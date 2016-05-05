@@ -186,12 +186,6 @@ public class RoleDAO {
                 .list();
     }
 
-    public List<Role> getActiveRoles() {
-        return sessionFactory.getCurrentSession().createCriteria(RoleTransition.class) //
-                .setProjection(Projections.groupProperty("role")) //
-                .list();
-    }
-
     public void deleteObsoleteUserRoles() {
         sessionFactory.getCurrentSession().createQuery( //
                 "delete UserRole " //
@@ -317,7 +311,8 @@ public class RoleDAO {
                 .uniqueResult();
     }
 
-    public List<UserRole> getUnnacceptedRolesForUser(User user) {
+    public List<UserRole> getUnacceptedRolesForUser(User user) {
+        // FIXME user argument not used, is that correct?
         return (List<UserRole>) sessionFactory.getCurrentSession().createCriteria(UserRole.class) //
                 .createAlias("role", "role", JoinType.INNER_JOIN) //
                 .add(Restrictions.isNull("acceptedTimestamp")) //

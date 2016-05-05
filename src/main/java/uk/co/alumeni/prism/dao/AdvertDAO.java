@@ -1,5 +1,37 @@
 package uk.co.alumeni.prism.dao;
 
+import com.google.common.base.Joiner;
+import com.google.common.collect.HashMultimap;
+import com.google.common.collect.Sets;
+import org.apache.commons.collections.CollectionUtils;
+import org.hibernate.Criteria;
+import org.hibernate.SessionFactory;
+import org.hibernate.criterion.*;
+import org.hibernate.sql.JoinType;
+import org.hibernate.transform.Transformers;
+import org.joda.time.LocalDate;
+import org.springframework.stereotype.Repository;
+import uk.co.alumeni.prism.domain.advert.*;
+import uk.co.alumeni.prism.domain.application.Application;
+import uk.co.alumeni.prism.domain.definitions.*;
+import uk.co.alumeni.prism.domain.definitions.workflow.PrismAction;
+import uk.co.alumeni.prism.domain.definitions.workflow.PrismPartnershipState;
+import uk.co.alumeni.prism.domain.definitions.workflow.PrismRole;
+import uk.co.alumeni.prism.domain.definitions.workflow.PrismScope;
+import uk.co.alumeni.prism.domain.resource.Institution;
+import uk.co.alumeni.prism.domain.resource.ResourceParent;
+import uk.co.alumeni.prism.domain.resource.ResourceState;
+import uk.co.alumeni.prism.domain.user.User;
+import uk.co.alumeni.prism.dto.*;
+import uk.co.alumeni.prism.rest.dto.OpportunitiesQueryDTO;
+import uk.co.alumeni.prism.rest.representation.advert.AdvertThemeRepresentation;
+
+import javax.inject.Inject;
+import java.math.BigDecimal;
+import java.util.Collection;
+import java.util.List;
+import java.util.Set;
+
 import static com.google.common.collect.Lists.newArrayList;
 import static com.google.common.collect.Sets.newHashSet;
 import static java.math.RoundingMode.HALF_UP;
@@ -13,89 +45,16 @@ import static org.apache.commons.lang3.ArrayUtils.isNotEmpty;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static uk.co.alumeni.prism.PrismConstants.COMMA;
 import static uk.co.alumeni.prism.PrismConstants.SPACE;
-import static uk.co.alumeni.prism.dao.WorkflowDAO.advertScopes;
-import static uk.co.alumeni.prism.dao.WorkflowDAO.getMatchingFlattenedPropertyConstraint;
-import static uk.co.alumeni.prism.dao.WorkflowDAO.getResolvedAliasReference;
-import static uk.co.alumeni.prism.dao.WorkflowDAO.getResourceParentManageableStateConstraint;
-import static uk.co.alumeni.prism.dao.WorkflowDAO.getTargetActionConstraint;
-import static uk.co.alumeni.prism.dao.WorkflowDAO.organizationScopes;
+import static uk.co.alumeni.prism.dao.WorkflowDAO.*;
 import static uk.co.alumeni.prism.domain.definitions.PrismDurationUnit.HOUR;
 import static uk.co.alumeni.prism.domain.definitions.PrismDurationUnit.getDurationUnitAsHours;
-import static uk.co.alumeni.prism.domain.definitions.PrismOpportunityCategory.EXPERIENCE;
-import static uk.co.alumeni.prism.domain.definitions.PrismOpportunityCategory.STUDY;
-import static uk.co.alumeni.prism.domain.definitions.PrismOpportunityCategory.WORK;
+import static uk.co.alumeni.prism.domain.definitions.PrismOpportunityCategory.*;
 import static uk.co.alumeni.prism.domain.definitions.PrismResourceContext.EMPLOYER;
 import static uk.co.alumeni.prism.domain.definitions.PrismResourceContext.UNIVERSITY;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismPartnershipState.ENDORSEMENT_PENDING;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismPartnershipState.ENDORSEMENT_PROVIDED;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismPartnershipState.ENDORSEMENT_REVOKED;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismPartnershipState.*;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRole.PrismRoleCategory.STUDENT;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.APPLICATION;
 import static uk.co.alumeni.prism.utils.PrismEnumUtils.values;
-
-import java.math.BigDecimal;
-import java.util.Collection;
-import java.util.List;
-import java.util.Set;
-
-import javax.inject.Inject;
-
-import org.apache.commons.collections.CollectionUtils;
-import org.hibernate.Criteria;
-import org.hibernate.SessionFactory;
-import org.hibernate.criterion.Criterion;
-import org.hibernate.criterion.Disjunction;
-import org.hibernate.criterion.Junction;
-import org.hibernate.criterion.MatchMode;
-import org.hibernate.criterion.Order;
-import org.hibernate.criterion.ProjectionList;
-import org.hibernate.criterion.Projections;
-import org.hibernate.criterion.Restrictions;
-import org.hibernate.sql.JoinType;
-import org.hibernate.transform.Transformers;
-import org.joda.time.LocalDate;
-import org.springframework.stereotype.Repository;
-
-import uk.co.alumeni.prism.domain.advert.Advert;
-import uk.co.alumeni.prism.domain.advert.AdvertAttribute;
-import uk.co.alumeni.prism.domain.advert.AdvertLocation;
-import uk.co.alumeni.prism.domain.advert.AdvertTarget;
-import uk.co.alumeni.prism.domain.advert.AdvertTargetPending;
-import uk.co.alumeni.prism.domain.advert.AdvertTheme;
-import uk.co.alumeni.prism.domain.application.Application;
-import uk.co.alumeni.prism.domain.definitions.PrismAdvertFunction;
-import uk.co.alumeni.prism.domain.definitions.PrismAdvertIndustry;
-import uk.co.alumeni.prism.domain.definitions.PrismDurationUnit;
-import uk.co.alumeni.prism.domain.definitions.PrismResourceContext;
-import uk.co.alumeni.prism.domain.definitions.PrismStudyOption;
-import uk.co.alumeni.prism.domain.definitions.workflow.PrismAction;
-import uk.co.alumeni.prism.domain.definitions.workflow.PrismPartnershipState;
-import uk.co.alumeni.prism.domain.definitions.workflow.PrismRole;
-import uk.co.alumeni.prism.domain.definitions.workflow.PrismScope;
-import uk.co.alumeni.prism.domain.resource.Institution;
-import uk.co.alumeni.prism.domain.resource.ResourceState;
-import uk.co.alumeni.prism.domain.user.User;
-import uk.co.alumeni.prism.dto.AdvertApplicationSummaryDTO;
-import uk.co.alumeni.prism.dto.AdvertCategoryDTO;
-import uk.co.alumeni.prism.dto.AdvertDTO;
-import uk.co.alumeni.prism.dto.AdvertFunctionDTO;
-import uk.co.alumeni.prism.dto.AdvertIndustryDTO;
-import uk.co.alumeni.prism.dto.AdvertLocationAddressPartSummaryDTO;
-import uk.co.alumeni.prism.dto.AdvertLocationDTO;
-import uk.co.alumeni.prism.dto.AdvertPartnerActionDTO;
-import uk.co.alumeni.prism.dto.AdvertStudyOptionDTO;
-import uk.co.alumeni.prism.dto.AdvertTargetAdvertDTO;
-import uk.co.alumeni.prism.dto.AdvertTargetDTO;
-import uk.co.alumeni.prism.dto.AdvertThemeDTO;
-import uk.co.alumeni.prism.dto.AdvertUserDTO;
-import uk.co.alumeni.prism.dto.EntityOpportunityCategoryDTO;
-import uk.co.alumeni.prism.dto.UserAdvertDTO;
-import uk.co.alumeni.prism.rest.dto.OpportunitiesQueryDTO;
-import uk.co.alumeni.prism.rest.representation.advert.AdvertThemeRepresentation;
-
-import com.google.common.base.Joiner;
-import com.google.common.collect.HashMultimap;
-import com.google.common.collect.Sets;
 
 @Repository
 @SuppressWarnings("unchecked")
@@ -194,7 +153,7 @@ public class AdvertDAO {
     }
 
     public List<EntityOpportunityCategoryDTO<?>> getVisibleAdverts(Collection<PrismScope> scopes,
-            Collection<Integer> nodeAdverts, UserAdvertDTO userAdvertDTO, OpportunitiesQueryDTO query) {
+                                                                   Collection<Integer> nodeAdverts, UserAdvertDTO userAdvertDTO, OpportunitiesQueryDTO query) {
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Advert.class) //
                 .setProjection(Projections.projectionList()
                         .add(Projections.groupProperty("id").as("id")) //
@@ -373,7 +332,7 @@ public class AdvertDAO {
     }
 
     public List<AdvertTargetDTO> getAdvertTargets(PrismScope resourceScope, String thisAdvertReference, String otherAdvertReference, User user,
-            Collection<Integer> connectAdverts, Collection<Integer> manageAdverts) {
+                                                  Collection<Integer> connectAdverts, Collection<Integer> manageAdverts) {
         Criterion visibilityConstraint = Restrictions.conjunction() //
                 .add(Restrictions.eq("target.partnershipState", ENDORSEMENT_PROVIDED))
                 .add(Restrictions.eq("target.advertSevered", false))
@@ -395,7 +354,7 @@ public class AdvertDAO {
     }
 
     public List<AdvertTargetDTO> getAdvertTargetsReceived(PrismScope resourceScope, String thisAdvertReference, String otherAdvertReference, User user,
-            Collection<Integer> connectAdverts) {
+                                                          Collection<Integer> connectAdverts) {
         Criterion permissionsConstraint;
         if (user != null && isNotEmpty(connectAdverts)) {
             permissionsConstraint = Restrictions.disjunction() //
@@ -422,7 +381,7 @@ public class AdvertDAO {
     }
 
     public List<Advert> getAdvertsTargetsForWhichUserCanEndorse(Advert advert, User user, PrismScope scope, PrismScope targeterScope, PrismScope targetScope,
-            List<Integer> targeterEntities) {
+                                                                List<Integer> targeterEntities) {
         return (List<Advert>) workflowDAO
                 .getWorkflowCriteriaList(scope, targeterScope, targetScope, targeterEntities, Projections.groupProperty("targeterTarget.targetAdvert"))
                 .add(Restrictions.eq("targeterTarget.advert", advert)) //
@@ -995,7 +954,7 @@ public class AdvertDAO {
     }
 
     private Junction getVisibleAdvertConstraint(String selectAdvertAlias, String restrictAdvertAlias,
-            HashMultimap<PrismScope, Integer> userResources, boolean publishedOnly, PrismScope... displayScopes) {
+                                                HashMultimap<PrismScope, Integer> userResources, boolean publishedOnly, PrismScope... displayScopes) {
         String selectAdvertAliasResolved = getResolvedAliasReference(selectAdvertAlias);
         String restrictAdvertAliasResolved = getResolvedAliasReference(restrictAdvertAlias);
 
@@ -1070,4 +1029,13 @@ public class AdvertDAO {
         return constraint;
     }
 
+    public List<Advert> getBadgeAdverts(ResourceParent parentResource, int count) {
+        return (List<Advert>) sessionFactory.getCurrentSession().createCriteria(Advert.class)
+                .add(Restrictions.eq(parentResource.getResourceScope().getLowerCamelName(), parentResource))
+                .add(Restrictions.disjunction()
+                        .add(Restrictions.isNotNull("project"))
+                        .add(Restrictions.isNotNull("program")))
+                .setMaxResults(count)
+                .list();
+    }
 }

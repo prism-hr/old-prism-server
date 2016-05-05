@@ -1,23 +1,9 @@
 package uk.co.alumeni.prism.rest.controller;
 
-import static org.apache.commons.lang3.StringUtils.removeEnd;
-
-import java.lang.reflect.Type;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Optional;
-
-import javax.inject.Inject;
-import javax.servlet.http.HttpServletResponse;
-
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
-
+import org.springframework.web.bind.annotation.*;
 import uk.co.alumeni.prism.domain.advert.Advert;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismScope;
 import uk.co.alumeni.prism.exceptions.ResourceNotFoundException;
@@ -29,8 +15,15 @@ import uk.co.alumeni.prism.rest.representation.advert.AdvertRepresentationExtend
 import uk.co.alumeni.prism.services.AdvertService;
 import uk.co.alumeni.prism.services.WidgetService;
 
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
+import javax.inject.Inject;
+import javax.servlet.http.HttpServletResponse;
+import java.lang.reflect.Type;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Optional;
+
+import static org.apache.commons.lang3.StringUtils.removeEnd;
 
 @RestController
 @RequestMapping("/api/opportunities")
@@ -48,8 +41,7 @@ public class OpportunityController {
 
     @RequestMapping(method = RequestMethod.GET)
     public AdvertListRepresentation getAdverts(OpportunitiesQueryDTO query) {
-        AdvertListRepresentation representation = advertMapper.getAdvertExtendedRepresentations(query);
-        return representation;
+        return advertMapper.getAdvertExtendedRepresentations(query);
     }
 
     @RequestMapping(method = RequestMethod.GET, value = "{resourceScope:projects|programs|departments|institutions}/{resourceId}")

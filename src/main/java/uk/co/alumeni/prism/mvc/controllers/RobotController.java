@@ -1,25 +1,13 @@
 package uk.co.alumeni.prism.mvc.controllers;
 
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.DEPARTMENT;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.INSTITUTION;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.PROGRAM;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.PROJECT;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.SYSTEM;
-
-import java.io.UnsupportedEncodingException;
-import java.net.URLDecoder;
-import java.util.HashMap;
-import java.util.Map;
-
-import javax.inject.Inject;
-
+import com.google.common.base.Charsets;
+import com.google.common.collect.Maps;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
-
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismScope;
 import uk.co.alumeni.prism.domain.resource.ResourceParent;
 import uk.co.alumeni.prism.exceptions.ResourceNotFoundException;
@@ -29,8 +17,13 @@ import uk.co.alumeni.prism.services.ResourceService;
 import uk.co.alumeni.prism.services.SystemService;
 import uk.co.alumeni.prism.utils.PrismTemplateUtils;
 
-import com.google.common.base.Charsets;
-import com.google.common.collect.Maps;
+import javax.inject.Inject;
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
+import java.util.HashMap;
+import java.util.Map;
+
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.*;
 
 @Controller
 @RequestMapping("api/robots")
@@ -69,7 +62,7 @@ public class RobotController {
         Map<String, Object> model = Maps.newHashMap();
         model.put("metadata", resourceScope.equals(SYSTEM) ? systemMapper.getRobotsRepresentation()
                 : resourceMapper.getResourceRepresentationRobot((ResourceParent) resourceService.getById(resourceScope, resourceId)));
-        return prismTemplateUtils.getContentFromLocation("template/robot_representation.ftl", model);
+        return prismTemplateUtils.getContentFromLocation("robot_representation.ftl", model);
     }
 
     private Map<String, String> getQueryMap(String escapedFragment) throws UnsupportedEncodingException {

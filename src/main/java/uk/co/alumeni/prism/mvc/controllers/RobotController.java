@@ -69,7 +69,7 @@ public class RobotController {
         Map<String, Object> model = Maps.newHashMap();
         model.put("metadata", resourceScope.equals(SYSTEM) ? systemMapper.getRobotsRepresentation()
                 : resourceMapper.getResourceRepresentationRobot((ResourceParent) resourceService.getById(resourceScope, resourceId)));
-        return prismTemplateUtils.getContentFromLocation("robot_representation", "template/robot_representation.ftl", model);
+        return prismTemplateUtils.getContentFromLocation("template/robot_representation.ftl", model);
     }
 
     private Map<String, String> getQueryMap(String escapedFragment) throws UnsupportedEncodingException {

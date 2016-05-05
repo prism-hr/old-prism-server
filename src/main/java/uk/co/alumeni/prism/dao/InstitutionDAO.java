@@ -77,7 +77,7 @@ public class InstitutionDAO {
         }
 
         sessionFactory.getCurrentSession().createSQLQuery( //
-                prismTemplateUtils.getContentFromLocation("statement", templateLocation, model)) //
+                prismTemplateUtils.getContentFromLocation(templateLocation, model)) //
                 .executeUpdate();
     }
 

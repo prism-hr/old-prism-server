@@ -159,7 +159,7 @@ public class NotificationPropertyLoader {
             model.put("declineLink", declineLink);
         }
 
-        return prismTemplateUtils.getContentFromLocation("Email Control Template", "email/email_control_template.ftl", model);
+        return prismTemplateUtils.getContentFromLocation("email/email_control_template.ftl", model);
     }
 
 }

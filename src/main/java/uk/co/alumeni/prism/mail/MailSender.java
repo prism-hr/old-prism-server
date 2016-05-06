@@ -214,7 +214,7 @@ public class MailSender {
 
         model.put("SUBJECT", subject);
         model.put("CONTENT", content);
-        return prismTemplateUtils.getContentFromLocation("email_template", "email/email_template.ftl", model);
+        return prismTemplateUtils.getContentFromLocation("email/email_template.ftl", model);
     }
 
     private Map<String, Object> createNotificationModel(NotificationDefinition notificationDefinition, NotificationDefinitionDTO notificationDefinitionDTO,

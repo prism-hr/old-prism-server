@@ -7,7 +7,7 @@
 <body>
 
 <div class="opportunities">
-    <div class="prism-connect opportunity">
+    <div class="prism-connect opportunity list">
         <div class="prism-header">
             <div class="logo">
                 <a href="${applicationUrl}" class="navbar-brand" target="_blank"><img

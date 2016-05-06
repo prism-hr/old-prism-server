@@ -35,3 +35,8 @@ ${opportunity.advert.summary}
         </li>
     </ul>
 </div>
+<div class="prism-apply-holder">
+    <a href="${applicationUrl}/#!/employer/applicant?institution=${advert.institution.id}&tab=opportunities" class="btn btn-default enquire" target="_blank">Other Opportunities</a>
+    <a href="${applicationUrl}/#!/applicant/main?${opportunity.advert.resource.resourceScope?lower_case}=${opportunity.advert.resource.id}"
+       class="btn btn-success ng-scope" target="_blank">Apply Now</a>
+</div>

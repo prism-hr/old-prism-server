@@ -1729,7 +1729,7 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     SYSTEM_RESOURCE_APPLICATION_OPTIONS_HEADER(PrismDisplayPropertyCategory.SYSTEM_RESOURCE, "Application Options"),
     SYSTEM_RESOURCE_MANAGEMENT_HEADER(PrismDisplayPropertyCategory.SYSTEM_RESOURCE, "Resource Management"),
     SYSTEM_RESOURCE_ADVERT_CATEGORIES_HEADER(PrismDisplayPropertyCategory.SYSTEM_RESOURCE, "Categories and Themes"),
-    SYSTEM_RESOURCE_ADVERT_BADGE_HEADER(PrismDisplayPropertyCategory.SYSTEM_RESOURCE, "Share and Badges"),
+    SYSTEM_RESOURCE_ADVERT_BADGE_HEADER(PrismDisplayPropertyCategory.SYSTEM_RESOURCE, "Sharing and Embeddable Badges"),
     SYSTEM_RESOURCE_CATEGORIES_INCOMPLETE(PrismDisplayPropertyCategory.SYSTEM_RESOURCE, "Provide some tags to help candidates discover your advert."),
     SYSTEM_RESOURCE_ADVERT_LOCATIONS_HEADER(PrismDisplayPropertyCategory.SYSTEM_RESOURCE, "Locations"),
     SYSTEM_RESOURCE_FEES_PAYMENTS_HEADER(PrismDisplayPropertyCategory.SYSTEM_RESOURCE, "Salary"),
@@ -2038,6 +2038,19 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     SYSTEM_RESOURCE_CONFIGURATION_OVERRIDE_LOCAL_VERSIONS_BUTTON(PrismDisplayPropertyCategory.SYSTEM_RESOURCE_CONFIGURATION, "Override Local Versions"),
     SYSTEM_RESOURCE_CONFIGURATION_RESTORE_DEFAULT_BUTTON(PrismDisplayPropertyCategory.SYSTEM_RESOURCE_CONFIGURATION, "Restore Default"),
 
+    /*
+     * *************** SYSTEM RESOURCE SHARING *********************
+     */
+    
+    SYSTEM_RESOURCE_SHARE_PREVIEW(PrismDisplayPropertyCategory.SYSTEM_RESOURCE_SHARE, "Preview"),
+    SYSTEM_RESOURCE_SHARE_OPPORTUNTIES(PrismDisplayPropertyCategory.SYSTEM_RESOURCE_SHARE, "Jobs & Work Experience"),
+    SYSTEM_RESOURCE_SHARE_VIEW_OPPORTUNITIES(PrismDisplayPropertyCategory.SYSTEM_RESOURCE_SHARE, "View Opportunities"),
+    SYSTEM_RESOURCE_SHARE_POST_OPPORTUNITY(PrismDisplayPropertyCategory.SYSTEM_RESOURCE_SHARE, "Post Opportunity"),
+    SYSTEM_RESOURCE_SHARE_OTHER_OPPORTUNITIES(PrismDisplayPropertyCategory.SYSTEM_RESOURCE_SHARE, "Other Opportunities"),
+    SYSTEM_RESOURCE_SHARE_READ_MORE(PrismDisplayPropertyCategory.SYSTEM_RESOURCE_SHARE, "Read More"),
+    SYSTEM_RESOURCE_SHARE_HTML_LABEL(PrismDisplayPropertyCategory.SYSTEM_RESOURCE_SHARE, "HTML to embed in your website"),
+    SYSTEM_RESOURCE_SHARE_HTML_HINT(PrismDisplayPropertyCategory.SYSTEM_RESOURCE_SHARE, "Embed this HTML in your website to display the badge."),
+    
     /*
      * *************** SYSTEM RESOURCE TARGETS *********************
      */

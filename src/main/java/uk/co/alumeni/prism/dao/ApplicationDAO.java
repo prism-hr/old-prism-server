@@ -437,7 +437,7 @@ public class ApplicationDAO {
         }
 
         ImmutableMap<String, Object> model = ImmutableMap.of("columnExpression", (Object) columnExpression, "constraintExpression", constraintExpression);
-        return sessionFactory.getCurrentSession().createSQLQuery(prismTemplateUtils.getContentFromLocation("statement", templateLocation, model))
+        return sessionFactory.getCurrentSession().createSQLQuery(prismTemplateUtils.getContentFromLocation(templateLocation, model))
                 .addScalar("advertCount", LongType.INSTANCE) //
                 .addScalar("applicationYear", StringType.INSTANCE) //
                 .addScalar("submittedApplicationCount", LongType.INSTANCE) //

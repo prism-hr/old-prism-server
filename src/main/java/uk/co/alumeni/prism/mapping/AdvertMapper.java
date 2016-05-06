@@ -166,12 +166,8 @@ public class AdvertMapper {
     public AdvertRepresentationExtended getAdvertRepresentationExtended(Advert advert) {
         User user = userService.getCurrentUser();
         UserAdvertDTO userAdvertDTO = advertService.getUserAdverts(user, advert.getResource().getResourceScope());
-
-        Integer advertId = advert.getId();
-        List<Integer> userAdverts = userAdvertDTO.getVisibleDirect();
-        List<Integer> userAdvertsRevoked = userAdvertDTO.getInvisible();
-        if ((isEmpty(userAdvertsRevoked) || !userAdvertsRevoked.contains(advertId)) && (isTrue(advert.getGloballyVisible())
-                || userAdvertDTO.isAllVisible() || (isNotEmpty(userAdverts) && userAdverts.contains(advertId)))) {
+        
+        if (advertService.checkAdvertVisible(advert, userAdvertDTO)) {
             AdvertRepresentationExtended representation = getAdvertRepresentation(advert, AdvertRepresentationExtended.class);
 
             ResourceParent resource = advert.getResource();
@@ -203,7 +199,7 @@ public class AdvertMapper {
 
             setOpportunityCategories(representation, resource.getOpportunityCategories());
 
-            Boolean recommended = userAdverts.contains(advert.getId());
+            Boolean recommended = userAdvertDTO.getVisibleDirect().contains(advert.getId());
             representation.setRecommended(recommended);
 
             representation.setName(advert.getName());

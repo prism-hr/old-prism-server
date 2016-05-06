@@ -1066,6 +1066,24 @@ public class AdvertService {
         return advertDAO.getSuggestedAdvertThemes(advert);
     }
 
+    public boolean checkAdvertVisible(Advert advert, UserAdvertDTO userAdvertDTO) {
+        Integer advertId = advert.getId();
+        List<Integer> advertsVisible = userAdvertDTO.getVisibleDirect();
+        List<Integer> advertsInvisible = userAdvertDTO.getInvisible();
+
+        if (isTrue(advert.getPublished()) && isEmpty(advertsInvisible) || !advertsInvisible.contains(advertId)) {
+            if (isTrue(advert.getGloballyVisible())) {
+                return true;
+            } else if (userAdvertDTO.isAllVisible()) {
+                return true;
+            } else if (isNotEmpty(advertsVisible) && advertsVisible.contains(advertId)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     private List<AdvertCategoryDTO> getAdvertsForWhichUserHasRoles(User user, String[] roleExtensions, PrismScope[] advertScopes,
             Collection<Integer> advertIds) {
         List<AdvertCategoryDTO> adverts = newArrayList();

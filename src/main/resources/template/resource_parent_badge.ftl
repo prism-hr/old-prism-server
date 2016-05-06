@@ -27,24 +27,25 @@
     [/#if]
     [#if options.type == "STATIC_LIST"]
         <div class="prism-main static-list">
-            [#list opportunities as opportunity]
-                <ul>
+            <ul>
+                [#list opportunities as opportunity]
                     <li>
                         [#include "opportunity_partial.ftl"]
                     </li>
-                </ul>
-            [/#list]
+                [/#list]
+            </ul>
         </div>
     [/#if]
     [#if options.type == "SLIDER_LIST"]
+    <script src="${applicationUrl}/scripts/slider.js" type="text/javascript"></script>
         <div class="prism-main slider-list">
-            [#list opportunities as opportunity]
-                <ul>
-                    <li>
-                        [#include "opportunity_partial.ftl"]
-                    </li>
-                </ul>
-            [/#list]
+            <ul>
+                [#list opportunities as opportunity]
+                <li>
+                    [#include "opportunity_partial.ftl"]
+                </li>
+                [/#list]
+            </ul>
         </div>
     [/#if]
     </div>

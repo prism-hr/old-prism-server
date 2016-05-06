@@ -1,0 +1,189 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+		This schema definition describes generic types that can be used in UCL
+		web services
+	-->
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:uclBasic_v1_0="http://ucl.ac.uk/isd/uclbasic_v1_0/" targetNamespace="http://ucl.ac.uk/isd/uclbasic_v1_0/" elementFormDefault="qualified">
+    <xs:annotation>
+        <xs:appinfo>
+            v1.0: Common types to be used across services.
+            v1.1: Added error info type. This type may be included to add detail to
+            any SOAP Fault.
+            v1.2: Added person type.
+            v1.3: Renamed person type, made elements optional.
+            v1.4: Added passportTp, employerTp, appointmentTp, languageTp, countryTp, domicileTp, nationalityTp, disabilityTp, ethnicityTp, professionalAssociationTp 
+        </xs:appinfo>
+    </xs:annotation>
+    <!-- Name type -->
+    <xs:complexType name="nameTp">
+        <xs:sequence>
+            <xs:element name="title" type="xs:string" minOccurs="0" maxOccurs="1" />
+            <xs:element name="surname" type="xs:string" minOccurs="0" maxOccurs="1" />
+            <xs:element name="forename1" type="xs:string" minOccurs="0" maxOccurs="1" />
+            <xs:element name="forename2" type="xs:string" minOccurs="0" maxOccurs="1" />
+            <xs:element name="forename3" type="xs:string" minOccurs="0" maxOccurs="1" />
+            <xs:element name="knownAs" type="xs:string" minOccurs="0" maxOccurs="1" />
+        </xs:sequence>
+    </xs:complexType>
+    <!--Gender Type -->
+    <xs:simpleType name="genderTp">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="M" />
+            <xs:enumeration value="F" />
+            <xs:enumeration value="N" />
+        </xs:restriction>
+    </xs:simpleType>
+    <!--Email Type -->
+    <xs:simpleType name="emailTp">
+        <xs:union>
+            <xs:simpleType>
+                <xs:restriction base="xs:string">
+                    <xs:pattern value="[A-Za-z0-9!#-'\*\+\-/=\?\^_`\{-~]+(\.[A-Za-z0-9!#-'\*\+\-/=\?\^_`\{-~]+)*@[A-Za-z0-9!#-'\*\+\-/=\?\^_`\{-~]+(\.[A-Za-z0-9!#-'\*\+\-/=\?\^_`\{-~]+)*" />
+                </xs:restriction>
+            </xs:simpleType>
+            <xs:simpleType>
+                <xs:restriction base="xs:string">
+                    <xs:enumeration value="" />
+                </xs:restriction>
+            </xs:simpleType>
+        </xs:union>
+    </xs:simpleType>
+    <!-- UPI type -->
+    <xs:simpleType name="upiTp">
+        <xs:restriction base="xs:string">
+            <xs:length value="7" />
+        </xs:restriction>
+    </xs:simpleType>
+    <!-- Address type -->
+    <xs:complexType name="addressTp">
+        <xs:sequence>
+            <xs:element name="addressLine1" type="xs:string" minOccurs="0" maxOccurs="1" />
+            <xs:element name="addressLine2" type="xs:string" minOccurs="0" maxOccurs="1" />
+            <xs:element name="addressLine3" type="xs:string" minOccurs="0" maxOccurs="1" />
+            <xs:element name="addressLine4" type="xs:string" minOccurs="0" maxOccurs="1" />
+            <xs:element name="addressLine5" type="xs:string" minOccurs="0" maxOccurs="1" />
+            <xs:element name="postCode" type="xs:string" minOccurs="0" maxOccurs="1" />
+            <xs:element name="country" type="xs:string" minOccurs="0" maxOccurs="1" />
+        </xs:sequence>
+    </xs:complexType>
+    <!--
+		Error information type
+		code:- Generic error code for the user to interpret (e.g: 001, 002..)
+		message:- 			Error message (e.g: Business validation failure message)
+		referenceCode:- 	Application specific error messages that could be matched against
+							errors thrown on the server side code(e.g:ERR123456)
+		additionalInfo :- 	Stacktrace
+	-->
+    <xs:complexType name="errorInfoTp">
+        <xs:sequence>
+            <xs:element minOccurs="1" maxOccurs="1" name="code" type="xs:string" />
+            <xs:element minOccurs="1" maxOccurs="1" name="message" type="xs:string" />
+            <xs:element minOccurs="0" maxOccurs="1" name="referenceCode" type="xs:string" />
+            <xs:element minOccurs="0" maxOccurs="1" name="additionalInfo" type="xs:string" />
+        </xs:sequence>
+    </xs:complexType>
+    <!--Basic Person type  -->
+    <xs:complexType name="personTp">
+        <xs:sequence>
+            <xs:element name="upi" type="uclBasic_v1_0:upiTp" minOccurs="0" maxOccurs="1" />
+            <xs:element name="mainUserID" type="xs:string" minOccurs="0" maxOccurs="1" />
+            <xs:element name="fullName" type="uclBasic_v1_0:nameTp" minOccurs="0" maxOccurs="1" />
+            <xs:element name="mainEmail" type="uclBasic_v1_0:emailTp" minOccurs="0" maxOccurs="1" />
+            <xs:element name="sex" type="uclBasic_v1_0:genderTp" minOccurs="0" maxOccurs="1" />
+            <xs:element name="exDirectory" type="xs:boolean" default="false" minOccurs="0" maxOccurs="1" />  
+        </xs:sequence>
+    </xs:complexType>
+    
+    <!-- Passport -->
+    <xs:complexType name="passportTp">
+        <xs:sequence>
+            <xs:element name="number" type="xs:string" minOccurs="0" maxOccurs="1" />
+            <xs:element name="name" type="xs:string" minOccurs="0" maxOccurs="1" />
+            <xs:element name="issueDate" type="xs:date" minOccurs="0" maxOccurs="1" />
+            <xs:element name="expiryDate" type="xs:date" minOccurs="0" maxOccurs="1" />
+            <xs:element name="placeOfIssue" type="xs:string" minOccurs="0" maxOccurs="1" />
+        </xs:sequence>
+    </xs:complexType>
+    <!-- Employer -->
+    <xs:complexType name="employerTp">
+        <xs:sequence>
+            <xs:element name="name" type="xs:string" minOccurs="0" maxOccurs="1" />    
+        </xs:sequence>
+    </xs:complexType>
+    
+    <!-- Appointment -->
+    <xs:complexType name="appointmentTp">
+        <xs:sequence>
+            <xs:element name="employer" type="uclBasic_v1_0:employerTp" minOccurs="1" maxOccurs="1" />
+            <xs:element name="jobTitle" type="xs:string" minOccurs="0" maxOccurs="1" />
+            <xs:element name="startDate" type="xs:date" minOccurs="0" maxOccurs="1" />
+            <xs:element name="endDate" type="xs:date" minOccurs="0" maxOccurs="1" />
+            <xs:element name="responsibilities" type="xs:string" minOccurs="0" maxOccurs="1" />
+        </xs:sequence>
+    </xs:complexType>
+    
+    <!--Language: ISO codes for languages    
+    -->
+    <xs:complexType name="languageTp">
+        <xs:sequence>            
+            <xs:element name="name" type="xs:string" minOccurs="1" maxOccurs="1" />
+        </xs:sequence>
+    </xs:complexType>
+    
+    <!-- Country: Only ISO codes allowed-->
+    <xs:complexType name="countryTp">
+        <xs:sequence>            
+            <xs:element name="code" type="xs:string" minOccurs="1" maxOccurs="1" />
+            <xs:element name="name" type="xs:string" minOccurs="0" maxOccurs="1" />
+        </xs:sequence>
+    </xs:complexType>
+    
+   <!--
+        All types below may or may not have international or country specific codes,
+        as a standard we allow only names. 
+        The service will be responsible to derive the codes are appropriate.
+    -->
+    <!-- Domicile -->
+    <xs:complexType name="domicileTp">
+        <xs:sequence>            
+            <xs:element name="code" type="xs:string" minOccurs="1" maxOccurs="1" />
+            <xs:element name="name" type="xs:string" minOccurs="0" maxOccurs="1" />
+        </xs:sequence>
+    </xs:complexType>
+   
+    <!-- Nationality -->
+    <xs:complexType name="nationalityTp">
+        <xs:sequence>            
+            <xs:element name="code" type="xs:string" minOccurs="1" maxOccurs="1" />
+            <xs:element name="name" type="xs:string" minOccurs="0" maxOccurs="1" />
+        </xs:sequence>
+    </xs:complexType>
+  
+    <!-- Disability -->
+    <xs:complexType name="disabilityTp">
+        <xs:sequence>            
+            <xs:element name="code" type="xs:string" minOccurs="1" maxOccurs="1" />
+            <xs:element name="name" type="xs:string" minOccurs="0" maxOccurs="1" />
+        </xs:sequence>
+    </xs:complexType>
+   
+    <!-- Ethnicity -->
+    <xs:complexType name="ethnicityTp">
+        <xs:sequence>            
+            <xs:element name="code" type="xs:string" minOccurs="1" maxOccurs="1" />
+            <xs:element name="name" type="xs:string" minOccurs="0" maxOccurs="1" />
+        </xs:sequence>
+    </xs:complexType>
+    
+    <!-- Professional associations a person/entity could be associated with -->
+    <xs:complexType name="professionalAssociationTp">    
+            <xs:sequence>
+                <xs:element name="name" type="xs:string" minOccurs="0" maxOccurs="1" />
+                <xs:element name="referenceNo" type="xs:string" minOccurs="0" maxOccurs="1" />
+                <xs:element name="validFrom" type="xs:date" minOccurs="0" maxOccurs="1" />
+                <xs:element name="validUntil" type="xs:date" minOccurs="0" maxOccurs="1" />
+                <xs:element name="additionalDetails" type="xs:string" minOccurs="0" maxOccurs="1" />
+            </xs:sequence>         
+    </xs:complexType>
+   
+</xs:schema>

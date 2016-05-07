@@ -2,6 +2,7 @@ package uk.co.alumeni.prism.domain.definitions.workflow.project;
 
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismAction.PROJECT_COMPLETE_APPROVAL_STAGE;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismAction.SYSTEM_VIEW_PROJECT_LIST;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismNotificationDefinition.PROJECT_COMPLETE_APPROVAL_STAGE_REQUEST;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRoleGroup.PROJECT_PARENT_ADMINISTRATOR_GROUP;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismState.PROJECT_APPROVAL_PENDING_CORRECTION;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismStateTransitionEvaluation.PROJECT_APPROVED_OUTCOME;
@@ -21,6 +22,7 @@ public class PrismProjectApproval extends PrismWorkflowState {
     protected void setStateActions() {
         stateActions.add(projectCompleteApproval() //
                 .withRaisesUrgentFlag() //
+                .withNotificationDefinition(PROJECT_COMPLETE_APPROVAL_STAGE_REQUEST) //
                 .withStateTransitions(new PrismStateTransition() //
                         .withTransitionState(PROJECT_APPROVAL_PENDING_CORRECTION) //
                         .withTransitionAction(SYSTEM_VIEW_PROJECT_LIST) //

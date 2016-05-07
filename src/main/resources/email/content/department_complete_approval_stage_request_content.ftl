@@ -3,7 +3,7 @@
 </h1>
 
 <p><b>
-	${DEPARMTENT_CREATOR_FULL_NAME} has submitted a new Department for approval.
+	${DEPARTMENT_CREATOR_FULL_NAME} has submitted a new Department for approval.
 </b></p>
 
 <p>

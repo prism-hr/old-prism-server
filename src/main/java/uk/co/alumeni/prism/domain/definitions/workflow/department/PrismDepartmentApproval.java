@@ -2,6 +2,7 @@ package uk.co.alumeni.prism.domain.definitions.workflow.department;
 
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismAction.DEPARTMENT_COMPLETE_APPROVAL_STAGE;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismAction.SYSTEM_VIEW_DEPARTMENT_LIST;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismNotificationDefinition.DEPARTMENT_COMPLETE_APPROVAL_STAGE_REQUEST;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRoleGroup.DEPARTMENT_PARENT_ADMINISTRATOR_GROUP;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismState.DEPARTMENT_APPROVAL_PENDING_CORRECTION;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismStateTransitionEvaluation.DEPARTMENT_APPROVED_OUTCOME;
@@ -23,6 +24,7 @@ public class PrismDepartmentApproval extends PrismWorkflowState {
     protected void setStateActions() {
         stateActions.add(departmentCompleteApproval()
                 .withRaisesUrgentFlag() //
+                .withNotificationDefinition(DEPARTMENT_COMPLETE_APPROVAL_STAGE_REQUEST) //
                 .withStateTransitions(new PrismStateTransition() //
                         .withTransitionState(DEPARTMENT_APPROVAL_PENDING_CORRECTION) //
                         .withTransitionAction(SYSTEM_VIEW_DEPARTMENT_LIST) //

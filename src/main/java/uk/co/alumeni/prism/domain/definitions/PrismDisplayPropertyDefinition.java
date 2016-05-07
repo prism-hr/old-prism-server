@@ -1090,17 +1090,21 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     SYSTEM_NOTIFICATION_APPLICATION_TERMINATE_NOTIFICATION(PrismDisplayPropertyCategory.SYSTEM_NOTIFICATION, "Terminate Notification"),
     SYSTEM_NOTIFICATION_APPLICATION_UPDATE_INTERVIEW_AVAILABILITY_NOTIFICATION(PrismDisplayPropertyCategory.SYSTEM_NOTIFICATION,
             "Update Interview Availability Notification"),
+    SYSTEM_NOTIFICATION_INSTITUTION_COMPLETE_APPROVAL_STAGE_REQUEST(PrismDisplayPropertyCategory.SYSTEM_NOTIFICATION, "Complete Approval Stage Request"),
     SYSTEM_NOTIFICATION_INSTITUTION_COMPLETE_APPROVAL_STAGE_NOTIFICATION(PrismDisplayPropertyCategory.SYSTEM_NOTIFICATION,
             "Complete Approval Stage Notification"),
     SYSTEM_NOTIFICATION_INSTITUTION_CORRECT_REQUEST(PrismDisplayPropertyCategory.SYSTEM_NOTIFICATION, "Correct Request"),
     SYSTEM_NOTIFICATION_INSTITUTION_MESSAGE_NOTIFICATION(PrismDisplayPropertyCategory.SYSTEM_NOTIFICATION, "New Message Notification"),
+    SYSTEM_NOTIFICATION_DEPARTMENT_COMPLETE_APPROVAL_STAGE_REQUEST(PrismDisplayPropertyCategory.SYSTEM_NOTIFICATION, "Complete Approval Stage Request"),
     SYSTEM_NOTIFICATION_DEPARTMENT_COMPLETE_APPROVAL_STAGE_NOTIFICATION(PrismDisplayPropertyCategory.SYSTEM_NOTIFICATION,
             "Complete Approval Stage Notification"),
     SYSTEM_NOTIFICATION_DEPARTMENT_CORRECT_REQUEST(PrismDisplayPropertyCategory.SYSTEM_NOTIFICATION, "Correct Request"),
     SYSTEM_NOTIFICATION_DEPARTMENT_MESSAGE_NOTIFICATION(PrismDisplayPropertyCategory.SYSTEM_NOTIFICATION, "New Message Notification"),
+    SYSTEM_NOTIFICATION_PROGRAM_COMPLETE_APPROVAL_STAGE_REQUEST(PrismDisplayPropertyCategory.SYSTEM_NOTIFICATION, "Complete Approval Stage Request"),
     SYSTEM_NOTIFICATION_PROGRAM_COMPLETE_APPROVAL_STAGE_NOTIFICATION(PrismDisplayPropertyCategory.SYSTEM_NOTIFICATION, "Complete Approval Stage Notification"),
     SYSTEM_NOTIFICATION_PROGRAM_CORRECT_REQUEST(PrismDisplayPropertyCategory.SYSTEM_NOTIFICATION, "Correct Request"),
     SYSTEM_NOTIFICATION_PROGRAM_MESSAGE_NOTIFICATION(PrismDisplayPropertyCategory.SYSTEM_NOTIFICATION, "New Message Notification"),
+    SYSTEM_NOTIFICATION_PROJECT_COMPLETE_APPROVAL_STAGE_REQUEST(PrismDisplayPropertyCategory.SYSTEM_NOTIFICATION, "Complete Approval Stage Request"),
     SYSTEM_NOTIFICATION_PROJECT_COMPLETE_APPROVAL_STAGE_NOTIFICATION(PrismDisplayPropertyCategory.SYSTEM_NOTIFICATION, "Complete Approval Stage Notification"),
     SYSTEM_NOTIFICATION_PROJECT_CORRECT_REQUEST(PrismDisplayPropertyCategory.SYSTEM_NOTIFICATION, "Correct Request"),
     SYSTEM_NOTIFICATION_PROJECT_MESSAGE_NOTIFICATION(PrismDisplayPropertyCategory.SYSTEM_NOTIFICATION, "New Message Notification"),
@@ -1234,7 +1238,11 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     SYSTEM_VALIDATION_MAX(PrismDisplayPropertyCategory.SYSTEM_VALIDATION_ERROR, "This field must be at most {1}."),
     SYSTEM_VALIDATION_MINLENGTH(PrismDisplayPropertyCategory.SYSTEM_VALIDATION_ERROR, "This field must be at least {1} character(s)."),
     SYSTEM_VALIDATION_MAXLENGTH(PrismDisplayPropertyCategory.SYSTEM_VALIDATION_ERROR, "This field must be less than {1} character(s)."),
-    SYSTEM_VALIDATION_MIN_ITEMS(PrismDisplayPropertyCategory.SYSTEM_VALIDATION_ERROR, "You have to select at least 1 element."), // FIXME soon, hack for ui-select
+    SYSTEM_VALIDATION_MIN_ITEMS(PrismDisplayPropertyCategory.SYSTEM_VALIDATION_ERROR, "You have to select at least 1 element."), // FIXME
+                                                                                                                                 // soon,
+                                                                                                                                 // hack
+                                                                                                                                 // for
+                                                                                                                                 // ui-select
     SYSTEM_VALIDATION_MAX_ITEMS(PrismDisplayPropertyCategory.SYSTEM_VALIDATION_ERROR, "You have to select at most {1} element(s)."),
     SYSTEM_VALIDATION_PATTERN(PrismDisplayPropertyCategory.SYSTEM_VALIDATION_ERROR, "This field is invalid."),
     SYSTEM_VALIDATION_URL(PrismDisplayPropertyCategory.SYSTEM_VALIDATION_ERROR, "This field must be a valid URL."),
@@ -1483,10 +1491,12 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     SYSTEM_OPPORTUNITIES_PENDING(PrismDisplayPropertyCategory.SYSTEM_OPPORTUNITIES, "Pending"),
     SYSTEM_OPPORTUNITIES_CONNECTED(PrismDisplayPropertyCategory.SYSTEM_OPPORTUNITIES, "Connect"),
     SYSTEM_OPPORTUNITIES_CONNECT_REQUEST(PrismDisplayPropertyCategory.SYSTEM_OPPORTUNITIES, "Your connection has been requested"),
-    SYSTEM_OPPORTUNITIES_CONNECT_REQUEST_TEXT(PrismDisplayPropertyCategory.SYSTEM_OPPORTUNITIES, "The organization that you requested a connection with will be notified of your interest"),
+    SYSTEM_OPPORTUNITIES_CONNECT_REQUEST_TEXT(PrismDisplayPropertyCategory.SYSTEM_OPPORTUNITIES,
+            "The organization that you requested a connection with will be notified of your interest"),
     SYSTEM_OPPORTUNITIES_REQUEST_USER_TITLE(PrismDisplayPropertyCategory.SYSTEM_OPPORTUNITIES, "I work here"),
     SYSTEM_OPPORTUNITIES_REQUEST_USER_HEADER(PrismDisplayPropertyCategory.SYSTEM_OPPORTUNITIES, "Your request has been submitted"),
-    SYSTEM_OPPORTUNITIES_REQUEST_USER_TEXT(PrismDisplayPropertyCategory.SYSTEM_OPPORTUNITIES, "The organization that you requested membership of will be notified of your interest"),
+    SYSTEM_OPPORTUNITIES_REQUEST_USER_TEXT(PrismDisplayPropertyCategory.SYSTEM_OPPORTUNITIES,
+            "The organization that you requested membership of will be notified of your interest"),
     SYSTEM_OPPORTUNITIES_CREATE_EMPLOYER(PrismDisplayPropertyCategory.SYSTEM_OPPORTUNITIES, "Create Employer"),
     SYSTEM_OPPORTUNITIES_INVITE_EMPLOYER(PrismDisplayPropertyCategory.SYSTEM_OPPORTUNITIES, "Invite Employer"),
     SYSTEM_OPPORTUNITIES_CREATE_UNIVERSITY(PrismDisplayPropertyCategory.SYSTEM_OPPORTUNITIES, "Create University"),
@@ -2041,7 +2051,7 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     /*
      * *************** SYSTEM RESOURCE SHARING *********************
      */
-    
+
     SYSTEM_RESOURCE_SHARE_PREVIEW(PrismDisplayPropertyCategory.SYSTEM_RESOURCE_SHARE, "Preview"),
     SYSTEM_RESOURCE_SHARE_OPPORTUNITIES(PrismDisplayPropertyCategory.SYSTEM_RESOURCE_SHARE, "Jobs & Work Experience"),
     SYSTEM_RESOURCE_SHARE_VIEW_OPPORTUNITIES(PrismDisplayPropertyCategory.SYSTEM_RESOURCE_SHARE, "View Opportunities"),
@@ -2050,7 +2060,7 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     SYSTEM_RESOURCE_SHARE_READ_MORE(PrismDisplayPropertyCategory.SYSTEM_RESOURCE_SHARE, "Read More"),
     SYSTEM_RESOURCE_SHARE_HTML_LABEL(PrismDisplayPropertyCategory.SYSTEM_RESOURCE_SHARE, "HTML to embed in your website"),
     SYSTEM_RESOURCE_SHARE_HTML_HINT(PrismDisplayPropertyCategory.SYSTEM_RESOURCE_SHARE, "Embed this HTML in your website to display the badge."),
-    
+
     /*
      * *************** SYSTEM RESOURCE TARGETS *********************
      */

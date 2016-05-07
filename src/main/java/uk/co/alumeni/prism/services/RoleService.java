@@ -200,8 +200,8 @@ public class RoleService {
         return hasUserRole(resource, user, prismRoles.getRoles());
     }
 
-    public boolean hasUserRole(Resource resource, User user, PrismRole... roles) {
-        return isNotEmpty(roles) ? isNotEmpty(roleDAO.getUserRoles(resource, user, asList(roles))) : false;
+    public boolean hasUserRole(Resource resource, User user, PrismRole... prismRoles) {
+        return isNotEmpty(prismRoles) ? isNotEmpty(roleDAO.getUserRoles(resource, user, asList(prismRoles))) : false;
     }
 
     public boolean createsUserRole(Comment comment, User user, PrismRole... prismRoles) {

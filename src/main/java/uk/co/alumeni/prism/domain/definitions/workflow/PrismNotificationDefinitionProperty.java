@@ -157,19 +157,19 @@ public enum PrismNotificationDefinitionProperty {
     PROJECT_NAME(PROJECT_GLOBAL, true, ProjectNameBuilder.class), //
     PROJECT_CODE(PROJECT_GLOBAL, true, ProjectCodeBuilder.class), //
     PROJECT_USER_CONTACT(PROJECT_GLOBAL, true, ProjectUserContactBuilder.class), //
-    PROJECT_CREATOR_FULL_NAME(APPLICATION_GLOBAL, true, ProjectCreatorFullNameBuilder.class), //
+    PROJECT_CREATOR_FULL_NAME(PROJECT_GLOBAL, true, ProjectCreatorFullNameBuilder.class), //
     PROGRAM_NAME(PROGRAM_GLOBAL, true, ProgramNameBuilder.class), //
     PROGRAM_CODE(PROGRAM_GLOBAL, true, ProgramCodeBuilder.class), //
     PROGRAM_USER_CONTACT(PROGRAM_GLOBAL, true, ProgramUserContactBuilder.class), //
-    PROGRAM_CREATOR_FULL_NAME(APPLICATION_GLOBAL, true, ProgramCreatorFullNameBuilder.class), //
+    PROGRAM_CREATOR_FULL_NAME(PROGRAM_GLOBAL, true, ProgramCreatorFullNameBuilder.class), //
     DEPARTMENT_NAME(DEPARTMENT_GLOBAL, true, DepartmentNameBuilder.class), //
     DEPARTMENT_CODE(DEPARTMENT_GLOBAL, true, DepartmentCodeBuilder.class), //
     DEPARTMENT_USER_CONTACT(DEPARTMENT_GLOBAL, true, DepartmentUserContactBuilder.class), //
-    DEPARTMENT_CREATOR_FULL_NAME(APPLICATION_GLOBAL, true, DepartmentCreatorFullNameBuilder.class), //
+    DEPARTMENT_CREATOR_FULL_NAME(DEPARTMENT_GLOBAL, true, DepartmentCreatorFullNameBuilder.class), //
     INSTITUTION_NAME(INSTITUTION_GLOBAL, true, InstitutionNameBuilder.class), //
     INSTITUTION_CODE(INSTITUTION_GLOBAL, true, InstitutionCodeBuilder.class), //
     INSTITUTION_USER_CONTACT(INSTITUTION_GLOBAL, true, InstitutionUserContactBuilder.class), //
-    INSTITUTION_CREATOR_FULL_NAME(APPLICATION_GLOBAL, true, InstitutionCreatorFullNameBuilder.class), //
+    INSTITUTION_CREATOR_FULL_NAME(INSTITUTION_GLOBAL, true, InstitutionCreatorFullNameBuilder.class), //
     SYSTEM_APPLICATION_HOMEPAGE(SYSTEM_APPLICATION, false, SystemApplicationHomepageBuilder.class), //
     SYSTEM_PROJECT_HOMEPAGE(SYSTEM_PROJECT, false, SystemProjectHomepageBuilder.class), //
     SYSTEM_PROGRAM_HOMEPAGE(SYSTEM_PROGRAM, false, SystemProgramHomepageBuilder.class), //

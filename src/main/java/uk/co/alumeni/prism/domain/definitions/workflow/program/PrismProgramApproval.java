@@ -2,6 +2,7 @@ package uk.co.alumeni.prism.domain.definitions.workflow.program;
 
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismAction.PROGRAM_COMPLETE_APPROVAL_STAGE;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismAction.SYSTEM_VIEW_PROGRAM_LIST;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismNotificationDefinition.PROGRAM_COMPLETE_APPROVAL_STAGE_REQUEST;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRoleGroup.PROGRAM_PARENT_ADMINISTRATOR_GROUP;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismState.PROGRAM_APPROVAL_PENDING_CORRECTION;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismStateTransitionEvaluation.PROGRAM_APPROVED_OUTCOME;
@@ -22,6 +23,7 @@ public class PrismProgramApproval extends PrismWorkflowState {
     protected void setStateActions() {
         stateActions.add(programCompleteApproval()
                 .withRaisesUrgentFlag() //
+                .withNotificationDefinition(PROGRAM_COMPLETE_APPROVAL_STAGE_REQUEST) //
                 .withStateTransitions(new PrismStateTransition() //
                         .withTransitionState(PROGRAM_APPROVAL_PENDING_CORRECTION) //
                         .withTransitionAction(SYSTEM_VIEW_PROGRAM_LIST) //

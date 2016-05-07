@@ -1,5 +1,6 @@
 package uk.co.alumeni.prism.mapping;
 
+import static com.google.common.collect.Lists.newArrayList;
 import static com.google.common.collect.Lists.newLinkedList;
 import static com.google.common.collect.Maps.newHashMap;
 import static com.google.common.collect.Maps.newTreeMap;
@@ -209,7 +210,8 @@ public class ResourceMapper {
         List<Integer> targeterEntities = advertService.getAdvertTargeterEntities(user, scope);
 
         if (isTrue(filter.getWithNewMessages())) {
-            filter.setResourceIds(resourceService.getResourcesWithUnreadMessages(scope, user));
+            List<Integer> resourceIds = resourceService.getResourcesWithUnreadMessages(scope, user);
+            filter.setResourceIds(resourceIds.size() > 0 ? resourceIds : newArrayList(0));
         }
 
         Set<ResourceOpportunityCategoryDTO> orderedResources = newTreeSet();

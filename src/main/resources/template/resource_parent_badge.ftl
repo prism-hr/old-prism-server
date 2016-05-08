@@ -31,6 +31,10 @@
                 [#list opportunities as opportunity]
                     <li>
                         [#include "opportunity_partial.ftl"]
+                        <div class="prism-apply-holder">
+                            <a href="${applicationUrl}/#!/applicant/main?${opportunity.advert.resource.scope?lower_case}=${opportunity.advert.resource.id}"
+                               class="btn btn-success ng-scope" target="_blank">Apply Now</a>
+                        </div>
                     </li>
                 [/#list]
             </ul>
@@ -43,6 +47,10 @@
                 [#list opportunities as opportunity]
                 <li>
                     [#include "opportunity_partial.ftl"]
+                    <div class="prism-apply-holder">
+                        <a href="${applicationUrl}/#!/applicant/main?${opportunity.advert.resource.scope?lower_case}=${opportunity.advert.resource.id}"
+                           class="btn btn-success ng-scope" target="_blank">Apply Now</a>
+                    </div>
                 </li>
                 [/#list]
             </ul>

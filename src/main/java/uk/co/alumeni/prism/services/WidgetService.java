@@ -5,12 +5,18 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import uk.co.alumeni.prism.domain.advert.Advert;
-import uk.co.alumeni.prism.domain.advert.AdvertFinancialDetail;
 import uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition;
+import uk.co.alumeni.prism.domain.definitions.PrismResourceContext;
+import uk.co.alumeni.prism.domain.resource.Resource;
 import uk.co.alumeni.prism.domain.resource.ResourceOpportunity;
 import uk.co.alumeni.prism.domain.resource.ResourceParent;
 import uk.co.alumeni.prism.exceptions.ResourceNotFoundException;
 import uk.co.alumeni.prism.mapping.AdvertMapper;
+import uk.co.alumeni.prism.rest.dto.OpportunitiesQueryDTO;
+import uk.co.alumeni.prism.rest.representation.advert.AdvertFinancialDetailRepresentation;
+import uk.co.alumeni.prism.rest.representation.advert.AdvertListRepresentation;
+import uk.co.alumeni.prism.rest.representation.advert.AdvertRepresentationExtended;
+import uk.co.alumeni.prism.rest.representation.resource.ResourceOpportunityRepresentationSimple;
 import uk.co.alumeni.prism.services.helpers.PropertyLoader;
 import uk.co.alumeni.prism.utils.PrismTemplateUtils;
 
@@ -50,9 +56,12 @@ public class WidgetService {
     }
 
     public String getOpportunityBadge(Advert advert, ResourceOpportunity opportunity) {
+
+        AdvertRepresentationExtended advertRepresentation = advertMapper.getAdvertRepresentationExtended(advert);
+
         Map<String, Object> model = new HashMap<>();
         model.put("applicationUrl", applicationUrl);
-        model.put("opportunity", createOpportunityModel(advert, opportunity));
+        model.put("opportunity", createOpportunityModel(advertRepresentation, opportunity));
 
         return templateUtils.getContentFromLocation("opportunity_badge.ftl", model);
     }
@@ -64,25 +73,34 @@ public class WidgetService {
         if (!options.containsKey("type")) {
             options.put("type", "SIMPLE");
         }
+        if (!options.containsKey("positionCount")) {
+            options.put("positionCount", "3");
+        }
 
         Map<String, Object> model = new HashMap<>();
         model.put("applicationUrl", applicationUrl);
         model.put("advert", advert);
         model.put("options", options);
 
-        List<Advert> opportunityAdverts = advertService.getBadgeAdverts(resource, 3);
-        List<Map<String, Object>> opportunities = opportunityAdverts.stream().map(ad -> createOpportunityModel(ad, ad.getResourceOpportunity())).collect(Collectors.toList());
+        OpportunitiesQueryDTO query = new OpportunitiesQueryDTO().withContext(PrismResourceContext.APPLICANT)
+                .withResourceScope(resource.getResourceScope()).withResourceId(resource.getId())
+                .withMaxAdverts(Integer.parseInt(options.get("positionCount")));
+        AdvertListRepresentation opportunityAdverts = advertMapper.getAdvertExtendedRepresentations(query);
+        List<Map<String, Object>> opportunities = opportunityAdverts.getRows().stream()
+                .map(ad -> createOpportunityModel(ad, resource))
+                .collect(Collectors.toList());
         model.put("opportunities", opportunities);
 
         return templateUtils.getContentFromLocation("resource_parent_badge.ftl", model);
     }
 
-    private Map<String, Object> createOpportunityModel(Advert advert, ResourceOpportunity opportunity) {
-        PropertyLoader propertyLoader = applicationContext.getBean(PropertyLoader.class).localizeLazy(opportunity);
-        String opportunityType = propertyLoader.loadEager(opportunity.getOpportunityType().getId().getDisplayProperty());
-        Integer durationMinimum = advert.getDurationMinimum();
-        Integer durationMaximum = advert.getDurationMaximum();
-        Set<String> locations = advertService.getAdvertLocations(opportunity.getResourceScope(), singletonList(opportunity.getId())).get(advert.getId());
+    private Map<String, Object> createOpportunityModel(AdvertRepresentationExtended advert, Resource localizeResource) {
+        ResourceOpportunityRepresentationSimple opportunity = (ResourceOpportunityRepresentationSimple) advert.getResource();
+        PropertyLoader propertyLoader = applicationContext.getBean(PropertyLoader.class).localizeLazy(localizeResource);
+        String opportunityType = propertyLoader.loadEager(advert.getOpportunityType().getDisplayProperty());
+        Integer durationMinimum = opportunity.getDurationMinimum();
+        Integer durationMaximum = opportunity.getDurationMaximum();
+        Set<String> locations = advertService.getAdvertLocations(opportunity.getScope(), singletonList(opportunity.getId())).get(advert.getId());
 
         Map<String, Object> model = new HashMap<>();
         model.put("opportunityType", opportunityType);
@@ -90,7 +108,7 @@ public class WidgetService {
         model.put("availabilityLabel", propertyLoader.loadEager(durationMinimum != null ? SYSTEM_RESOURCE_PARENT_OPPORTUNITY_TYPE_CONTRACT
                 : SYSTEM_RESOURCE_PARENT_OPPORTUNITY_TYPE_PERMANENT));
         model.put("availability", propertyLoader.loadEager(SYSTEM_OPPORTUNITIES_PROPERTY_STUDY_LABEL));
-        model.put("studyOptions", opportunity.getResourceStudyOptions().stream().map(s -> propertyLoader.loadEager(s.getStudyOption().getDisplayProperty()))
+        model.put("studyOptions", advert.getStudyOptions().stream().map(s -> propertyLoader.loadEager(s.getDisplayProperty()))
                 .collect(Collectors.toList()));
         model.put("locationLabel", propertyLoader.loadEager(SYSTEM_OPPORTUNITIES_PROPERTY_LOCATION_LABEL));
         model.put("locations", locations);
@@ -110,7 +128,7 @@ public class WidgetService {
             model.put("duration", durationString);
         }
 
-        AdvertFinancialDetail pay = advert.getPay();
+        AdvertFinancialDetailRepresentation pay = advert.getFinancialDetail();
         String payDisplayValue;
         if (pay != null && (pay.getMinimum() != null || pay.getMaximum() != null)) {
             if (pay.getMinimum() != null && pay.getMaximum() != null) {
@@ -122,7 +140,7 @@ public class WidgetService {
             }
             payDisplayValue = payDisplayValue.replace("{{minimum}}", "" + pay.getMinimum())
                     .replace("{{maximum}}", "" + pay.getMaximum()).replace("{{currency}}", pay.getCurrency());
-            String frequency = propertyLoader.loadEager(PrismDisplayPropertyDefinition.valueOf("SYSTEM_DURATION_UNIT_PER_" + advert.getPay().getInterval()));
+            String frequency = propertyLoader.loadEager(PrismDisplayPropertyDefinition.valueOf("SYSTEM_DURATION_UNIT_PER_" + pay.getInterval()));
             payDisplayValue += ", " + frequency;
             model.put("pay", payDisplayValue);
         }

@@ -239,7 +239,7 @@ public class AdvertService {
         TreeMap<String, uk.co.alumeni.prism.dto.AdvertDTO> adverts = Maps.newTreeMap();
         if (!advertDTOs.isEmpty()) {
             Map<Integer, BigDecimal> advertIndex = getRowsToReturn(advertDTOs, query.getOpportunityCategory(), query.getOpportunityTypes(),
-                    query.getLastSequenceIdentifier(), ADVERT_LIST_PAGE_ROW_COUNT);
+                    query.getLastSequenceIdentifier(), query.getMaxAdverts());
 
             Set<Integer> advertIds = advertIndex.keySet();
             if (CollectionUtils.isNotEmpty(advertIds)) {

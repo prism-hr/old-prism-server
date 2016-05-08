@@ -21,7 +21,7 @@
             </div>
             <div class="prism-apply-holder">
                 <a href="${applicationUrl}/#!/employer/applicant?institution=${opportunity.advert.institution.id}&tab=opportunities" class="btn btn-default enquire" target="_blank">Other Opportunities</a>
-                <a href="${applicationUrl}/#!/applicant/main?${opportunity.advert.resource.resourceScope?lower_case}=${opportunity.advert.resource.id}"
+                <a href="${applicationUrl}/#!/applicant/main?${opportunity.advert.resource.scope?lower_case}=${opportunity.advert.resource.id}"
                    class="btn btn-success ng-scope" target="_blank">Apply Now</a>
             </div>
         </div>

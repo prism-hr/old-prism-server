@@ -11,7 +11,7 @@ import uk.co.alumeni.prism.domain.address.AddressDefinition;
 @Transactional
 public class AddressMapper {
 
-    public <T extends AddressDefinition, V extends AddressDefinition> V transform(T source, Class<V> targetClass) {
+    public <T extends AddressDefinition<?>, V extends AddressDefinition<?>> V transform(T source, Class<V> targetClass) {
         V target = BeanUtils.instantiate(targetClass);
         target.setAddressLine1(source.getAddressLine1());
         target.setAddressLine2(source.getAddressLine2());

@@ -1,6 +1,5 @@
 package uk.co.alumeni.prism.services;
 
-import static java.util.Collections.singletonList;
 import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_OPPORTUNITIES_PROPERTY_CLOSING_DATE_LABEL;
 import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_OPPORTUNITIES_PROPERTY_LOCATION_LABEL;
 import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_OPPORTUNITIES_PROPERTY_NO_CLOSING_DATE;
@@ -19,7 +18,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 import javax.inject.Inject;
@@ -55,7 +53,7 @@ public class WidgetService {
     private PrismTemplateUtils templateUtils;
 
     @Inject
-    private AdvertService advertService;
+    private AdvertMapper advertMapper;
 
     @Inject
     private AdvertMapper advertMapper;
@@ -116,7 +114,6 @@ public class WidgetService {
         String opportunityType = propertyLoader.loadEager(advert.getOpportunityType().getDisplayProperty());
         Integer durationMinimum = opportunity.getDurationMinimum();
         Integer durationMaximum = opportunity.getDurationMaximum();
-        Set<String> locations = advertService.getAdvertLocations(opportunity.getScope(), singletonList(opportunity.getId())).get(advert.getId());
 
         Map<String, Object> model = new HashMap<>();
         model.put("opportunityType", opportunityType);
@@ -127,7 +124,7 @@ public class WidgetService {
         model.put("studyOptions", advert.getStudyOptions().stream().map(s -> propertyLoader.loadEager(s.getDisplayProperty()))
                 .collect(Collectors.toList()));
         model.put("locationLabel", propertyLoader.loadEager(SYSTEM_OPPORTUNITIES_PROPERTY_LOCATION_LABEL));
-        model.put("locations", locations);
+        model.put("locations", advert.getCategories().getLocationsDisplay());
         model.put("payLabel", propertyLoader.loadEager(SYSTEM_OPPORTUNITIES_PROPERTY_PAY_LABEL));
         model.put("closingDateLabel", propertyLoader.loadEager(SYSTEM_OPPORTUNITIES_PROPERTY_CLOSING_DATE_LABEL));
         model.put("noClosingDate", propertyLoader.loadEager(SYSTEM_OPPORTUNITIES_PROPERTY_NO_CLOSING_DATE));

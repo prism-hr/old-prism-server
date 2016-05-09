@@ -13,6 +13,7 @@ import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinit
 import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_OPPORTUNITIES_PROPERTY_STUDY_LABEL;
 import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_RESOURCE_PARENT_OPPORTUNITY_TYPE_CONTRACT;
 import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_RESOURCE_PARENT_OPPORTUNITY_TYPE_PERMANENT;
+import static uk.co.alumeni.prism.domain.definitions.PrismResourceContext.APPLICANT;
 
 import java.util.HashMap;
 import java.util.List;
@@ -30,7 +31,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import uk.co.alumeni.prism.domain.advert.Advert;
 import uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition;
-import uk.co.alumeni.prism.domain.definitions.PrismResourceContext;
 import uk.co.alumeni.prism.domain.resource.Resource;
 import uk.co.alumeni.prism.domain.resource.ResourceOpportunity;
 import uk.co.alumeni.prism.domain.resource.ResourceParent;
@@ -69,7 +69,6 @@ public class WidgetService {
     }
 
     public String getOpportunityBadge(Advert advert, ResourceOpportunity opportunity) {
-
         AdvertRepresentationExtended advertRepresentation = advertMapper.getAdvertRepresentationExtended(advert);
 
         Map<String, Object> model = new HashMap<>();
@@ -95,7 +94,7 @@ public class WidgetService {
         model.put("advert", advert);
         model.put("options", options);
 
-        OpportunitiesQueryDTO query = new OpportunitiesQueryDTO().withContext(PrismResourceContext.APPLICANT)
+        OpportunitiesQueryDTO query = new OpportunitiesQueryDTO().withContext(APPLICANT)
                 .withResourceScope(resource.getResourceScope()).withResourceId(resource.getId())
                 .withMaxAdverts(Integer.parseInt(options.get("positionCount")));
         AdvertListRepresentation opportunityAdverts = advertMapper.getAdvertExtendedRepresentations(query);

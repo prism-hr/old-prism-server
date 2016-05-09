@@ -2,6 +2,7 @@ package uk.co.alumeni.prism.domain.resource;
 
 import static com.google.common.base.Objects.equal;
 import static com.google.common.collect.Maps.newLinkedHashMap;
+import static org.apache.commons.lang3.ObjectUtils.firstNonNull;
 import static uk.co.alumeni.prism.PrismConstants.HYPHEN;
 import static uk.co.alumeni.prism.PrismConstants.SPACE;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.SYSTEM;
@@ -167,7 +168,7 @@ public abstract class Resource implements ActivityEditable, UniqueEntity {
     }
 
     public ResourceParent getResourceParent() {
-        return ObjectUtils.firstNonNull(getDepartment(), getInstitution());
+        return firstNonNull(getDepartment(), getInstitution());
     }
 
     public PrismScope getResourceScope() {

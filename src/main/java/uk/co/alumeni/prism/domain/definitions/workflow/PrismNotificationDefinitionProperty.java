@@ -190,8 +190,8 @@ public enum PrismNotificationDefinitionProperty {
 
     private Class<? extends NotificationPropertyBuilder> builder;
 
-    private static ListMultimap<PrismNotificationDefinitionPropertyCategory, PrismNotificationDefinitionProperty> propertiesByCategory = LinkedListMultimap
-            .create();
+    private static ListMultimap<PrismNotificationDefinitionPropertyCategory, PrismNotificationDefinitionProperty> propertiesByCategory =
+            LinkedListMultimap.create();
 
     static {
         for (PrismNotificationDefinitionProperty property : PrismNotificationDefinitionProperty.values()) {

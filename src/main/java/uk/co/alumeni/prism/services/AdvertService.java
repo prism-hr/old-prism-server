@@ -1,7 +1,5 @@
 package uk.co.alumeni.prism.services;
 
-import static com.google.common.collect.Lists.newArrayList;
-import static com.google.common.collect.Lists.newLinkedList;
 import static com.google.common.collect.Sets.newHashSet;
 import static com.google.common.collect.Sets.newTreeSet;
 import static java.math.RoundingMode.HALF_UP;
@@ -18,6 +16,67 @@ import static org.joda.time.DateTime.now;
 import static org.slf4j.LoggerFactory.getLogger;
 import static uk.co.alumeni.prism.PrismConstants.ADDRESS_LOCATION_PRECISION;
 import static uk.co.alumeni.prism.PrismConstants.ADVERT_LIST_PAGE_ROW_COUNT;
+import static uk.co.alumeni.prism.PrismConstants.COMMA;
+import static uk.co.alumeni.prism.PrismConstants.SPACE;
+import static uk.co.alumeni.prism.PrismConstants.WORK_DAYS_IN_WEEK;
+import static uk.co.alumeni.prism.PrismConstants.WORK_HOURS_IN_DAY;
+import static uk.co.alumeni.prism.dao.WorkflowDAO.advertScopes;
+import static uk.co.alumeni.prism.dao.WorkflowDAO.opportunityScopes;
+import static uk.co.alumeni.prism.dao.WorkflowDAO.organizationScopes;
+import static uk.co.alumeni.prism.domain.definitions.PrismDurationUnit.HOUR;
+import static uk.co.alumeni.prism.domain.definitions.PrismDurationUnit.getDurationUnitAsHours;
+import static uk.co.alumeni.prism.domain.definitions.PrismOpportunityCategory.EXPERIENCE;
+import static uk.co.alumeni.prism.domain.definitions.PrismOpportunityCategory.PERSONAL_DEVELOPMENT;
+import static uk.co.alumeni.prism.domain.definitions.PrismOpportunityCategory.STUDY;
+import static uk.co.alumeni.prism.domain.definitions.PrismOpportunityCategory.WORK;
+import static uk.co.alumeni.prism.domain.definitions.PrismResourceContext.EMPLOYER;
+import static uk.co.alumeni.prism.domain.definitions.PrismRoleContext.VIEWER;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismPartnershipState.ENDORSEMENT_PENDING;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismPartnershipState.ENDORSEMENT_PROVIDED;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismPartnershipState.ENDORSEMENT_REVOKED;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRole.SYSTEM_ADMINISTRATOR;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRole.PrismRoleCategory.STUDENT;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.DEPARTMENT;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.getResourceContexts;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScopeCategory.APPLICATION;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScopeCategory.OPPORTUNITY;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScopeCategory.ORGANIZATION;
+import static uk.co.alumeni.prism.utils.PrismListUtils.getRowsToReturn;
+import static uk.co.alumeni.prism.utils.PrismReflectionUtils.getProperty;
+
+import java.io.IOException;
+import java.math.BigDecimal;
+import java.net.URI;
+import java.net.URLEncoder;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.TreeMap;
+import java.util.stream.Collectors;
+
+import javax.inject.Inject;
+
+import static com.google.common.collect.Lists.reverse;
+import static com.google.common.collect.Sets.newHashSet;
+import static com.google.common.collect.Sets.newTreeSet;
+import static java.math.RoundingMode.HALF_UP;
+import static java.util.Arrays.asList;
+import static java.util.Arrays.stream;
+import static java.util.Collections.emptyList;
+import static java.util.stream.Collectors.toList;
+import static org.apache.commons.collections.CollectionUtils.containsAny;
+import static org.apache.commons.collections.CollectionUtils.isEmpty;
+import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
+import static org.apache.commons.lang.BooleanUtils.isTrue;
+import static org.apache.commons.lang3.ObjectUtils.compare;
+import static org.joda.time.DateTime.now;
+import static org.slf4j.LoggerFactory.getLogger;
+import static uk.co.alumeni.prism.PrismConstants.ADDRESS_LOCATION_PRECISION;
 import static uk.co.alumeni.prism.PrismConstants.COMMA;
 import static uk.co.alumeni.prism.PrismConstants.SPACE;
 import static uk.co.alumeni.prism.PrismConstants.WORK_DAYS_IN_WEEK;
@@ -257,7 +316,7 @@ public class AdvertService {
         return adverts.descendingMap().values();
     }
 
-    public List<Advert> getBadgeAdverts(ResourceParent parentResource, int count){
+    public List<Advert> getBadgeAdverts(ResourceParent parentResource, int count) {
         return advertDAO.getBadgeAdverts(parentResource, count);
     }
 
@@ -316,7 +375,7 @@ public class AdvertService {
                     element--;
                 }
 
-                locations.put(location.getAdvertId(), Joiner.on(COMMA + SPACE).join(Lists.reverse(partsList)));
+                locations.put(location.getAdvertId(), Joiner.on(COMMA + SPACE).join(reverse(partsList)));
             });
         }
         return locations;
@@ -363,20 +422,20 @@ public class AdvertService {
 
     public void persistAdvert(ResourceParent resource, Advert advert) {
         advert.setResource(resource);
-        advert.setScope(scopeService.getById(resource.getResourceScope()));
+        PrismScope resourceScope = resource.getResourceScope();
+        advert.setScope(scopeService.getById(resourceScope));
 
         Address address = advert.getAddress();
         advert.setAddress(null);
         entityService.save(advert);
 
-        AdvertCategories categories = advert.getCategories();
-        if (categories != null) {
-            categories.getLocations().stream().forEach(entityService::getOrCreate);
-        }
-
         if (address != null) {
             addressService.persistAndGeocodeAddress(address, advert.getName());
             advert.setAddress(address);
+        }
+
+        if (resourceScope.getScopeCategory().equals(OPPORTUNITY)) {
+            persistAdvertLocation(advert, resource.getResourceParent().getAdvert());
         }
 
         entityService.flush();
@@ -479,14 +538,12 @@ public class AdvertService {
         Advert advert = resource.getAdvert();
         advertDAO.deleteAdvertAttributes(advert, AdvertLocation.class);
 
-        AdvertCategories categories = advert.getCategories();
-        Set<AdvertLocation> advertLocations = categories.getLocations();
         if (isNotEmpty(locations)) {
             PrismResourceContext context = getResourceContexts(resource.getOpportunityCategories()).iterator().next();
             User user = resource.getUser();
             for (ResourceRelationDTO locationDTO : locations) {
                 ResourceParent locationResource = resourceService.createResourceRelation(locationDTO, context, user);
-                persistAdvertLocation(advert, advertLocations, locationResource.getAdvert());
+                persistAdvertLocation(advert, locationResource.getAdvert());
             }
         }
 
@@ -1419,8 +1476,8 @@ public class AdvertService {
         }
     }
 
-    private boolean persistAdvertLocation(Advert advert, Set<AdvertLocation> advertLocations, Advert locationAdvert) {
-        return advertLocations.add(entityService.getOrCreate(new AdvertLocation().withAdvert(advert).withLocationAdvert(locationAdvert)));
+    private boolean persistAdvertLocation(Advert advert, Advert locationAdvert) {
+        return advert.getCategories().getLocations().add(entityService.getOrCreate(new AdvertLocation().withAdvert(advert).withLocationAdvert(locationAdvert)));
     }
 
 }

@@ -126,6 +126,21 @@ public class AdvertDAO {
                 .setResultTransformer(Transformers.aliasToBean(AdvertApplicationSummaryDTO.class)) //
                 .uniqueResult();
     }
+    
+    public List<Integer> getAdverts(PrismScope resourceScope, Collection<Integer> resourceIds) {
+        return (List<Integer>) sessionFactory.getCurrentSession().createCriteria(resourceScope.getResourceClass()) //
+                .setProjection(Projections.groupProperty("advert.id")) //
+                .add(Restrictions.in("id", resourceIds)) //
+                .list();
+    }
+    
+    public List<Integer> getEnclosingAdverts(PrismScope enclosingScope, PrismScope resourceScope, Collection<Integer> advertIds) {
+        return (List<Integer>) sessionFactory.getCurrentSession().createCriteria(resourceScope.getResourceClass()) //
+                .setProjection(Projections.groupProperty("enclosingResource.advert.id")) //
+                .createAlias(enclosingScope.getLowerCamelName(), "enclosingResource", JoinType.INNER_JOIN) //
+                .add(Restrictions.in("advert.id", advertIds)) //
+                .list();
+    }
 
     public List<AdvertDTO> getAdverts(OpportunitiesQueryDTO query, Collection<Integer> adverts) {
         return (List<AdvertDTO>) sessionFactory.getCurrentSession().createCriteria(Advert.class)
@@ -320,7 +335,7 @@ public class AdvertDAO {
                 .setResultTransformer(Transformers.aliasToBean(AdvertLocationDTO.class)) //
                 .list();
     }
-
+    
     public List<AdvertStudyOptionDTO> getAdvertStudyOptions(PrismScope resourceScope, Collection<Integer> resourceIds) {
         return (List<AdvertStudyOptionDTO>) sessionFactory.getCurrentSession().createCriteria(Advert.class) //
                 .setProjection(Projections.projectionList() //

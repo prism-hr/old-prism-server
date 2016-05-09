@@ -56,9 +56,6 @@ public class WidgetService {
     private AdvertMapper advertMapper;
 
     @Inject
-    private AdvertMapper advertMapper;
-
-    @Inject
     private ApplicationContext applicationContext;
 
     public String getAdvertBadge(Advert advert, Map<String, String> options) {

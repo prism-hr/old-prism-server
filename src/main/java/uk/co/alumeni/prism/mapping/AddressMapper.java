@@ -1,10 +1,11 @@
 package uk.co.alumeni.prism.mapping;
 
+import javax.transaction.Transactional;
+
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
-import uk.co.alumeni.prism.domain.address.AddressDefinition;
 
-import javax.transaction.Transactional;
+import uk.co.alumeni.prism.domain.address.AddressDefinition;
 
 @Service
 @Transactional

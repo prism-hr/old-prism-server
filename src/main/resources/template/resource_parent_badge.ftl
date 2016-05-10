@@ -7,20 +7,32 @@
 <body>
 
 <div class="opportunities">
+    [#if options.type == "SIMPLE"]
+    <div class="prism-connect">
+    [#else]
     <div class="prism-connect opportunity list">
+    [/#if]
         <div class="prism-header">
             <div class="logo">
                 <a href="${applicationUrl}" class="navbar-brand" target="_blank"><img
                         src="${applicationUrl}/images/prism_white.png" alt="PRiSM"></a>
             </div>
             <div class="sub-header">Jobs and Work experience</div>
+            [#if options.type == "SLIDER_LIST"]
+                <div class="control">
+                    <a class="btn control_prev"> &#60 </a>
+                    <span class="position-number"></span> /
+                    <span class="position-total"></span>
+                    <a class="btn control_next"> &#62 </a>
+                </div>
+            [/#if]
         </div>
 
     [#if options.type == "SIMPLE"]
         <div class="prism-main">
             <a href="http://prism.hr/#!/applicant/main?${advert.resource.resourceScope?lower_case}=${advert.resource.id}"
                class="btn btn-success"
-               target="_blank">View Opportunities</a>
+               target="_blank">Opportunities</a>
             <a href="http://prism.hr/#!/advertise?context=${advert.resource.resourceScope?lower_case}&&selected${advert.resource.resourceScope?capitalize}=${advert.resource.id}&selectedResourceContext=university"
                class="btn btn-primary" target="_blank">Post Opportunities</a>
         </div>

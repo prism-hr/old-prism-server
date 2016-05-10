@@ -3,6 +3,7 @@ package uk.co.alumeni.prism.domain.advert;
 import static com.google.common.collect.Sets.newHashSet;
 import static java.util.Arrays.stream;
 import static java.util.stream.Collectors.joining;
+import static org.apache.commons.lang3.ObjectUtils.firstNonNull;
 import static uk.co.alumeni.prism.PrismConstants.HYPHEN;
 import static uk.co.alumeni.prism.PrismConstants.SPACE;
 import static uk.co.alumeni.prism.dao.WorkflowDAO.advertScopes;
@@ -142,7 +143,7 @@ public class Advert implements UniqueEntity, UserAssignment<AdvertReassignmentPr
 
     @Column(name = "submitted", nullable = false)
     private Boolean submitted;
-    
+
     @Column(name = "published", nullable = false)
     private Boolean published;
 
@@ -413,11 +414,11 @@ public class Advert implements UniqueEntity, UserAssignment<AdvertReassignmentPr
     }
 
     public ResourceParent getResourceParent() {
-        return ObjectUtils.firstNonNull(department, institution);
+        return firstNonNull(department, institution);
     }
 
     public ResourceOpportunity getResourceOpportunity() {
-        return ObjectUtils.firstNonNull(project, program);
+        return firstNonNull(project, program);
     }
 
     public List<ResourceParent> getParentResources() {

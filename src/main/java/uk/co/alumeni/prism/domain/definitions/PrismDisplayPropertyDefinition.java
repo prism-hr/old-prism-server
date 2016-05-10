@@ -2054,7 +2054,7 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
 
     SYSTEM_RESOURCE_SHARE_PREVIEW(PrismDisplayPropertyCategory.SYSTEM_RESOURCE_SHARE, "Preview"),
     SYSTEM_RESOURCE_SHARE_OPPORTUNITIES(PrismDisplayPropertyCategory.SYSTEM_RESOURCE_SHARE, "Jobs & Work Experience"),
-    SYSTEM_RESOURCE_SHARE_VIEW_OPPORTUNITIES(PrismDisplayPropertyCategory.SYSTEM_RESOURCE_SHARE, "View Opportunities"),
+    SYSTEM_RESOURCE_SHARE_VIEW_OPPORTUNITIES(PrismDisplayPropertyCategory.SYSTEM_RESOURCE_SHARE, "Opportunities"),
     SYSTEM_RESOURCE_SHARE_POST_OPPORTUNITY(PrismDisplayPropertyCategory.SYSTEM_RESOURCE_SHARE, "Post Opportunity"),
     SYSTEM_RESOURCE_SHARE_OTHER_OPPORTUNITIES(PrismDisplayPropertyCategory.SYSTEM_RESOURCE_SHARE, "Other Opportunities"),
     SYSTEM_RESOURCE_SHARE_READ_MORE(PrismDisplayPropertyCategory.SYSTEM_RESOURCE_SHARE, "Read More"),

@@ -7,13 +7,25 @@
 <body>
 
 <div class="opportunities">
+    [#if options.type == "SIMPLE"]
+    <div class="prism-connect">
+    [#else]
     <div class="prism-connect opportunity list">
+    [/#if]
         <div class="prism-header">
             <div class="logo">
                 <a href="${applicationUrl}" class="navbar-brand" target="_blank"><img
                         src="${applicationUrl}/images/prism_white.png" alt="PRiSM"></a>
             </div>
             <div class="sub-header">${headerTitle}</div>
+            [#if options.type == "SLIDER_LIST"]
+                <div class="control">
+                    <a class="btn control_prev"> &#60 </a>
+                    <span class="position-number"></span> /
+                    <span class="position-total"></span>
+                    <a class="btn control_next"> &#62 </a>
+                </div>
+            [/#if]
         </div>
 
     [#if options.type == "SIMPLE"]

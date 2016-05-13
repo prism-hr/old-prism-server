@@ -418,7 +418,7 @@ public class ResourceMapper {
         representation.setAdvert(advertMapper.getAdvertRepresentationSimple(resource.getAdvert()));
         representation.setOpportunityCategories(asList(resource.getOpportunityCategories().split("\\|")).stream().map(PrismOpportunityCategory::valueOf)
                 .collect(toList()));
-        representation.setContexts(PrismScope.getResourceContexts(resource.getOpportunityCategories()));
+        representation.setContexts(getResourceContexts(resource.getOpportunityCategories()));
         representation.setSuggestedThemes(advertService.getSuggestedAdvertThemes(resource.getAdvert()));
         representation.setAdvertIncompleteSections(getResourceAdvertIncompleteSectionRepresentation(resource.getAdvertIncompleteSection()));
         return representation;

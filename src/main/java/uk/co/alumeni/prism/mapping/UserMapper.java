@@ -127,8 +127,6 @@ public class UserMapper {
 
         representation.setConnectedWithLinkedin(user.getUserAccount().getLinkedinId() != null);
         representation.setRequiredFeedbackRoleCategory(userFeedbackService.getRequiredFeedbackRoleCategory(user));
-        representation.setResourcesForWhichUserCanCreateConnections(getUserResourceConnectionRepresentations(user, null));
-
         return representation;
     }
 

@@ -3,7 +3,6 @@ package uk.co.alumeni.prism.rest.representation.user;
 import java.util.List;
 
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismRole.PrismRoleCategory;
-import uk.co.alumeni.prism.rest.representation.resource.ResourceRepresentationConnection;
 
 public class UserRepresentationExtended extends UserRepresentationSimple {
 
@@ -18,8 +17,6 @@ public class UserRepresentationExtended extends UserRepresentationSimple {
     private Boolean connectedWithLinkedin;
 
     private PrismRoleCategory requiredFeedbackRoleCategory;
-
-    private List<ResourceRepresentationConnection> resourcesForWhichUserCanCreateConnections;
 
     public Boolean getSendActivityNotification() {
         return sendActivityNotification;
@@ -67,14 +64,6 @@ public class UserRepresentationExtended extends UserRepresentationSimple {
 
     public void setRequiredFeedbackRoleCategory(PrismRoleCategory requiredFeedbackRoleCategory) {
         this.requiredFeedbackRoleCategory = requiredFeedbackRoleCategory;
-    }
-
-    public List<ResourceRepresentationConnection> getResourcesForWhichUserCanCreateConnections() {
-        return resourcesForWhichUserCanCreateConnections;
-    }
-
-    public void setResourcesForWhichUserCanCreateConnections(List<ResourceRepresentationConnection> resourcesForWhichUserCanCreateConnections) {
-        this.resourcesForWhichUserCanCreateConnections = resourcesForWhichUserCanCreateConnections;
     }
 
 }

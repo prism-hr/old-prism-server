@@ -3,6 +3,7 @@ package uk.co.alumeni.prism.services;
 import static com.google.common.collect.Lists.newArrayList;
 import static com.google.common.collect.Lists.newLinkedList;
 import static com.google.common.collect.Lists.reverse;
+import static com.google.common.collect.Maps.newHashMap;
 import static com.google.common.collect.Sets.newHashSet;
 import static com.google.common.collect.Sets.newTreeSet;
 import static java.math.RoundingMode.HALF_UP;
@@ -750,7 +751,7 @@ public class AdvertService {
         boolean isOrganization = scopeCategory.equals(ORGANIZATION);
         List<Integer> manageAdverts = isOrganization ? getAdvertsForWhichUserCanManageConnections(user) : emptyList();
 
-        Map<Integer, AdvertTargetDTO> advertTargets = Maps.newHashMap();
+        Map<Integer, AdvertTargetDTO> advertTargets = newHashMap();
         String[] opportunityCategoriesSplit = resource.getOpportunityCategories().split("\\|");
         List<PrismOpportunityCategory> opportunityCategories = asList(opportunityCategoriesSplit).stream().map(PrismOpportunityCategory::valueOf)
                 .collect(toList());

@@ -96,6 +96,9 @@ public class Department extends ResourceParent {
     @JoinColumn(name = "previous_state_id")
     private State previousState;
 
+    @Column(name = "recent_update")
+    private Boolean recentUpdate;
+
     @Column(name = "due_date")
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentLocalDate")
     private LocalDate dueDate;
@@ -111,7 +114,7 @@ public class Department extends ResourceParent {
     @Column(name = "activity_cached_timestamp")
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
     private DateTime activityCachedTimestamp;
-    
+
     @Column(name = "updated_timestamp_sitemap", nullable = false)
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
     private DateTime updatedTimestampSitemap;
@@ -304,6 +307,16 @@ public class Department extends ResourceParent {
     }
 
     @Override
+    public Boolean getRecentUpdate() {
+        return recentUpdate;
+    }
+
+    @Override
+    public void setRecentUpdate(Boolean recentUpdate) {
+        this.recentUpdate = recentUpdate;
+    }
+
+    @Override
     public LocalDate getDueDate() {
         return dueDate;
     }
@@ -342,7 +355,7 @@ public class Department extends ResourceParent {
     public void setActivityCachedTimestamp(DateTime activityCachedTimestamp) {
         this.activityCachedTimestamp = activityCachedTimestamp;
     }
-    
+
     @Override
     public String getSequenceIdentifier() {
         return sequenceIdentifier;

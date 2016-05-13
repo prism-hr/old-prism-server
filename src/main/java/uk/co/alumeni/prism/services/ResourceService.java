@@ -135,6 +135,7 @@ import uk.co.alumeni.prism.dto.ResourceListRowDTO;
 import uk.co.alumeni.prism.dto.ResourceOpportunityCategoryDTO;
 import uk.co.alumeni.prism.dto.ResourceRoleDTO;
 import uk.co.alumeni.prism.dto.ResourceSimpleDTO;
+import uk.co.alumeni.prism.dto.ResourceUpdateDTO;
 import uk.co.alumeni.prism.dto.UserResourceDTO;
 import uk.co.alumeni.prism.exceptions.PrismForbiddenException;
 import uk.co.alumeni.prism.exceptions.WorkflowEngineException;
@@ -359,13 +360,13 @@ public class ResourceService {
 
     @SuppressWarnings("unchecked")
     public <T extends Resource> void persistResource(T resource, Comment comment) {
-        DateTime baseline = new DateTime();
+        DateTime baseline = now();
         if (comment.isCreateComment()) {
             Advert advert = resource.getAdvert();
             resource.setAdvert(null);
 
             resource.setCreatedTimestamp(baseline);
-            resource.setUpdatedTimestamp(baseline);
+            setResourceUpdated(resource, baseline);
 
             boolean resourceParent = asList(OPPORTUNITY, ORGANIZATION).contains(resource.getResourceScope().getScopeCategory());
             if (resourceParent) {
@@ -390,7 +391,7 @@ public class ResourceService {
             resource.setCode(generateResourceCode(resource));
             entityService.flush();
         } else if (comment.isUserComment() || resource.getSequenceIdentifier() == null) {
-            resource.setUpdatedTimestamp(baseline);
+            setResourceUpdated(resource, baseline);
             activityService.setSequenceIdentifier(resource, baseline);
             entityService.flush();
         }
@@ -1228,15 +1229,30 @@ public class ResourceService {
     }
 
     public HashMultimap<PrismScope, Integer> getResourcesWithActivitiesToCache(DateTime baseline) {
-        HashMultimap<PrismScope, Integer> resourceIndex = HashMultimap.create();
+        DateTime updateBaseline = baseline.minusDays(1);
+        Set<Integer> resourceExpiredUpdates = newHashSet();
+        HashMultimap<PrismScope, Integer> resources = HashMultimap.create();
         stream(PrismScope.values()).forEach(scope -> {
-            Set<Integer> resources = resourceDAO.getResourcesWithActivitiesToCache(scope, baseline);
-            if (resources.size() > 0) {
-                resourceIndex.putAll(scope, resources);
-                resourceDAO.setResourceActivityCachedTimestamp(scope, resources, baseline);
+            Set<ResourceUpdateDTO> resourceDTOs = resourceDAO.getResourcesWithActivitiesToCache(scope, baseline, updateBaseline);
+            resourceDTOs.stream().forEach(resourceDTO -> {
+                Integer resourceId = resourceDTO.getId();
+                resources.put(scope, resourceId);
+
+                if (resourceDTO.getUpdatedTimestamp().compareTo(updateBaseline) > 0 && isTrue(resourceDTO.getRecentUpdate())) {
+                    resourceExpiredUpdates.add(resourceId);
+                }
+            });
+
+            Set<Integer> resourceIds = resources.get(scope);
+            if (isNotEmpty(resourceIds)) {
+                resourceDAO.setResourceActivityCachedTimestamp(scope, resourceIds, baseline);
+
+                if (isNotEmpty(resourceExpiredUpdates)) {
+                    resourceDAO.setResourceRecentUpdate(scope, resourceExpiredUpdates, null);
+                }
             }
         });
-        return resourceIndex;
+        return resources;
     }
 
     public List<Integer> getResourceTargets(PrismScope targeterScope, Collection<Integer> targeterResources, PrismScope targetScope) {
@@ -1605,6 +1621,11 @@ public class ResourceService {
         PrismRole role = PrismRole.valueOf(commentDTO.getResource().getScope().name() + "_ENQUIRER");
         CommentAssignedUserDTO assignedUser = new CommentAssignedUserDTO().withUser(userDTO).withRole(role);
         commentDTO.setAssignedUsers(singletonList(assignedUser));
+    }
+
+    private <T extends Resource> void setResourceUpdated(T resource, DateTime baseline) {
+        resource.setRecentUpdate(true);
+        resource.setUpdatedTimestamp(baseline);
     }
 
 }

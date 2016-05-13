@@ -33,7 +33,7 @@
             <a href="http://prism.hr/#!/applicant/main?${advert.resource.resourceScope?lower_case}=${advert.resource.id}"
                class="btn btn-success"
                target="_blank">${viewOpportunitiesLabel}</a>
-            <a href="http://prism.hr/#!/advertise?context=${advert.resource.resourceScope?lower_case}&&selected${advert.resource.resourceScope?capitalize}=${advert.resource.id}&selectedResourceContext=university"
+            <a href="http://prism.hr/#!/advertise?context=${advert.resource.resourceScope?lower_case}&&selected${advert.resource.resourceScope?capitalize}=${advert.resource.id}&selectedResourceContext=${options.context}"
                class="btn btn-primary" target="_blank">${postOpportunityLabel}</a>
         </div>
     [/#if]

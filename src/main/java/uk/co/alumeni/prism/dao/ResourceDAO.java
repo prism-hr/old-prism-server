@@ -922,7 +922,7 @@ public class ResourceDAO {
         return Projections.projectionList() //
                 .add(Projections.groupProperty(resourceReference + "id").as("id")) //
                 .add(Projections.groupProperty(resourceReference + "recentUpdate").as("recentUpdate")) //
-                .add(Projections.groupProperty(resourceReference + "updatedTimestamp").as("updateTimestamp"));
+                .add(Projections.groupProperty(resourceReference + "updatedTimestamp").as("updatedTimestamp"));
     }
 
 }

@@ -703,6 +703,8 @@ public class ResourceService {
         Set<Integer> connections = newHashSet();
         if (resourceTarget != null) {
             Advert advertTarget = resourceTarget.getAdvert();
+            connections.add(advertTarget.getId());
+
             advertTarget.getTargets().stream().forEach(target -> {
                 if (!target.getPartnershipState().equals(ENDORSEMENT_REVOKED)) {
                     connections.add(target.getTargetAdvert().getId());
@@ -737,7 +739,7 @@ public class ResourceService {
                 }
             }
         }
-        
+
         return new ArrayList<>(resources);
     }
 

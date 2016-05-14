@@ -372,7 +372,7 @@ public class ResourceController {
     public void viewMessageThread(@RequestBody Map<String, Integer> body) {
         messageService.viewMessageThread(body.get("latestUnreadMessageId"));
     }
-
+    
     @PreAuthorize("isAuthenticated()")
     @RequestMapping(value = "{resourceId}/connections", method = RequestMethod.GET, params = "q")
     public List<ResourceRepresentationConnection> getResourcesForWhichUserCanConnect(@PathVariable Integer resourceId,

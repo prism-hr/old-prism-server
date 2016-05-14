@@ -737,6 +737,7 @@ public class ResourceService {
                 }
             }
         }
+        
         return new ArrayList<>(resources);
     }
 

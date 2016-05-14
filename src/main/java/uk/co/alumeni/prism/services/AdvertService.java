@@ -736,8 +736,8 @@ public class AdvertService {
     }
 
     public List<AdvertTargetDTO> getAdvertTargets(Advert advert) {
+        List<Integer> connectAdverts = newArrayList();
         ResourceParent resource = advert.getResource();
-        List<Integer> connectAdverts = Lists.newArrayList();
 
         Department department = resource.getDepartment();
         if (department != null) {

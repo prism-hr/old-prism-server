@@ -418,7 +418,7 @@ public class ResourceMapper {
         representation.setAdvert(advertMapper.getAdvertRepresentationSimple(resource.getAdvert()));
         representation.setOpportunityCategories(asList(resource.getOpportunityCategories().split("\\|")).stream().map(PrismOpportunityCategory::valueOf)
                 .collect(toList()));
-        representation.setContexts(PrismScope.getResourceContexts(resource.getOpportunityCategories()));
+        representation.setContexts(getResourceContexts(resource.getOpportunityCategories()));
         representation.setSuggestedThemes(advertService.getSuggestedAdvertThemes(resource.getAdvert()));
         representation.setAdvertIncompleteSections(getResourceAdvertIncompleteSectionRepresentation(resource.getAdvertIncompleteSection()));
         return representation;
@@ -724,11 +724,15 @@ public class ResourceMapper {
         return representation;
     }
 
-    public List<ResourceRepresentationConnection> getUserResourceConnectionRepresentations(User user, ResourceParent targetResource,
+    public List<ResourceRepresentationConnection> getUserResourceConnectionRepresentations(User user, PrismResourceContext motivation, String searchTerm) {
+        return getUserResourceConnectionRepresentations(user, null, motivation, searchTerm);
+    }
+
+    public List<ResourceRepresentationConnection> getUserResourceConnectionRepresentations(User user, ResourceParent resourceTarget,
             PrismResourceContext motivation, String searchTerm) {
-        List<ResourceRepresentationConnection> representations = Lists.newLinkedList();
-        resourceService.getResourcesForWhichUserCanConnect(user, targetResource, motivation, searchTerm).forEach(resource -> {
-            representations.add(getResourceRepresentationConnection(resource));
+        List<ResourceRepresentationConnection> representations = newLinkedList();
+        resourceService.getResourcesForWhichUserCanConnect(user, resourceTarget, motivation, searchTerm).forEach(resourceConnect -> {
+            representations.add(getResourceRepresentationConnection(resourceConnect));
         });
         return representations;
     }

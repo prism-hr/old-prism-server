@@ -67,14 +67,14 @@ public class WidgetService {
         ResourceParent resourceParent = advert.getResourceParent();
         ResourceOpportunity resourceOpportunity = advert.getResourceOpportunity();
         if (resourceParent != null) {
-            return getParentResourceBadge(advert, resourceParent, options);
+            return getResourceParentBadge(advert, resourceParent, options);
         } else if (resourceOpportunity != null) {
             return getOpportunityBadge(advert, resourceOpportunity);
         }
         throw new ResourceNotFoundException("Incorrect resource type");
     }
 
-    public String getOpportunityBadge(Advert advert, ResourceOpportunity resource) {
+    private String getOpportunityBadge(Advert advert, ResourceOpportunity resource) {
         AdvertRepresentationExtended advertRepresentation = advertMapper.getAdvertRepresentationExtended(advert);
 
         PropertyLoader propertyLoader = applicationContext.getBean(PropertyLoader.class).localizeLazy(resource);
@@ -84,10 +84,7 @@ public class WidgetService {
         return templateUtils.getContentFromLocation("opportunity_badge.ftl", model);
     }
 
-    public String getParentResourceBadge(Advert advert, ResourceParent resource, Map<String, String> options) {
-        if (options == null) {
-            options = new HashMap<>();
-        }
+    private String getResourceParentBadge(Advert advert, ResourceParent resource, Map<String, String> options) {
         if (!options.containsKey("type")) {
             options.put("type", "SIMPLE");
         }

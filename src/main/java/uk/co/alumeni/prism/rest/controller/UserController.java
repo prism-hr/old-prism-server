@@ -28,6 +28,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.context.request.async.DeferredResult;
 
+import uk.co.alumeni.prism.domain.definitions.PrismResourceContext;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismScope;
 import uk.co.alumeni.prism.domain.user.User;
 import uk.co.alumeni.prism.domain.user.UserAccount;
@@ -39,6 +40,7 @@ import uk.co.alumeni.prism.domain.workflow.Scope;
 import uk.co.alumeni.prism.exceptions.ResourceNotFoundException;
 import uk.co.alumeni.prism.mapping.MessageMapper;
 import uk.co.alumeni.prism.mapping.ProfileMapper;
+import uk.co.alumeni.prism.mapping.ResourceMapper;
 import uk.co.alumeni.prism.mapping.UserMapper;
 import uk.co.alumeni.prism.rest.dto.profile.ProfileAdditionalInformationDTO;
 import uk.co.alumeni.prism.rest.dto.profile.ProfileAddressDTO;
@@ -107,6 +109,9 @@ public class UserController {
 
     @Inject
     private ProfileMapper profileMapper;
+
+    @Inject
+    private ResourceMapper resourceMapper;
 
     @Inject
     private UserMapper userMapper;
@@ -237,12 +242,6 @@ public class UserController {
             userActivityCacheServiceDelegate.addPollingUser(currentUser.getId(), result);
         }
         return result;
-    }
-
-    @PreAuthorize("isAuthenticated()")
-    @RequestMapping(value = "/connection/resource", method = RequestMethod.GET, params = "q")
-    public List<ResourceRepresentationConnection> getUserResourceConnectionRepresentations(@RequestParam(required = false) String q) {
-        return userMapper.getUserResourceConnectionRepresentations(userService.getCurrentUser(), q);
     }
 
     @PreAuthorize("isAuthenticated()")
@@ -408,6 +407,13 @@ public class UserController {
     public void shareUserProfile(@PathVariable String operation, @RequestBody Map<?, ?> undertow) {
         boolean share = operation.equals("share");
         userAccountService.shareUserProfile(share);
+    }
+
+    @PreAuthorize("isAuthenticated()")
+    @RequestMapping(value = "/connections", method = RequestMethod.GET, params = "q")
+    public List<ResourceRepresentationConnection> getResourcesForWhichUserCanConnect(@RequestParam PrismResourceContext motivation,
+            @RequestParam(required = false) String q) {
+        return resourceMapper.getUserResourceConnectionRepresentations(userService.getCurrentUser(), motivation, q);
     }
 
     @ResponseStatus(value = NOT_MODIFIED, reason = "No updates to user activity")

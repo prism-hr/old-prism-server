@@ -86,6 +86,10 @@ public abstract class Resource implements ActivityEditable, UniqueEntity {
     public abstract State getPreviousState();
 
     public abstract void setPreviousState(State previousState);
+    
+    public abstract Boolean getRecentUpdate();
+    
+    public abstract void setRecentUpdate(Boolean recentUpdate);
 
     public abstract LocalDate getDueDate();
 

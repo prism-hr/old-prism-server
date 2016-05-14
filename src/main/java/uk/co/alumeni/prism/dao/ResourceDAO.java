@@ -457,20 +457,20 @@ public class ResourceDAO {
 
     public List<ResourceConnectionDTO> getResourcesForWhichUserCanConnect(User user, PrismScope resourceScope, String searchTerm) {
         ProjectionList projections = Projections.projectionList() //
-                .add(Projections.groupProperty("institution.id").as("institutionId")) //
+                .add(Projections.property("institution.id").as("institutionId")) //
                 .add(Projections.property("institution.name").as("institutionName")) //
                 .add(Projections.property("institution.logoImage.id").as("logoImageId"));
 
         boolean isDepartment = resourceScope.equals(DEPARTMENT);
         if (isDepartment) {
-            projections.add(Projections.groupProperty("department.id").as("departmentId")) //
+            projections.add(Projections.property("department.id").as("departmentId")) //
                     .add(Projections.property("department.name").as("departmentName"));
 
         }
 
         String resourceReference = resourceScope.getLowerCamelName();
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(ResourceState.class) //
-                .setProjection(projections //
+                .setProjection(projections.add(Projections.groupProperty("advert.id")) //
                         .add(Projections.property(resourceReference + ".opportunityCategories").as("opportunityCategories"))) //
                 .createAlias(resourceReference, resourceReference, JoinType.INNER_JOIN);
 
@@ -747,7 +747,7 @@ public class ResourceDAO {
                 .setParameterList("resources", resources) //
                 .executeUpdate();
     }
-    
+
     public void setResourceRecentUpdate(PrismScope scope, Collection<Integer> resources, Boolean recentUpdate) {
         sessionFactory.getCurrentSession().createQuery( //
                 "update " + scope.getUpperCamelName() + " " //

@@ -14,6 +14,8 @@ public class ResourceConnectionDTO extends ResourceConnectionAbstractDTO {
 
     private String departmentName;
 
+    private Integer advertId;
+
     private String opportunityCategories;
 
     public Integer getInstitutionId() {
@@ -56,6 +58,14 @@ public class ResourceConnectionDTO extends ResourceConnectionAbstractDTO {
         this.departmentName = departmentName;
     }
 
+    public Integer getAdvertId() {
+        return advertId;
+    }
+
+    public void setAdvertId(Integer advertId) {
+        this.advertId = advertId;
+    }
+
     public String getOpportunityCategories() {
         return opportunityCategories;
     }
@@ -66,7 +76,7 @@ public class ResourceConnectionDTO extends ResourceConnectionAbstractDTO {
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(institutionId, departmentId);
+        return Objects.hashCode(advertId);
     }
 
     @Override
@@ -78,7 +88,7 @@ public class ResourceConnectionDTO extends ResourceConnectionAbstractDTO {
             return false;
         }
         ResourceConnectionDTO other = (ResourceConnectionDTO) object;
-        return Objects.equal(institutionId, other.getInstitutionId()) && Objects.equal(departmentId, other.getDepartmentId());
+        return Objects.equal(advertId, other.getAdvertId());
     }
 
 }

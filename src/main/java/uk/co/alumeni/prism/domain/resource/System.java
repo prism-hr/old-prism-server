@@ -60,6 +60,9 @@ public class System extends Resource {
     @JoinColumn(name = "previous_state_id")
     private State previousState;
 
+    @Column(name = "recent_update")
+    private Boolean recentUpdate;
+
     @Column(name = "due_date")
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentLocalDate")
     private LocalDate dueDate;
@@ -71,7 +74,7 @@ public class System extends Resource {
     @Column(name = "updated_timestamp", nullable = false)
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
     private DateTime updatedTimestamp;
-    
+
     @Column(name = "activity_cached_timestamp")
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
     private DateTime activityCachedTimestamp;
@@ -255,6 +258,16 @@ public class System extends Resource {
     }
 
     @Override
+    public Boolean getRecentUpdate() {
+        return recentUpdate;
+    }
+
+    @Override
+    public void setRecentUpdate(Boolean recentUpdate) {
+        this.recentUpdate = recentUpdate;
+    }
+
+    @Override
     public LocalDate getDueDate() {
         return dueDate;
     }
@@ -283,7 +296,7 @@ public class System extends Resource {
     public void setUpdatedTimestamp(DateTime updatedTimestamp) {
         this.updatedTimestamp = updatedTimestamp;
     }
-    
+
     @Override
     public DateTime getActivityCachedTimestamp() {
         return activityCachedTimestamp;

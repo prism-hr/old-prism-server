@@ -37,7 +37,6 @@ import uk.co.alumeni.prism.rest.UserDescriptor;
 import uk.co.alumeni.prism.rest.UserDescriptorExtended;
 import uk.co.alumeni.prism.rest.dto.UserListFilterDTO;
 import uk.co.alumeni.prism.rest.representation.profile.ProfileRepresentationMessage;
-import uk.co.alumeni.prism.rest.representation.resource.ResourceRepresentationConnection;
 import uk.co.alumeni.prism.rest.representation.resource.ResourceRepresentationIdentity;
 import uk.co.alumeni.prism.rest.representation.user.UserActivityRepresentation;
 import uk.co.alumeni.prism.rest.representation.user.UserActivityRepresentation.ResourceUserUnverifiedRepresentation;
@@ -58,7 +57,6 @@ import uk.co.alumeni.prism.utils.PrismJsonMappingUtils;
 
 import com.google.common.base.Joiner;
 import com.google.common.collect.HashMultimap;
-import com.google.common.collect.Lists;
 import com.google.common.collect.TreeMultimap;
 import com.google.gson.JsonParser;
 import com.google.gson.JsonPrimitive;
@@ -127,8 +125,6 @@ public class UserMapper {
 
         representation.setConnectedWithLinkedin(user.getUserAccount().getLinkedinId() != null);
         representation.setRequiredFeedbackRoleCategory(userFeedbackService.getRequiredFeedbackRoleCategory(user));
-        representation.setResourcesForWhichUserCanCreateConnections(getUserResourceConnectionRepresentations(user, null));
-
         return representation;
     }
 
@@ -252,14 +248,6 @@ public class UserMapper {
         return index.keySet().stream()
                 .map(resource -> new UserRolesRepresentation(resource, newArrayList(index.get(resource))))
                 .collect(Collectors.toList());
-    }
-
-    public List<ResourceRepresentationConnection> getUserResourceConnectionRepresentations(User user, String searchTerm) {
-        List<ResourceRepresentationConnection> representations = Lists.newLinkedList();
-        resourceService.getResourcesForWhichUserCanConnect(user, searchTerm).forEach(resource -> {
-            representations.add(resourceMapper.getResourceRepresentationConnection(resource));
-        });
-        return representations;
     }
 
     private <T extends UserDescriptor, U extends UserRepresentationSimple> U getUserRepresentation(T user, User currentUser, boolean forceReturnEmail,

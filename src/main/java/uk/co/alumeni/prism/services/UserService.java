@@ -1,5 +1,6 @@
 package uk.co.alumeni.prism.services;
 
+import static com.google.common.base.Objects.equal;
 import static com.google.common.collect.Lists.newArrayList;
 import static com.google.common.collect.Lists.newLinkedList;
 import static com.google.common.collect.Maps.newHashMap;
@@ -47,7 +48,6 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Objects;
 import java.util.Set;
 
 import javax.annotation.PostConstruct;
@@ -106,6 +106,7 @@ import uk.co.alumeni.prism.services.helpers.PropertyLoader;
 import uk.co.alumeni.prism.utils.PrismEncryptionUtils;
 import uk.co.alumeni.prism.utils.PrismJsonMappingUtils;
 
+import com.google.common.base.Objects;
 import com.google.common.base.Strings;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.LinkedHashMultimap;
@@ -331,7 +332,7 @@ public class UserService {
 
     public void unlinkUser(Integer userId) {
         User user = getById(userId);
-        if (Objects.equals(user.getId(), user.getParentUser().getId())) {
+        if (equal(user.getId(), user.getParentUser().getId())) {
             User newParent = getCurrentUser();
             List<User> childUsers = Lists.asList(user, user.getChildUsers().toArray(new User[user.getChildUsers().size()]));
             for (User childUser : childUsers) {
@@ -418,7 +419,7 @@ public class UserService {
     }
 
     public String getSecuredUserEmailAddress(String email, User currentUser, boolean forceReturnEmail) {
-        return (forceReturnEmail || Objects.equals(email, (currentUser == null ? null : currentUser.getEmail()))) ? email : getObfuscatedEmail(email);
+        return (forceReturnEmail || Objects.equal(email, (currentUser == null ? null : currentUser.getEmail()))) ? email : getObfuscatedEmail(email);
     }
 
     public List<User> getResourceUsers(Resource resource, PrismRole role) {

@@ -2,7 +2,6 @@ package uk.co.alumeni.prism.rest.controller;
 
 import static org.apache.commons.lang3.StringUtils.removeEnd;
 
-import java.lang.reflect.Type;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -61,15 +60,11 @@ public class OpportunityController {
     }
 
     @RequestMapping(method = RequestMethod.GET, value = "{resourceScope:projects|programs|departments|institutions}/{resourceId}/badge", produces = "text/javascript")
-    public String getAdvertBadge(@PathVariable String resourceScope, @PathVariable Integer resourceId,
-                                 @RequestParam Optional<String> callback,
-                                 @RequestParam String options,
-                                 HttpServletResponse response) {
+    public String getAdvertBadge(@PathVariable String resourceScope, @PathVariable Integer resourceId, @RequestParam Optional<String> callback,
+            @RequestParam String options, HttpServletResponse response) {
         response.setHeader("X-Frame-Options", null);
         Advert advert = advertService.getAdvert(PrismScope.valueOf(removeEnd(resourceScope, "s").toUpperCase()), resourceId);
-        Type mapType = new TypeToken<HashMap<String, String>>() {
-        }.getType();
-        HashMap<String, String> widgetOptions = new Gson().fromJson(options, mapType);
+        HashMap<String, String> widgetOptions = new Gson().fromJson(options, new TypeToken<HashMap<String, String>>() {}.getType());
         String badge = widgetService.getAdvertBadge(advert, widgetOptions);
         if (callback.isPresent()) {
             response.setHeader("content-type", "text/javascript");

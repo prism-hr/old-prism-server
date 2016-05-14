@@ -126,14 +126,14 @@ public class AdvertDAO {
                 .setResultTransformer(Transformers.aliasToBean(AdvertApplicationSummaryDTO.class)) //
                 .uniqueResult();
     }
-    
+
     public List<Integer> getAdverts(PrismScope resourceScope, Collection<Integer> resourceIds) {
         return (List<Integer>) sessionFactory.getCurrentSession().createCriteria(resourceScope.getResourceClass()) //
                 .setProjection(Projections.groupProperty("advert.id")) //
                 .add(Restrictions.in("id", resourceIds)) //
                 .list();
     }
-    
+
     public List<Integer> getEnclosingAdverts(PrismScope enclosingScope, PrismScope resourceScope, Collection<Integer> advertIds) {
         return (List<Integer>) sessionFactory.getCurrentSession().createCriteria(resourceScope.getResourceClass()) //
                 .setProjection(Projections.groupProperty("enclosingResource.advert.id")) //
@@ -210,7 +210,7 @@ public class AdvertDAO {
     }
 
     public List<EntityOpportunityCategoryDTO<?>> getVisibleAdverts(Collection<PrismScope> scopes,
-                                                                   Collection<Integer> nodeAdverts, UserAdvertDTO userAdvertDTO, OpportunitiesQueryDTO query) {
+            Collection<Integer> nodeAdverts, UserAdvertDTO userAdvertDTO, OpportunitiesQueryDTO query) {
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Advert.class) //
                 .setProjection(Projections.projectionList()
                         .add(Projections.groupProperty("id").as("id")) //
@@ -335,7 +335,7 @@ public class AdvertDAO {
                 .setResultTransformer(Transformers.aliasToBean(AdvertLocationDTO.class)) //
                 .list();
     }
-    
+
     public List<AdvertStudyOptionDTO> getAdvertStudyOptions(PrismScope resourceScope, Collection<Integer> resourceIds) {
         return (List<AdvertStudyOptionDTO>) sessionFactory.getCurrentSession().createCriteria(Advert.class) //
                 .setProjection(Projections.projectionList() //
@@ -389,7 +389,7 @@ public class AdvertDAO {
     }
 
     public List<AdvertTargetDTO> getAdvertTargets(PrismScope resourceScope, String thisAdvertReference, String otherAdvertReference, User user,
-                                                  Collection<Integer> connectAdverts, Collection<Integer> manageAdverts) {
+            Collection<Integer> connectAdverts, Collection<Integer> manageAdverts) {
         Criterion visibilityConstraint = Restrictions.conjunction() //
                 .add(Restrictions.eq("target.partnershipState", ENDORSEMENT_PROVIDED))
                 .add(Restrictions.eq("target.advertSevered", false))
@@ -411,7 +411,7 @@ public class AdvertDAO {
     }
 
     public List<AdvertTargetDTO> getAdvertTargetsReceived(PrismScope resourceScope, String thisAdvertReference, String otherAdvertReference, User user,
-                                                          Collection<Integer> connectAdverts) {
+            Collection<Integer> connectAdverts) {
         Criterion permissionsConstraint;
         if (user != null && isNotEmpty(connectAdverts)) {
             permissionsConstraint = Restrictions.disjunction() //
@@ -438,7 +438,7 @@ public class AdvertDAO {
     }
 
     public List<Advert> getAdvertsTargetsForWhichUserCanEndorse(Advert advert, User user, PrismScope scope, PrismScope targeterScope, PrismScope targetScope,
-                                                                List<Integer> targeterEntities) {
+            List<Integer> targeterEntities) {
         return (List<Advert>) workflowDAO
                 .getWorkflowCriteriaList(scope, targeterScope, targetScope, targeterEntities, Projections.groupProperty("targeterTarget.targetAdvert"))
                 .add(Restrictions.eq("targeterTarget.advert", advert)) //
@@ -1011,7 +1011,7 @@ public class AdvertDAO {
     }
 
     private Junction getVisibleAdvertConstraint(String selectAdvertAlias, String restrictAdvertAlias,
-                                                HashMultimap<PrismScope, Integer> userResources, boolean publishedOnly, PrismScope... displayScopes) {
+            HashMultimap<PrismScope, Integer> userResources, boolean publishedOnly, PrismScope... displayScopes) {
         String selectAdvertAliasResolved = getResolvedAliasReference(selectAdvertAlias);
         String restrictAdvertAliasResolved = getResolvedAliasReference(restrictAdvertAlias);
 

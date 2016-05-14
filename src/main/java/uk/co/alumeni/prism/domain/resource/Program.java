@@ -109,6 +109,9 @@ public class Program extends ResourceOpportunity {
     @JoinColumn(name = "previous_state_id")
     private State previousState;
 
+    @Column(name = "recent_update")
+    private Boolean recentUpdate;
+
     @Column(name = "due_date")
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentLocalDate")
     private LocalDate dueDate;
@@ -362,6 +365,16 @@ public class Program extends ResourceOpportunity {
     @Override
     public void setPreviousState(State previousState) {
         this.previousState = previousState;
+    }
+
+    @Override
+    public Boolean getRecentUpdate() {
+        return recentUpdate;
+    }
+
+    @Override
+    public void setRecentUpdate(Boolean recentUpdate) {
+        this.recentUpdate = recentUpdate;
     }
 
     @Override

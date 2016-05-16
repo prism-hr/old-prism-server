@@ -33,6 +33,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
 import uk.co.alumeni.prism.domain.advert.Advert;
 import uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition;
 import uk.co.alumeni.prism.domain.resource.ResourceOpportunity;
@@ -46,17 +47,6 @@ import uk.co.alumeni.prism.rest.representation.advert.AdvertRepresentationExtend
 import uk.co.alumeni.prism.rest.representation.resource.ResourceOpportunityRepresentationSimple;
 import uk.co.alumeni.prism.services.helpers.PropertyLoader;
 import uk.co.alumeni.prism.utils.PrismTemplateUtils;
-
-import javax.inject.Inject;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.stream.Collectors;
-
-import static java.util.stream.Collectors.toList;
-import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition.*;
-import static uk.co.alumeni.prism.domain.definitions.PrismResourceContext.APPLICANT;
 
 @Service
 @Transactional

@@ -1,13 +1,12 @@
 package uk.co.alumeni.prism.domain.definitions;
 
-import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyCategory.PROFILE_UPDATE;
-
-import java.util.Set;
-
+import com.google.common.collect.LinkedHashMultimap;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismConfigurationCategorizable;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismScope;
 
-import com.google.common.collect.LinkedHashMultimap;
+import java.util.Set;
+
+import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyCategory.PROFILE_UPDATE;
 
 public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategorizable<PrismDisplayPropertyCategory> {
 
@@ -1554,6 +1553,7 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     SYSTEM_OPPORTUNITIES_ENQUIRE_WORK_EXPERIENCE(PrismDisplayPropertyCategory.SYSTEM_OPPORTUNITIES, "Work Experience"),
     SYSTEM_OPPORTUNITIES_ENQUIRE_SUBMIT(PrismDisplayPropertyCategory.SYSTEM_OPPORTUNITIES, "Submit"),
     SYSTEM_OPPORTUNITIES_APPLY_NOW(PrismDisplayPropertyCategory.SYSTEM_OPPORTUNITIES, "Apply Now"),
+    SYSTEM_OPPORTUNITIES_VIEW_APPLICATION(PrismDisplayPropertyCategory.SYSTEM_OPPORTUNITIES, "View Application"),
     SYSTEM_OPPORTUNITIES_NOT_ACCEPTING_APPLICATIONS(PrismDisplayPropertyCategory.SYSTEM_OPPORTUNITIES, "Not accepting applications at the current time."),
     SYSTEM_OPPORTUNITIES_NO_OPPORTUNITY(PrismDisplayPropertyCategory.SYSTEM_OPPORTUNITIES, "Can't find the opportunity that you're looking for?"),
     SYSTEM_OPPORTUNITIES_NO_EMPLOYER_DEPARTMENT(PrismDisplayPropertyCategory.SYSTEM_OPPORTUNITIES, "Can't find the department that you're looking for?"),

@@ -31,6 +31,7 @@ import static uk.co.alumeni.prism.domain.definitions.workflow.PrismPartnershipSt
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismPartnershipState.ENDORSEMENT_REVOKED;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRole.PrismRoleCategory.STUDENT;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.APPLICATION;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismStateGroup.APPLICATION_WITHDRAWN;
 import static uk.co.alumeni.prism.utils.PrismEnumUtils.values;
 
 import java.math.BigDecimal;
@@ -83,13 +84,13 @@ import uk.co.alumeni.prism.dto.AdvertFunctionDTO;
 import uk.co.alumeni.prism.dto.AdvertIndustryDTO;
 import uk.co.alumeni.prism.dto.AdvertLocationAddressPartSummaryDTO;
 import uk.co.alumeni.prism.dto.AdvertLocationDTO;
+import uk.co.alumeni.prism.dto.AdvertOpportunityCategoryDTO;
 import uk.co.alumeni.prism.dto.AdvertPartnerActionDTO;
 import uk.co.alumeni.prism.dto.AdvertStudyOptionDTO;
 import uk.co.alumeni.prism.dto.AdvertTargetAdvertDTO;
 import uk.co.alumeni.prism.dto.AdvertTargetDTO;
 import uk.co.alumeni.prism.dto.AdvertThemeDTO;
 import uk.co.alumeni.prism.dto.AdvertUserDTO;
-import uk.co.alumeni.prism.dto.EntityOpportunityCategoryDTO;
 import uk.co.alumeni.prism.dto.UserAdvertDTO;
 import uk.co.alumeni.prism.rest.dto.OpportunitiesQueryDTO;
 import uk.co.alumeni.prism.rest.representation.advert.AdvertThemeRepresentation;
@@ -209,13 +210,17 @@ public class AdvertDAO {
                 .list();
     }
 
-    public List<EntityOpportunityCategoryDTO<?>> getVisibleAdverts(Collection<PrismScope> scopes,
+    public List<AdvertOpportunityCategoryDTO> getVisibleAdverts(Collection<PrismScope> scopes,
             Collection<Integer> nodeAdverts, UserAdvertDTO userAdvertDTO, OpportunitiesQueryDTO query) {
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Advert.class) //
                 .setProjection(Projections.projectionList()
                         .add(Projections.groupProperty("id").as("id")) //
+                        .add(Projections.property("globallyVisible").as("globallyVisible")) //
+                        .add(Projections.property("institution.id").as("institutionId")) //
+                        .add(Projections.property("institution.name").as("institutionName")) //
+                        .add(Projections.property("institution.logoImage.id").as("institutionLogoImageId")) //
                         .add(Projections.property("opportunityCategories").as("opportunityCategories")) //
-                        .add(Projections.property("opportunityType.id").as("opportunityType"))
+                        .add(Projections.property("opportunityType.id").as("opportunityType")) //
                         .add(Projections.property("sequenceIdentifier").as("sequenceIdentifier"))) //
                 .createAlias("targets", "target", JoinType.LEFT_OUTER_JOIN) //
                 .createAlias("categories.industries", "industry", JoinType.LEFT_OUTER_JOIN) //
@@ -253,7 +258,8 @@ public class AdvertDAO {
         appendPayConstraint(criteria, query);
         appendDurationConstraint(criteria, query);
 
-        return criteria.setResultTransformer(Transformers.aliasToBean(EntityOpportunityCategoryDTO.class))
+        return (List<AdvertOpportunityCategoryDTO>) criteria //
+                .setResultTransformer(Transformers.aliasToBean(AdvertOpportunityCategoryDTO.class)) //
                 .list();
     }
 
@@ -841,6 +847,19 @@ public class AdvertDAO {
                 .list();
     }
 
+    public List<Integer> getAdvertsUserApplyingFor(User user, Collection<Integer> adverts) {
+        return (List<Integer>) sessionFactory.getCurrentSession().createCriteria(Application.class) //
+                .setProjection(Projections.groupProperty("advert.id")) //
+                .createAlias("resourceStates", "resourceState", JoinType.INNER_JOIN) //
+                .createAlias("resourceState.state", "state", JoinType.INNER_JOIN) //
+                .add(Restrictions.eq("user", user)) //
+                .add(Restrictions.in("advert.id", adverts)) //
+                .add(Restrictions.disjunction() //
+                        .add(Restrictions.isNull("completionDate")) //
+                        .add(Restrictions.eq("state.stateGroup.id", APPLICATION_WITHDRAWN))) //
+                .list();
+    }
+
     private void appendContextConstraint(Criteria criteria, OpportunitiesQueryDTO queryDTO) {
         PrismResourceContext context = queryDTO.getContext();
         if (context != null) {
@@ -1065,15 +1084,6 @@ public class AdvertDAO {
         Junction constraint = Restrictions.conjunction();
         if (recommendation) {
             constraint.add(Restrictions.in("id", userAdvertDTO.getVisibleDirect()));
-        } else if (!userAdvertDTO.isAllVisible()) {
-            Set<Integer> visible = userAdvertDTO.getVisible();
-            if (isNotEmpty(visible)) {
-                constraint.add(Restrictions.disjunction() //
-                        .add(Restrictions.eq("globallyVisible", true))
-                        .add(Restrictions.in("id", visible)));
-            } else {
-                constraint.add(Restrictions.eq("globallyVisible", true));
-            }
         }
 
         List<Integer> invisible = userAdvertDTO.getInvisible();

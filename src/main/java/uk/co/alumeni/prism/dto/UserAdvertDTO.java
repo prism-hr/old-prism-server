@@ -47,16 +47,16 @@ public class UserAdvertDTO {
         this.invisible = invisible;
     }
 
-    public UserAdvertDTO withAllVisible(boolean allVisible) {
-        this.allVisible = allVisible;
-        return this;
-    }
-
     public Set<Integer> getVisible() {
         Set<Integer> target = Sets.newHashSet();
         assignVisibleAdverts(target, visibleDirect);
         assignVisibleAdverts(target, visibleIndirect);
         return target;
+    }
+
+    public UserAdvertDTO withAllVisible(boolean allVisible) {
+        this.allVisible = allVisible;
+        return this;
     }
 
     public UserAdvertDTO withVisibleDirect(List<Integer> visibleDirect) {
@@ -69,7 +69,7 @@ public class UserAdvertDTO {
         return this;
     }
 
-    public UserAdvertDTO withInvisibleAdverts(List<Integer> invisible) {
+    public UserAdvertDTO withInvisible(List<Integer> invisible) {
         this.invisible = invisible;
         return this;
     }

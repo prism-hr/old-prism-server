@@ -1047,12 +1047,12 @@ public class ResourceService {
         return getResources(user, scope, parentScopes, targeterEntities, filter, getFilterConditions(scope, filter));
     }
 
-    public <T extends EntityOpportunityCategoryDTO<?>> Set<T> getResources(User user, PrismScope scope, List<PrismScope> parentScopes,
+    public <T extends EntityOpportunityCategoryDTO> Set<T> getResources(User user, PrismScope scope, List<PrismScope> parentScopes,
             List<Integer> targeterEntities, ProjectionList columns, Class<T> responseClass) {
         return getResources(user, scope, parentScopes, targeterEntities, new ResourceListFilterDTO(), columns, responseClass);
     }
 
-    public <T extends EntityOpportunityCategoryDTO<?>> Set<T> getResources(User user, PrismScope scope, List<PrismScope> parentScopes,
+    public <T extends EntityOpportunityCategoryDTO> Set<T> getResources(User user, PrismScope scope, List<PrismScope> parentScopes,
             List<Integer> targeterEntities, ResourceListFilterDTO filter, ProjectionList columns, Class<T> responseClass) {
         return getResources(user, scope, parentScopes, targeterEntities, filter, columns, getFilterConditions(scope, filter), responseClass);
     }
@@ -1323,7 +1323,7 @@ public class ResourceService {
                 conditions, ResourceOpportunityCategoryDTO.class);
     }
 
-    private <T extends EntityOpportunityCategoryDTO<?>> Set<T> getResources(User user, PrismScope scope, List<PrismScope> parentScopes,
+    private <T extends EntityOpportunityCategoryDTO> Set<T> getResources(User user, PrismScope scope, List<PrismScope> parentScopes,
             List<Integer> targeterEntities, ResourceListFilterDTO filter, ProjectionList columns, Junction conditions, Class<T> responseClass) {
         Set<T> resources = newTreeSet();
         if (!(setReplicableActionFilter(scope, filter) && isEmpty(filter.getResourceIds()))) {

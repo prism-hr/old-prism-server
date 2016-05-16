@@ -1,6 +1,7 @@
 package uk.co.alumeni.prism.services;
 
 import static java.util.stream.Collectors.toList;
+import static org.apache.commons.lang.StringUtils.EMPTY;
 import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_APPLY;
 import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_OPPORTUNITIES_PROPERTY_CLOSING_DATE_LABEL;
 import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_OPPORTUNITIES_PROPERTY_LOCATION_LABEL;
@@ -76,12 +77,15 @@ public class WidgetService {
 
     private String getOpportunityBadge(Advert advert, ResourceOpportunity resource) {
         AdvertRepresentationExtended advertRepresentation = advertMapper.getAdvertRepresentationExtended(advert);
+        if (advertRepresentation != null) {
+            PropertyLoader propertyLoader = applicationContext.getBean(PropertyLoader.class).localizeLazy(resource);
+            Map<String, Object> model = createHeaderModel(advert, propertyLoader);
+            model.put("opportunity", createOpportunityModel(advertRepresentation, propertyLoader));
 
-        PropertyLoader propertyLoader = applicationContext.getBean(PropertyLoader.class).localizeLazy(resource);
-        Map<String, Object> model = createHeaderModel(advert, propertyLoader);
-        model.put("opportunity", createOpportunityModel(advertRepresentation, propertyLoader));
+            return templateUtils.getContentFromLocation("opportunity_badge.ftl", model);
+        }
 
-        return templateUtils.getContentFromLocation("opportunity_badge.ftl", model);
+        return EMPTY;
     }
 
     private String getResourceParentBadge(Advert advert, ResourceParent resource, Map<String, String> options) {

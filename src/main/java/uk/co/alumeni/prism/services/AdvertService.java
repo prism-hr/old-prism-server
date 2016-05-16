@@ -4,6 +4,7 @@ import static com.google.common.collect.Lists.newArrayList;
 import static com.google.common.collect.Lists.newLinkedList;
 import static com.google.common.collect.Lists.reverse;
 import static com.google.common.collect.Maps.newHashMap;
+import static com.google.common.collect.Maps.newTreeMap;
 import static com.google.common.collect.Sets.newHashSet;
 import static com.google.common.collect.Sets.newTreeSet;
 import static java.math.RoundingMode.HALF_UP;
@@ -113,11 +114,12 @@ import uk.co.alumeni.prism.dto.ActionOutcomeDTO;
 import uk.co.alumeni.prism.dto.AdvertApplicationSummaryDTO;
 import uk.co.alumeni.prism.dto.AdvertCategoryDTO;
 import uk.co.alumeni.prism.dto.AdvertLocationAddressPartSummaryDTO;
+import uk.co.alumeni.prism.dto.AdvertOpportunityCategoryDTO;
 import uk.co.alumeni.prism.dto.AdvertTargetDTO;
 import uk.co.alumeni.prism.dto.AdvertUserDTO;
-import uk.co.alumeni.prism.dto.EntityOpportunityCategoryDTO;
 import uk.co.alumeni.prism.dto.UserAdvertDTO;
 import uk.co.alumeni.prism.dto.UserResourceDTO;
+import uk.co.alumeni.prism.dto.VisibleAdvertDTO;
 import uk.co.alumeni.prism.dto.json.ExchangeRateLookupResponseDTO;
 import uk.co.alumeni.prism.mapping.AdvertMapper;
 import uk.co.alumeni.prism.rest.dto.AddressDTO;
@@ -154,7 +156,7 @@ public class AdvertService {
 
     private static final Logger logger = getLogger(AdvertService.class);
 
-    private final Map<LocalDate, Map<String, BigDecimal>> exchangeRates = Maps.newHashMap();
+    private final Map<LocalDate, Map<String, BigDecimal>> exchangeRates = newHashMap();
 
     @Value("${integration.yahoo.exchange.rate.api.uri}")
     private String yahooExchangeRateApiUri;
@@ -236,9 +238,9 @@ public class AdvertService {
         return advertDAO.getAdvertApplicationSummary(advert);
     }
 
-    public Collection<uk.co.alumeni.prism.dto.AdvertDTO> getAdvertList(OpportunitiesQueryDTO query, Collection<EntityOpportunityCategoryDTO<?>> advertDTOs) {
-        TreeMap<String, uk.co.alumeni.prism.dto.AdvertDTO> adverts = Maps.newTreeMap();
-        if (!advertDTOs.isEmpty()) {
+    public Collection<uk.co.alumeni.prism.dto.AdvertDTO> getAdvertList(OpportunitiesQueryDTO query, Collection<AdvertOpportunityCategoryDTO> advertDTOs) {
+        TreeMap<String, uk.co.alumeni.prism.dto.AdvertDTO> adverts = newTreeMap();
+        if (advertDTOs.size() > 0) {
             Map<Integer, BigDecimal> advertIndex = getRowsToReturn(advertDTOs, query.getOpportunityCategory(), query.getOpportunityTypes(),
                     query.getLastSequenceIdentifier(), query.getMaxAdverts());
 
@@ -834,7 +836,7 @@ public class AdvertService {
         return importances;
     }
 
-    public Set<EntityOpportunityCategoryDTO<?>> getVisibleAdverts(User user, OpportunitiesQueryDTO query, PrismScope[] scopes) {
+    public VisibleAdvertDTO getVisibleAdverts(User user, OpportunitiesQueryDTO query, PrismScope[] scopes) {
         Integer advertId = query.getAdvertId();
         PrismScope resourceScope = query.getResourceScope();
 
@@ -847,18 +849,26 @@ public class AdvertService {
             nodeAdverts.add(advertId);
         }
 
+        Set<AdvertOpportunityCategoryDTO> visible = newTreeSet();
+        Set<AdvertOpportunityCategoryDTO> invisible = newHashSet();
         UserAdvertDTO userAdvertDTO = getUserAdverts(user, scopes);
         List<Integer> visibleDirect = userAdvertDTO.getVisibleDirect();
-        Set<EntityOpportunityCategoryDTO<?>> adverts = Sets.newTreeSet();
         if (!(resourceScope != null && isEmpty(nodeAdverts) || (isTrue(query.getRecommendation()) && isEmpty(visibleDirect)))) {
+            boolean allVisible = userAdvertDTO.isAllVisible();
+            List<Integer> visibleIndirect = userAdvertDTO.getVisibleIndirect();
             advertDAO.getVisibleAdverts(asList(scopes), nodeAdverts, userAdvertDTO, query).forEach(advert -> {
                 Integer visibleAdvertId = advert.getId();
-                advert.setPriority(new BigDecimal(visibleDirect.contains(visibleAdvertId) ? 1 : 0));
-                adverts.add(advert);
+                boolean isVisibleDirect = visibleDirect.contains(visibleAdvertId);
+                if (allVisible || isTrue(advert.getGloballyVisible()) || isVisibleDirect || visibleIndirect.contains(visibleAdvertId)) {
+                    advert.setPriority(new BigDecimal(isVisibleDirect ? 1 : 0));
+                    visible.add(advert);
+                } else {
+                    invisible.add(advert);
+                }
             });
         }
 
-        return adverts;
+        return new VisibleAdvertDTO().withVisible(visible).withInvisible(invisible);
     }
 
     public void recordPartnershipStateTransition(Resource resource, Comment comment) {
@@ -962,7 +972,7 @@ public class AdvertService {
 
     public UserAdvertDTO getUserAdverts(User user, PrismScope... displayScopes) {
         if (user == null) {
-            return new UserAdvertDTO().withAllVisible(false).withVisibleDirect(emptyList()).withInvisibleAdverts(emptyList());
+            return new UserAdvertDTO().withAllVisible(false).withVisibleDirect(emptyList()).withVisibleIndirect(emptyList()).withInvisible(emptyList());
         }
 
         Set<Integer> visibleDirect = newHashSet();
@@ -992,7 +1002,7 @@ public class AdvertService {
 
         return new UserAdvertDTO().withAllVisible(roleService.hasUserRole(systemService.getSystem(), user, SYSTEM_ADMINISTRATOR))
                 .withVisibleDirect(newArrayList(visibleDirect)).withVisibleIndirect(newArrayList(visibleIndirect))
-                .withInvisibleAdverts(newArrayList(invisible));
+                .withInvisible(newArrayList(invisible));
     }
 
     public List<AdvertCategoryDTO> getAdvertsForWhichUserHasRoles(User user) {
@@ -1085,6 +1095,10 @@ public class AdvertService {
         }
 
         return false;
+    }
+
+    public List<Integer> getAdvertsUserApplyingFor(User user, Collection<Integer> adverts) {
+        return advertDAO.getAdvertsUserApplyingFor(user, adverts);
     }
 
     private List<AdvertCategoryDTO> getAdvertsForWhichUserHasRoles(User user, String[] roleExtensions, PrismScope[] advertScopes,

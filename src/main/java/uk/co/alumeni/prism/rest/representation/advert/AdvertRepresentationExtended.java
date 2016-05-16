@@ -1,19 +1,19 @@
 package uk.co.alumeni.prism.rest.representation.advert;
 
-import static org.apache.commons.lang3.ObjectUtils.firstNonNull;
-
-import java.math.BigDecimal;
-import java.util.List;
-
 import uk.co.alumeni.prism.domain.definitions.PrismConnectionState;
 import uk.co.alumeni.prism.domain.definitions.PrismOpportunityCategory;
 import uk.co.alumeni.prism.domain.definitions.PrismOpportunityType;
 import uk.co.alumeni.prism.domain.definitions.PrismStudyOption;
-import uk.co.alumeni.prism.rest.representation.action.ActionRepresentation;
+import uk.co.alumeni.prism.rest.representation.action.OpportunityActionRepresentation;
 import uk.co.alumeni.prism.rest.representation.advert.AdvertTargetRepresentation.AdvertTargetConnectionRepresentation;
 import uk.co.alumeni.prism.rest.representation.resource.ResourceOpportunityRepresentationSimple;
 import uk.co.alumeni.prism.rest.representation.resource.ResourceRepresentationSimple;
 import uk.co.alumeni.prism.rest.representation.user.UserRepresentationSimple;
+
+import java.math.BigDecimal;
+import java.util.List;
+
+import static org.apache.commons.lang3.ObjectUtils.firstNonNull;
 
 public class AdvertRepresentationExtended extends AdvertRepresentationSimple {
 
@@ -45,7 +45,7 @@ public class AdvertRepresentationExtended extends AdvertRepresentationSimple {
 
     private List<AdvertTargetConnectionRepresentation> targets;
 
-    private ActionRepresentation action;
+    private OpportunityActionRepresentation action;
 
     private PrismConnectionState joinStateStaff;
 
@@ -165,11 +165,11 @@ public class AdvertRepresentationExtended extends AdvertRepresentationSimple {
         this.targets = targets;
     }
 
-    public ActionRepresentation getAction() {
+    public OpportunityActionRepresentation getAction() {
         return action;
     }
 
-    public void setAction(ActionRepresentation action) {
+    public void setAction(OpportunityActionRepresentation action) {
         this.action = action;
     }
 

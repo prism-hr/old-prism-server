@@ -53,7 +53,6 @@
         </div>
     [/#if]
     [#if options.type == "SLIDER_LIST"]
-    <script src="${applicationUrl}/scripts/slider.js" type="text/javascript"></script>
         <div class="prism-main slider-list">
             <ul>
                 [#list opportunities as opportunity]
@@ -66,6 +65,15 @@
                 </li>
                 [/#list]
             </ul>
+        </div>
+    [/#if]
+    [#if options.type == "STATIC_LIST" || options.type == "SLIDER_LIST"]
+        <div class="prism-footer">
+            <a href="http://prism.hr/#!/applicant/main?${advert.resource.resourceScope?lower_case}=${advert.resource.id}"
+               class="btn btn-success"
+               target="_blank">${viewOpportunitiesLabel}</a>
+            <a href="http://prism.hr/#!/advertise?context=${advert.resource.resourceScope?lower_case}&&selected${advert.resource.resourceScope?capitalize}=${advert.resource.id}&selectedResourceContext=${options.context}"
+               class="btn btn-primary" target="_blank">${postOpportunityLabel}</a>
         </div>
     [/#if]
     </div>

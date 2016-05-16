@@ -2,7 +2,7 @@ package uk.co.alumeni.prism.dto;
 
 import org.joda.time.DateTime;
 
-public class ResourceOpportunityCategoryDTO extends EntityOpportunityCategoryDTO<ResourceOpportunityCategoryDTO> {
+public class ResourceOpportunityCategoryDTO extends EntityOpportunityCategoryDTO {
 
     private Boolean raisesUrgentFlag;
 

@@ -69,6 +69,7 @@ import uk.co.alumeni.prism.domain.resource.ResourceOpportunity;
 import uk.co.alumeni.prism.domain.resource.ResourceParent;
 import uk.co.alumeni.prism.domain.resource.System;
 import uk.co.alumeni.prism.domain.user.User;
+import uk.co.alumeni.prism.dto.AdvertOpportunityCategoryDTO;
 import uk.co.alumeni.prism.dto.ApplicationProcessingSummaryDTO;
 import uk.co.alumeni.prism.dto.ResourceChildCreationDTO;
 import uk.co.alumeni.prism.dto.ResourceConnectionDTO;
@@ -107,6 +108,7 @@ import uk.co.alumeni.prism.rest.representation.resource.ResourceRepresentationCo
 import uk.co.alumeni.prism.rest.representation.resource.ResourceRepresentationExtended;
 import uk.co.alumeni.prism.rest.representation.resource.ResourceRepresentationIdentity;
 import uk.co.alumeni.prism.rest.representation.resource.ResourceRepresentationLocation;
+import uk.co.alumeni.prism.rest.representation.resource.ResourceRepresentationOccurrence;
 import uk.co.alumeni.prism.rest.representation.resource.ResourceRepresentationRelation;
 import uk.co.alumeni.prism.rest.representation.resource.ResourceRepresentationRobot;
 import uk.co.alumeni.prism.rest.representation.resource.ResourceRepresentationRobotMetadata;
@@ -735,6 +737,12 @@ public class ResourceMapper {
             representations.add(getResourceRepresentationConnection(resourceConnect));
         });
         return representations;
+    }
+
+    public ResourceRepresentationOccurrence getResourceRepresentationOccurrence(PrismScope scope, AdvertOpportunityCategoryDTO advertOpportunityCategoryDTO) {
+        return new ResourceRepresentationOccurrence().withScope(scope).withId(advertOpportunityCategoryDTO.getInstitutionId())
+                .withName(advertOpportunityCategoryDTO.getInstitutionName())
+                .withLogoImage(documentMapper.getDocumentRepresentation(advertOpportunityCategoryDTO.getInstitutionLogoImageId()));
     }
 
     private <T extends Resource, V extends ResourceRepresentationRelation> V getResourceRepresentationRelation(T resource, Class<V> returnType, User currentUser) {

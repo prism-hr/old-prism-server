@@ -831,7 +831,7 @@ public class AdvertDAO {
                 .add(Restrictions.eq("partnershipState", ENDORSEMENT_REVOKED)) //
                 .add(Restrictions.disjunction() //
                         .add(Restrictions.isNotNull("advert.project.id")) //
-                        .add(Restrictions.isNotNull("advert.project.id"))) //
+                        .add(Restrictions.isNotNull("advert.program.id"))) //
                 .list();
     }
 

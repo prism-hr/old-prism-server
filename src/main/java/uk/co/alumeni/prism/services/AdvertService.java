@@ -111,12 +111,12 @@ import uk.co.alumeni.prism.domain.resource.ResourceOpportunity;
 import uk.co.alumeni.prism.domain.resource.ResourceParent;
 import uk.co.alumeni.prism.domain.user.User;
 import uk.co.alumeni.prism.dto.ActionOutcomeDTO;
+import uk.co.alumeni.prism.dto.AdvertApplicationDTO;
 import uk.co.alumeni.prism.dto.AdvertApplicationSummaryDTO;
 import uk.co.alumeni.prism.dto.AdvertCategoryDTO;
 import uk.co.alumeni.prism.dto.AdvertLocationAddressPartSummaryDTO;
 import uk.co.alumeni.prism.dto.AdvertOpportunityCategoryDTO;
 import uk.co.alumeni.prism.dto.AdvertTargetDTO;
-import uk.co.alumeni.prism.dto.AdvertApplicationDTO;
 import uk.co.alumeni.prism.dto.AdvertUserDTO;
 import uk.co.alumeni.prism.dto.UserAdvertDTO;
 import uk.co.alumeni.prism.dto.UserResourceDTO;
@@ -838,7 +838,7 @@ public class AdvertService {
     }
 
     public VisibleAdvertDTO getVisibleAdverts(User user, OpportunitiesQueryDTO query, PrismScope[] scopes) {
-        Integer advertId = query.getAdvertId();
+        Integer queryAdvertId = query.getAdvertId();
         PrismScope resourceScope = query.getResourceScope();
 
         Set<Integer> nodeAdverts = Sets.newHashSet();
@@ -846,8 +846,8 @@ public class AdvertService {
             Integer resourceId = query.getResourceId();
             nodeAdverts.addAll(advertDAO.getResourceAdverts(resourceScope, resourceId, scopes));
             nodeAdverts.addAll(advertDAO.getResourceAdvertsTargeted(resourceScope, resourceId, scopes));
-        } else if (advertId != null) {
-            nodeAdverts.add(advertId);
+        } else if (queryAdvertId != null) {
+            nodeAdverts.add(queryAdvertId);
         }
 
         Set<AdvertOpportunityCategoryDTO> visible = newTreeSet();
@@ -857,13 +857,14 @@ public class AdvertService {
         if (!(resourceScope != null && isEmpty(nodeAdverts) || (isTrue(query.getRecommendation()) && isEmpty(visibleDirect)))) {
             boolean allVisible = userAdvertDTO.isAllVisible();
             List<Integer> visibleIndirect = userAdvertDTO.getVisibleIndirect();
+            List<Integer> advertsRevoked = userAdvertDTO.isLoggedIn() ? newArrayList() : advertDAO.getAdvertsRevoked();
             advertDAO.getVisibleAdverts(asList(scopes), nodeAdverts, userAdvertDTO, query).forEach(advert -> {
-                Integer visibleAdvertId = advert.getId();
-                boolean isVisibleDirect = visibleDirect.contains(visibleAdvertId);
-                if (allVisible || isTrue(advert.getGloballyVisible()) || isVisibleDirect || visibleIndirect.contains(visibleAdvertId)) {
+                Integer advertId = advert.getId();
+                boolean isVisibleDirect = visibleDirect.contains(advertId);
+                if (allVisible || isTrue(advert.getGloballyVisible()) || isVisibleDirect || visibleIndirect.contains(advertId)) {
                     advert.setPriority(new BigDecimal(isVisibleDirect ? 1 : 0));
                     visible.add(advert);
-                } else {
+                } else if (!advertsRevoked.contains(advertId)) {
                     invisible.add(advert);
                 }
             });
@@ -972,38 +973,40 @@ public class AdvertService {
     }
 
     public UserAdvertDTO getUserAdverts(User user, PrismScope... displayScopes) {
-        if (user == null) {
-            return new UserAdvertDTO().withAllVisible(false).withVisibleDirect(emptyList()).withVisibleIndirect(emptyList()).withInvisible(emptyList());
-        }
-
         Set<Integer> visibleDirect = newHashSet();
         Set<Integer> visibleIndirect = newHashSet();
         Set<Integer> invisible = newHashSet();
-        if (ArrayUtils.isNotEmpty(displayScopes) && stream(displayScopes).anyMatch(displayScope -> displayScope.getScopeCategory().equals(OPPORTUNITY))) {
-            UserResourceDTO userResourceDTO = resourceService.getUserResourceParents(user, true);
-            HashMultimap<PrismScope, Integer> userResources = userResourceDTO.getResourcesAll();
 
-            visibleDirect.addAll(advertDAO.getUserAdverts(userResources, displayScopes));
+        boolean allVisible = false;
+        boolean loggedIn = user != null;
+        if (loggedIn) {
+            if (ArrayUtils.isNotEmpty(displayScopes) && stream(displayScopes).anyMatch(displayScope -> displayScope.getScopeCategory().equals(OPPORTUNITY))) {
+                UserResourceDTO userResourceDTO = resourceService.getUserResourceParents(user, true);
+                HashMultimap<PrismScope, Integer> userResources = userResourceDTO.getResourcesAll();
 
-            Set<Integer> visibleDirectIndex = userResourceDTO.getAdvertsDirect();
-            advertDAO.getUserAdvertsTargeted(userResources, displayScopes).stream().forEach(advert -> {
-                if (visibleDirectIndex.contains(advert.getTargetAdvertId())) {
-                    visibleDirect.add(advert.getAdvertId());
-                } else {
-                    visibleIndirect.add(advert.getAdvertId());
+                visibleDirect.addAll(advertDAO.getUserAdverts(userResources, displayScopes));
+
+                Set<Integer> visibleDirectIndex = userResourceDTO.getAdvertsDirect();
+                advertDAO.getUserAdvertsTargeted(userResources, displayScopes).stream().forEach(advert -> {
+                    if (visibleDirectIndex.contains(advert.getTargetAdvertId())) {
+                        visibleDirect.add(advert.getAdvertId());
+                    } else {
+                        visibleIndirect.add(advert.getAdvertId());
+                    }
+                });
+
+                Set<Integer> visible = visibleDirect;
+                visible.addAll(visibleIndirect);
+                if (visible.size() > 0) {
+                    invisible.addAll(newHashSet(advertDAO.getUserAdvertsRevoked(visible, userResources, displayScopes)));
                 }
-            });
-
-            Set<Integer> visible = visibleDirect;
-            visible.addAll(visibleIndirect);
-            if (visible.size() > 0) {
-                invisible.addAll(newHashSet(advertDAO.getUserAdvertsRevoked(visible, userResources, displayScopes)));
             }
+
+            allVisible = roleService.hasUserRole(systemService.getSystem(), user, SYSTEM_ADMINISTRATOR);
         }
 
-        return new UserAdvertDTO().withAllVisible(roleService.hasUserRole(systemService.getSystem(), user, SYSTEM_ADMINISTRATOR))
-                .withVisibleDirect(newArrayList(visibleDirect)).withVisibleIndirect(newArrayList(visibleIndirect))
-                .withInvisible(newArrayList(invisible));
+        return new UserAdvertDTO().withLoggedIn(loggedIn).withAllVisible(allVisible).withVisibleDirect(newArrayList(visibleDirect))
+                .withVisibleIndirect(newArrayList(visibleIndirect)).withInvisible(newArrayList(invisible));
     }
 
     public List<AdvertCategoryDTO> getAdvertsForWhichUserHasRoles(User user) {

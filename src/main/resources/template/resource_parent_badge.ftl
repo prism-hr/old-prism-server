@@ -53,6 +53,15 @@
         </ul>
     </div>
 
+    [#if invisibleAdvertCount > 0]
+        <div>
+            <p>Invisible adverts: ${invisibleAdvertCount}</p>
+            [#list invisibleAdvertInstitutions as institution]
+                <p>${institution.name}: ${institution.occurrenceCount}</p>
+            [/#list]
+        </div>
+    [/#if]
+
     <div class="prism-footer">
         <a href="http://prism.hr/#!/applicant/main?${advert.resource.resourceScope?lower_case}=${advert.resource.id}"
            class="btn btn-success"

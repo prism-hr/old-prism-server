@@ -1,19 +1,19 @@
 package uk.co.alumeni.prism.rest.representation.advert;
 
-import uk.co.alumeni.prism.domain.definitions.PrismConnectionState;
-import uk.co.alumeni.prism.domain.definitions.PrismOpportunityCategory;
-import uk.co.alumeni.prism.domain.definitions.PrismOpportunityType;
-import uk.co.alumeni.prism.domain.definitions.PrismStudyOption;
-import uk.co.alumeni.prism.rest.representation.action.OpportunityActionRepresentation;
-import uk.co.alumeni.prism.rest.representation.advert.AdvertTargetRepresentation.AdvertTargetConnectionRepresentation;
-import uk.co.alumeni.prism.rest.representation.resource.ResourceOpportunityRepresentationSimple;
-import uk.co.alumeni.prism.rest.representation.resource.ResourceRepresentationSimple;
-import uk.co.alumeni.prism.rest.representation.user.UserRepresentationSimple;
+import static org.apache.commons.lang3.ObjectUtils.firstNonNull;
 
 import java.math.BigDecimal;
 import java.util.List;
 
-import static org.apache.commons.lang3.ObjectUtils.firstNonNull;
+import uk.co.alumeni.prism.domain.definitions.PrismConnectionState;
+import uk.co.alumeni.prism.domain.definitions.PrismOpportunityCategory;
+import uk.co.alumeni.prism.domain.definitions.PrismOpportunityType;
+import uk.co.alumeni.prism.domain.definitions.PrismStudyOption;
+import uk.co.alumeni.prism.rest.representation.action.ActionRepresentationResource;
+import uk.co.alumeni.prism.rest.representation.advert.AdvertTargetRepresentation.AdvertTargetConnectionRepresentation;
+import uk.co.alumeni.prism.rest.representation.resource.ResourceOpportunityRepresentationSimple;
+import uk.co.alumeni.prism.rest.representation.resource.ResourceRepresentationSimple;
+import uk.co.alumeni.prism.rest.representation.user.UserRepresentationSimple;
 
 public class AdvertRepresentationExtended extends AdvertRepresentationSimple {
 
@@ -45,7 +45,7 @@ public class AdvertRepresentationExtended extends AdvertRepresentationSimple {
 
     private List<AdvertTargetConnectionRepresentation> targets;
 
-    private OpportunityActionRepresentation action;
+    private ActionRepresentationResource action;
 
     private PrismConnectionState joinStateStaff;
 
@@ -165,11 +165,11 @@ public class AdvertRepresentationExtended extends AdvertRepresentationSimple {
         this.targets = targets;
     }
 
-    public OpportunityActionRepresentation getAction() {
+    public ActionRepresentationResource getAction() {
         return action;
     }
 
-    public void setAction(OpportunityActionRepresentation action) {
+    public void setAction(ActionRepresentationResource action) {
         this.action = action;
     }
 

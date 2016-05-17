@@ -1,46 +1,5 @@
 package uk.co.alumeni.prism.mapping;
 
-import com.google.common.collect.*;
-import jersey.repackaged.com.google.common.base.Objects;
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang.BooleanUtils;
-import org.springframework.beans.BeanUtils;
-import org.springframework.stereotype.Service;
-import uk.co.alumeni.prism.domain.Domicile;
-import uk.co.alumeni.prism.domain.Theme;
-import uk.co.alumeni.prism.domain.address.Address;
-import uk.co.alumeni.prism.domain.address.AddressCoordinates;
-import uk.co.alumeni.prism.domain.advert.*;
-import uk.co.alumeni.prism.domain.definitions.*;
-import uk.co.alumeni.prism.domain.definitions.workflow.PrismAction;
-import uk.co.alumeni.prism.domain.definitions.workflow.PrismActionCondition;
-import uk.co.alumeni.prism.domain.definitions.workflow.PrismPartnershipState;
-import uk.co.alumeni.prism.domain.definitions.workflow.PrismScope;
-import uk.co.alumeni.prism.domain.resource.*;
-import uk.co.alumeni.prism.domain.user.User;
-import uk.co.alumeni.prism.dto.*;
-import uk.co.alumeni.prism.rest.dto.AddressDTO;
-import uk.co.alumeni.prism.rest.dto.OpportunitiesQueryDTO;
-import uk.co.alumeni.prism.rest.representation.DocumentRepresentation;
-import uk.co.alumeni.prism.rest.representation.action.OpportunityActionRepresentation;
-import uk.co.alumeni.prism.rest.representation.address.AddressCoordinatesRepresentation;
-import uk.co.alumeni.prism.rest.representation.address.AddressRepresentation;
-import uk.co.alumeni.prism.rest.representation.advert.*;
-import uk.co.alumeni.prism.rest.representation.advert.AdvertTargetRepresentation.AdvertTargetConnectionRepresentation;
-import uk.co.alumeni.prism.rest.representation.resource.*;
-import uk.co.alumeni.prism.rest.representation.user.UserRepresentationSimple;
-import uk.co.alumeni.prism.services.ActionService;
-import uk.co.alumeni.prism.services.AdvertService;
-import uk.co.alumeni.prism.services.UserService;
-
-import javax.inject.Inject;
-import javax.transaction.Transactional;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.stream.Collectors;
-
 import static com.google.common.collect.Lists.newArrayList;
 import static com.google.common.collect.Lists.newLinkedList;
 import static com.google.common.collect.Maps.newHashMap;
@@ -55,12 +14,24 @@ import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
 import static org.apache.commons.lang.BooleanUtils.isTrue;
 import static uk.co.alumeni.prism.PrismConstants.RATING_PRECISION;
 import static uk.co.alumeni.prism.dao.WorkflowDAO.advertScopes;
-import static uk.co.alumeni.prism.domain.definitions.PrismConnectionState.*;
-import static uk.co.alumeni.prism.domain.definitions.PrismResourceContext.*;
+import static uk.co.alumeni.prism.domain.definitions.PrismConnectionState.ACCEPTED;
+import static uk.co.alumeni.prism.domain.definitions.PrismConnectionState.ACCEPTED_PARTIAL;
+import static uk.co.alumeni.prism.domain.definitions.PrismConnectionState.PENDING;
+import static uk.co.alumeni.prism.domain.definitions.PrismConnectionState.PENDING_PARTIAL;
+import static uk.co.alumeni.prism.domain.definitions.PrismConnectionState.REJECTED;
+import static uk.co.alumeni.prism.domain.definitions.PrismConnectionState.UNKNOWN;
+import static uk.co.alumeni.prism.domain.definitions.PrismResourceContext.APPLICANT;
+import static uk.co.alumeni.prism.domain.definitions.PrismResourceContext.EMPLOYER;
+import static uk.co.alumeni.prism.domain.definitions.PrismResourceContext.UNIVERSITY;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismAction.APPLICATION_VIEW_EDIT;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismPartnershipState.ENDORSEMENT_PENDING;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismPartnershipState.ENDORSEMENT_PROVIDED;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.*;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.APPLICATION;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.DEPARTMENT;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.INSTITUTION;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.PROGRAM;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.PROJECT;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.getResourceContexts;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScopeCategory.OPPORTUNITY;
 import static uk.co.alumeni.prism.utils.PrismCollectionUtils.containsSame;
 import static uk.co.alumeni.prism.utils.PrismCollectionUtils.containsSome;
@@ -70,12 +41,103 @@ import static uk.co.alumeni.prism.utils.PrismListUtils.processRowDescriptors;
 import static uk.co.alumeni.prism.utils.PrismReflectionUtils.setProperty;
 import static uk.co.alumeni.prism.utils.PrismStringUtils.endsWith;
 
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
+
+import javax.inject.Inject;
+import javax.transaction.Transactional;
+
+import jersey.repackaged.com.google.common.base.Objects;
+
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.BooleanUtils;
+import org.springframework.beans.BeanUtils;
+import org.springframework.stereotype.Service;
+
+import uk.co.alumeni.prism.domain.Domicile;
+import uk.co.alumeni.prism.domain.Theme;
+import uk.co.alumeni.prism.domain.address.Address;
+import uk.co.alumeni.prism.domain.address.AddressCoordinates;
+import uk.co.alumeni.prism.domain.advert.Advert;
+import uk.co.alumeni.prism.domain.advert.AdvertCategories;
+import uk.co.alumeni.prism.domain.advert.AdvertFinancialDetail;
+import uk.co.alumeni.prism.domain.advert.AdvertFunction;
+import uk.co.alumeni.prism.domain.advert.AdvertIndustry;
+import uk.co.alumeni.prism.domain.advert.AdvertLocation;
+import uk.co.alumeni.prism.domain.advert.AdvertTarget;
+import uk.co.alumeni.prism.domain.advert.AdvertTheme;
+import uk.co.alumeni.prism.domain.definitions.PrismAdvertBenefit;
+import uk.co.alumeni.prism.domain.definitions.PrismAdvertFunction;
+import uk.co.alumeni.prism.domain.definitions.PrismAdvertIndustry;
+import uk.co.alumeni.prism.domain.definitions.PrismConnectionState;
+import uk.co.alumeni.prism.domain.definitions.PrismOpportunityCategory;
+import uk.co.alumeni.prism.domain.definitions.PrismResourceContext;
+import uk.co.alumeni.prism.domain.definitions.PrismStudyOption;
+import uk.co.alumeni.prism.domain.definitions.workflow.PrismAction;
+import uk.co.alumeni.prism.domain.definitions.workflow.PrismActionCondition;
+import uk.co.alumeni.prism.domain.definitions.workflow.PrismPartnershipState;
+import uk.co.alumeni.prism.domain.definitions.workflow.PrismScope;
+import uk.co.alumeni.prism.domain.resource.Department;
+import uk.co.alumeni.prism.domain.resource.Institution;
+import uk.co.alumeni.prism.domain.resource.Program;
+import uk.co.alumeni.prism.domain.resource.Project;
+import uk.co.alumeni.prism.domain.resource.Resource;
+import uk.co.alumeni.prism.domain.resource.ResourceOpportunity;
+import uk.co.alumeni.prism.domain.resource.ResourceParent;
+import uk.co.alumeni.prism.domain.resource.ResourceStudyOption;
+import uk.co.alumeni.prism.domain.user.User;
+import uk.co.alumeni.prism.dto.AdvertApplicationSummaryDTO;
+import uk.co.alumeni.prism.dto.AdvertCategoryDTO;
+import uk.co.alumeni.prism.dto.AdvertDTO;
+import uk.co.alumeni.prism.dto.AdvertLocationAddressPartSummaryDTO;
+import uk.co.alumeni.prism.dto.AdvertOpportunityCategoryDTO;
+import uk.co.alumeni.prism.dto.AdvertTargetDTO;
+import uk.co.alumeni.prism.dto.AdvertApplicationDTO;
+import uk.co.alumeni.prism.dto.AdvertUserDTO;
+import uk.co.alumeni.prism.dto.ResourceFlatToNestedDTO;
+import uk.co.alumeni.prism.dto.UserAdvertDTO;
+import uk.co.alumeni.prism.dto.VisibleAdvertDTO;
+import uk.co.alumeni.prism.rest.dto.AddressDTO;
+import uk.co.alumeni.prism.rest.dto.OpportunitiesQueryDTO;
+import uk.co.alumeni.prism.rest.representation.DocumentRepresentation;
+import uk.co.alumeni.prism.rest.representation.action.ActionRepresentationResource;
+import uk.co.alumeni.prism.rest.representation.address.AddressCoordinatesRepresentation;
+import uk.co.alumeni.prism.rest.representation.address.AddressRepresentation;
+import uk.co.alumeni.prism.rest.representation.advert.AdvertCategoriesRepresentation;
+import uk.co.alumeni.prism.rest.representation.advert.AdvertCompetenceRepresentation;
+import uk.co.alumeni.prism.rest.representation.advert.AdvertFinancialDetailRepresentation;
+import uk.co.alumeni.prism.rest.representation.advert.AdvertListRepresentation;
+import uk.co.alumeni.prism.rest.representation.advert.AdvertLocationAddressPartRepresentation;
+import uk.co.alumeni.prism.rest.representation.advert.AdvertRepresentationExtended;
+import uk.co.alumeni.prism.rest.representation.advert.AdvertRepresentationSimple;
+import uk.co.alumeni.prism.rest.representation.advert.AdvertTargetRepresentation;
+import uk.co.alumeni.prism.rest.representation.advert.AdvertTargetRepresentation.AdvertTargetConnectionRepresentation;
+import uk.co.alumeni.prism.rest.representation.advert.AdvertThemeRepresentation;
+import uk.co.alumeni.prism.rest.representation.resource.ResourceLocationRepresentationRelation;
+import uk.co.alumeni.prism.rest.representation.resource.ResourceOpportunityRepresentationSimple;
+import uk.co.alumeni.prism.rest.representation.resource.ResourceRepresentationConnection;
+import uk.co.alumeni.prism.rest.representation.resource.ResourceRepresentationIdentity;
+import uk.co.alumeni.prism.rest.representation.resource.ResourceRepresentationOccurrence;
+import uk.co.alumeni.prism.rest.representation.resource.ResourceRepresentationSimple;
+import uk.co.alumeni.prism.rest.representation.user.UserRepresentationSimple;
+import uk.co.alumeni.prism.services.ActionService;
+import uk.co.alumeni.prism.services.AdvertService;
+import uk.co.alumeni.prism.services.UserService;
+
+import com.google.common.collect.HashMultimap;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.LinkedHashMultimap;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
+import com.google.common.collect.TreeMultimap;
+
 @Service
 @Transactional
 public class AdvertMapper {
-
-    @Inject
-    private ActionMapper actionMapper;
 
     @Inject
     private ActionService actionService;
@@ -178,7 +240,7 @@ public class AdvertMapper {
         representation.setUser(new UserRepresentationSimple().withFirstName(advert.getUserFirstName()).withLastName(advert.getUserLastName())
                 .withAccountProfileUrl(advert.getUserAccountProfileUrl()).withAccountImageUrl(advert.getUserAccountImageUrl()));
 
-        for (PrismScope scope : new PrismScope[]{PROJECT, PROGRAM, DEPARTMENT, INSTITUTION}) {
+        for (PrismScope scope : new PrismScope[] { PROJECT, PROGRAM, DEPARTMENT, INSTITUTION }) {
             ResourceRepresentationSimple resource = getAdvertResourceRepresentation(advert, scope);
             if (resource != null) {
                 setProperty(representation, scope.getLowerCamelName(), resource);
@@ -433,7 +495,7 @@ public class AdvertMapper {
     }
 
     private void mapAdvertLocationAddressPartRepresentations(Set<AdvertLocationAddressPartRepresentation> currentParents,
-                                                             TreeMultimap<Integer, AdvertLocationAddressPartRepresentation> representationIndex) {
+            TreeMultimap<Integer, AdvertLocationAddressPartRepresentation> representationIndex) {
         Set<AdvertLocationAddressPartRepresentation> newParents = Sets.newHashSet();
         while (!(representationIndex == null || representationIndex.isEmpty())) {
             currentParents.forEach(currentParent -> {
@@ -458,7 +520,7 @@ public class AdvertMapper {
 
     private AdvertListRepresentation getAdvertListRepresentation(User user, OpportunitiesQueryDTO query) {
         PrismScope filterScope = query.getContextScope();
-        PrismScope[] filterScopes = filterScope != null ? new PrismScope[]{filterScope} : query.getContext().getFilterScopes();
+        PrismScope[] filterScopes = filterScope != null ? new PrismScope[] { filterScope } : query.getContext().getFilterScopes();
 
         Map<String, Integer> summaries = Maps.newHashMap();
         VisibleAdvertDTO visibleAdvertDTO = advertService.getVisibleAdverts(user, query, filterScopes);
@@ -621,7 +683,7 @@ public class AdvertMapper {
     }
 
     private void setAdvertFinancialDetailBenefitsRepresentation(String benefit, String benefitDescription,
-                                                                AdvertFinancialDetailRepresentation financialDetailRepresentation) {
+            AdvertFinancialDetailRepresentation financialDetailRepresentation) {
         if (benefit != null) {
             financialDetailRepresentation.setBenefits(stream(benefit.split("\\|")).map(PrismAdvertBenefit::valueOf).collect(toList()));
             financialDetailRepresentation.setBenefitsDescription(benefitDescription);
@@ -680,8 +742,9 @@ public class AdvertMapper {
     }
 
     private void setAdvertApplyActions(User user, Map<Integer, AdvertRepresentationExtended> representations) {
-        List<AdvertUserApplyingForDTO> advertsApplyingFor = advertService.getAdvertsUserApplyingFor(user, representations.keySet());
-        Map<Integer, Integer> advertsMap = advertsApplyingFor.stream().collect(Collectors.toMap(AdvertUserApplyingForDTO::getAdvertId, AdvertUserApplyingForDTO::getApplicationId));
+        List<AdvertApplicationDTO> advertsApplyingFor = advertService.getAdvertsUserApplyingFor(user, representations.keySet());
+        Map<Integer, Integer> advertsMap = advertsApplyingFor.stream().collect(
+                Collectors.toMap(AdvertApplicationDTO::getAdvertId, AdvertApplicationDTO::getApplicationId));
         if (advertsApplyingFor.size() > 0) {
             representations.values().stream().forEach(representation -> {
                 PrismScope resourceScope = representation.getResource().getScope();
@@ -694,9 +757,10 @@ public class AdvertMapper {
                         resourceRepresentation = new ResourceRepresentationIdentity().withId(applicationId).withScope(APPLICATION);
                     } else {
                         action = PrismAction.valueOf(resourceScope.name() + "_CREATE_APPLICATION");
-                        resourceRepresentation = new ResourceRepresentationIdentity().withId(representation.getId()).withScope(PrismScope.valueOf(resourceScope.name()));
+                        resourceRepresentation = new ResourceRepresentationIdentity().withId(representation.getId()).withScope(
+                                PrismScope.valueOf(resourceScope.name()));
                     }
-                    OpportunityActionRepresentation actionRepresentation = new OpportunityActionRepresentation()
+                    ActionRepresentationResource actionRepresentation = new ActionRepresentationResource()
                             .withId(action).withCategory(action.getActionCategory()).withResource(resourceRepresentation);
                     representation.setAction(actionRepresentation);
                 }
@@ -705,7 +769,7 @@ public class AdvertMapper {
     }
 
     private void setAdvertJoinStates(User user, HashMultimap<String, AdvertCategoryDTO> advertUserRoles,
-                                     Map<Integer, AdvertRepresentationExtended> representations) {
+            Map<Integer, AdvertRepresentationExtended> representations) {
         List<Integer> advertsAsStaff = advertUserRoles.get("staff").stream().map(advert -> advert.getAdvert()).collect(toList());
         List<Integer> advertsAsStaffPending = advertUserRoles.get("staffPending").stream().map(advert -> advert.getAdvert()).collect(toList());
         List<Integer> advertsAsStudent = advertUserRoles.get("student").stream().map(advert -> advert.getAdvert()).collect(toList());
@@ -786,7 +850,7 @@ public class AdvertMapper {
     }
 
     private void setAdvertConnectState(HashMultimap<Integer, Integer> pendingForIndex, HashMultimap<Integer, Integer> acceptedForIndex, AdvertTarget target,
-                                       Integer ownerAdvert, Integer targetAdvert) {
+            Integer ownerAdvert, Integer targetAdvert) {
         if (target.getPartnershipState().equals(ENDORSEMENT_PROVIDED)) {
             acceptedForIndex.put(targetAdvert, ownerAdvert);
         } else {

@@ -1,6 +1,6 @@
 package uk.co.alumeni.prism.dto;
 
-public class AdvertUserApplyingForDTO {
+public class AdvertApplicationDTO {
 
     private Integer advertId;
 

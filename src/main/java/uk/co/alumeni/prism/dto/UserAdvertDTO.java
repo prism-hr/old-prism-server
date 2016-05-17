@@ -7,6 +7,8 @@ import com.google.common.collect.Sets;
 
 public class UserAdvertDTO {
 
+    private boolean loggedIn;
+    
     private boolean allVisible;
 
     private List<Integer> visibleDirect;
@@ -14,6 +16,14 @@ public class UserAdvertDTO {
     private List<Integer> visibleIndirect;
 
     private List<Integer> invisible;
+    
+    public boolean isLoggedIn() {
+        return loggedIn;
+    }
+
+    public void setLoggedIn(boolean loggedIn) {
+        this.loggedIn = loggedIn;
+    }
 
     public boolean isAllVisible() {
         return allVisible;
@@ -54,6 +64,11 @@ public class UserAdvertDTO {
         return target;
     }
 
+    public UserAdvertDTO withLoggedIn(boolean loggedIn) {
+        this.loggedIn = loggedIn;
+        return this;
+    }
+    
     public UserAdvertDTO withAllVisible(boolean allVisible) {
         this.allVisible = allVisible;
         return this;

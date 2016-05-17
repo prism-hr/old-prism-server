@@ -1,0 +1,3 @@
+ALTER TABLE advert
+MODIFY COLUMN pay_option VARCHAR(20)
+;

@@ -30,10 +30,10 @@
 
 [#if options.type == "SIMPLE"]
     <div class="prism-main">
-        <a href="http://prism.hr/#!/applicant/main?${advert.resource.resourceScope?lower_case}=${advert.resource.id}"
+        <a href="${applicationUrl}/#!/applicant/main?${advert.resource.resourceScope?lower_case}=${advert.resource.id}"
            class="btn btn-success"
            target="_blank">${viewOpportunitiesLabel}</a>
-        <a href="http://prism.hr/#!/advertise?context=${advert.resource.resourceScope?lower_case}&&selected${advert.resource.resourceScope?capitalize}=${advert.resource.id}&selectedResourceContext=${options.context}"
+        <a href="${applicationUrl}/#!/advertise?context=${advert.resource.resourceScope?lower_case}&&selected${advert.resource.resourceScope?capitalize}=${advert.resource.id}&selectedResourceContext=${options.context}"
            class="btn btn-primary" target="_blank">${postOpportunityLabel}</a>
     </div>
 
@@ -50,41 +50,47 @@
                     </div>
                 </li>
             [/#list]
+            [#if invisibleAdvertCount > 0]
                 <li class="prism-summary clearfix">
                     <div class="projects">
                         <div class="content">
-                            <div class="title"><span class="ng-binding">9 more</span> private <br>opportunities</div>
+                            <div class="title">
+                                <span class="ng-binding">${invisibleAdvertCount} more</span>
+                                Private <br>Opportunities
+                            </div>
                         </div>
                     </div>
                     <div class="companies-list">
                         <h2>Opportunities from: </h2>
                         <ul>
-                           <li>University College London: <strong>5</strong></li>
-                           <li>Caja Granada: <strong>1</strong></li>
-                           <li>Merck Serono SA: <strong>1</strong></li>
-                           <li>Plasticell: <strong>1</strong></li>
-                           <li>UCB: <strong>1</strong></li>
+                            [#list invisibleAdvertInstitutions as institution]
+                                <li>${institution.name}: <strong>${institution.occurrenceCount}</strong></li>
+                            [/#list]
                         </ul>
-                        <p>To apply for the private applications you need to <a class="btn btn-success inverted btn-xs">Register as a student</a></p>
+
+                        <p>To apply for the private applications you need to
+
+                            [#if advert.resource.resourceScope == "DEPARTMENT"]
+                            <a href="${applicationUrl}/#!/university/applicant?department=${advert.resource.id}"
+                               class="btn btn-success inverted btn-xs">
+                            [#else]
+                            <a href="${applicationUrl}/#!/university/applicant"
+                               class="btn btn-success inverted btn-xs">
+                            [/#if]
+                            Register as a student
+                        </a>
+                        </p>
                     </div>
                 </li>
+            [/#if]
         </ul>
     </div>
 
-    [#if invisibleAdvertCount > 0]
-        <div>
-            <p>Invisible adverts: ${invisibleAdvertCount}</p>
-            [#list invisibleAdvertInstitutions as institution]
-                <p>${institution.name}: ${institution.occurrenceCount}</p>
-            [/#list]
-        </div>
-    [/#if]
-
     <div class="prism-footer">
-        <a href="http://prism.hr/#!/applicant/main?${advert.resource.resourceScope?lower_case}=${advert.resource.id}"
+        <a href="${applicationUrl}/#!/applicant/main?${advert.resource.resourceScope?lower_case}=${advert.resource.id}"
            class="btn btn-success"
            target="_blank">${viewOpportunitiesLabel}</a>
-        <a href="http://prism.hr/#!/advertise?context=${advert.resource.resourceScope?lower_case}&&selected${advert.resource.resourceScope?capitalize}=${advert.resource.id}&selectedResourceContext=${options.context}"
+        <a href="${applicationUrl}/#!/advertise?context=${advert.resource.resourceScope?lower_case}&&selected${advert.resource.resourceScope?capitalize}=${advert.resource.id}&selectedResourceContext=${options.context}"
            class="btn btn-primary" target="_blank">${postOpportunityLabel}</a>
     </div>
 [/#if]

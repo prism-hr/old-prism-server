@@ -50,6 +50,24 @@
                     </div>
                 </li>
             [/#list]
+                <li class="prism-summary clearfix">
+                    <div class="projects">
+                        <div class="content">
+                            <div class="title"><span class="ng-binding">9 more</span> private <br>opportunities</div>
+                        </div>
+                    </div>
+                    <div class="companies-list">
+                        <h2>Opportunities from: </h2>
+                        <ul>
+                           <li>University College London: <strong>5</strong></li>
+                           <li>Caja Granada: <strong>1</strong></li>
+                           <li>Merck Serono SA: <strong>1</strong></li>
+                           <li>Plasticell: <strong>1</strong></li>
+                           <li>UCB: <strong>1</strong></li>
+                        </ul>
+                        <p>To apply for the private applications you need to <a class="btn btn-success inverted btn-xs">Register as a student</a></p>
+                    </div>
+                </li>
         </ul>
     </div>
 

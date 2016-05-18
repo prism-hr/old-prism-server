@@ -1047,26 +1047,31 @@ public class AdvertDAO {
     private Junction getVisibleAdvertConstraint(String selectAdvertAlias, String restrictAdvertAlias, HashMultimap<PrismScope, Integer> userResources,
             boolean publishedOnly, PrismScope... displayScopes) {
         String selectAdvertAliasResolved = getResolvedAliasReference(selectAdvertAlias);
-        String restrictAdvertAliasResolved = getResolvedAliasReference(restrictAdvertAlias);
 
-        Junction permissionConstraint = Restrictions.disjunction();
-        userResources.keySet().stream().forEach(userResourceScope -> {
-            Set<Integer> userResourcesScope = userResources.get(userResourceScope);
-            if (isNotEmpty(userResourcesScope)) {
-                permissionConstraint.add(Restrictions.in(restrictAdvertAliasResolved + userResourceScope.getLowerCamelName() + ".id", userResourcesScope));
+        Junction visibilityConstraint = Restrictions.conjunction();
+        if (userResources == null || userResources.isEmpty()) {
+            visibilityConstraint.add(Restrictions.eq(selectAdvertAliasResolved + "id", 0));
+        } else {
+            String restrictAdvertAliasResolved = getResolvedAliasReference(restrictAdvertAlias);
+
+            Junction permissionConstraint = Restrictions.disjunction();
+            userResources.keySet().stream().forEach(userResourceScope -> {
+                Set<Integer> userResourcesScope = userResources.get(userResourceScope);
+                if (isNotEmpty(userResourcesScope)) {
+                    permissionConstraint.add(Restrictions.in(restrictAdvertAliasResolved + userResourceScope.getLowerCamelName() + ".id", userResourcesScope));
+                }
+            });
+
+            visibilityConstraint.add(permissionConstraint);
+
+            if (isNotEmpty(displayScopes)) {
+                visibilityConstraint.add(Restrictions.in(selectAdvertAliasResolved + "scope.id", displayScopes));
             }
-        });
 
-        Junction visibilityConstraint = Restrictions.conjunction() //
-                .add(permissionConstraint);
-
-        if (isNotEmpty(displayScopes)) {
-            visibilityConstraint.add(Restrictions.in(selectAdvertAliasResolved + "scope.id", displayScopes));
-        }
-
-        visibilityConstraint.add(Restrictions.eq(selectAdvertAliasResolved + "submitted", true));
-        if (publishedOnly) {
-            visibilityConstraint.add(Restrictions.eq(selectAdvertAliasResolved + "published", true));
+            visibilityConstraint.add(Restrictions.eq(selectAdvertAliasResolved + "submitted", true));
+            if (publishedOnly) {
+                visibilityConstraint.add(Restrictions.eq(selectAdvertAliasResolved + "published", true));
+            }
         }
 
         return visibilityConstraint;

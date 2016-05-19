@@ -26,7 +26,6 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.toList;
-import static org.apache.commons.lang.StringUtils.EMPTY;
 import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition.*;
 import static uk.co.alumeni.prism.domain.definitions.PrismResourceContext.APPLICANT;
 
@@ -49,25 +48,24 @@ public class WidgetService {
     public String getAdvertBadge(Advert advert, Map<String, String> options) {
         ResourceParent resourceParent = advert.getResourceParent();
         ResourceOpportunity resourceOpportunity = advert.getResourceOpportunity();
-        if (resourceParent != null) {
-            return getResourceParentBadge(advert, resourceParent, options);
-        } else if (resourceOpportunity != null) {
+        if (resourceOpportunity != null) {
             return getOpportunityBadge(advert, resourceOpportunity);
+        } else if (resourceParent != null) {
+            return getResourceParentBadge(advert, resourceParent, options);
         }
         throw new ResourceNotFoundException("Incorrect resource type");
     }
 
     private String getOpportunityBadge(Advert advert, ResourceOpportunity resource) {
         AdvertRepresentationExtended advertRepresentation = advertMapper.getAdvertRepresentationExtended(advert);
-        if (advertRepresentation != null) {
-            PropertyLoader propertyLoader = applicationContext.getBean(PropertyLoader.class).localizeLazy(resource);
-            Map<String, Object> model = createHeaderModel(advert, propertyLoader);
-            model.put("opportunity", createOpportunityModel(advertRepresentation, propertyLoader));
+        PropertyLoader propertyLoader = applicationContext.getBean(PropertyLoader.class).localizeLazy(resource);
+        Map<String, Object> model = createHeaderModel(advert, propertyLoader);
 
-            return templateUtils.getContentFromLocation("opportunity_badge.ftl", model);
+        if (advertRepresentation != null) {
+            model.put("opportunity", createOpportunityModel(advertRepresentation, propertyLoader));
         }
 
-        return EMPTY;
+        return templateUtils.getContentFromLocation("opportunity_badge.ftl", model);
     }
 
     private String getResourceParentBadge(Advert advert, ResourceParent resource, Map<String, String> options) {

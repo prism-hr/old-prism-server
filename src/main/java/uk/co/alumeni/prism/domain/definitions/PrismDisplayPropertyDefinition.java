@@ -1741,6 +1741,8 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
             "Complete your advert, to help candidates understand whether they wish to apply."),
     SYSTEM_RESOURCE_APPLICATION_OPTIONS_HEADER(PrismDisplayPropertyCategory.SYSTEM_RESOURCE, "Application Options"),
     SYSTEM_RESOURCE_MANAGEMENT_HEADER(PrismDisplayPropertyCategory.SYSTEM_RESOURCE, "Resource Management"),
+    SYSTEM_RESOURCE_ADVERT_EMPLOYER(PrismDisplayPropertyCategory.SYSTEM_RESOURCE, "Employer"),
+    SYSTEM_RESOURCE_ADVERT_UNIVERSITY(PrismDisplayPropertyCategory.SYSTEM_RESOURCE, "University"),    
     SYSTEM_RESOURCE_ADVERT_CATEGORIES_HEADER(PrismDisplayPropertyCategory.SYSTEM_RESOURCE, "Categories and Themes"),
     SYSTEM_RESOURCE_ADVERT_BADGE_HEADER(PrismDisplayPropertyCategory.SYSTEM_RESOURCE, "Sharing and Embeddable Badges"),
     SYSTEM_RESOURCE_CATEGORIES_INCOMPLETE(PrismDisplayPropertyCategory.SYSTEM_RESOURCE, "Provide some tags to help candidates discover your advert."),
@@ -2063,6 +2065,11 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     SYSTEM_RESOURCE_SHARE_READ_MORE(PrismDisplayPropertyCategory.SYSTEM_RESOURCE_SHARE, "Read More"),
     SYSTEM_RESOURCE_SHARE_HTML_LABEL(PrismDisplayPropertyCategory.SYSTEM_RESOURCE_SHARE, "HTML to embed in your website"),
     SYSTEM_RESOURCE_SHARE_HTML_HINT(PrismDisplayPropertyCategory.SYSTEM_RESOURCE_SHARE, "Embed this HTML in your website to display the badge."),
+    SYSTEM_RESOURCE_SHARE_OPTIONS(PrismDisplayPropertyCategory.SYSTEM_RESOURCE_SHARE, "Badge Options"),
+    SYSTEM_RESOURCE_SHARE_OPTIONS_BASIC(PrismDisplayPropertyCategory.SYSTEM_RESOURCE_SHARE, "Basic"),
+    SYSTEM_RESOURCE_SHARE_OPTIONS_POSITION_LIST(PrismDisplayPropertyCategory.SYSTEM_RESOURCE_SHARE, "Position List"),
+    SYSTEM_RESOURCE_SHARE_OPTIONS_POSITION_LIST_STATIC(PrismDisplayPropertyCategory.SYSTEM_RESOURCE_SHARE, "Static List"),
+    SYSTEM_RESOURCE_SHARE_OPTIONS_POSITION_LIST_SLIDER(PrismDisplayPropertyCategory.SYSTEM_RESOURCE_SHARE, "Slider"),
 
     /*
      * *************** SYSTEM RESOURCE TARGETS *********************

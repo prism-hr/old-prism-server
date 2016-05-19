@@ -17,12 +17,19 @@
                 <div class="sub-header">${headerTitle}</div>
             </div>
             <div class="prism-main">
+            [#if opportunity??]
                 [#include "opportunity_partial.ftl"]
+            [#else]
+                <h1>Opportunity Not Available</h1>
+            [/#if]
             </div>
             <div class="prism-apply-holder">
-                <a href="${applicationUrl}/#!/employer/applicant?institution=${opportunity.advert.institution.id}&tab=opportunities" class="btn btn-default enquire" target="_blank">${otherOpportunitiesLabel}</a>
-                <a href="${applicationUrl}/#!/applicant/main?${opportunity.advert.resource.scope?lower_case}=${opportunity.advert.resource.id}"
+                <a href="${applicationUrl}/#!/employer/applicant?institution=${advert.institution.id}&tab=opportunities"
+                   class="btn btn-default enquire" target="_blank">${otherOpportunitiesLabel}</a>
+            [#if opportunity??]
+                <a href="${applicationUrl}/#!/applicant/main?${advert.resource.resourceScope?lower_case}=${advert.resource.id}"
                    class="btn btn-success ng-scope" target="_blank">${applyNowLabel}</a>
+            [/#if]
             </div>
         </div>
     </div>

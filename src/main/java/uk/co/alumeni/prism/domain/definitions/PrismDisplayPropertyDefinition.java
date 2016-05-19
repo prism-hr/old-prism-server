@@ -1238,11 +1238,10 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     SYSTEM_VALIDATION_MAX(PrismDisplayPropertyCategory.SYSTEM_VALIDATION_ERROR, "This field must be at most {1}."),
     SYSTEM_VALIDATION_MINLENGTH(PrismDisplayPropertyCategory.SYSTEM_VALIDATION_ERROR, "This field must be at least {1} character(s)."),
     SYSTEM_VALIDATION_MAXLENGTH(PrismDisplayPropertyCategory.SYSTEM_VALIDATION_ERROR, "This field must be less than {1} character(s)."),
-    SYSTEM_VALIDATION_MIN_ITEMS(PrismDisplayPropertyCategory.SYSTEM_VALIDATION_ERROR, "You have to select at least 1 element."), // FIXME
-                                                                                                                                 // soon,
-                                                                                                                                 // hack
-                                                                                                                                 // for
-                                                                                                                                 // ui-select
+
+    SYSTEM_VALIDATION_MIN_ITEMS(PrismDisplayPropertyCategory.SYSTEM_VALIDATION_ERROR, "You have to select at least 1 element."),
+    // FIXME soon, hack for ui-select
+
     SYSTEM_VALIDATION_MAX_ITEMS(PrismDisplayPropertyCategory.SYSTEM_VALIDATION_ERROR, "You have to select at most {1} element(s)."),
     SYSTEM_VALIDATION_PATTERN(PrismDisplayPropertyCategory.SYSTEM_VALIDATION_ERROR, "This field is invalid."),
     SYSTEM_VALIDATION_URL(PrismDisplayPropertyCategory.SYSTEM_VALIDATION_ERROR, "This field must be a valid URL."),
@@ -1380,6 +1379,7 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     SYSTEM_HTML_GENERAL_CONNECT_UNIVERSITY(PrismDisplayPropertyCategory.SYSTEM_GENERAL, "Connect with Universities"),
     SYSTEM_HTML_GENERAL_JOIN_UNIVERSITY(PrismDisplayPropertyCategory.SYSTEM_GENERAL, "Join University"),
     SYSTEM_HTML_GENERAL_CONNECT_EMPLOYER(PrismDisplayPropertyCategory.SYSTEM_GENERAL, "Connect with Employers"),
+    SYSTEM_HTML_GENERAL_PRIVATE(PrismDisplayPropertyCategory.SYSTEM_GENERAL, "Private"),
     SYSTEM_HTML_SEARCH_OPPORTUNITIES(PrismDisplayPropertyCategory.SYSTEM_GENERAL, "Search Opportunities"),
     SYSTEM_HTML_SEARCH_CONNECTIONS(PrismDisplayPropertyCategory.SYSTEM_GENERAL, "Search Connections"),
     SYSTEM_HTML_ADVERTISE_OPPORTUNITIES(PrismDisplayPropertyCategory.SYSTEM_GENERAL, "Advertise Opportunity"),
@@ -1524,6 +1524,8 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     SYSTEM_OPPORTUNITIES_FILTER_DURATION(PrismDisplayPropertyCategory.SYSTEM_OPPORTUNITIES, "Duration"),
     SYSTEM_OPPORTUNITIES_FILTER_INSTITUTION_LABEL(PrismDisplayPropertyCategory.SYSTEM_OPPORTUNITIES, "Organization"),
     SYSTEM_OPPORTUNITIES_FILTER_CLEAR(PrismDisplayPropertyCategory.SYSTEM_OPPORTUNITIES, "Clear"),
+    SYSTEM_OPPORTUNITIES_ACCESS_PRIVATE(PrismDisplayPropertyCategory.SYSTEM_GENERAL, "To access private opportunities"),
+    SYSTEM_OPPORTUNITIES_LOADING(PrismDisplayPropertyCategory.SYSTEM_GENERAL, "Loading"),
     SYSTEM_OPPORTUNITIES_LOAD_MORE(PrismDisplayPropertyCategory.SYSTEM_OPPORTUNITIES, "Load More"),
     SYSTEM_OPPORTUNITIES_PROPERTY_CLOSING_DATE_LABEL(PrismDisplayPropertyCategory.SYSTEM_OPPORTUNITIES, "Closing Date"),
     SYSTEM_OPPORTUNITIES_PROPERTY_NO_CLOSING_DATE(PrismDisplayPropertyCategory.SYSTEM_OPPORTUNITIES, "No closing date"),

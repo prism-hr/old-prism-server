@@ -709,20 +709,21 @@ public class AdvertDAO {
     }
 
     public List<AdvertLocationAddressPartSummaryDTO> getAdvertLocationSummaries(PrismScope scope, UserAdvertDTO userAdvertDTO, String searchTerm) {
-        return (List<AdvertLocationAddressPartSummaryDTO>) sessionFactory.getCurrentSession().createCriteria(Advert.class) //
-                .setProjection(Projections.projectionList() //
+        return (List<AdvertLocationAddressPartSummaryDTO>) sessionFactory.getCurrentSession().createCriteria(Advert.class)
+                .setProjection(Projections.projectionList()
                         .add(Projections.groupProperty("addressLocationPart.id").as("id"))
-                        .add(Projections.property("addressLocationPart.parent.id").as("parentId")) //
-                        .add(Projections.property("addressLocationPart.name").as("name")) //
-                        .add(Projections.countDistinct("advert.id").as("advertCount"))) //
-                .createAlias("categories.locations", "advertLocation", JoinType.INNER_JOIN) //
-                .createAlias("advertLocation.locationAdvert", "locationAdvert", JoinType.INNER_JOIN) //
-                .createAlias("locationAdvert.address", "locationAddress", JoinType.INNER_JOIN) //
-                .createAlias("locationAddress.addressLocationParts", "addressLocationPart", JoinType.INNER_JOIN) //
-                .add(getVisibilityConstraint(userAdvertDTO, false)) //
-                .add(Restrictions.like("addressLocationPart.name", searchTerm)) //
-                .addOrder(Order.asc("addressLocationPart.nameIndex")) //
-                .setResultTransformer(Transformers.aliasToBean(AdvertLocationAddressPartSummaryDTO.class)) //
+                        .add(Projections.property("addressLocationPart.parent.id").as("parentId"))
+                        .add(Projections.property("addressLocationPart.name").as("name"))
+                        .add(Projections.countDistinct("id").as("advertCount")))
+                .createAlias("categories.locations", "advertLocation", JoinType.INNER_JOIN)
+                .createAlias("advertLocation.locationAdvert", "locationAdvert", JoinType.INNER_JOIN)
+                .createAlias("locationAdvert.address", "locationAddress", JoinType.INNER_JOIN)
+                .createAlias("locationAddress.locations", "location", JoinType.INNER_JOIN)
+                .createAlias("location.locationPart", "addressLocationPart", JoinType.INNER_JOIN)
+                .add(getVisibilityConstraint(userAdvertDTO, false))
+                .add(Restrictions.like("addressLocationPart.name", searchTerm))
+                .addOrder(Order.asc("addressLocationPart.nameIndex"))
+                .setResultTransformer(Transformers.aliasToBean(AdvertLocationAddressPartSummaryDTO.class))
                 .list();
     }
 

@@ -49,17 +49,17 @@ public class WidgetService {
         ResourceParent resourceParent = advert.getResourceParent();
         ResourceOpportunity resourceOpportunity = advert.getResourceOpportunity();
         if (resourceOpportunity != null) {
-            return getOpportunityBadge(advert, resourceOpportunity);
+            return getOpportunityBadge(advert, resourceOpportunity, options);
         } else if (resourceParent != null) {
             return getResourceParentBadge(advert, resourceParent, options);
         }
         throw new ResourceNotFoundException("Incorrect resource type");
     }
 
-    private String getOpportunityBadge(Advert advert, ResourceOpportunity resource) {
+    private String getOpportunityBadge(Advert advert, ResourceOpportunity resource, Map<String, String> options) {
         AdvertRepresentationExtended advertRepresentation = advertMapper.getAdvertRepresentationExtended(advert);
         PropertyLoader propertyLoader = applicationContext.getBean(PropertyLoader.class).localizeLazy(resource);
-        Map<String, Object> model = createHeaderModel(advert, propertyLoader);
+        Map<String, Object> model = createHeaderModel(advert, propertyLoader, options);
 
         if (advertRepresentation != null) {
             model.put("opportunity", createOpportunityModel(advertRepresentation, propertyLoader));
@@ -80,8 +80,7 @@ public class WidgetService {
         }
 
         PropertyLoader propertyLoader = applicationContext.getBean(PropertyLoader.class).localizeLazy(resource);
-        Map<String, Object> model = createHeaderModel(advert, propertyLoader);
-        model.put("options", options);
+        Map<String, Object> model = createHeaderModel(advert, propertyLoader, options);
 
         OpportunitiesQueryDTO query = new OpportunitiesQueryDTO().withContext(APPLICANT)
                 .withResourceScope(resource.getResourceScope()).withResourceId(resource.getId())
@@ -97,8 +96,9 @@ public class WidgetService {
         return templateUtils.getContentFromLocation("resource_parent_badge.ftl", model);
     }
 
-    private Map<String, Object> createHeaderModel(Advert advert, PropertyLoader propertyLoader) {
+    private Map<String, Object> createHeaderModel(Advert advert, PropertyLoader propertyLoader, Map<String, String> options) {
         Map<String, Object> model = new HashMap<>();
+        model.put("options", options);
         model.put("advert", advert);
         model.put("applicationUrl", applicationUrl);
         model.put("headerTitle", propertyLoader.loadLazy(SYSTEM_RESOURCE_SHARE_OPPORTUNITIES));

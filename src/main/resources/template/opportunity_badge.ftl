@@ -24,7 +24,7 @@
             [/#if]
             </div>
             <div class="prism-apply-holder">
-                <a href="${applicationUrl}/#!/employer/applicant?institution=${advert.institution.id}&tab=opportunities"
+                <a href="${applicationUrl}/#!/${options.context?lower_case}/applicant?institution=${advert.institution.id}&tab=opportunities"
                    class="btn btn-default enquire" target="_blank">${otherOpportunitiesLabel}</a>
             [#if opportunity??]
                 <a href="${applicationUrl}/#!/applicant/main?${advert.resource.resourceScope?lower_case}=${advert.resource.id}"

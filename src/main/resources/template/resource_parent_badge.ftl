@@ -30,13 +30,8 @@
 
 [#if options.type == "SIMPLE"]
     <div class="prism-main">
-        <a href="${applicationUrl}/#!/applicant/main?${advert.resource.resourceScope?lower_case}=${advert.resource.id}"
-           class="btn btn-success"
-           target="_blank">${viewOpportunitiesLabel}</a>
-        <a href="${applicationUrl}/#!/advertise?context=${advert.resource.resourceScope?lower_case}&&selected${advert.resource.resourceScope?capitalize}=${advert.resource.id}&selectedResourceContext=${options.context}"
-           class="btn btn-primary" target="_blank">${postOpportunityLabel}</a>
+        [#include "resource_parent_badge_footer.ftl"]
     </div>
-
 [#else] [#-- LIST --]
 
     <div class="prism-main ${options.type?replace("_", "-")?lower_case}">
@@ -71,10 +66,10 @@
                         <p>To apply for the private applications you need to
 
                             [#if advert.resource.resourceScope == "DEPARTMENT"]
-                            <a href="${applicationUrl}/#!/university/applicant?department=${advert.resource.id}"
+                            <a href="${applicationUrl}/#!/${options.context?lower_case}/applicant?department=${advert.resource.id}&tab=opportunities"
                                class="btn btn-success inverted btn-xs">
                             [#else]
-                            <a href="${applicationUrl}/#!/university/applicant"
+                            <a href="${applicationUrl}/#!/${options.context?lower_case}/applicant"
                                class="btn btn-success inverted btn-xs">
                             [/#if]
                             Register as a student
@@ -87,11 +82,7 @@
     </div>
 
     <div class="prism-footer">
-        <a href="${applicationUrl}/#!/applicant/main?${advert.resource.resourceScope?lower_case}=${advert.resource.id}"
-           class="btn btn-success"
-           target="_blank">${viewOpportunitiesLabel}</a>
-        <a href="${applicationUrl}/#!/advertise?context=${advert.resource.resourceScope?lower_case}&&selected${advert.resource.resourceScope?capitalize}=${advert.resource.id}&selectedResourceContext=${options.context}"
-           class="btn btn-primary" target="_blank">${postOpportunityLabel}</a>
+        [#include "resource_parent_badge_footer.ftl"]
     </div>
 [/#if]
 </div>

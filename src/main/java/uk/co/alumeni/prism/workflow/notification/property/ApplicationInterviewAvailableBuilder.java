@@ -1,0 +1,21 @@
+package uk.co.alumeni.prism.workflow.notification.property;
+
+
+import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_NOTIFICATION_AVAILABLE;
+import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_NOTIFICATION_UNAVAILABLE;
+
+import org.apache.commons.lang3.BooleanUtils;
+import org.springframework.stereotype.Component;
+
+import uk.co.alumeni.prism.services.helpers.NotificationPropertyLoader;
+
+@Component
+public class ApplicationInterviewAvailableBuilder implements NotificationPropertyBuilder {
+
+    @Override
+    public String build(NotificationPropertyLoader propertyLoader) {
+        return propertyLoader.getPropertyLoader().loadLazy(SYSTEM_NOTIFICATION_AVAILABLE, SYSTEM_NOTIFICATION_UNAVAILABLE,
+                BooleanUtils.isTrue(propertyLoader.getNotificationDefinitionDTO().getComment().getInterviewAvailable()));
+    }
+
+}

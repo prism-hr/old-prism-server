@@ -183,8 +183,7 @@ public class ResourceController {
 
     @RequestMapping(value = "/{resourceId}/children", method = RequestMethod.GET)
     @PreAuthorize("permitAll")
-    public List<ResourceRepresentationCreation> getResources(
-            @PathVariable Integer resourceId, @ModelAttribute ResourceDescriptor resourceDescriptor,
+    public List<ResourceRepresentationCreation> getResources(@PathVariable Integer resourceId, @ModelAttribute ResourceDescriptor resourceDescriptor,
             @RequestParam PrismScope childResourceScope, @RequestParam Optional<String> q) {
         User user = userService.getCurrentUser();
         Resource resource = loadResource(resourceId, resourceDescriptor);
@@ -372,7 +371,7 @@ public class ResourceController {
     public void viewMessageThread(@RequestBody Map<String, Integer> body) {
         messageService.viewMessageThread(body.get("latestUnreadMessageId"));
     }
-    
+
     @PreAuthorize("isAuthenticated()")
     @RequestMapping(value = "{resourceId}/connections", method = RequestMethod.GET)
     public List<ResourceRepresentationConnection> getResourcesForWhichUserCanConnect(@PathVariable Integer resourceId,

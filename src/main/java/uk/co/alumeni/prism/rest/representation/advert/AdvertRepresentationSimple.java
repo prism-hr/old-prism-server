@@ -18,6 +18,8 @@ public class AdvertRepresentationSimple {
 
     private Boolean globallyVisible;
 
+    private Boolean published;
+
     private DocumentRepresentation backgroundImage;
 
     private String homepage;
@@ -72,6 +74,14 @@ public class AdvertRepresentationSimple {
 
     public void setGloballyVisible(Boolean globallyVisible) {
         this.globallyVisible = globallyVisible;
+    }
+
+    public Boolean getPublished() {
+        return published;
+    }
+
+    public void setPublished(Boolean published) {
+        this.published = published;
     }
 
     public DocumentRepresentation getBackgroundImage() {

@@ -41,7 +41,7 @@
                     [#include "opportunity_partial.ftl"]
                     <div class="prism-apply-holder">
                         <a href="${applicationUrl}/#!/applicant/main?${opportunity.advert.resource.scope?lower_case}=${opportunity.advert.resource.id}"
-                           class="btn btn-success ng-scope" target="_blank">${applyNowLabel}</a>
+                           class="btn btn-success ng-scope" target="_blank">${readMoreLabel}</a>
                     </div>
                 </li>
             [/#list]

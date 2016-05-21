@@ -1,7 +1,7 @@
 package uk.co.alumeni.prism.services;
 
 import static java.util.stream.Collectors.toList;
-import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_APPLY;
+import static org.apache.commons.lang.StringUtils.EMPTY;
 import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_OPPORTUNITIES_PROPERTY_CLOSING_DATE_LABEL;
 import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_OPPORTUNITIES_PROPERTY_LOCATION_LABEL;
 import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_OPPORTUNITIES_PROPERTY_NO_CLOSING_DATE;
@@ -17,6 +17,7 @@ import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinit
 import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_RESOURCE_SHARE_OPPORTUNITIES;
 import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_RESOURCE_SHARE_OTHER_OPPORTUNITIES;
 import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_RESOURCE_SHARE_POST_OPPORTUNITY;
+import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_RESOURCE_SHARE_READ_MORE;
 import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_RESOURCE_SHARE_VIEW_OPPORTUNITIES;
 import static uk.co.alumeni.prism.domain.definitions.PrismResourceContext.APPLICANT;
 
@@ -67,23 +68,27 @@ public class WidgetService {
         ResourceParent resourceParent = advert.getResourceParent();
         ResourceOpportunity resourceOpportunity = advert.getResourceOpportunity();
         if (resourceOpportunity != null) {
-            return getOpportunityBadge(advert, resourceOpportunity, options);
+            return getResourceOpportunityBadge(advert, resourceOpportunity, options);
         } else if (resourceParent != null) {
             return getResourceParentBadge(advert, resourceParent, options);
         }
         throw new ResourceNotFoundException("Incorrect resource type");
     }
 
-    private String getOpportunityBadge(Advert advert, ResourceOpportunity resource, Map<String, String> options) {
+    private String getResourceOpportunityBadge(Advert advert, ResourceOpportunity resource, Map<String, String> options) {
         AdvertRepresentationExtended advertRepresentation = advertMapper.getAdvertRepresentationExtended(advert);
-        PropertyLoader propertyLoader = applicationContext.getBean(PropertyLoader.class).localizeLazy(resource);
-        Map<String, Object> model = createHeaderModel(advert, propertyLoader, options);
-
         if (advertRepresentation != null) {
-            model.put("opportunity", createOpportunityModel(advertRepresentation, propertyLoader));
+            PropertyLoader propertyLoader = applicationContext.getBean(PropertyLoader.class).localizeLazy(resource);
+            Map<String, Object> model = createHeaderModel(advert, propertyLoader, options);
+
+            if (advertRepresentation != null) {
+                model.put("opportunity", createOpportunityModel(advertRepresentation, propertyLoader));
+            }
+
+            return templateUtils.getContentFromLocation("opportunity_badge.ftl", model);
         }
 
-        return templateUtils.getContentFromLocation("opportunity_badge.ftl", model);
+        return EMPTY;
     }
 
     private String getResourceParentBadge(Advert advert, ResourceParent resource, Map<String, String> options) {
@@ -123,7 +128,7 @@ public class WidgetService {
         model.put("viewOpportunitiesLabel", propertyLoader.loadLazy(SYSTEM_RESOURCE_SHARE_VIEW_OPPORTUNITIES));
         model.put("postOpportunityLabel", propertyLoader.loadLazy(SYSTEM_RESOURCE_SHARE_POST_OPPORTUNITY));
         model.put("otherOpportunitiesLabel", propertyLoader.loadLazy(SYSTEM_RESOURCE_SHARE_OTHER_OPPORTUNITIES));
-        model.put("applyNowLabel", propertyLoader.loadLazy(SYSTEM_APPLY));
+        model.put("readMoreLabel", propertyLoader.loadLazy(SYSTEM_RESOURCE_SHARE_READ_MORE));
         return model;
     }
 

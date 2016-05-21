@@ -168,6 +168,7 @@ public class AdvertDAO {
                         .add(Projections.property("summary").as("summary"))
                         .add(Projections.property("description").as("description"))
                         .add(Projections.property("globallyVisible").as("globallyVisible"))
+                        .add(Projections.property("published").as("published"))
                         .add(Projections.property("homepage").as("homepage"))
                         .add(Projections.property("applyHomepage").as("applyHomepage"))
                         .add(Projections.property("telephone").as("telephone"))

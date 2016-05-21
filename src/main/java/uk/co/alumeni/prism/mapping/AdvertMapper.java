@@ -15,6 +15,7 @@ import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
 import static org.apache.commons.lang.BooleanUtils.isTrue;
 import static uk.co.alumeni.prism.PrismConstants.RATING_PRECISION;
 import static uk.co.alumeni.prism.dao.WorkflowDAO.advertScopes;
+import static uk.co.alumeni.prism.domain.definitions.PrismAdvertFilterCategory.LOCATION;
 import static uk.co.alumeni.prism.domain.definitions.PrismConnectionState.ACCEPTED;
 import static uk.co.alumeni.prism.domain.definitions.PrismConnectionState.ACCEPTED_PARTIAL;
 import static uk.co.alumeni.prism.domain.definitions.PrismConnectionState.PENDING;
@@ -70,6 +71,7 @@ import uk.co.alumeni.prism.domain.advert.AdvertLocation;
 import uk.co.alumeni.prism.domain.advert.AdvertTarget;
 import uk.co.alumeni.prism.domain.advert.AdvertTheme;
 import uk.co.alumeni.prism.domain.definitions.PrismAdvertBenefit;
+import uk.co.alumeni.prism.domain.definitions.PrismAdvertFilterCategory;
 import uk.co.alumeni.prism.domain.definitions.PrismAdvertFunction;
 import uk.co.alumeni.prism.domain.definitions.PrismAdvertIndustry;
 import uk.co.alumeni.prism.domain.definitions.PrismConnectionState;
@@ -92,8 +94,13 @@ import uk.co.alumeni.prism.domain.user.User;
 import uk.co.alumeni.prism.dto.AdvertApplicationDTO;
 import uk.co.alumeni.prism.dto.AdvertApplicationSummaryDTO;
 import uk.co.alumeni.prism.dto.AdvertCategoryDTO;
+import uk.co.alumeni.prism.dto.AdvertCategoryNameStringSummaryDTO;
+import uk.co.alumeni.prism.dto.AdvertCategorySummaryDTO;
 import uk.co.alumeni.prism.dto.AdvertDTO;
-import uk.co.alumeni.prism.dto.AdvertLocationAddressPartSummaryDTO;
+import uk.co.alumeni.prism.dto.AdvertFunctionSummaryDTO;
+import uk.co.alumeni.prism.dto.AdvertIndustrySummaryDTO;
+import uk.co.alumeni.prism.dto.AdvertInstitutionSummaryDTO;
+import uk.co.alumeni.prism.dto.AdvertLocationSummaryDTO;
 import uk.co.alumeni.prism.dto.AdvertOpportunityCategoryDTO;
 import uk.co.alumeni.prism.dto.AdvertTargetDTO;
 import uk.co.alumeni.prism.dto.AdvertUserDTO;
@@ -107,10 +114,15 @@ import uk.co.alumeni.prism.rest.representation.action.ActionRepresentationResour
 import uk.co.alumeni.prism.rest.representation.address.AddressCoordinatesRepresentation;
 import uk.co.alumeni.prism.rest.representation.address.AddressRepresentation;
 import uk.co.alumeni.prism.rest.representation.advert.AdvertCategoriesRepresentation;
+import uk.co.alumeni.prism.rest.representation.advert.AdvertCategoryNameStringSummaryRepresentation;
+import uk.co.alumeni.prism.rest.representation.advert.AdvertCategorySummaryRepresentation;
 import uk.co.alumeni.prism.rest.representation.advert.AdvertCompetenceRepresentation;
 import uk.co.alumeni.prism.rest.representation.advert.AdvertFinancialDetailRepresentation;
+import uk.co.alumeni.prism.rest.representation.advert.AdvertFunctionSummaryRepresentation;
+import uk.co.alumeni.prism.rest.representation.advert.AdvertIndustrySummaryRepresentation;
+import uk.co.alumeni.prism.rest.representation.advert.AdvertInstitutionSummaryRepresentation;
 import uk.co.alumeni.prism.rest.representation.advert.AdvertListRepresentation;
-import uk.co.alumeni.prism.rest.representation.advert.AdvertLocationAddressPartRepresentation;
+import uk.co.alumeni.prism.rest.representation.advert.AdvertLocationSummaryRepresentation;
 import uk.co.alumeni.prism.rest.representation.advert.AdvertRepresentationExtended;
 import uk.co.alumeni.prism.rest.representation.advert.AdvertRepresentationSimple;
 import uk.co.alumeni.prism.rest.representation.advert.AdvertTargetRepresentation;
@@ -471,14 +483,46 @@ public class AdvertMapper {
                 .collect(toList());
     }
 
-    public List<AdvertLocationAddressPartRepresentation> getAdvertLocationAddressPartRepresentations(String searchTerm) {
-        Set<AdvertLocationAddressPartSummaryDTO> summaryDTOs = advertService.getAdvertLocationSummaries(searchTerm);
+    @SuppressWarnings("unchecked")
+    public <T extends AdvertCategorySummaryRepresentation<?>, U extends AdvertCategorySummaryDTO<?>> List<T> getAdvertCategorySummaryRepresentations(
+            PrismAdvertFilterCategory category, String searchTerm) {
+        List<U> summaryDTOs = advertService.getAdvertCategorySummaries(category, searchTerm);
+
         if (summaryDTOs.size() > 0) {
-            Set<AdvertLocationAddressPartRepresentation> representations = Sets.newTreeSet();
-            TreeMultimap<Integer, AdvertLocationAddressPartRepresentation> representationIndex = TreeMultimap.create();
+            switch (category) {
+            case FUNCTION:
+                return (List<T>) summaryDTOs.stream().map(summaryDTO -> new AdvertFunctionSummaryRepresentation()
+                        .withId(((AdvertFunctionSummaryDTO) summaryDTO).getId()).withAdvertCount(summaryDTO.getAdvertCount())).collect(toList());
+            case INDUSTRY:
+                return (List<T>) summaryDTOs.stream().map(summaryDTO -> new AdvertIndustrySummaryRepresentation()
+                        .withId(((AdvertIndustrySummaryDTO) summaryDTO).getId()).withAdvertCount(summaryDTO.getAdvertCount())).collect(toList());
+            case INSTITUTION:
+                return (List<T>) summaryDTOs.stream().map(summaryDTO -> new AdvertInstitutionSummaryRepresentation()
+                        .withId(new ResourceRepresentationIdentity().withScope(INSTITUTION).withId(((AdvertInstitutionSummaryDTO) summaryDTO).getId())
+                                .withName(((AdvertInstitutionSummaryDTO) summaryDTO).getName())
+                                .withLogoImage(documentMapper.getDocumentRepresentation(((AdvertInstitutionSummaryDTO) summaryDTO).getLogoImageId())))
+                        .withAdvertCount(summaryDTO.getAdvertCount())).collect(toList());
+            case LOCATION:
+                return (List<T>) getAdvertLocationSummaryRepresentations(searchTerm);
+            case THEME:
+                return (List<T>) summaryDTOs.stream().map(summaryDTO -> new AdvertCategoryNameStringSummaryRepresentation()
+                        .withId(((AdvertCategoryNameStringSummaryDTO) summaryDTO).getId())
+                        .withName(((AdvertCategoryNameStringSummaryDTO) summaryDTO).getName())
+                        .withAdvertCount(summaryDTO.getAdvertCount())).collect(toList());
+            }
+        }
+
+        return newArrayList();
+    }
+
+    private List<AdvertLocationSummaryRepresentation> getAdvertLocationSummaryRepresentations(String searchTerm) {
+        List<AdvertLocationSummaryDTO> summaryDTOs = advertService.getAdvertCategorySummaries(LOCATION, searchTerm);
+        if (summaryDTOs.size() > 0) {
+            Set<AdvertLocationSummaryRepresentation> representations = newTreeSet();
+            TreeMultimap<Integer, AdvertLocationSummaryRepresentation> representationIndex = TreeMultimap.create();
             summaryDTOs.forEach(summaryDTO -> {
                 Integer parentId = summaryDTO.getParentId();
-                AdvertLocationAddressPartRepresentation representation = new AdvertLocationAddressPartRepresentation().withId(summaryDTO.getId())
+                AdvertLocationSummaryRepresentation representation = new AdvertLocationSummaryRepresentation().withId(summaryDTO.getId())
                         .withName(summaryDTO.getName()).withAdvertCount(summaryDTO.getAdvertCount());
                 if (parentId == null) {
                     representations.add(representation);
@@ -487,10 +531,6 @@ public class AdvertMapper {
                 }
             });
 
-            while (representationIndex.size() > 0) {
-
-            }
-
             mapAdvertLocationAddressPartRepresentations(representations, representationIndex);
             return newLinkedList(representations);
         }
@@ -498,15 +538,15 @@ public class AdvertMapper {
         return newArrayList();
     }
 
-    private void mapAdvertLocationAddressPartRepresentations(Set<AdvertLocationAddressPartRepresentation> representations,
-            TreeMultimap<Integer, AdvertLocationAddressPartRepresentation> representationIndex) {
-        Set<AdvertLocationAddressPartRepresentation> newRepresentations = newHashSet();
+    private void mapAdvertLocationAddressPartRepresentations(Set<AdvertLocationSummaryRepresentation> representations,
+            TreeMultimap<Integer, AdvertLocationSummaryRepresentation> representationIndex) {
+        Set<AdvertLocationSummaryRepresentation> newRepresentations = newHashSet();
         if (representationIndex.size() > 0) {
             representations.forEach(representation -> {
                 Integer representationId = representation.getId();
-                Set<AdvertLocationAddressPartRepresentation> subRepresentations = representationIndex.get(representationId);
+                Set<AdvertLocationSummaryRepresentation> subRepresentations = representationIndex.get(representationId);
 
-                List<AdvertLocationAddressPartRepresentation> subParts = newLinkedList();
+                List<AdvertLocationSummaryRepresentation> subParts = newLinkedList();
                 subRepresentations.forEach(subRepresentation -> {
                     subParts.add(subRepresentation);
                     newRepresentations.add(subRepresentation);

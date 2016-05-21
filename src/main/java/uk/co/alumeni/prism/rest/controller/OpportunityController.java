@@ -1,6 +1,11 @@
 package uk.co.alumeni.prism.rest.controller;
 
 import static org.apache.commons.lang3.StringUtils.removeEnd;
+import static uk.co.alumeni.prism.domain.definitions.PrismAdvertFilterCategory.FUNCTION;
+import static uk.co.alumeni.prism.domain.definitions.PrismAdvertFilterCategory.INDUSTRY;
+import static uk.co.alumeni.prism.domain.definitions.PrismAdvertFilterCategory.INSTITUTION;
+import static uk.co.alumeni.prism.domain.definitions.PrismAdvertFilterCategory.LOCATION;
+import static uk.co.alumeni.prism.domain.definitions.PrismAdvertFilterCategory.THEME;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -22,8 +27,12 @@ import uk.co.alumeni.prism.domain.definitions.workflow.PrismScope;
 import uk.co.alumeni.prism.exceptions.ResourceNotFoundException;
 import uk.co.alumeni.prism.mapping.AdvertMapper;
 import uk.co.alumeni.prism.rest.dto.OpportunitiesQueryDTO;
+import uk.co.alumeni.prism.rest.representation.advert.AdvertCategoryNameStringSummaryRepresentation;
+import uk.co.alumeni.prism.rest.representation.advert.AdvertFunctionSummaryRepresentation;
+import uk.co.alumeni.prism.rest.representation.advert.AdvertIndustrySummaryRepresentation;
+import uk.co.alumeni.prism.rest.representation.advert.AdvertInstitutionSummaryRepresentation;
 import uk.co.alumeni.prism.rest.representation.advert.AdvertListRepresentation;
-import uk.co.alumeni.prism.rest.representation.advert.AdvertLocationAddressPartRepresentation;
+import uk.co.alumeni.prism.rest.representation.advert.AdvertLocationSummaryRepresentation;
 import uk.co.alumeni.prism.rest.representation.advert.AdvertRepresentationExtended;
 import uk.co.alumeni.prism.services.AdvertService;
 import uk.co.alumeni.prism.services.WidgetService;
@@ -64,7 +73,8 @@ public class OpportunityController {
             @RequestParam String options, HttpServletResponse response) {
         response.setHeader("X-Frame-Options", null);
         Advert advert = advertService.getAdvert(PrismScope.valueOf(removeEnd(resourceScope, "s").toUpperCase()), resourceId);
-        HashMap<String, String> widgetOptions = new Gson().fromJson(options, new TypeToken<HashMap<String, String>>() {}.getType());
+        HashMap<String, String> widgetOptions = new Gson().fromJson(options, new TypeToken<HashMap<String, String>>() {
+        }.getType());
         String badge = widgetService.getAdvertBadge(advert, widgetOptions);
         if (callback.isPresent()) {
             response.setHeader("content-type", "text/javascript");
@@ -76,9 +86,29 @@ public class OpportunityController {
         }
     }
 
+    @RequestMapping(method = RequestMethod.GET, value = "industries")
+    public List<AdvertIndustrySummaryRepresentation> getAdvertIndustrySummaryRepresentations(@RequestParam(required = false) String q) {
+        return advertMapper.getAdvertCategorySummaryRepresentations(INDUSTRY, q);
+    }
+
+    @RequestMapping(method = RequestMethod.GET, value = "functions")
+    public List<AdvertFunctionSummaryRepresentation> getAdvertFunctionSummaryRepresentations(@RequestParam(required = false) String q) {
+        return advertMapper.getAdvertCategorySummaryRepresentations(FUNCTION, q);
+    }
+
+    @RequestMapping(method = RequestMethod.GET, value = "themes")
+    public List<AdvertCategoryNameStringSummaryRepresentation> getAdvertThemeSummaryRepresentations(@RequestParam(required = false) String q) {
+        return advertMapper.getAdvertCategorySummaryRepresentations(THEME, q);
+    }
+
     @RequestMapping(method = RequestMethod.GET, value = "locations")
-    public List<AdvertLocationAddressPartRepresentation> getAdvertLocationAddressPartRepresentations(@RequestParam String q) {
-        return advertMapper.getAdvertLocationAddressPartRepresentations(q);
+    public List<AdvertLocationSummaryRepresentation> getAdvertLocationSummaryRepresentations(@RequestParam(required = false) String q) {
+        return advertMapper.getAdvertCategorySummaryRepresentations(LOCATION, q);
+    }
+
+    @RequestMapping(method = RequestMethod.GET, value = "institutions")
+    public List<AdvertInstitutionSummaryRepresentation> getInsitutionSummaryRepresentations(@RequestParam(required = false) String q) {
+        return advertMapper.getAdvertCategorySummaryRepresentations(INSTITUTION, q);
     }
 
 }

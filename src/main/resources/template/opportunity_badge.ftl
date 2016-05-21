@@ -28,7 +28,7 @@
                    class="btn btn-default enquire" target="_blank">${otherOpportunitiesLabel}</a>
             [#if opportunity??]
                 <a href="${applicationUrl}/#!/applicant/main?${advert.resource.resourceScope?lower_case}=${advert.resource.id}"
-                   class="btn btn-success ng-scope" target="_blank">${applyNowLabel}</a>
+                   class="btn btn-success ng-scope" target="_blank">${readMoreLabel}</a>
             [/#if]
             </div>
         </div>

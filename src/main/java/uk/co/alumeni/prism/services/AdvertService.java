@@ -93,6 +93,7 @@ import uk.co.alumeni.prism.domain.advert.AdvertTargetPending;
 import uk.co.alumeni.prism.domain.advert.AdvertTheme;
 import uk.co.alumeni.prism.domain.comment.Comment;
 import uk.co.alumeni.prism.domain.definitions.PrismAdvertBenefit;
+import uk.co.alumeni.prism.domain.definitions.PrismAdvertFilterCategory;
 import uk.co.alumeni.prism.domain.definitions.PrismAdvertFunction;
 import uk.co.alumeni.prism.domain.definitions.PrismAdvertIndustry;
 import uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition;
@@ -114,12 +115,9 @@ import uk.co.alumeni.prism.dto.ActionOutcomeDTO;
 import uk.co.alumeni.prism.dto.AdvertApplicationDTO;
 import uk.co.alumeni.prism.dto.AdvertApplicationSummaryDTO;
 import uk.co.alumeni.prism.dto.AdvertCategoryDTO;
-import uk.co.alumeni.prism.dto.AdvertFunctionSummaryDTO;
-import uk.co.alumeni.prism.dto.AdvertIndustrySummaryDTO;
-import uk.co.alumeni.prism.dto.AdvertLocationAddressPartSummaryDTO;
+import uk.co.alumeni.prism.dto.AdvertCategorySummaryDTO;
 import uk.co.alumeni.prism.dto.AdvertOpportunityCategoryDTO;
 import uk.co.alumeni.prism.dto.AdvertTargetDTO;
-import uk.co.alumeni.prism.dto.AdvertThemeSummaryDTO;
 import uk.co.alumeni.prism.dto.AdvertUserDTO;
 import uk.co.alumeni.prism.dto.UserAdvertDTO;
 import uk.co.alumeni.prism.dto.UserResourceDTO;
@@ -1049,56 +1047,27 @@ public class AdvertService {
         return locations;
     }
 
-    public Set<AdvertIndustrySummaryDTO> getAdvertIndustrySummaries(String searchTerm) {
+    @SuppressWarnings("unchecked")
+    public <T extends AdvertCategorySummaryDTO<?>> List<T> getAdvertCategorySummaries(PrismAdvertFilterCategory category, String searchTerm) {
         User user = userService.getCurrentUser();
         VisibleAdvertDTO visibleAdvertDTO = getVisibleAdverts(user, new OpportunitiesQueryDTO(), opportunityScopes);
         List<Integer> visibleAdverts = visibleAdvertDTO.getVisible().stream().map(advertDTO -> advertDTO.getId()).collect(toList());
 
-        Set<AdvertIndustrySummaryDTO> industrySummaries = newTreeSet();
         if (visibleAdverts.size() > 0) {
-            industrySummaries.addAll(advertDAO.getAdvertIndustrySummaries(visibleAdverts, searchTerm));
+            switch (category) {
+            case FUNCTION:
+            case INDUSTRY:
+                return (List<T>) advertDAO.getAdvertCategoryEnumNameSummaries(category, visibleAdverts, searchTerm);
+            case INSTITUTION:
+                return (List<T>) advertDAO.getAdvertInstitutionSummaries(visibleAdverts, searchTerm);
+            case LOCATION:
+                return (List<T>) advertDAO.getAdvertLocationSummaries(visibleAdverts, searchTerm);
+            case THEME:
+                return (List<T>) advertDAO.getAdvertThemeSummaries(visibleAdverts, searchTerm);
+            }
         }
 
-        return industrySummaries;
-    }
-
-    public Set<AdvertFunctionSummaryDTO> getAdvertFunctionSummaries(String searchTerm) {
-        User user = userService.getCurrentUser();
-        VisibleAdvertDTO visibleAdvertDTO = getVisibleAdverts(user, new OpportunitiesQueryDTO(), opportunityScopes);
-        List<Integer> visibleAdverts = visibleAdvertDTO.getVisible().stream().map(advertDTO -> advertDTO.getId()).collect(toList());
-
-        Set<AdvertFunctionSummaryDTO> functionSummaries = newTreeSet();
-        if (visibleAdverts.size() > 0) {
-            functionSummaries.addAll(advertDAO.getAdvertFunctionSummaries(visibleAdverts, searchTerm));
-        }
-
-        return functionSummaries;
-    }
-
-    public Set<AdvertThemeSummaryDTO> getAdvertThemeSummaries(String searchTerm) {
-        User user = userService.getCurrentUser();
-        VisibleAdvertDTO visibleAdvertDTO = getVisibleAdverts(user, new OpportunitiesQueryDTO(), opportunityScopes);
-        List<Integer> visibleAdverts = visibleAdvertDTO.getVisible().stream().map(advertDTO -> advertDTO.getId()).collect(toList());
-
-        Set<AdvertThemeSummaryDTO> themeSummaries = newTreeSet();
-        if (visibleAdverts.size() > 0) {
-            themeSummaries.addAll(advertDAO.getAdvertThemeSummaries(visibleAdverts, searchTerm));
-        }
-
-        return themeSummaries;
-    }
-
-    public Set<AdvertLocationAddressPartSummaryDTO> getAdvertLocationSummaries(String searchTerm) {
-        User user = userService.getCurrentUser();
-        VisibleAdvertDTO visibleAdvertDTO = getVisibleAdverts(user, new OpportunitiesQueryDTO(), opportunityScopes);
-        List<Integer> visibleAdverts = visibleAdvertDTO.getVisible().stream().map(advertDTO -> advertDTO.getId()).collect(toList());
-
-        Set<AdvertLocationAddressPartSummaryDTO> locationSummaries = newTreeSet();
-        if (visibleAdverts.size() > 0) {
-            locationSummaries.addAll(advertDAO.getAdvertLocationSummaries(visibleAdverts, searchTerm));
-        }
-
-        return locationSummaries;
+        return newArrayList();
     }
 
     public void retireAdvertClosingDate(Advert advert) {

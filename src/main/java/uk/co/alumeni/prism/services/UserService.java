@@ -103,7 +103,6 @@ import uk.co.alumeni.prism.services.helpers.PropertyLoader;
 import uk.co.alumeni.prism.utils.PrismEncryptionUtils;
 import uk.co.alumeni.prism.utils.PrismJsonMappingUtils;
 
-import com.google.common.base.Objects;
 import com.google.common.base.Strings;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.LinkedHashMultimap;
@@ -406,7 +405,7 @@ public class UserService {
     }
 
     public String getSecuredUserEmailAddress(String email, User currentUser, boolean forceReturnEmail) {
-        return (forceReturnEmail || Objects.equal(email, (currentUser == null ? null : currentUser.getEmail()))) ? email : getObfuscatedEmail(email);
+        return (forceReturnEmail || equal(email, (currentUser == null ? null : currentUser.getEmail()))) ? email : getObfuscatedEmail(email);
     }
 
     public List<User> getResourceUsers(Resource resource, PrismRole role) {

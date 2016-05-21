@@ -35,9 +35,15 @@ public class OpportunitiesQueryDTO {
 
     private String keyword;
 
+    private List<Integer> locations;
+
     private List<PrismAdvertIndustry> industries;
 
     private List<PrismAdvertFunction> functions;
+
+    private List<Integer> themes;
+
+    private List<Integer> institutions;
 
     private List<PrismOpportunityType> opportunityTypes;
 
@@ -131,6 +137,14 @@ public class OpportunitiesQueryDTO {
         this.keyword = keyword;
     }
 
+    public List<Integer> getLocations() {
+        return locations;
+    }
+
+    public void setLocations(List<Integer> locations) {
+        this.locations = locations;
+    }
+
     public List<PrismAdvertIndustry> getIndustries() {
         return industries;
     }
@@ -145,6 +159,22 @@ public class OpportunitiesQueryDTO {
 
     public void setFunctions(List<PrismAdvertFunction> functions) {
         this.functions = functions;
+    }
+
+    public List<Integer> getThemes() {
+        return themes;
+    }
+
+    public void setThemes(List<Integer> themes) {
+        this.themes = themes;
+    }
+
+    public List<Integer> getInstitutions() {
+        return institutions;
+    }
+
+    public void setInstitutions(List<Integer> institutions) {
+        this.institutions = institutions;
     }
 
     public List<PrismOpportunityType> getOpportunityTypes() {

@@ -1,32 +1,21 @@
-package uk.co.alumeni.prism.dto;
+package uk.co.alumeni.prism.rest.representation.advert;
 
 import static com.google.common.base.Objects.equal;
-import static org.apache.commons.lang3.ObjectUtils.compare;
 
 import com.google.common.base.Objects;
 
-public class AdvertThemeSummaryDTO implements Comparable<AdvertThemeSummaryDTO> {
+public class AdvertCategorySummaryRepresentation<T> {
 
-    private Integer id;
-
-    private String name;
+    private T id;
 
     private Long advertCount;
 
-    public Integer getId() {
+    public T getId() {
         return id;
     }
 
-    public void setId(Integer id) {
+    public void setId(T id) {
         this.id = id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
     }
 
     public Long getAdvertCount() {
@@ -43,6 +32,7 @@ public class AdvertThemeSummaryDTO implements Comparable<AdvertThemeSummaryDTO> 
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public boolean equals(Object object) {
         if (object == null) {
             return false;
@@ -50,12 +40,7 @@ public class AdvertThemeSummaryDTO implements Comparable<AdvertThemeSummaryDTO> 
         if (!getClass().equals(object.getClass())) {
             return false;
         }
-        return equal(id, ((AdvertThemeSummaryDTO) object).getId());
-    }
-
-    @Override
-    public int compareTo(AdvertThemeSummaryDTO other) {
-        return compare(name, other.getName());
+        return equal(id, ((AdvertCategorySummaryRepresentation<T>) object).getId());
     }
 
 }

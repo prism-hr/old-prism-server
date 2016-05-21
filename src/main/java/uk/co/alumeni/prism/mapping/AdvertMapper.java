@@ -255,6 +255,7 @@ public class AdvertMapper {
         representation.setSummary(advert.getSummary());
         representation.setDescription(advert.getDescription());
         representation.setGloballyVisible(advert.getGloballyVisible());
+        representation.setPublished(advert.getPublished());
         representation.setHomepage(advert.getHomepage());
         representation.setApplyHomepage(advert.getApplyHomepage());
         representation.setTelephone(advert.getTelephone());
@@ -304,6 +305,7 @@ public class AdvertMapper {
         representation.setSummary(advert.getSummary());
         representation.setDescription(advert.getDescription());
         representation.setGloballyVisible(advert.getGloballyVisible());
+        representation.setPublished(advert.getPublished());
 
         Integer backgroundImageId = advertService.getBackgroundImage(advert);
         representation.setBackgroundImage(backgroundImageId != null ? new DocumentRepresentation().withId(backgroundImageId) : null);

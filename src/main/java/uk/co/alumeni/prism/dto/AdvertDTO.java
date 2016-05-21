@@ -37,6 +37,8 @@ public class AdvertDTO extends ResourceFlatToNestedDTO {
 
     private Boolean globallyVisible;
 
+    private Boolean published;
+
     private String homepage;
 
     private String applyHomepage;
@@ -64,7 +66,7 @@ public class AdvertDTO extends ResourceFlatToNestedDTO {
     private Integer durationMinimum;
 
     private Integer durationMaximum;
-    
+
     private PrismPaymentOption payOption;
 
     private PrismDurationUnit payInterval;
@@ -197,6 +199,14 @@ public class AdvertDTO extends ResourceFlatToNestedDTO {
         this.globallyVisible = globallyVisible;
     }
 
+    public Boolean getPublished() {
+        return published;
+    }
+
+    public void setPublished(Boolean published) {
+        this.published = published;
+    }
+
     public String getHomepage() {
         return homepage;
     }
@@ -308,7 +318,7 @@ public class AdvertDTO extends ResourceFlatToNestedDTO {
     public void setDurationMaximum(Integer durationMaximum) {
         this.durationMaximum = durationMaximum;
     }
-    
+
     public PrismPaymentOption getPayOption() {
         return payOption;
     }

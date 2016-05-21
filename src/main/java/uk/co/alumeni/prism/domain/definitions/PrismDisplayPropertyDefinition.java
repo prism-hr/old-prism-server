@@ -1742,7 +1742,7 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     SYSTEM_RESOURCE_APPLICATION_OPTIONS_HEADER(PrismDisplayPropertyCategory.SYSTEM_RESOURCE, "Application Options"),
     SYSTEM_RESOURCE_MANAGEMENT_HEADER(PrismDisplayPropertyCategory.SYSTEM_RESOURCE, "Resource Management"),
     SYSTEM_RESOURCE_ADVERT_EMPLOYER(PrismDisplayPropertyCategory.SYSTEM_RESOURCE, "Employer"),
-    SYSTEM_RESOURCE_ADVERT_UNIVERSITY(PrismDisplayPropertyCategory.SYSTEM_RESOURCE, "University"),    
+    SYSTEM_RESOURCE_ADVERT_UNIVERSITY(PrismDisplayPropertyCategory.SYSTEM_RESOURCE, "University"),
     SYSTEM_RESOURCE_ADVERT_CATEGORIES_HEADER(PrismDisplayPropertyCategory.SYSTEM_RESOURCE, "Categories and Themes"),
     SYSTEM_RESOURCE_ADVERT_BADGE_HEADER(PrismDisplayPropertyCategory.SYSTEM_RESOURCE, "Sharing and Embeddable Badges"),
     SYSTEM_RESOURCE_CATEGORIES_INCOMPLETE(PrismDisplayPropertyCategory.SYSTEM_RESOURCE, "Provide some tags to help candidates discover your advert."),
@@ -1854,7 +1854,8 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     SYSTEM_RESOURCE_PARENT_VISIBILITY_HINT(PrismDisplayPropertyCategory.SYSTEM_RESOURCE_PARENT, "Set the visibility that you want for your opportunity."),
     SYSTEM_RESOURCE_PARENT_PRIMARY_CONTACT_LABEL(PrismDisplayPropertyCategory.SYSTEM_RESOURCE_PARENT, "Primary Contact"),
     SYSTEM_RESOURCE_PARENT_PRIMARY_CONTACT_HINT(PrismDisplayPropertyCategory.SYSTEM_RESOURCE_PARENT,
-            "To change the primary owner go to Manage User and change the owner fo the project"),
+            "The primary contact for enquiries."),
+    SYSTEM_RESOURCE_PARENT_PRIMARY_CONTACT_CHANGE(PrismDisplayPropertyCategory.SYSTEM_RESOURCE_PARENT, "Change"),
     SYSTEM_RESOURCE_PARENT_VISIBILITY_EVERYONE_OPTION(PrismDisplayPropertyCategory.SYSTEM_RESOURCE_PARENT, "Visible to everybody"),
     SYSTEM_RESOURCE_PARENT_VISIBILITY_MY_CONNECTIONS_OPTION(PrismDisplayPropertyCategory.SYSTEM_RESOURCE_PARENT, "Visible to my connections"),
     SYSTEM_RESOURCE_PARENT_VISIBILITY_CUSTOM_OPTION(PrismDisplayPropertyCategory.SYSTEM_RESOURCE_PARENT, "Custom"),
@@ -2070,6 +2071,8 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     SYSTEM_RESOURCE_SHARE_OPTIONS_POSITION_LIST(PrismDisplayPropertyCategory.SYSTEM_RESOURCE_SHARE, "Position List"),
     SYSTEM_RESOURCE_SHARE_OPTIONS_POSITION_LIST_STATIC(PrismDisplayPropertyCategory.SYSTEM_RESOURCE_SHARE, "Static List"),
     SYSTEM_RESOURCE_SHARE_OPTIONS_POSITION_LIST_SLIDER(PrismDisplayPropertyCategory.SYSTEM_RESOURCE_SHARE, "Slider"),
+    SYSTEM_RESOURCE_SHARE_DISABLED(PrismDisplayPropertyCategory.SYSTEM_RESOURCE_SHARE,
+            "You cannot create a badge for this resource as it is not publically visible. Update the application options to change the visibility."),
 
     /*
      * *************** SYSTEM RESOURCE TARGETS *********************

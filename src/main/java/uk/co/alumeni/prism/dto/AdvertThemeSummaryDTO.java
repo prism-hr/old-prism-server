@@ -5,11 +5,9 @@ import static org.apache.commons.lang3.ObjectUtils.compare;
 
 import com.google.common.base.Objects;
 
-public class AdvertLocationAddressPartSummaryDTO implements Comparable<AdvertLocationAddressPartSummaryDTO> {
+public class AdvertThemeSummaryDTO implements Comparable<AdvertThemeSummaryDTO> {
 
     private Integer id;
-
-    private Integer parentId;
 
     private String name;
 
@@ -21,14 +19,6 @@ public class AdvertLocationAddressPartSummaryDTO implements Comparable<AdvertLoc
 
     public void setId(Integer id) {
         this.id = id;
-    }
-
-    public Integer getParentId() {
-        return parentId;
-    }
-
-    public void setParentId(Integer parentId) {
-        this.parentId = parentId;
     }
 
     public String getName() {
@@ -60,11 +50,11 @@ public class AdvertLocationAddressPartSummaryDTO implements Comparable<AdvertLoc
         if (!getClass().equals(object.getClass())) {
             return false;
         }
-        return equal(id, ((AdvertLocationAddressPartSummaryDTO) object).getId());
+        return equal(id, ((AdvertThemeSummaryDTO) object).getId());
     }
 
     @Override
-    public int compareTo(AdvertLocationAddressPartSummaryDTO other) {
+    public int compareTo(AdvertThemeSummaryDTO other) {
         return compare(name, other.getName());
     }
 

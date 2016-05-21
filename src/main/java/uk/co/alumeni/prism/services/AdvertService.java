@@ -114,9 +114,12 @@ import uk.co.alumeni.prism.dto.ActionOutcomeDTO;
 import uk.co.alumeni.prism.dto.AdvertApplicationDTO;
 import uk.co.alumeni.prism.dto.AdvertApplicationSummaryDTO;
 import uk.co.alumeni.prism.dto.AdvertCategoryDTO;
+import uk.co.alumeni.prism.dto.AdvertFunctionSummaryDTO;
+import uk.co.alumeni.prism.dto.AdvertIndustrySummaryDTO;
 import uk.co.alumeni.prism.dto.AdvertLocationAddressPartSummaryDTO;
 import uk.co.alumeni.prism.dto.AdvertOpportunityCategoryDTO;
 import uk.co.alumeni.prism.dto.AdvertTargetDTO;
+import uk.co.alumeni.prism.dto.AdvertThemeSummaryDTO;
 import uk.co.alumeni.prism.dto.AdvertUserDTO;
 import uk.co.alumeni.prism.dto.UserAdvertDTO;
 import uk.co.alumeni.prism.dto.UserResourceDTO;
@@ -1046,23 +1049,56 @@ public class AdvertService {
         return locations;
     }
 
-    public Set<AdvertLocationAddressPartSummaryDTO> getAdvertLocationSummaries(String searchTerm) {
-        UserAdvertDTO userAdvertDTO = getUserAdverts(userService.getCurrentUser(), opportunityScopes);
+    public Set<AdvertIndustrySummaryDTO> getAdvertIndustrySummaries(String searchTerm) {
+        User user = userService.getCurrentUser();
+        VisibleAdvertDTO visibleAdvertDTO = getVisibleAdverts(user, new OpportunitiesQueryDTO(), opportunityScopes);
+        List<Integer> visibleAdverts = visibleAdvertDTO.getVisible().stream().map(advertDTO -> advertDTO.getId()).collect(toList());
 
-        Map<Integer, AdvertLocationAddressPartSummaryDTO> summaries = Maps.newHashMap();
-        for (PrismScope opportunityScope : opportunityScopes) {
-            advertDAO.getAdvertLocationSummaries(opportunityScope, userAdvertDTO, searchTerm).forEach(summary -> {
-                Integer id = summary.getId();
-                AdvertLocationAddressPartSummaryDTO existingSummary = summaries.get(id);
-                if (existingSummary == null) {
-                    summaries.put(id, summary);
-                } else {
-                    existingSummary.setAdvertCount(existingSummary.getAdvertCount() + summary.getAdvertCount());
-                }
-            });
+        Set<AdvertIndustrySummaryDTO> industrySummaries = newTreeSet();
+        if (visibleAdverts.size() > 0) {
+            industrySummaries.addAll(advertDAO.getAdvertIndustrySummaries(visibleAdverts, searchTerm));
         }
 
-        return newTreeSet(summaries.values());
+        return industrySummaries;
+    }
+
+    public Set<AdvertFunctionSummaryDTO> getAdvertFunctionSummaries(String searchTerm) {
+        User user = userService.getCurrentUser();
+        VisibleAdvertDTO visibleAdvertDTO = getVisibleAdverts(user, new OpportunitiesQueryDTO(), opportunityScopes);
+        List<Integer> visibleAdverts = visibleAdvertDTO.getVisible().stream().map(advertDTO -> advertDTO.getId()).collect(toList());
+
+        Set<AdvertFunctionSummaryDTO> functionSummaries = newTreeSet();
+        if (visibleAdverts.size() > 0) {
+            functionSummaries.addAll(advertDAO.getAdvertFunctionSummaries(visibleAdverts, searchTerm));
+        }
+
+        return functionSummaries;
+    }
+
+    public Set<AdvertThemeSummaryDTO> getAdvertThemeSummaries(String searchTerm) {
+        User user = userService.getCurrentUser();
+        VisibleAdvertDTO visibleAdvertDTO = getVisibleAdverts(user, new OpportunitiesQueryDTO(), opportunityScopes);
+        List<Integer> visibleAdverts = visibleAdvertDTO.getVisible().stream().map(advertDTO -> advertDTO.getId()).collect(toList());
+
+        Set<AdvertThemeSummaryDTO> themeSummaries = newTreeSet();
+        if (visibleAdverts.size() > 0) {
+            themeSummaries.addAll(advertDAO.getAdvertThemeSummaries(visibleAdverts, searchTerm));
+        }
+
+        return themeSummaries;
+    }
+
+    public Set<AdvertLocationAddressPartSummaryDTO> getAdvertLocationSummaries(String searchTerm) {
+        User user = userService.getCurrentUser();
+        VisibleAdvertDTO visibleAdvertDTO = getVisibleAdverts(user, new OpportunitiesQueryDTO(), opportunityScopes);
+        List<Integer> visibleAdverts = visibleAdvertDTO.getVisible().stream().map(advertDTO -> advertDTO.getId()).collect(toList());
+
+        Set<AdvertLocationAddressPartSummaryDTO> locationSummaries = newTreeSet();
+        if (visibleAdverts.size() > 0) {
+            locationSummaries.addAll(advertDAO.getAdvertLocationSummaries(visibleAdverts, searchTerm));
+        }
+
+        return locationSummaries;
     }
 
     public void retireAdvertClosingDate(Advert advert) {

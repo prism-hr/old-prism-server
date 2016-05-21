@@ -1,6 +1,7 @@
 package uk.co.alumeni.prism.dao;
 
 import static java.util.Arrays.stream;
+import static uk.co.alumeni.prism.dao.WorkflowDAO.getLikeConstraint;
 import static uk.co.alumeni.prism.dao.WorkflowDAO.getMatchingFlattenedPropertyConstraint;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismState.INSTITUTION_DISABLED_COMPLETED;
 
@@ -85,7 +86,7 @@ public class InstitutionDAO {
         Disjunction searchConstraint = Restrictions.disjunction();
 
         if (query != null) {
-            searchConstraint.add(WorkflowDAO.getLikeConstraint("name", query));
+            searchConstraint.add(getLikeConstraint("name", query));
         }
         if (googleIds != null && googleIds.length > 0) {
             searchConstraint.add(Restrictions.in("googleId", googleIds));

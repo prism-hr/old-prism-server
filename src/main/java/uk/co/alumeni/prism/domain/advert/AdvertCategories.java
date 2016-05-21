@@ -1,5 +1,7 @@
 package uk.co.alumeni.prism.domain.advert;
 
+import static com.google.common.collect.Sets.newHashSet;
+
 import java.util.Set;
 
 import javax.persistence.Embeddable;
@@ -7,26 +9,24 @@ import javax.persistence.OneToMany;
 
 import org.hibernate.annotations.OrderBy;
 
-import com.google.common.collect.Sets;
-
 @Embeddable
 public class AdvertCategories {
 
     @OneToMany(mappedBy = "advert")
     @OrderBy(clause = "industry")
-    private Set<AdvertIndustry> industries = Sets.newHashSet();
+    private Set<AdvertIndustry> industries = newHashSet();
 
     @OneToMany(mappedBy = "advert")
     @OrderBy(clause = "function")
-    private Set<AdvertFunction> functions = Sets.newHashSet();
+    private Set<AdvertFunction> functions = newHashSet();
 
     @OneToMany(mappedBy = "advert")
     @OrderBy(clause = "theme_id")
-    private Set<AdvertTheme> themes = Sets.newHashSet();
+    private Set<AdvertTheme> themes = newHashSet();
 
     @OneToMany(mappedBy = "advert")
     @OrderBy(clause = "location_advert_id")
-    private Set<AdvertLocation> locations = Sets.newHashSet();
+    private Set<AdvertLocation> locations = newHashSet();
 
     public Set<AdvertIndustry> getIndustries() {
         return industries;

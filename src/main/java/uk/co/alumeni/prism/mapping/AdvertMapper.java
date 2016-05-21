@@ -4,6 +4,7 @@ import static com.google.common.collect.Lists.newArrayList;
 import static com.google.common.collect.Lists.newLinkedList;
 import static com.google.common.collect.Maps.newHashMap;
 import static com.google.common.collect.Maps.newLinkedHashMap;
+import static com.google.common.collect.Sets.newHashSet;
 import static com.google.common.collect.Sets.newTreeSet;
 import static java.util.Arrays.asList;
 import static java.util.Arrays.stream;
@@ -52,7 +53,6 @@ import javax.transaction.Transactional;
 
 import jersey.repackaged.com.google.common.base.Objects;
 
-import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.BooleanUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
@@ -473,14 +473,13 @@ public class AdvertMapper {
 
     public List<AdvertLocationAddressPartRepresentation> getAdvertLocationAddressPartRepresentations(String searchTerm) {
         Set<AdvertLocationAddressPartSummaryDTO> summaryDTOs = advertService.getAdvertLocationSummaries(searchTerm);
-        if (CollectionUtils.isNotEmpty(summaryDTOs)) {
+        if (summaryDTOs.size() > 0) {
             Set<AdvertLocationAddressPartRepresentation> representations = Sets.newTreeSet();
             TreeMultimap<Integer, AdvertLocationAddressPartRepresentation> representationIndex = TreeMultimap.create();
             summaryDTOs.forEach(summaryDTO -> {
                 Integer parentId = summaryDTO.getParentId();
                 AdvertLocationAddressPartRepresentation representation = new AdvertLocationAddressPartRepresentation().withId(summaryDTO.getId())
-                        .withName(summaryDTO.getName())
-                        .withAdvertCount(summaryDTO.getAdvertCount());
+                        .withName(summaryDTO.getName()).withAdvertCount(summaryDTO.getAdvertCount());
                 if (parentId == null) {
                     representations.add(representation);
                 } else {
@@ -488,34 +487,37 @@ public class AdvertMapper {
                 }
             });
 
-            Set<AdvertLocationAddressPartRepresentation> currentParents = Sets.newHashSet(representations);
-            mapAdvertLocationAddressPartRepresentations(currentParents, representationIndex);
+            while (representationIndex.size() > 0) {
 
+            }
+
+            mapAdvertLocationAddressPartRepresentations(representations, representationIndex);
             return newLinkedList(representations);
         }
+
         return newArrayList();
     }
 
-    private void mapAdvertLocationAddressPartRepresentations(Set<AdvertLocationAddressPartRepresentation> currentParents,
+    private void mapAdvertLocationAddressPartRepresentations(Set<AdvertLocationAddressPartRepresentation> representations,
             TreeMultimap<Integer, AdvertLocationAddressPartRepresentation> representationIndex) {
-        Set<AdvertLocationAddressPartRepresentation> newParents = Sets.newHashSet();
-        while (!(representationIndex == null || representationIndex.isEmpty())) {
-            currentParents.forEach(currentParent -> {
-                Integer currentParentId = currentParent.getId();
-                Set<AdvertLocationAddressPartRepresentation> subRepresentations = representationIndex.get(currentParentId);
+        Set<AdvertLocationAddressPartRepresentation> newRepresentations = newHashSet();
+        if (representationIndex.size() > 0) {
+            representations.forEach(representation -> {
+                Integer representationId = representation.getId();
+                Set<AdvertLocationAddressPartRepresentation> subRepresentations = representationIndex.get(representationId);
 
                 List<AdvertLocationAddressPartRepresentation> subParts = newLinkedList();
                 subRepresentations.forEach(subRepresentation -> {
                     subParts.add(subRepresentation);
-                    newParents.add(subRepresentation);
-                    representationIndex.remove(currentParentId, subRepresentation);
+                    newRepresentations.add(subRepresentation);
+                    representationIndex.remove(representationId, subRepresentation);
                 });
 
-                currentParent.setSubParts(subParts);
+                representation.setSubParts(subParts);
             });
 
-            if (isNotEmpty(newParents)) {
-                mapAdvertLocationAddressPartRepresentations(newParents, representationIndex);
+            if (newRepresentations.size() > 0) {
+                mapAdvertLocationAddressPartRepresentations(newRepresentations, representationIndex);
             }
         }
     }

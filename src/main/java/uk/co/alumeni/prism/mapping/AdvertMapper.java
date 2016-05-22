@@ -15,7 +15,6 @@ import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
 import static org.apache.commons.lang.BooleanUtils.isTrue;
 import static uk.co.alumeni.prism.PrismConstants.RATING_PRECISION;
 import static uk.co.alumeni.prism.dao.WorkflowDAO.advertScopes;
-import static uk.co.alumeni.prism.domain.definitions.PrismAdvertFilterCategory.LOCATION;
 import static uk.co.alumeni.prism.domain.definitions.PrismConnectionState.ACCEPTED;
 import static uk.co.alumeni.prism.domain.definitions.PrismConnectionState.ACCEPTED_PARTIAL;
 import static uk.co.alumeni.prism.domain.definitions.PrismConnectionState.PENDING;
@@ -71,7 +70,6 @@ import uk.co.alumeni.prism.domain.advert.AdvertLocation;
 import uk.co.alumeni.prism.domain.advert.AdvertTarget;
 import uk.co.alumeni.prism.domain.advert.AdvertTheme;
 import uk.co.alumeni.prism.domain.definitions.PrismAdvertBenefit;
-import uk.co.alumeni.prism.domain.definitions.PrismAdvertFilterCategory;
 import uk.co.alumeni.prism.domain.definitions.PrismAdvertFunction;
 import uk.co.alumeni.prism.domain.definitions.PrismAdvertIndustry;
 import uk.co.alumeni.prism.domain.definitions.PrismConnectionState;
@@ -94,12 +92,7 @@ import uk.co.alumeni.prism.domain.user.User;
 import uk.co.alumeni.prism.dto.AdvertApplicationDTO;
 import uk.co.alumeni.prism.dto.AdvertApplicationSummaryDTO;
 import uk.co.alumeni.prism.dto.AdvertCategoryDTO;
-import uk.co.alumeni.prism.dto.AdvertCategoryNameStringSummaryDTO;
-import uk.co.alumeni.prism.dto.AdvertCategorySummaryDTO;
 import uk.co.alumeni.prism.dto.AdvertDTO;
-import uk.co.alumeni.prism.dto.AdvertFunctionSummaryDTO;
-import uk.co.alumeni.prism.dto.AdvertIndustrySummaryDTO;
-import uk.co.alumeni.prism.dto.AdvertInstitutionSummaryDTO;
 import uk.co.alumeni.prism.dto.AdvertLocationSummaryDTO;
 import uk.co.alumeni.prism.dto.AdvertOpportunityCategoryDTO;
 import uk.co.alumeni.prism.dto.AdvertTargetDTO;
@@ -108,14 +101,12 @@ import uk.co.alumeni.prism.dto.ResourceFlatToNestedDTO;
 import uk.co.alumeni.prism.dto.UserAdvertDTO;
 import uk.co.alumeni.prism.dto.VisibleAdvertDTO;
 import uk.co.alumeni.prism.rest.dto.AddressDTO;
-import uk.co.alumeni.prism.rest.dto.OpportunitiesQueryDTO;
+import uk.co.alumeni.prism.rest.dto.OpportunityQueryDTO;
 import uk.co.alumeni.prism.rest.representation.DocumentRepresentation;
 import uk.co.alumeni.prism.rest.representation.action.ActionRepresentationResource;
 import uk.co.alumeni.prism.rest.representation.address.AddressCoordinatesRepresentation;
 import uk.co.alumeni.prism.rest.representation.address.AddressRepresentation;
 import uk.co.alumeni.prism.rest.representation.advert.AdvertCategoriesRepresentation;
-import uk.co.alumeni.prism.rest.representation.advert.AdvertCategoryNameStringSummaryRepresentation;
-import uk.co.alumeni.prism.rest.representation.advert.AdvertCategorySummaryRepresentation;
 import uk.co.alumeni.prism.rest.representation.advert.AdvertCompetenceRepresentation;
 import uk.co.alumeni.prism.rest.representation.advert.AdvertFinancialDetailRepresentation;
 import uk.co.alumeni.prism.rest.representation.advert.AdvertFunctionSummaryRepresentation;
@@ -128,6 +119,7 @@ import uk.co.alumeni.prism.rest.representation.advert.AdvertRepresentationSimple
 import uk.co.alumeni.prism.rest.representation.advert.AdvertTargetRepresentation;
 import uk.co.alumeni.prism.rest.representation.advert.AdvertTargetRepresentation.AdvertTargetConnectionRepresentation;
 import uk.co.alumeni.prism.rest.representation.advert.AdvertThemeRepresentation;
+import uk.co.alumeni.prism.rest.representation.advert.AdvertThemeSummaryRepresentation;
 import uk.co.alumeni.prism.rest.representation.resource.ResourceLocationRepresentationRelation;
 import uk.co.alumeni.prism.rest.representation.resource.ResourceOpportunityRepresentationSimple;
 import uk.co.alumeni.prism.rest.representation.resource.ResourceRepresentationConnection;
@@ -176,12 +168,12 @@ public class AdvertMapper {
         return getAdvertRepresentation(advert, AdvertRepresentationSimple.class);
     }
 
-    public AdvertListRepresentation getAdvertExtendedRepresentations(OpportunitiesQueryDTO query) {
+    public AdvertListRepresentation getAdvertExtendedRepresentations(OpportunityQueryDTO query) {
         return getAdvertListRepresentation(userService.getCurrentUser(), query);
     }
 
     public AdvertListRepresentation getAdvertExtendedRepresentations(Integer user) {
-        return getAdvertListRepresentation(userService.getById(user), new OpportunitiesQueryDTO().withContext(APPLICANT).withRecommendation(true));
+        return getAdvertListRepresentation(userService.getById(user), new OpportunityQueryDTO().withContext(APPLICANT).withRecommendation(true));
     }
 
     public AdvertRepresentationExtended getAdvertRepresentationExtended(Advert advert) {
@@ -483,44 +475,30 @@ public class AdvertMapper {
                 .collect(toList());
     }
 
-    @SuppressWarnings("unchecked")
-    public <T extends AdvertCategorySummaryRepresentation<?>, U extends AdvertCategorySummaryDTO<?>> List<T> getAdvertCategorySummaryRepresentations(
-            PrismAdvertFilterCategory category, String searchTerm) {
-        List<U> summaryDTOs = advertService.getAdvertCategorySummaries(category, searchTerm);
-
-        if (summaryDTOs.size() > 0) {
-            switch (category) {
-            case FUNCTION:
-                return (List<T>) summaryDTOs.stream().map(summaryDTO -> new AdvertFunctionSummaryRepresentation()
-                        .withId(((AdvertFunctionSummaryDTO) summaryDTO).getId()).withAdvertCount(summaryDTO.getAdvertCount())).collect(toList());
-            case INDUSTRY:
-                return (List<T>) summaryDTOs.stream().map(summaryDTO -> new AdvertIndustrySummaryRepresentation()
-                        .withId(((AdvertIndustrySummaryDTO) summaryDTO).getId()).withAdvertCount(summaryDTO.getAdvertCount())).collect(toList());
-            case INSTITUTION:
-                return (List<T>) summaryDTOs.stream().map(summaryDTO -> new AdvertInstitutionSummaryRepresentation()
-                        .withId(new ResourceRepresentationIdentity().withScope(INSTITUTION).withId(((AdvertInstitutionSummaryDTO) summaryDTO).getId())
-                                .withName(((AdvertInstitutionSummaryDTO) summaryDTO).getName())
-                                .withLogoImage(documentMapper.getDocumentRepresentation(((AdvertInstitutionSummaryDTO) summaryDTO).getLogoImageId())))
-                        .withAdvertCount(summaryDTO.getAdvertCount())).collect(toList());
-            case LOCATION:
-                return (List<T>) getAdvertLocationSummaryRepresentations(searchTerm);
-            case THEME:
-                return (List<T>) summaryDTOs.stream().map(summaryDTO -> new AdvertCategoryNameStringSummaryRepresentation()
-                        .withId(((AdvertCategoryNameStringSummaryDTO) summaryDTO).getId())
-                        .withName(((AdvertCategoryNameStringSummaryDTO) summaryDTO).getName())
-                        .withAdvertCount(summaryDTO.getAdvertCount())).collect(toList());
-            }
-        }
-
-        return newArrayList();
+    public List<AdvertIndustrySummaryRepresentation> getAdvertIndustrySummaryRepresentations(OpportunityQueryDTO query, String searchTerm) {
+        return advertService.getAdvertIndustrySummaries(query, searchTerm).stream()
+                .map(advertIndustrySummary -> new AdvertIndustrySummaryRepresentation().withIndustry(advertIndustrySummary.getIndustry())
+                        .withAdvertCount(advertIndustrySummary.getAdvertCount())).collect(toList());
     }
 
-    private List<AdvertLocationSummaryRepresentation> getAdvertLocationSummaryRepresentations(String searchTerm) {
-        List<AdvertLocationSummaryDTO> summaryDTOs = advertService.getAdvertCategorySummaries(LOCATION, searchTerm);
-        if (summaryDTOs.size() > 0) {
+    public List<AdvertFunctionSummaryRepresentation> getAdvertFunctionSummaryRepresentations(OpportunityQueryDTO query, String searchTerm) {
+        return advertService.getAdvertFunctionSummaries(query, searchTerm).stream()
+                .map(advertFunctionSummary -> new AdvertFunctionSummaryRepresentation().withFunction(advertFunctionSummary.getFunction())
+                        .withAdvertCount(advertFunctionSummary.getAdvertCount())).collect(toList());
+    }
+
+    public List<AdvertThemeSummaryRepresentation> getAdvertThemeSummaryRepresentations(OpportunityQueryDTO query, String searchTerm) {
+        return advertService.getAdvertThemeSummaries(query, searchTerm).stream()
+                .map(advertThemeSummary -> new AdvertThemeSummaryRepresentation().withId(advertThemeSummary.getId())
+                        .withName(advertThemeSummary.getName()).withAdvertCount(advertThemeSummary.getAdvertCount())).collect(toList());
+    }
+
+    public List<AdvertLocationSummaryRepresentation> getAdvertLocationSummaryRepresentations(OpportunityQueryDTO query, String searchTerm) {
+        List<AdvertLocationSummaryDTO> advertlocationSummaries = advertService.getAdvertLocationSummaries(query, searchTerm);
+        if (advertlocationSummaries.size() > 0) {
             Set<AdvertLocationSummaryRepresentation> representations = newTreeSet();
             TreeMultimap<Integer, AdvertLocationSummaryRepresentation> representationIndex = TreeMultimap.create();
-            summaryDTOs.forEach(summaryDTO -> {
+            advertlocationSummaries.forEach(summaryDTO -> {
                 Integer parentId = summaryDTO.getParentId();
                 AdvertLocationSummaryRepresentation representation = new AdvertLocationSummaryRepresentation().withId(summaryDTO.getId())
                         .withName(summaryDTO.getName()).withAdvertCount(summaryDTO.getAdvertCount());
@@ -538,6 +516,15 @@ public class AdvertMapper {
         return newArrayList();
     }
 
+    public List<AdvertInstitutionSummaryRepresentation> getAdvertInstitutionSummaryRepresentations(OpportunityQueryDTO query, String searchTerm) {
+        return advertService.getAdvertInstitutionSummaries(query, searchTerm).stream()
+                .map(advertInstitutionSummary -> new AdvertInstitutionSummaryRepresentation().withInstitution(
+                        new ResourceRepresentationIdentity().withScope(INSTITUTION).withId(advertInstitutionSummary.getId())
+                                .withName(advertInstitutionSummary.getName())
+                                .withLogoImage(documentMapper.getDocumentRepresentation(advertInstitutionSummary.getLogoImageId())))
+                        .withAdvertCount(advertInstitutionSummary.getAdvertCount())).collect(toList());
+    }
+
     private void mapAdvertLocationAddressPartRepresentations(Set<AdvertLocationSummaryRepresentation> representations,
             TreeMultimap<Integer, AdvertLocationSummaryRepresentation> representationIndex) {
         Set<AdvertLocationSummaryRepresentation> newRepresentations = newHashSet();
@@ -553,7 +540,7 @@ public class AdvertMapper {
                     representationIndex.remove(representationId, subRepresentation);
                 });
 
-                representation.setSubParts(subParts);
+                representation.setChildLocations(subParts);
             });
 
             if (newRepresentations.size() > 0) {
@@ -562,7 +549,7 @@ public class AdvertMapper {
         }
     }
 
-    private AdvertListRepresentation getAdvertListRepresentation(User user, OpportunitiesQueryDTO query) {
+    private AdvertListRepresentation getAdvertListRepresentation(User user, OpportunityQueryDTO query) {
         PrismScope filterScope = query.getContextScope();
         PrismScope[] filterScopes = filterScope != null ? new PrismScope[] { filterScope } : query.getContext().getFilterScopes();
 

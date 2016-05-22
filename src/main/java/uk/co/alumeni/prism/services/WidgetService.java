@@ -40,7 +40,7 @@ import uk.co.alumeni.prism.domain.resource.ResourceOpportunity;
 import uk.co.alumeni.prism.domain.resource.ResourceParent;
 import uk.co.alumeni.prism.exceptions.ResourceNotFoundException;
 import uk.co.alumeni.prism.mapping.AdvertMapper;
-import uk.co.alumeni.prism.rest.dto.OpportunitiesQueryDTO;
+import uk.co.alumeni.prism.rest.dto.OpportunityQueryDTO;
 import uk.co.alumeni.prism.rest.representation.advert.AdvertFinancialDetailRepresentation;
 import uk.co.alumeni.prism.rest.representation.advert.AdvertListRepresentation;
 import uk.co.alumeni.prism.rest.representation.advert.AdvertRepresentationExtended;
@@ -105,7 +105,7 @@ public class WidgetService {
         PropertyLoader propertyLoader = applicationContext.getBean(PropertyLoader.class).localizeLazy(resource);
         Map<String, Object> model = createHeaderModel(advert, propertyLoader, options);
 
-        OpportunitiesQueryDTO query = new OpportunitiesQueryDTO().withContext(APPLICANT)
+        OpportunityQueryDTO query = new OpportunityQueryDTO().withContext(APPLICANT)
                 .withResourceScope(resource.getResourceScope()).withResourceId(resource.getId())
                 .withMaxAdverts(Integer.parseInt(options.get("positionCount")));
         AdvertListRepresentation advertRepresentations = advertMapper.getAdvertExtendedRepresentations(query);

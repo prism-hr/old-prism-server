@@ -1,7 +1,6 @@
 package uk.co.alumeni.prism.dto;
 
-
-public class AdvertLocationSummaryDTO extends AdvertCategoryNameStringSummaryDTO {
+public class AdvertLocationSummaryDTO extends AdvertThemeSummaryDTO {
 
     private Integer parentId;
 

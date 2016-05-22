@@ -2,16 +2,16 @@ package uk.co.alumeni.prism.rest.representation.advert;
 
 import java.util.List;
 
-public class AdvertLocationSummaryRepresentation extends AdvertCategoryNameStringSummaryRepresentation {
+public class AdvertLocationSummaryRepresentation extends AdvertThemeSummaryRepresentation {
 
-    private List<AdvertLocationSummaryRepresentation> subParts;
+    private List<AdvertLocationSummaryRepresentation> childLocations;
 
-    public List<AdvertLocationSummaryRepresentation> getSubParts() {
-        return subParts;
+    public List<AdvertLocationSummaryRepresentation> getChildLocations() {
+        return childLocations;
     }
 
-    public void setSubParts(List<AdvertLocationSummaryRepresentation> subParts) {
-        this.subParts = subParts;
+    public void setChildLocations(List<AdvertLocationSummaryRepresentation> childLocations) {
+        this.childLocations = childLocations;
     }
 
     public AdvertLocationSummaryRepresentation withId(Integer id) {

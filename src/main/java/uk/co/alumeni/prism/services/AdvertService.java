@@ -93,7 +93,6 @@ import uk.co.alumeni.prism.domain.advert.AdvertTargetPending;
 import uk.co.alumeni.prism.domain.advert.AdvertTheme;
 import uk.co.alumeni.prism.domain.comment.Comment;
 import uk.co.alumeni.prism.domain.definitions.PrismAdvertBenefit;
-import uk.co.alumeni.prism.domain.definitions.PrismAdvertFilterCategory;
 import uk.co.alumeni.prism.domain.definitions.PrismAdvertFunction;
 import uk.co.alumeni.prism.domain.definitions.PrismAdvertIndustry;
 import uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition;
@@ -115,9 +114,13 @@ import uk.co.alumeni.prism.dto.ActionOutcomeDTO;
 import uk.co.alumeni.prism.dto.AdvertApplicationDTO;
 import uk.co.alumeni.prism.dto.AdvertApplicationSummaryDTO;
 import uk.co.alumeni.prism.dto.AdvertCategoryDTO;
-import uk.co.alumeni.prism.dto.AdvertCategorySummaryDTO;
+import uk.co.alumeni.prism.dto.AdvertFunctionSummaryDTO;
+import uk.co.alumeni.prism.dto.AdvertIndustrySummaryDTO;
+import uk.co.alumeni.prism.dto.AdvertInstitutionSummaryDTO;
+import uk.co.alumeni.prism.dto.AdvertLocationSummaryDTO;
 import uk.co.alumeni.prism.dto.AdvertOpportunityCategoryDTO;
 import uk.co.alumeni.prism.dto.AdvertTargetDTO;
+import uk.co.alumeni.prism.dto.AdvertThemeSummaryDTO;
 import uk.co.alumeni.prism.dto.AdvertUserDTO;
 import uk.co.alumeni.prism.dto.UserAdvertDTO;
 import uk.co.alumeni.prism.dto.UserResourceDTO;
@@ -125,7 +128,7 @@ import uk.co.alumeni.prism.dto.VisibleAdvertDTO;
 import uk.co.alumeni.prism.dto.json.ExchangeRateLookupResponseDTO;
 import uk.co.alumeni.prism.mapping.AdvertMapper;
 import uk.co.alumeni.prism.rest.dto.AddressDTO;
-import uk.co.alumeni.prism.rest.dto.OpportunitiesQueryDTO;
+import uk.co.alumeni.prism.rest.dto.OpportunityQueryDTO;
 import uk.co.alumeni.prism.rest.dto.TagDTO;
 import uk.co.alumeni.prism.rest.dto.advert.AdvertCategoriesDTO;
 import uk.co.alumeni.prism.rest.dto.advert.AdvertCompetenceDTO;
@@ -240,7 +243,7 @@ public class AdvertService {
         return advertDAO.getAdvertApplicationSummary(advert);
     }
 
-    public Collection<uk.co.alumeni.prism.dto.AdvertDTO> getAdvertList(OpportunitiesQueryDTO query, Collection<AdvertOpportunityCategoryDTO> advertDTOs) {
+    public Collection<uk.co.alumeni.prism.dto.AdvertDTO> getAdvertList(OpportunityQueryDTO query, Collection<AdvertOpportunityCategoryDTO> advertDTOs) {
         TreeMap<String, uk.co.alumeni.prism.dto.AdvertDTO> adverts = newTreeMap();
         if (advertDTOs.size() > 0) {
             Map<Integer, BigDecimal> advertIndex = getRowsToReturn(advertDTOs, query.getOpportunityCategory(), query.getOpportunityTypes(),
@@ -838,7 +841,7 @@ public class AdvertService {
         return importances;
     }
 
-    public VisibleAdvertDTO getVisibleAdverts(User user, OpportunitiesQueryDTO query, PrismScope[] scopes) {
+    public VisibleAdvertDTO getVisibleAdverts(User user, OpportunityQueryDTO query, PrismScope[] scopes) {
         Integer queryAdvertId = query.getAdvertId();
         PrismScope resourceScope = query.getResourceScope();
 
@@ -1047,27 +1050,29 @@ public class AdvertService {
         return locations;
     }
 
-    @SuppressWarnings("unchecked")
-    public <T extends AdvertCategorySummaryDTO<?>> List<T> getAdvertCategorySummaries(PrismAdvertFilterCategory category, String searchTerm) {
-        User user = userService.getCurrentUser();
-        VisibleAdvertDTO visibleAdvertDTO = getVisibleAdverts(user, new OpportunitiesQueryDTO(), opportunityScopes);
-        List<Integer> visibleAdverts = visibleAdvertDTO.getVisible().stream().map(advertDTO -> advertDTO.getId()).collect(toList());
+    public List<AdvertIndustrySummaryDTO> getAdvertIndustrySummaries(OpportunityQueryDTO query, String searchTerm) {
+        List<Integer> visibleAdverts = getVisibleAdverts(query, opportunityScopes);
+        return visibleAdverts.size() > 0 ? advertDAO.getAdvertIndustrySummaries(visibleAdverts, searchTerm) : newArrayList();
+    }
 
-        if (visibleAdverts.size() > 0) {
-            switch (category) {
-            case FUNCTION:
-            case INDUSTRY:
-                return (List<T>) advertDAO.getAdvertCategoryEnumNameSummaries(category, visibleAdverts, searchTerm);
-            case INSTITUTION:
-                return (List<T>) advertDAO.getAdvertInstitutionSummaries(visibleAdverts, searchTerm);
-            case LOCATION:
-                return (List<T>) advertDAO.getAdvertLocationSummaries(visibleAdverts, searchTerm);
-            case THEME:
-                return (List<T>) advertDAO.getAdvertThemeSummaries(visibleAdverts, searchTerm);
-            }
-        }
+    public List<AdvertFunctionSummaryDTO> getAdvertFunctionSummaries(OpportunityQueryDTO query, String searchTerm) {
+        List<Integer> visibleAdverts = getVisibleAdverts(query, opportunityScopes);
+        return visibleAdverts.size() > 0 ? advertDAO.getAdvertFunctionSummaries(visibleAdverts, searchTerm) : newArrayList();
+    }
 
-        return newArrayList();
+    public List<AdvertThemeSummaryDTO> getAdvertThemeSummaries(OpportunityQueryDTO query, String searchTerm) {
+        List<Integer> visibleAdverts = getVisibleAdverts(query, opportunityScopes);
+        return visibleAdverts.size() > 0 ? advertDAO.getAdvertThemeSummaries(visibleAdverts, searchTerm) : newArrayList();
+    }
+
+    public List<AdvertLocationSummaryDTO> getAdvertLocationSummaries(OpportunityQueryDTO query, String searchTerm) {
+        List<Integer> visibleAdverts = getVisibleAdverts(query, opportunityScopes);
+        return visibleAdverts.size() > 0 ? advertDAO.getAdvertLocationSummaries(visibleAdverts, searchTerm) : newArrayList();
+    }
+
+    public List<AdvertInstitutionSummaryDTO> getAdvertInstitutionSummaries(OpportunityQueryDTO query, String searchTerm) {
+        List<Integer> visibleAdverts = getVisibleAdverts(query, opportunityScopes);
+        return visibleAdverts.size() > 0 ? advertDAO.getAdvertInstitutionSummaries(visibleAdverts, searchTerm) : newArrayList();
     }
 
     public void retireAdvertClosingDate(Advert advert) {
@@ -1108,6 +1113,11 @@ public class AdvertService {
 
     public List<AdvertApplicationDTO> getAdvertsUserApplyingFor(User user, Collection<Integer> adverts) {
         return advertDAO.getAdvertsUserApplyingFor(user, adverts);
+    }
+
+    private List<Integer> getVisibleAdverts(OpportunityQueryDTO query, PrismScope[] scopes) {
+        VisibleAdvertDTO visibleAdvertDTO = getVisibleAdverts(userService.getCurrentUser(), query, scopes);
+        return visibleAdvertDTO.getVisible().stream().map(advertDTO -> advertDTO.getId()).collect(toList());
     }
 
     private List<AdvertCategoryDTO> getAdvertsForWhichUserHasRoles(User user, String[] roleExtensions, PrismScope[] advertScopes,

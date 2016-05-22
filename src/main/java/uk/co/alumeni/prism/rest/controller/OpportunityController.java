@@ -1,11 +1,6 @@
 package uk.co.alumeni.prism.rest.controller;
 
 import static org.apache.commons.lang3.StringUtils.removeEnd;
-import static uk.co.alumeni.prism.domain.definitions.PrismAdvertFilterCategory.FUNCTION;
-import static uk.co.alumeni.prism.domain.definitions.PrismAdvertFilterCategory.INDUSTRY;
-import static uk.co.alumeni.prism.domain.definitions.PrismAdvertFilterCategory.INSTITUTION;
-import static uk.co.alumeni.prism.domain.definitions.PrismAdvertFilterCategory.LOCATION;
-import static uk.co.alumeni.prism.domain.definitions.PrismAdvertFilterCategory.THEME;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -26,14 +21,14 @@ import uk.co.alumeni.prism.domain.advert.Advert;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismScope;
 import uk.co.alumeni.prism.exceptions.ResourceNotFoundException;
 import uk.co.alumeni.prism.mapping.AdvertMapper;
-import uk.co.alumeni.prism.rest.dto.OpportunitiesQueryDTO;
-import uk.co.alumeni.prism.rest.representation.advert.AdvertCategoryNameStringSummaryRepresentation;
+import uk.co.alumeni.prism.rest.dto.OpportunityQueryDTO;
 import uk.co.alumeni.prism.rest.representation.advert.AdvertFunctionSummaryRepresentation;
 import uk.co.alumeni.prism.rest.representation.advert.AdvertIndustrySummaryRepresentation;
 import uk.co.alumeni.prism.rest.representation.advert.AdvertInstitutionSummaryRepresentation;
 import uk.co.alumeni.prism.rest.representation.advert.AdvertListRepresentation;
 import uk.co.alumeni.prism.rest.representation.advert.AdvertLocationSummaryRepresentation;
 import uk.co.alumeni.prism.rest.representation.advert.AdvertRepresentationExtended;
+import uk.co.alumeni.prism.rest.representation.advert.AdvertThemeSummaryRepresentation;
 import uk.co.alumeni.prism.services.AdvertService;
 import uk.co.alumeni.prism.services.WidgetService;
 
@@ -55,7 +50,7 @@ public class OpportunityController {
     private WidgetService widgetService;
 
     @RequestMapping(method = RequestMethod.GET)
-    public AdvertListRepresentation getAdverts(OpportunitiesQueryDTO query) {
+    public AdvertListRepresentation getAdverts(OpportunityQueryDTO query) {
         return advertMapper.getAdvertExtendedRepresentations(query);
     }
 
@@ -87,28 +82,28 @@ public class OpportunityController {
     }
 
     @RequestMapping(method = RequestMethod.GET, value = "industries")
-    public List<AdvertIndustrySummaryRepresentation> getAdvertIndustrySummaryRepresentations(@RequestParam(required = false) String q) {
-        return advertMapper.getAdvertCategorySummaryRepresentations(INDUSTRY, q);
+    public List<AdvertIndustrySummaryRepresentation> getAdvertIndustrySummaryRepresentations(OpportunityQueryDTO query, @RequestParam(required = false) String q) {
+        return advertMapper.getAdvertIndustrySummaryRepresentations(query, q);
     }
 
     @RequestMapping(method = RequestMethod.GET, value = "functions")
-    public List<AdvertFunctionSummaryRepresentation> getAdvertFunctionSummaryRepresentations(@RequestParam(required = false) String q) {
-        return advertMapper.getAdvertCategorySummaryRepresentations(FUNCTION, q);
+    public List<AdvertFunctionSummaryRepresentation> getAdvertFunctionSummaryRepresentations(OpportunityQueryDTO query, @RequestParam(required = false) String q) {
+        return advertMapper.getAdvertFunctionSummaryRepresentations(query, q);
     }
 
     @RequestMapping(method = RequestMethod.GET, value = "themes")
-    public List<AdvertCategoryNameStringSummaryRepresentation> getAdvertThemeSummaryRepresentations(@RequestParam(required = false) String q) {
-        return advertMapper.getAdvertCategorySummaryRepresentations(THEME, q);
+    public List<AdvertThemeSummaryRepresentation> getAdvertThemeSummaryRepresentations(OpportunityQueryDTO query, @RequestParam(required = false) String q) {
+        return advertMapper.getAdvertThemeSummaryRepresentations(query, q);
     }
 
     @RequestMapping(method = RequestMethod.GET, value = "locations")
-    public List<AdvertLocationSummaryRepresentation> getAdvertLocationSummaryRepresentations(@RequestParam(required = false) String q) {
-        return advertMapper.getAdvertCategorySummaryRepresentations(LOCATION, q);
+    public List<AdvertLocationSummaryRepresentation> getAdvertLocationSummaryRepresentations(OpportunityQueryDTO query, @RequestParam(required = false) String q) {
+        return advertMapper.getAdvertLocationSummaryRepresentations(query, q);
     }
 
     @RequestMapping(method = RequestMethod.GET, value = "institutions")
-    public List<AdvertInstitutionSummaryRepresentation> getInsitutionSummaryRepresentations(@RequestParam(required = false) String q) {
-        return advertMapper.getAdvertCategorySummaryRepresentations(INSTITUTION, q);
+    public List<AdvertInstitutionSummaryRepresentation> getInsitutionSummaryRepresentations(OpportunityQueryDTO query, @RequestParam(required = false) String q) {
+        return advertMapper.getAdvertInstitutionSummaryRepresentations(query, q);
     }
 
 }

@@ -65,7 +65,6 @@ import uk.co.alumeni.prism.domain.advert.AdvertTarget;
 import uk.co.alumeni.prism.domain.advert.AdvertTargetPending;
 import uk.co.alumeni.prism.domain.advert.AdvertTheme;
 import uk.co.alumeni.prism.domain.application.Application;
-import uk.co.alumeni.prism.domain.definitions.PrismAdvertFilterCategory;
 import uk.co.alumeni.prism.domain.definitions.PrismAdvertFunction;
 import uk.co.alumeni.prism.domain.definitions.PrismAdvertIndustry;
 import uk.co.alumeni.prism.domain.definitions.PrismDurationUnit;
@@ -82,11 +81,11 @@ import uk.co.alumeni.prism.domain.user.User;
 import uk.co.alumeni.prism.dto.AdvertApplicationDTO;
 import uk.co.alumeni.prism.dto.AdvertApplicationSummaryDTO;
 import uk.co.alumeni.prism.dto.AdvertCategoryDTO;
-import uk.co.alumeni.prism.dto.AdvertCategoryNameEnumDTO;
-import uk.co.alumeni.prism.dto.AdvertCategoryNameStringSummaryDTO;
 import uk.co.alumeni.prism.dto.AdvertDTO;
 import uk.co.alumeni.prism.dto.AdvertFunctionDTO;
+import uk.co.alumeni.prism.dto.AdvertFunctionSummaryDTO;
 import uk.co.alumeni.prism.dto.AdvertIndustryDTO;
+import uk.co.alumeni.prism.dto.AdvertIndustrySummaryDTO;
 import uk.co.alumeni.prism.dto.AdvertInstitutionSummaryDTO;
 import uk.co.alumeni.prism.dto.AdvertLocationDTO;
 import uk.co.alumeni.prism.dto.AdvertLocationSummaryDTO;
@@ -96,9 +95,10 @@ import uk.co.alumeni.prism.dto.AdvertStudyOptionDTO;
 import uk.co.alumeni.prism.dto.AdvertTargetAdvertDTO;
 import uk.co.alumeni.prism.dto.AdvertTargetDTO;
 import uk.co.alumeni.prism.dto.AdvertThemeDTO;
+import uk.co.alumeni.prism.dto.AdvertThemeSummaryDTO;
 import uk.co.alumeni.prism.dto.AdvertUserDTO;
 import uk.co.alumeni.prism.dto.UserAdvertDTO;
-import uk.co.alumeni.prism.rest.dto.OpportunitiesQueryDTO;
+import uk.co.alumeni.prism.rest.dto.OpportunityQueryDTO;
 import uk.co.alumeni.prism.rest.representation.advert.AdvertThemeRepresentation;
 
 import com.google.common.base.Joiner;
@@ -149,7 +149,7 @@ public class AdvertDAO {
                 .list();
     }
 
-    public List<AdvertDTO> getAdverts(OpportunitiesQueryDTO query, Collection<Integer> adverts) {
+    public List<AdvertDTO> getAdverts(OpportunityQueryDTO query, Collection<Integer> adverts) {
         return (List<AdvertDTO>) sessionFactory.getCurrentSession().createCriteria(Advert.class)
                 .setProjection(Projections.projectionList()
                         .add(Projections.groupProperty("id").as("advertId"))
@@ -219,7 +219,7 @@ public class AdvertDAO {
 
     // FIXME: Reduce number of joins in query
     public List<AdvertOpportunityCategoryDTO> getVisibleAdverts(Collection<PrismScope> scopes,
-            Collection<Integer> nodeAdverts, UserAdvertDTO userAdvertDTO, OpportunitiesQueryDTO query) {
+            Collection<Integer> nodeAdverts, UserAdvertDTO userAdvertDTO, OpportunityQueryDTO query) {
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Advert.class) //
                 .setProjection(Projections.projectionList()
                         .add(Projections.groupProperty("id").as("id")) //
@@ -722,37 +722,51 @@ public class AdvertDAO {
                 .list(); //
     }
 
-    public <T extends Enum<T>> List<AdvertCategoryNameEnumDTO<?>> getAdvertCategoryEnumNameSummaries(PrismAdvertFilterCategory category, List<Integer> adverts,
-            String searchTerm) {
-        List<AdvertCategoryNameEnumDTO<?>> summaries = newArrayList();
-        if (category.isNameEnumCategory()) {
-            String propertyName = category.getPropertyName();
-            String propertyNameAliased = propertyName + "." + propertyName;
-            Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Advert.class) //
-                    .setProjection(Projections.projectionList() //
-                            .add(Projections.groupProperty(propertyNameAliased).as("id"))
-                            .add(Projections.countDistinct("id").as("advertCount"))) //
-                    .createAlias("categories." + category.getPropertyCollectionName(), propertyName, JoinType.INNER_JOIN) //
-                    .add(Restrictions.in("id", adverts));
+    public List<AdvertIndustrySummaryDTO> getAdvertIndustrySummaries(List<Integer> adverts, String searchTerm) {
+        Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Advert.class) //
+                .setProjection(Projections.projectionList() //
+                        .add(Projections.groupProperty("industry.industry").as("id"))
+                        .add(Projections.countDistinct("id").as("advertCount"))) //
+                .createAlias("categories.industries", "industry", JoinType.INNER_JOIN) //
+                .add(Restrictions.in("id", adverts));
 
-            if (isNotEmpty(searchTerm)) {
-                List<T> matchingValues = getSimilar((Class<T>) category.getIdClass(), searchTerm);
-                if (matchingValues.size() > 0) {
-                    criteria.add(Restrictions.in(propertyNameAliased, matchingValues));
-                } else {
-                    criteria.add(Restrictions.eq("id", 0));
-                }
+        if (isNotEmpty(searchTerm)) {
+            List<PrismAdvertIndustry> matchingValues = getSimilar(PrismAdvertIndustry.class, searchTerm);
+            if (matchingValues.size() > 0) {
+                criteria.add(Restrictions.in("industry.industry", matchingValues));
+            } else {
+                criteria.add(Restrictions.eq("id", 0));
             }
-
-            summaries.addAll(criteria.addOrder(Order.asc(propertyNameAliased)) //
-                    .setResultTransformer(Transformers.aliasToBean(category.getDtoClass())) //
-                    .list());
         }
 
-        return summaries;
+        return (List<AdvertIndustrySummaryDTO>) criteria.addOrder(Order.asc("industry.industry")) //
+                .setResultTransformer(Transformers.aliasToBean(AdvertIndustrySummaryDTO.class)) //
+                .list();
     }
 
-    public List<AdvertCategoryNameStringSummaryDTO> getAdvertThemeSummaries(List<Integer> adverts, String searchTerm) {
+    public List<AdvertFunctionSummaryDTO> getAdvertFunctionSummaries(List<Integer> adverts, String searchTerm) {
+        Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Advert.class) //
+                .setProjection(Projections.projectionList() //
+                        .add(Projections.groupProperty("function.function").as("id"))
+                        .add(Projections.countDistinct("id").as("advertCount"))) //
+                .createAlias("categories.functions", "function", JoinType.INNER_JOIN) //
+                .add(Restrictions.in("id", adverts));
+
+        if (isNotEmpty(searchTerm)) {
+            List<PrismAdvertIndustry> matchingValues = getSimilar(PrismAdvertIndustry.class, searchTerm);
+            if (matchingValues.size() > 0) {
+                criteria.add(Restrictions.in("function.function", matchingValues));
+            } else {
+                criteria.add(Restrictions.eq("id", 0));
+            }
+        }
+
+        return (List<AdvertFunctionSummaryDTO>) criteria.addOrder(Order.asc("industry.industry")) //
+                .setResultTransformer(Transformers.aliasToBean(AdvertIndustrySummaryDTO.class)) //
+                .list();
+    }
+
+    public List<AdvertThemeSummaryDTO> getAdvertThemeSummaries(List<Integer> adverts, String searchTerm) {
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Advert.class) //
                 .setProjection(Projections.projectionList() //
                         .add(Projections.groupProperty("theme.id").as("id")) //
@@ -766,8 +780,8 @@ public class AdvertDAO {
             criteria.add(Restrictions.like("theme.name", searchTerm, MatchMode.ANYWHERE));
         }
 
-        return (List<AdvertCategoryNameStringSummaryDTO>) criteria.addOrder(Order.asc("theme.name")) //
-                .setResultTransformer(Transformers.aliasToBean(AdvertCategoryNameStringSummaryDTO.class)) //
+        return (List<AdvertThemeSummaryDTO>) criteria.addOrder(Order.asc("theme.name")) //
+                .setResultTransformer(Transformers.aliasToBean(AdvertThemeSummaryDTO.class)) //
                 .list();
     }
 
@@ -962,7 +976,7 @@ public class AdvertDAO {
                 .list();
     }
 
-    private void appendContextConstraint(Criteria criteria, OpportunitiesQueryDTO queryDTO) {
+    private void appendContextConstraint(Criteria criteria, OpportunityQueryDTO queryDTO) {
         PrismResourceContext context = queryDTO.getContext();
         if (context != null) {
             if (context.equals(EMPLOYER)) {
@@ -984,7 +998,7 @@ public class AdvertDAO {
         appendVisibilityConstraint(criteria, userAdvertDTO, recommendation);
     }
 
-    private void appendKeywordConstraint(OpportunitiesQueryDTO queryDTO, Criteria criteria) {
+    private void appendKeywordConstraint(OpportunityQueryDTO queryDTO, Criteria criteria) {
         String keyword = queryDTO.getKeyword();
         if (keyword != null) {
             Junction constraint = Restrictions.disjunction();
@@ -998,7 +1012,7 @@ public class AdvertDAO {
         }
     }
 
-    private void appendLocationConstraint(Criteria criteria, OpportunitiesQueryDTO queryDTO) {
+    private void appendLocationConstraint(Criteria criteria, OpportunityQueryDTO queryDTO) {
         BigDecimal neLat = queryDTO.getNeLat();
         List<Integer> locations = queryDTO.getLocations();
         if (neLat != null) {
@@ -1023,35 +1037,35 @@ public class AdvertDAO {
         }
     }
 
-    private void appendIndustryConstraint(Criteria criteria, OpportunitiesQueryDTO queryDTO) {
+    private void appendIndustryConstraint(Criteria criteria, OpportunityQueryDTO queryDTO) {
         List<PrismAdvertIndustry> industries = queryDTO.getIndustries();
         if (isNotEmpty(industries)) {
             criteria.add(Restrictions.in("industry.industry", industries));
         }
     }
 
-    private void appendFunctionConstraint(Criteria criteria, OpportunitiesQueryDTO queryDTO) {
+    private void appendFunctionConstraint(Criteria criteria, OpportunityQueryDTO queryDTO) {
         List<PrismAdvertFunction> functions = queryDTO.getFunctions();
         if (isNotEmpty(functions)) {
             criteria.add(Restrictions.in("function.function", functions));
         }
     }
 
-    private void appendThemeConstraint(Criteria criteria, OpportunitiesQueryDTO queryDTO) {
+    private void appendThemeConstraint(Criteria criteria, OpportunityQueryDTO queryDTO) {
         List<Integer> themes = queryDTO.getThemes();
         if (isNotEmpty(themes)) {
             criteria.add(Restrictions.in("advertTheme.theme.id", themes));
         }
     }
 
-    private void appendInstitutionConstraint(Criteria criteria, OpportunitiesQueryDTO queryDTO) {
+    private void appendInstitutionConstraint(Criteria criteria, OpportunityQueryDTO queryDTO) {
         List<Integer> institutions = queryDTO.getInstitutions();
         if (isNotEmpty(institutions)) {
             criteria.add(Restrictions.in("institution.id", institutions));
         }
     }
 
-    private void appendStudyOptionConstraint(OpportunitiesQueryDTO queryDTO, Criteria criteria) {
+    private void appendStudyOptionConstraint(OpportunityQueryDTO queryDTO, Criteria criteria) {
         List<PrismStudyOption> studyOptions = queryDTO.getStudyOptions();
         if (isNotEmpty(studyOptions)) {
             Disjunction studyOptionConstraint = Restrictions.disjunction();
@@ -1062,7 +1076,7 @@ public class AdvertDAO {
         }
     }
 
-    private void appendPayConstraint(Criteria criteria, OpportunitiesQueryDTO queryDTO) {
+    private void appendPayConstraint(Criteria criteria, OpportunityQueryDTO queryDTO) {
         PrismDurationUnit interval = queryDTO.getSalaryInterval();
         if (interval != null) {
             BigDecimal durationAsHours = new BigDecimal(getDurationUnitAsHours(interval));
@@ -1076,7 +1090,7 @@ public class AdvertDAO {
         }
     }
 
-    private void appendDurationConstraint(Criteria criteria, OpportunitiesQueryDTO queryDTO) {
+    private void appendDurationConstraint(Criteria criteria, OpportunityQueryDTO queryDTO) {
         appendRangeConstraint(criteria, "durationMinimum", "durationMaximum", queryDTO.getMinDuration(), queryDTO.getMaxDuration());
     }
 

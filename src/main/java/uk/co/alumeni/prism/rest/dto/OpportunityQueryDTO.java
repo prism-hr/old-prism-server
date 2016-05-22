@@ -16,7 +16,7 @@ import uk.co.alumeni.prism.domain.definitions.PrismResourceContext;
 import uk.co.alumeni.prism.domain.definitions.PrismStudyOption;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismScope;
 
-public class OpportunitiesQueryDTO {
+public class OpportunityQueryDTO {
 
     private Integer advertId;
 
@@ -281,27 +281,27 @@ public class OpportunitiesQueryDTO {
         this.maxAdverts = maxAdverts;
     }
 
-    public OpportunitiesQueryDTO withContext(PrismResourceContext context) {
+    public OpportunityQueryDTO withContext(PrismResourceContext context) {
         this.context = context;
         return this;
     }
 
-    public OpportunitiesQueryDTO withRecommendation(Boolean recommendation) {
+    public OpportunityQueryDTO withRecommendation(Boolean recommendation) {
         this.recommendation = recommendation;
         return this;
     }
 
-    public OpportunitiesQueryDTO withResourceScope(final PrismScope resourceScope) {
+    public OpportunityQueryDTO withResourceScope(final PrismScope resourceScope) {
         this.resourceScope = resourceScope;
         return this;
     }
 
-    public OpportunitiesQueryDTO withResourceId(final Integer resourceId) {
+    public OpportunityQueryDTO withResourceId(final Integer resourceId) {
         this.resourceId = resourceId;
         return this;
     }
 
-    public OpportunitiesQueryDTO withMaxAdverts(final Integer maxAdverts) {
+    public OpportunityQueryDTO withMaxAdverts(final Integer maxAdverts) {
         this.maxAdverts = maxAdverts;
         return this;
     }

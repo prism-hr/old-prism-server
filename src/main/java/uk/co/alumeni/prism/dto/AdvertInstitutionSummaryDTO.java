@@ -1,6 +1,6 @@
 package uk.co.alumeni.prism.dto;
 
-public class AdvertInstitutionSummaryDTO extends AdvertCategoryNameStringSummaryDTO {
+public class AdvertInstitutionSummaryDTO extends AdvertThemeSummaryDTO {
 
     private Integer logoImageId;
 

@@ -356,12 +356,8 @@ public class AdvertService {
             updateFinancialDetail(advert, ((ResourceOpportunityDTO) resourceDTO).getFinancialDetail(), parentResource.getInstitution());
         } else {
             advert.setGloballyVisible(resourceScope.isDefaultShared());
-
-            if (resourceScope.equals(DEPARTMENT)) {
-                updateAdvertAddress(advert, advertMapper.getAddressDTO(getResourceAddress(parentResource)));
-            } else {
-                updateAdvertAddress(advert, ((InstitutionDTO) resourceDTO).getAddress());
-            }
+            createAdvertAddress(advert, resourceScope.equals(DEPARTMENT) ? advertMapper.getAddressDTO(getResourceAddress(parentResource))
+                    : ((InstitutionDTO) resourceDTO).getAddress());
         }
 
         advert.setSubmitted(false);
@@ -1096,16 +1092,14 @@ public class AdvertService {
         return advertDAO.getAdvertsUserApplyingFor(user, adverts);
     }
 
+    private void createAdvertAddress(Advert advert, AddressDTO addressDTO) {
+        Address address = new Address();
+        addressService.updateAddress(address, addressDTO);
+        advert.setAddress(address);
+    }
+
     public void updateAdvertAddress(Advert advert, AddressDTO addressDTO) {
-        Address address = advert.getAddress();
-        if (address == null) {
-            address = new Address();
-            advert.setAddress(address);
-            addressService.updateAddress(address, addressDTO);
-            persistAdvertLocation(advert, advert);
-        } else {
-            addressService.updateAndGeocodeAddress(address, addressDTO, advert.getName());
-        }
+        addressService.updateAndGeocodeAddress(advert.getAddress(), addressDTO, advert.getName());
     }
 
     private List<Integer> getVisibleAdverts(OpportunityQueryDTO query, PrismScope[] scopes) {
@@ -1437,8 +1431,11 @@ public class AdvertService {
         return new AdvertLocation().withAdvert(advert).withLocationAdvert(locationAdvert);
     }
 
-    private boolean persistAdvertLocation(Advert advert, Advert locationAdvert) {
-        return advert.getCategories().getLocations().add(entityService.getOrCreate(createAdvertLocation(advert, locationAdvert)));
+    private void persistAdvertLocation(Advert advert, Advert locationAdvert) {
+        AdvertCategories categories = advert.getCategories();
+        categories = categories == null ? new AdvertCategories() : categories;
+        categories.getLocations().add(entityService.getOrCreate(createAdvertLocation(advert, locationAdvert)));
+        advert.setCategories(categories);
     }
 
 }

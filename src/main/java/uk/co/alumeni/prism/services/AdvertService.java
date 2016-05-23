@@ -380,6 +380,7 @@ public class AdvertService {
 
         entityService.flush();
 
+        resource.setAdvert(advert);
         advert.getEnclosingResources().stream().forEach(enclosingResource -> {
             setProperty(advert, enclosingResource.getResourceScope().getLowerCamelName() + "Advert", enclosingResource.getAdvert());
         });
@@ -389,7 +390,7 @@ public class AdvertService {
             advert.setAddress(address);
         }
 
-        persistAdvertLocation(advert, (resourceScope.equals(INSTITUTION) ? resource : resource.getResourceParent()).getAdvert());
+        persistAdvertLocation(advert, resourceScope.equals(INSTITUTION) ? advert : resource.getResourceParent().getAdvert());
         entityService.flush();
     }
 

@@ -356,8 +356,11 @@ public class AdvertService {
             updateFinancialDetail(advert, ((ResourceOpportunityDTO) resourceDTO).getFinancialDetail(), parentResource.getInstitution());
         } else {
             advert.setGloballyVisible(resourceScope.isDefaultShared());
-            createAdvertAddress(advert, resourceScope.equals(DEPARTMENT) ? advertMapper.getAddressDTO(getResourceAddress(parentResource))
-                    : ((InstitutionDTO) resourceDTO).getAddress());
+            if (resourceScope.equals(DEPARTMENT)) {
+                createAdvertAddress(advert, advertMapper.getAddressDTO(parentResource.getInstitution().getAdvert().getAddress()));
+            } else {
+                createAdvertAddress(advert, ((InstitutionDTO) resourceDTO).getAddress());
+            }
         }
 
         advert.setSubmitted(false);
@@ -1380,24 +1383,6 @@ public class AdvertService {
     private ActionOutcomeDTO executeUpdate(ResourceParent resource, String message) {
         return resourceService.executeUpdate(resource, userService.getCurrentUser(),
                 PrismDisplayPropertyDefinition.valueOf(resource.getResourceScope().name() + "_" + message));
-    }
-
-    private Address getResourceAddress(Resource resource) {
-        Advert advert = resource.getAdvert();
-        if (advert == null) {
-            return null;
-        }
-
-        Address address = advert.getAddress();
-        if (address == null) {
-            Resource parentResource = resource.getParentResource();
-            if (parentResource.equals(resource)) {
-                return null;
-            }
-            getResourceAddress(resource.getParentResource());
-        }
-
-        return address;
     }
 
     private void setAdvertTargetPartnershipState(AdvertTarget advertTarget, PrismPartnershipState partnershipState, DateTime baseline, boolean activateResource) {

@@ -1102,10 +1102,10 @@ public class AdvertService {
             address = new Address();
             advert.setAddress(address);
             addressService.updateAddress(address, addressDTO);
+            persistAdvertLocation(advert, advert);
         } else {
             addressService.updateAndGeocodeAddress(address, addressDTO, advert.getName());
         }
-        persistAdvertLocation(advert, advert);
     }
 
     private List<Integer> getVisibleAdverts(OpportunityQueryDTO query, PrismScope[] scopes) {

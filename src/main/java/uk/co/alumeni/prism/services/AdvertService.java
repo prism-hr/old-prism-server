@@ -41,6 +41,7 @@ import static uk.co.alumeni.prism.domain.definitions.workflow.PrismPartnershipSt
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRole.SYSTEM_ADMINISTRATOR;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRole.PrismRoleCategory.STUDENT;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.DEPARTMENT;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.INSTITUTION;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.getResourceContexts;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScopeCategory.APPLICATION;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScopeCategory.OPPORTUNITY;
@@ -388,7 +389,7 @@ public class AdvertService {
             advert.setAddress(address);
         }
 
-        persistAdvertLocation(advert, resource.getResourceParent().getAdvert());
+        persistAdvertLocation(advert, (resourceScope.equals(INSTITUTION) ? resource : resource.getResourceParent()).getAdvert());
         entityService.flush();
     }
 

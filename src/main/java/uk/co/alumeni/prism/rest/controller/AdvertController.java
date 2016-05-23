@@ -21,6 +21,7 @@ import uk.co.alumeni.prism.domain.resource.Resource;
 import uk.co.alumeni.prism.domain.resource.ResourceOpportunity;
 import uk.co.alumeni.prism.dto.AdvertTargetDTO;
 import uk.co.alumeni.prism.mapping.AdvertMapper;
+import uk.co.alumeni.prism.rest.PrismRestUtils;
 import uk.co.alumeni.prism.rest.ResourceDescriptor;
 import uk.co.alumeni.prism.rest.dto.AddressDTO;
 import uk.co.alumeni.prism.rest.dto.advert.AdvertCategoriesDTO;
@@ -107,7 +108,7 @@ public class AdvertController {
 
     @ModelAttribute
     private ResourceDescriptor getResourceDescriptor(@PathVariable String resourceScope) {
-        return getResourceDescriptor(resourceScope);
+        return PrismRestUtils.getResourceDescriptor(resourceScope);
     }
 
 }

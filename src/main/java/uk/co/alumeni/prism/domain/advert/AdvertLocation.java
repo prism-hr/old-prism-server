@@ -13,7 +13,7 @@ import javax.persistence.UniqueConstraint;
 import com.google.common.base.Objects;
 
 @Entity
-@Table(name = "advert_location", uniqueConstraints = { @UniqueConstraint(columnNames = { "advert_id", "location_advert_id", "address_id" }) })
+@Table(name = "advert_location", uniqueConstraints = { @UniqueConstraint(columnNames = { "advert_id", "location_advert_id" }) })
 public class AdvertLocation extends AdvertAttribute {
 
     @Id

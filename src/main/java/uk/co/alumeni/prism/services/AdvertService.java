@@ -1434,7 +1434,7 @@ public class AdvertService {
     }
 
     private AdvertLocation createAdvertLocation(Advert advert, Advert locationAdvert) {
-        return new AdvertLocation().withAdvert(advert).withLocationAdvert(locationAdvert).withAddress(locationAdvert.getAddress());
+        return new AdvertLocation().withAdvert(advert).withLocationAdvert(locationAdvert);
     }
 
     private boolean persistAdvertLocation(Advert advert, Advert locationAdvert) {

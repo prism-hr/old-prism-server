@@ -1,5 +1,7 @@
 package uk.co.alumeni.prism.domain.comment;
 
+import static com.google.common.base.Objects.equal;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -113,8 +115,8 @@ public class CommentAssignedUser implements UniqueEntity, UserAssignment<Comment
             return false;
         }
         CommentAssignedUser other = (CommentAssignedUser) object;
-        return Objects.equal(comment, other.getComment()) && Objects.equal(user, other.getUser()) && Objects.equal(role, other.getRole())
-                && Objects.equal(roleTransitionType, other.getRoleTransitionType());
+        return equal(comment, other.getComment()) && equal(user, other.getUser()) && equal(role, other.getRole())
+                && equal(roleTransitionType, other.getRoleTransitionType());
     }
 
     @Override

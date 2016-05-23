@@ -21,6 +21,7 @@ import static org.apache.commons.lang.WordUtils.capitalize;
 import static org.apache.commons.lang3.ArrayUtils.isEmpty;
 import static org.joda.time.DateTime.now;
 import static org.springframework.beans.BeanUtils.instantiate;
+import static org.springframework.security.core.context.SecurityContextHolder.getContext;
 import static uk.co.alumeni.prism.PrismConstants.ADDRESS_LOCATION_PRECISION;
 import static uk.co.alumeni.prism.PrismConstants.RATING_PRECISION;
 import static uk.co.alumeni.prism.PrismConstants.SYSTEM_NOTIFICATION_INTERVAL;
@@ -61,7 +62,6 @@ import org.joda.time.DateTime;
 import org.springframework.beans.BeanUtils;
 import org.springframework.context.ApplicationContext;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.BeanPropertyBindingResult;
@@ -194,7 +194,7 @@ public class UserService {
     }
 
     public User getCurrentUser() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        Authentication authentication = getContext().getAuthentication();
         if (authentication != null && authentication.getDetails() instanceof User) {
             User user = (User) authentication.getDetails();
             user = getById(user.getId());

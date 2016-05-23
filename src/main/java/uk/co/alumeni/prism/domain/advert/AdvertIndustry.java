@@ -1,5 +1,7 @@
 package uk.co.alumeni.prism.domain.advert;
 
+import static com.google.common.base.Objects.equal;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -12,6 +14,8 @@ import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
 import uk.co.alumeni.prism.domain.definitions.PrismAdvertIndustry;
+
+import com.google.common.base.Objects;
 
 @Entity
 @Table(name = "advert_industry", uniqueConstraints = { @UniqueConstraint(columnNames = { "advert_id", "industry" }) })
@@ -65,6 +69,23 @@ public class AdvertIndustry extends AdvertAttribute {
     public AdvertIndustry withIndustry(PrismAdvertIndustry industry) {
         this.industry = industry;
         return this;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(advert, industry);
+    }
+
+    @Override
+    public boolean equals(Object object) {
+        if (object == null) {
+            return false;
+        }
+        if (getClass() != object.getClass()) {
+            return false;
+        }
+        AdvertIndustry other = (AdvertIndustry) object;
+        return equal(advert, other.getAdvert()) && equal(industry, other.getIndustry());
     }
 
     @Override

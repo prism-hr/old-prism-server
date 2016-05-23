@@ -1,5 +1,7 @@
 package uk.co.alumeni.prism.domain.advert;
 
+import static com.google.common.base.Objects.equal;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -12,6 +14,8 @@ import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
 import uk.co.alumeni.prism.domain.definitions.PrismAdvertFunction;
+
+import com.google.common.base.Objects;
 
 @Entity
 @Table(name = "advert_function", uniqueConstraints = { @UniqueConstraint(columnNames = { "advert_id", "function" }) })
@@ -65,6 +69,23 @@ public class AdvertFunction extends AdvertAttribute {
     public AdvertFunction withFunction(PrismAdvertFunction function) {
         this.function = function;
         return this;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(advert, function);
+    }
+
+    @Override
+    public boolean equals(Object object) {
+        if (object == null) {
+            return false;
+        }
+        if (getClass() != object.getClass()) {
+            return false;
+        }
+        AdvertFunction other = (AdvertFunction) object;
+        return equal(advert, other.getAdvert()) && equal(function, other.getFunction());
     }
 
     @Override

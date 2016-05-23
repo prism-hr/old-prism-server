@@ -1,5 +1,7 @@
 package uk.co.alumeni.prism.domain.address;
 
+import static com.google.common.base.Objects.equal;
+
 import java.util.Set;
 
 import javax.persistence.Column;
@@ -104,7 +106,7 @@ public class AddressLocationPart implements UniqueEntity {
             return false;
         }
         AddressLocationPart other = (AddressLocationPart) object;
-        if (Objects.equal(nameIndex, other.getNameIndex())) {
+        if (equal(nameIndex, other.getNameIndex())) {
             AddressLocationPart otherParent = other.getParent();
             if (parent == null && otherParent == null) {
                 return true;

@@ -1,5 +1,7 @@
 package uk.co.alumeni.prism.domain;
 
+import static com.google.common.base.Objects.equal;
+
 import org.joda.time.DateTime;
 
 import com.google.common.base.Objects;
@@ -40,7 +42,7 @@ public abstract class Tag implements UniqueEntity {
             return false;
         }
         Tag other = (Tag) object;
-        return Objects.equal(getName(), other.getName());
+        return equal(getName(), other.getName());
     }
 
     @Override

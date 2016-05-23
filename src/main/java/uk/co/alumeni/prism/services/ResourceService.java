@@ -379,6 +379,7 @@ public class ResourceService {
             }
 
             resource.setAdvert(advert);
+            
 
             activityService.setSequenceIdentifier(resource, baseline);
             Class<? extends ResourcePopulator<T>> populator = (Class<? extends ResourcePopulator<T>>) resource.getResourceScope().getResourcePopulator();

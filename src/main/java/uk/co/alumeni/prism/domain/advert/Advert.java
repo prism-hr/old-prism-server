@@ -1,5 +1,7 @@
 package uk.co.alumeni.prism.domain.advert;
 
+import static com.google.common.base.Objects.equal;
+import static com.google.common.collect.Lists.newArrayList;
 import static com.google.common.collect.Sets.newHashSet;
 import static java.util.Arrays.stream;
 import static java.util.stream.Collectors.joining;
@@ -8,8 +10,10 @@ import static uk.co.alumeni.prism.PrismConstants.HYPHEN;
 import static uk.co.alumeni.prism.PrismConstants.SPACE;
 import static uk.co.alumeni.prism.dao.WorkflowDAO.advertScopes;
 import static uk.co.alumeni.prism.utils.PrismReflectionUtils.getProperty;
+import static uk.co.alumeni.prism.utils.PrismReflectionUtils.setProperty;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import javax.persistence.Column;
@@ -49,7 +53,7 @@ import uk.co.alumeni.prism.domain.workflow.OpportunityType;
 import uk.co.alumeni.prism.domain.workflow.Scope;
 import uk.co.alumeni.prism.workflow.user.AdvertReassignmentProcessor;
 
-import com.google.common.collect.Lists;
+import com.google.common.base.Objects;
 
 @Entity
 @Table(name = "advert", uniqueConstraints = { @UniqueConstraint(columnNames = { "institution_id", "department_id", "program_id", "project_id" }) })
@@ -72,16 +76,32 @@ public class Advert implements UniqueEntity, UserAssignment<AdvertReassignmentPr
     private Institution institution;
 
     @ManyToOne
-    @JoinColumn(name = "program_id")
-    private Program program;
+    @JoinColumn(name = "institution_advert_id")
+    private Advert institutionAdvert;
 
     @ManyToOne
     @JoinColumn(name = "department_id")
     private Department department;
 
     @ManyToOne
+    @JoinColumn(name = "department_advert_id")
+    private Advert departmentAdvert;
+
+    @ManyToOne
+    @JoinColumn(name = "program_id")
+    private Program program;
+
+    @ManyToOne
+    @JoinColumn(name = "program_advert_id")
+    private Advert programAdvert;
+
+    @ManyToOne
     @JoinColumn(name = "project_id")
     private Project project;
+
+    @ManyToOne
+    @JoinColumn(name = "project_advert_id")
+    private Advert projectAdvert;
 
     @ManyToOne
     @JoinColumn(name = "scope_id")
@@ -201,12 +221,28 @@ public class Advert implements UniqueEntity, UserAssignment<AdvertReassignmentPr
         this.institution = institution;
     }
 
+    public Advert getInstitutionAdvert() {
+        return institutionAdvert;
+    }
+
+    public void setInstitutionAdvert(Advert institutionAdvert) {
+        this.institutionAdvert = institutionAdvert;
+    }
+
     public Department getDepartment() {
         return department;
     }
 
     public void setDepartment(Department department) {
         this.department = department;
+    }
+
+    public Advert getDepartmentAdvert() {
+        return departmentAdvert;
+    }
+
+    public void setDepartmentAdvert(Advert departmentAdvert) {
+        this.departmentAdvert = departmentAdvert;
     }
 
     public Program getProgram() {
@@ -217,12 +253,28 @@ public class Advert implements UniqueEntity, UserAssignment<AdvertReassignmentPr
         this.program = program;
     }
 
+    public Advert getProgramAdvert() {
+        return programAdvert;
+    }
+
+    public void setProgramAdvert(Advert programAdvert) {
+        this.programAdvert = programAdvert;
+    }
+
     public Project getProject() {
         return project;
     }
 
     public void setProject(Project project) {
         this.project = project;
+    }
+
+    public Advert getProjectAdvert() {
+        return projectAdvert;
+    }
+
+    public void setProjectAdvert(Advert projectAdvert) {
+        this.projectAdvert = projectAdvert;
     }
 
     public Scope getScope() {
@@ -410,15 +462,15 @@ public class Advert implements UniqueEntity, UserAssignment<AdvertReassignmentPr
     }
 
     public ResourceParent getResource() {
-        return ObjectUtils.firstNonNull(getResourceOpportunity(), getResourceParent());
+        return firstNonNull(getResourceOpportunity(), getResourceParent());
     }
 
     public void setResource(Resource resource) {
-        this.system = resource.getSystem();
-        this.institution = resource.getInstitution();
-        this.department = resource.getDepartment();
-        this.program = resource.getProgram();
-        this.project = resource.getProject();
+        Map<PrismScope, Resource> enclosingResources = resource.getEnclosingResources();
+        enclosingResources.keySet().stream().forEach(enclosingScope -> {
+            String enclosingReference = enclosingScope.getLowerCamelName();
+            setProperty(this, enclosingReference, enclosingResources.get(enclosingScope));
+        });
     }
 
     public ResourceParent getResourceParent() {
@@ -431,7 +483,7 @@ public class Advert implements UniqueEntity, UserAssignment<AdvertReassignmentPr
 
     public List<ResourceParent> getParentResources() {
         PrismScope scope = getResource().getResourceScope();
-        List<ResourceParent> parentResources = Lists.newArrayList();
+        List<ResourceParent> parentResources = newArrayList();
         for (PrismScope advertScope : advertScopes) {
             if (advertScope.ordinal() < scope.ordinal()) {
                 ResourceParent parentResource = (ResourceParent) getProperty(this, advertScope.getLowerCamelName());
@@ -444,14 +496,14 @@ public class Advert implements UniqueEntity, UserAssignment<AdvertReassignmentPr
     }
 
     public List<ResourceParent> getEnclosingResources() {
-        List<ResourceParent> parentResources = Lists.newArrayList();
+        List<ResourceParent> enclosingResources = newArrayList();
         for (PrismScope advertScope : advertScopes) {
-            ResourceParent parentResource = (ResourceParent) getProperty(this, advertScope.getLowerCamelName());
-            if (parentResource != null) {
-                parentResources.add(parentResource);
+            ResourceParent enclosingResource = (ResourceParent) getProperty(this, advertScope.getLowerCamelName());
+            if (enclosingResource != null) {
+                enclosingResources.add(enclosingResource);
             }
         }
-        return parentResources;
+        return enclosingResources;
     }
 
     public boolean isAdvertOfScope(PrismScope scope) {
@@ -482,6 +534,23 @@ public class Advert implements UniqueEntity, UserAssignment<AdvertReassignmentPr
     }
 
     @Override
+    public int hashCode() {
+        return Objects.hashCode(id);
+    }
+
+    @Override
+    public boolean equals(Object object) {
+        if (object == null) {
+            return false;
+        }
+        if (getClass() != object.getClass()) {
+            return false;
+        }
+        Advert other = (Advert) object;
+        return equal(id, other.getId());
+    }
+
+    @Override
     public int compareTo(Advert other) {
         return ObjectUtils.compare(name, other.getName());
     }
@@ -489,8 +558,7 @@ public class Advert implements UniqueEntity, UserAssignment<AdvertReassignmentPr
     @Override
     public String toString() {
         return stream(new ResourceParent[] { institution, department, program, project }).filter(resource -> resource != null)
-                .map(resource -> resource.getAdvert().getName())
-                .collect(joining(SPACE + HYPHEN + SPACE));
+                .map(resource -> resource.getAdvert().getName()).collect(joining(SPACE + HYPHEN + SPACE));
     }
 
     @Override

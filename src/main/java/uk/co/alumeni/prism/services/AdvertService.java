@@ -47,12 +47,12 @@ import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScopeCategory
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScopeCategory.ORGANIZATION;
 import static uk.co.alumeni.prism.utils.PrismListUtils.getRowsToReturn;
 import static uk.co.alumeni.prism.utils.PrismReflectionUtils.getProperty;
+import static uk.co.alumeni.prism.utils.PrismReflectionUtils.setProperty;
 
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.net.URI;
 import java.net.URLEncoder;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
@@ -353,14 +353,14 @@ public class AdvertService {
                 advert.setCategories(advertCategories);
             }
 
-            advertCategories.getLocations().add(new AdvertLocation().withAdvert(advert).withLocationAdvert(parentResource.getAdvert()));
             updateFinancialDetail(advert, ((ResourceOpportunityDTO) resourceDTO).getFinancialDetail(), parentResource.getInstitution());
         } else {
             advert.setGloballyVisible(resourceScope.isDefaultShared());
+
             if (resourceScope.equals(DEPARTMENT)) {
-                updateAddress(parentResource, advert);
+                updateAdvertAddress(advert, advertMapper.getAddressDTO(getResourceAddress(parentResource)));
             } else {
-                updateAddress(parentResource, advert, ((InstitutionDTO) resourceDTO).getAddress());
+                updateAdvertAddress(advert, ((InstitutionDTO) resourceDTO).getAddress());
             }
         }
 
@@ -370,23 +370,26 @@ public class AdvertService {
     }
 
     public void persistAdvert(ResourceParent resource, Advert advert) {
-        advert.setResource(resource);
         PrismScope resourceScope = resource.getResourceScope();
         advert.setScope(scopeService.getById(resourceScope));
+        advert.setResource(resource);
 
         Address address = advert.getAddress();
         advert.setAddress(null);
         entityService.save(advert);
+
+        entityService.flush();
+
+        advert.getEnclosingResources().stream().forEach(enclosingResource -> {
+            setProperty(advert, enclosingResource.getResourceScope().getLowerCamelName() + "Advert", enclosingResource.getAdvert());
+        });
 
         if (address != null) {
             addressService.persistAndGeocodeAddress(address, advert.getName());
             advert.setAddress(address);
         }
 
-        if (resourceScope.getScopeCategory().equals(OPPORTUNITY)) {
-            persistAdvertLocation(advert, resource.getResourceParent().getAdvert());
-        }
-
+        persistAdvertLocation(advert, resource.getResourceParent().getAdvert());
         entityService.flush();
     }
 
@@ -464,26 +467,7 @@ public class AdvertService {
         resourceService.setResourceAdvertIncompleteSection(resource);
     }
 
-    public void updateAddress(Resource parentResource, Advert advert) {
-        updateAddress(parentResource, advert, null);
-    }
-
-    public void updateAddress(Resource parentResource, Advert advert, AddressDTO addressDTO) {
-        Address address = advert.getAddress();
-        if (addressDTO != null) {
-            setAdvertAddress(advert, addressDTO);
-        } else if (address == null) {
-            if (ResourceParent.class.isAssignableFrom(parentResource.getClass())) {
-                address = getResourceAddress(parentResource);
-                addressDTO = advertMapper.getAddressDTO(address);
-                setAdvertAddress(advert, addressDTO);
-            } else {
-                throw new Error();
-            }
-        }
-    }
-
-    public void updateLocations(ResourceOpportunity resource, List<ResourceRelationDTO> locations) {
+    public void updateAdvertLocations(ResourceOpportunity resource, List<ResourceRelationDTO> locations) {
         Advert advert = resource.getAdvert();
         advertDAO.deleteAdvertAttributes(advert, AdvertLocation.class);
 
@@ -536,7 +520,7 @@ public class AdvertService {
         advertDAO.updateAdvertPayCurrency(adverts, currency);
     }
 
-    public void updateCategories(PrismScope resourceScope, Integer resourceId, AdvertCategoriesDTO categoriesDTO) {
+    public void updateAdvertCategories(PrismScope resourceScope, Integer resourceId, AdvertCategoriesDTO categoriesDTO) {
         ResourceParent resource = (ResourceParent) resourceService.getById(resourceScope, resourceId);
 
         Advert advert = resource.getAdvert();
@@ -702,7 +686,7 @@ public class AdvertService {
         });
     }
 
-    public void updateCompetences(PrismScope resourceScope, Integer resourceId, List<AdvertCompetenceDTO> competencesDTO) {
+    public void updateAdvertCompetences(PrismScope resourceScope, Integer resourceId, List<AdvertCompetenceDTO> competencesDTO) {
         ResourceParent resource = (ResourceParent) resourceService.getById(resourceScope, resourceId);
         Advert advert = resource.getAdvert();
         updateCompetences(advert, competencesDTO);
@@ -1042,12 +1026,9 @@ public class AdvertService {
     }
 
     public List<Advert> getPossibleAdvertLocations(Advert advert) {
-        List<Advert> locations = advert.getParentResources().stream().map(Resource::getAdvert).collect(Collectors.toList());
-
-        stream(advertScopes)
-                .flatMap(advertScope -> advertDAO.getPossibleAdvertLocations(advert, advertScope, locations).stream())
-                .collect(Collectors.toCollection(() -> new ArrayList<>(locations)));
-        return locations;
+        List<Advert> enclosingAdverts = advert.getParentResources().stream().map(Resource::getAdvert).collect(toList());
+        stream(advertScopes).forEach(advertScope -> enclosingAdverts.addAll(advertDAO.getPossibleAdvertLocations(advert, advertScope, enclosingAdverts)));
+        return enclosingAdverts;
     }
 
     public List<AdvertIndustrySummaryDTO> getAdvertIndustrySummaries(OpportunityQueryDTO query, String searchTerm) {
@@ -1113,6 +1094,18 @@ public class AdvertService {
 
     public List<AdvertApplicationDTO> getAdvertsUserApplyingFor(User user, Collection<Integer> adverts) {
         return advertDAO.getAdvertsUserApplyingFor(user, adverts);
+    }
+
+    public void updateAdvertAddress(Advert advert, AddressDTO addressDTO) {
+        Address address = advert.getAddress();
+        if (address == null) {
+            address = new Address();
+            advert.setAddress(address);
+            addressService.updateAddress(address, addressDTO);
+        } else {
+            addressService.updateAndGeocodeAddress(address, addressDTO, advert.getName());
+        }
+        persistAdvertLocation(advert, advert);
     }
 
     private List<Integer> getVisibleAdverts(OpportunityQueryDTO query, PrismScope[] scopes) {
@@ -1395,17 +1388,6 @@ public class AdvertService {
                 PrismDisplayPropertyDefinition.valueOf(resource.getResourceScope().name() + "_" + message));
     }
 
-    private void setAdvertAddress(Advert advert, AddressDTO addressDTO) {
-        Address address = advert.getAddress();
-        if (address == null) {
-            address = new Address();
-            advert.setAddress(address);
-            addressService.updateAddress(address, addressDTO);
-        } else {
-            addressService.updateAndGeocodeAddress(address, addressDTO, advert.getName());
-        }
-    }
-
     private Address getResourceAddress(Resource resource) {
         Advert advert = resource.getAdvert();
         if (advert == null) {
@@ -1451,8 +1433,12 @@ public class AdvertService {
         }
     }
 
+    private AdvertLocation createAdvertLocation(Advert advert, Advert locationAdvert) {
+        return new AdvertLocation().withAdvert(advert).withLocationAdvert(locationAdvert).withAddress(locationAdvert.getAddress());
+    }
+
     private boolean persistAdvertLocation(Advert advert, Advert locationAdvert) {
-        return advert.getCategories().getLocations().add(entityService.getOrCreate(new AdvertLocation().withAdvert(advert).withLocationAdvert(locationAdvert)));
+        return advert.getCategories().getLocations().add(entityService.getOrCreate(createAdvertLocation(advert, locationAdvert)));
     }
 
 }

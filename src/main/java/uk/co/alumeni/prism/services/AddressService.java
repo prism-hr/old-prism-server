@@ -1,7 +1,9 @@
 package uk.co.alumeni.prism.services;
 
 import static com.google.common.base.Objects.equal;
+import static com.google.common.collect.Lists.newArrayList;
 import static com.google.common.collect.Lists.newLinkedList;
+import static org.apache.commons.collections.CollectionUtils.containsAny;
 import static uk.co.alumeni.prism.PrismConstants.OK;
 
 import java.net.URI;
@@ -49,7 +51,7 @@ public class AddressService {
 
     private static Logger logger = LoggerFactory.getLogger(AddressService.class);
 
-    private static final List<String> googleLocationTypes = Lists.newArrayList("country", "administrative_area_level_1", "administrative_area_level_2",
+    private static final List<String> googleLocationTypes = newArrayList("country", "administrative_area_level_1", "administrative_area_level_2",
             "administrative_area_level_3", "administrative_area_level_4", "administrative_area_level_5", "political", "postal_town", "locality", "sublocality",
             "sublocality_level_1", "sublocality_level_2", "sublocality_level_3", "sublocality_level_4", "sublocality_level_5", "neighborhood", "premise",
             "subpremise", "airport");
@@ -150,11 +152,11 @@ public class AddressService {
     public void geocodeAddressAsEstablishment(Integer addressId) throws Exception {
         geocodeAddressAsEstablishment(getById(addressId));
     }
-    
+
     public LinkedHashMultimap<Integer, String> getAddressLocationIndex(List<EntityLocationDTO> entityLocations, int precision) {
         Integer entityId = null;
         int entityLocationCount = 0;
-        
+
         LinkedHashMultimap<Integer, String> entityLocationIndex = LinkedHashMultimap.create();
         for (EntityLocationDTO entityLocation : entityLocations) {
             Integer thisEntityId = entityLocation.getId();
@@ -165,7 +167,7 @@ public class AddressService {
                 entityLocationIndex.put(entityId, entityLocation.getLocation());
             }
         }
-        
+
         return entityLocationIndex;
     }
 
@@ -243,7 +245,7 @@ public class AddressService {
             List<String> partNames = newLinkedList();
             Set<AddressLocation> locations = address.getAddressLocations();
             for (GoogleAddressComponentDTO componentItem : Lists.reverse(componentData)) {
-                if (CollectionUtils.containsAny(googleLocationTypes, componentItem.getTypes())) {
+                if (containsAny(googleLocationTypes, componentItem.getTypes())) {
                     String name = componentItem.getName();
                     if (!partNames.contains(name)) {
                         partNames.add(name);

@@ -511,24 +511,19 @@ public class AdvertMapper {
     private void mapAdvertLocationAddressPartRepresentations(Set<AdvertLocationSummaryRepresentation> representations,
             TreeMultimap<Integer, AdvertLocationSummaryRepresentation> representationIndex) {
         Set<AdvertLocationSummaryRepresentation> newRepresentations = newHashSet();
-        if (representationIndex.size() > 0) {
+        if (representations.size() > 0) {
             representations.forEach(representation -> {
                 Integer representationId = representation.getId();
                 Set<AdvertLocationSummaryRepresentation> subRepresentations = representationIndex.get(representationId);
 
-                List<AdvertLocationSummaryRepresentation> subParts = newLinkedList();
                 subRepresentations.forEach(subRepresentation -> {
-                    subParts.add(subRepresentation);
                     newRepresentations.add(subRepresentation);
-                    representationIndex.remove(representationId, subRepresentation);
                 });
 
-                representation.setChildLocations(subParts);
+                representation.setChildLocations(newLinkedList(subRepresentations));
             });
 
-            if (newRepresentations.size() > 0) {
-                mapAdvertLocationAddressPartRepresentations(newRepresentations, representationIndex);
-            }
+            mapAdvertLocationAddressPartRepresentations(newRepresentations, representationIndex);
         }
     }
 

@@ -7,8 +7,8 @@ import static java.util.Arrays.asList;
 import static java.util.Arrays.stream;
 import static java.util.stream.Collectors.toList;
 import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
-import static org.apache.commons.lang.BooleanUtils.isTrue;
 import static org.apache.commons.lang3.ArrayUtils.isNotEmpty;
+import static org.apache.commons.lang3.BooleanUtils.isTrue;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.apache.commons.lang3.StringUtils.isNotEmpty;
 import static uk.co.alumeni.prism.PrismConstants.COMMA;
@@ -31,6 +31,7 @@ import static uk.co.alumeni.prism.domain.definitions.workflow.PrismPartnershipSt
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismPartnershipState.ENDORSEMENT_REVOKED;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRole.PrismRoleCategory.STUDENT;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.APPLICATION;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.PROJECT;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismStateGroup.APPLICATION_WITHDRAWN;
 import static uk.co.alumeni.prism.utils.PrismEnumUtils.getSimilar;
 import static uk.co.alumeni.prism.utils.PrismEnumUtils.values;
@@ -233,12 +234,15 @@ public class AdvertDAO {
                 .createAlias("categories.functions", "function", JoinType.LEFT_OUTER_JOIN) //
                 .createAlias("categories.themes", "theme", JoinType.LEFT_OUTER_JOIN) //
                 .createAlias("categories.locations", "location", JoinType.LEFT_OUTER_JOIN) //
-                .createAlias("location.address", "locationAddress", JoinType.LEFT_OUTER_JOIN) //
+                .createAlias("location.locationAdvert", "locationAdvert", JoinType.LEFT_OUTER_JOIN) //
+                .createAlias("locationAdvert.address", "locationAddress", JoinType.LEFT_OUTER_JOIN) //
                 .createAlias("locationAddress.locations", "locationAddressLocation", JoinType.LEFT_OUTER_JOIN);
 
         stream(advertScopes).forEach(advertScope -> {
-            String advertReference = advertScope.getLowerCamelName() + "Advert";
-            criteria.createAlias(advertReference, advertReference, JoinType.LEFT_OUTER_JOIN);
+            if (!advertScope.equals(PROJECT)) {
+                String advertReference = advertScope.getLowerCamelName() + "Advert";
+                criteria.createAlias(advertReference, advertReference, JoinType.LEFT_OUTER_JOIN);
+            }
         });
 
         appendScopeConstraint(criteria, scopes);
@@ -980,8 +984,8 @@ public class AdvertDAO {
         String keyword = queryDTO.getKeyword();
         if (isNotEmpty(keyword)) {
             Junction constraint = Restrictions.disjunction();
-            for (PrismScope scope : advertScopes) {
-                String enclosingAdvertReference = scope.getLowerCamelName() + "Advert.";
+            for (PrismScope advertScope : advertScopes) {
+                String enclosingAdvertReference = (advertScope.equals(PROJECT) ? EMPTY : advertScope.getLowerCamelName()) + "Advert.";
                 constraint.add(Restrictions.like(enclosingAdvertReference + "name", keyword, MatchMode.ANYWHERE)) //
                         .add(Restrictions.like(enclosingAdvertReference + "summary", keyword, MatchMode.ANYWHERE)) //
                         .add(Restrictions.like(enclosingAdvertReference + "description", keyword, MatchMode.ANYWHERE));

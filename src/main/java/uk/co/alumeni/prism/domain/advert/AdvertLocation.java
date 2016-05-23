@@ -7,11 +7,8 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
-
-import uk.co.alumeni.prism.domain.address.Address;
 
 import com.google.common.base.Objects;
 
@@ -30,10 +27,6 @@ public class AdvertLocation extends AdvertAttribute {
     @ManyToOne
     @JoinColumn(name = "location_advert_id", nullable = false)
     private Advert locationAdvert;
-
-    @OneToOne
-    @JoinColumn(name = "address_id", nullable = false)
-    private Address address;
 
     @Override
     public Integer getId() {
@@ -63,14 +56,6 @@ public class AdvertLocation extends AdvertAttribute {
         this.locationAdvert = locationAdvert;
     }
 
-    public Address getAddress() {
-        return address;
-    }
-
-    public void setAddress(Address address) {
-        this.address = address;
-    }
-
     public AdvertLocation withAdvert(Advert advert) {
         this.advert = advert;
         return this;
@@ -81,14 +66,9 @@ public class AdvertLocation extends AdvertAttribute {
         return this;
     }
 
-    public AdvertLocation withAddress(Address address) {
-        this.address = address;
-        return this;
-    }
-
     @Override
     public int hashCode() {
-        return Objects.hashCode(advert, locationAdvert, address);
+        return Objects.hashCode(advert, locationAdvert);
     }
 
     @Override
@@ -100,12 +80,12 @@ public class AdvertLocation extends AdvertAttribute {
             return false;
         }
         AdvertLocation other = (AdvertLocation) object;
-        return equal(advert, other.getAdvert()) && equal(locationAdvert, other.getLocationAdvert()) && equal(address, other.getAddress());
+        return equal(advert, other.getAdvert()) && equal(locationAdvert, other.getLocationAdvert());
     }
 
     @Override
     public EntitySignature getEntitySignature() {
-        return super.getEntitySignature().addProperty("locationAdvert", locationAdvert).addProperty("address", address);
+        return super.getEntitySignature().addProperty("locationAdvert", locationAdvert);
     }
 
 }

@@ -1,5 +1,7 @@
 package uk.co.alumeni.prism.domain.address;
 
+import static com.google.common.base.Objects.equal;
+
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
@@ -76,7 +78,7 @@ public class AddressLocation implements UniqueEntity {
             return false;
         }
         AddressLocation other = (AddressLocation) object;
-        return Objects.equal(address.getId(), other.getAddress().getId()) && Objects.equal(locationPart.getId(), other.getLocationPart().getId());
+        return equal(address, other.getAddress()) && Objects.equal(locationPart, other.getLocationPart());
     }
 
     @Override

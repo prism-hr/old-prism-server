@@ -5,7 +5,12 @@ import javax.transaction.Transactional;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
+import uk.co.alumeni.prism.domain.Domicile;
+import uk.co.alumeni.prism.domain.address.Address;
+import uk.co.alumeni.prism.domain.address.AddressCoordinates;
 import uk.co.alumeni.prism.domain.address.AddressDefinition;
+import uk.co.alumeni.prism.rest.representation.address.AddressCoordinatesRepresentation;
+import uk.co.alumeni.prism.rest.representation.address.AddressRepresentation;
 
 @Service
 @Transactional
@@ -19,6 +24,22 @@ public class AddressMapper {
         target.setAddressRegion(source.getAddressRegion());
         target.setAddressCode(source.getAddressCode());
         return target;
+    }
+    
+    public AddressRepresentation getAddressRepresentation(Address address)  {
+        AddressRepresentation representation = transform(address, AddressRepresentation.class);
+
+        Domicile domicile = address.getDomicile();
+        representation.setDomicile(domicile == null ? null : domicile.getId());
+        representation.setGoogleId(address.getGoogleId());
+
+        AddressCoordinates addressCoordinates = address.getAddressCoordinates();
+        if (addressCoordinates != null) {
+            representation.setCoordinates(new AddressCoordinatesRepresentation().withLatitude(addressCoordinates.getLatitude()) //
+                    .withLongitude(addressCoordinates.getLongitude()));
+        }
+
+        return representation;
     }
 
 }

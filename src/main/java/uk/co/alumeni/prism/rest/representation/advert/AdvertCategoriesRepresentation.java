@@ -4,7 +4,7 @@ import java.util.List;
 
 import uk.co.alumeni.prism.domain.definitions.PrismAdvertFunction;
 import uk.co.alumeni.prism.domain.definitions.PrismAdvertIndustry;
-import uk.co.alumeni.prism.rest.representation.resource.ResourceLocationRepresentationRelation;
+import uk.co.alumeni.prism.rest.representation.resource.ResourceRepresentationLocationRelation;
 
 public class AdvertCategoriesRepresentation {
 
@@ -14,7 +14,7 @@ public class AdvertCategoriesRepresentation {
 
     private List<AdvertThemeRepresentation> themes;
 
-    private List<ResourceLocationRepresentationRelation> locations;
+    private List<ResourceRepresentationLocationRelation> locations;
 
     private List<String> themesDisplay;
 
@@ -44,11 +44,11 @@ public class AdvertCategoriesRepresentation {
         this.themes = themes;
     }
 
-    public List<ResourceLocationRepresentationRelation> getLocations() {
+    public List<ResourceRepresentationLocationRelation> getLocations() {
         return locations;
     }
 
-    public void setLocations(List<ResourceLocationRepresentationRelation> locations) {
+    public void setLocations(List<ResourceRepresentationLocationRelation> locations) {
         this.locations = locations;
     }
 
@@ -83,7 +83,7 @@ public class AdvertCategoriesRepresentation {
         return this;
     }
 
-    public AdvertCategoriesRepresentation withLocations(List<ResourceLocationRepresentationRelation> locations) {
+    public AdvertCategoriesRepresentation withLocations(List<ResourceRepresentationLocationRelation> locations) {
         this.locations = locations;
         return this;
     }

@@ -150,7 +150,7 @@ public class ApplicationMapper {
         representation.setPossibleStudyOptions(studyOptions);
 
         Advert advert = application.getAdvert();
-        AdvertCategoriesRepresentation advertCategories = advertMapper.getAdvertCategoriesRepresentation(advert);
+        AdvertCategoriesRepresentation advertCategories = advertMapper.getAdvertCategoriesRepresentation(advert, currentUser);
         representation.setPossibleThemes(advertCategories.getThemes());
         representation.setPossibleLocations(advertCategories.getLocations().stream().filter(location -> isTrue(location.getSelected())).collect(toList()));
 

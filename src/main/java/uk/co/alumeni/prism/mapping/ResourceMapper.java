@@ -48,6 +48,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 
+import uk.co.alumeni.prism.domain.address.Address;
 import uk.co.alumeni.prism.domain.advert.Advert;
 import uk.co.alumeni.prism.domain.application.Application;
 import uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition;
@@ -95,7 +96,6 @@ import uk.co.alumeni.prism.rest.representation.resource.ResourceListFilterRepres
 import uk.co.alumeni.prism.rest.representation.resource.ResourceListFilterRepresentation.FilterExpressionRepresentation;
 import uk.co.alumeni.prism.rest.representation.resource.ResourceListRepresentation;
 import uk.co.alumeni.prism.rest.representation.resource.ResourceListRowRepresentation;
-import uk.co.alumeni.prism.rest.representation.resource.ResourceLocationRepresentationRelation;
 import uk.co.alumeni.prism.rest.representation.resource.ResourceOpportunityRepresentation;
 import uk.co.alumeni.prism.rest.representation.resource.ResourceOpportunityRepresentationClient;
 import uk.co.alumeni.prism.rest.representation.resource.ResourceOpportunityRepresentationRelation;
@@ -108,6 +108,7 @@ import uk.co.alumeni.prism.rest.representation.resource.ResourceRepresentationCo
 import uk.co.alumeni.prism.rest.representation.resource.ResourceRepresentationExtended;
 import uk.co.alumeni.prism.rest.representation.resource.ResourceRepresentationIdentity;
 import uk.co.alumeni.prism.rest.representation.resource.ResourceRepresentationLocation;
+import uk.co.alumeni.prism.rest.representation.resource.ResourceRepresentationLocationRelation;
 import uk.co.alumeni.prism.rest.representation.resource.ResourceRepresentationOccurrence;
 import uk.co.alumeni.prism.rest.representation.resource.ResourceRepresentationRelation;
 import uk.co.alumeni.prism.rest.representation.resource.ResourceRepresentationRobot;
@@ -152,6 +153,9 @@ public class ResourceMapper {
 
     @Inject
     private ActionService actionService;
+
+    @Inject
+    private AddressMapper addressMapper;
 
     @Inject
     private AdvertService advertService;
@@ -417,7 +421,7 @@ public class ResourceMapper {
     public <T extends ResourceParent, V extends ResourceParentRepresentation> V getResourceParentRepresentation(T resource, Class<V> returnType,
             List<PrismRole> overridingRoles, User currentUser) {
         V representation = getResourceRepresentationExtended(resource, returnType, overridingRoles, currentUser);
-        representation.setAdvert(advertMapper.getAdvertRepresentationSimple(resource.getAdvert()));
+        representation.setAdvert(advertMapper.getAdvertRepresentationSimple(resource.getAdvert(), currentUser));
         representation.setOpportunityCategories(asList(resource.getOpportunityCategories().split("\\|")).stream().map(PrismOpportunityCategory::valueOf)
                 .collect(toList()));
         representation.setContexts(getResourceContexts(resource.getOpportunityCategories()));
@@ -670,8 +674,10 @@ public class ResourceMapper {
         return getResourceRepresentationRelation(resource, ResourceRepresentationRelation.class, currentUser);
     }
 
-    public <T extends Resource> ResourceLocationRepresentationRelation getResourceLocationRepresentationRelation(T resource, User currentUser) {
-        return getResourceRepresentationRelation(resource, ResourceLocationRepresentationRelation.class, currentUser);
+    public <T extends Resource> ResourceRepresentationLocationRelation getResourceRepresentationRelationLocation(T resource, Address address, boolean selected,
+            User currentUser) {
+        return getResourceRepresentationRelation(resource, ResourceRepresentationLocationRelation.class, currentUser)
+                .withAddress(addressMapper.getAddressRepresentation(address)).withSelected(selected);
     }
 
     public <T extends Resource> ResourceRepresentationRelation getResourceOpportunityRepresentationRelation(T resource, User currentUser) {
@@ -776,10 +782,6 @@ public class ResourceMapper {
                 }
                 representation.setParentResource(parentRepresentation);
             }
-        }
-
-        if (returnType.equals(ResourceLocationRepresentationRelation.class)) {
-            ((ResourceLocationRepresentationRelation) representation).setAddress(advertMapper.getAdvertAddressRepresentation(resource.getAdvert()));
         }
 
         return representation;

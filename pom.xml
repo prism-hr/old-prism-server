@@ -23,9 +23,9 @@
     </repositories>
 
     <properties>
-        <spring.version>4.2.5.RELEASE</spring.version>
-        <spring.security.version>4.0.4.RELEASE</spring.security.version>
-        <jackson.version>2.7.3</jackson.version>
+        <spring.version>4.2.6.RELEASE</spring.version>
+        <spring.security.version>4.1.0.RELEASE</spring.security.version>
+        <jackson.version>2.7.4</jackson.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
@@ -151,7 +151,7 @@
         <dependency>
             <groupId>net.sf.ehcache</groupId>
             <artifactId>ehcache</artifactId>
-            <version>2.10.1</version>
+            <version>2.10.2</version>
         </dependency>
 
         <!-- Freemarker -->
@@ -170,7 +170,7 @@
         <dependency>
             <groupId>org.jsoup</groupId>
             <artifactId>jsoup</artifactId>
-            <version>1.8.3</version>
+            <version>1.9.2</version>
         </dependency>
 
         <!-- JSON -->
@@ -203,19 +203,19 @@
         <dependency>
             <groupId>com.google.code.gson</groupId>
             <artifactId>gson</artifactId>
-            <version>2.5</version>
+            <version>2.6.2</version>
         </dependency>
 
         <!-- PDF generator -->
         <dependency>
             <groupId>com.itextpdf</groupId>
             <artifactId>itextpdf</artifactId>
-            <version>5.5.7</version>
+            <version>5.5.9</version>
         </dependency>
         <dependency>
             <groupId>org.bouncycastle</groupId>
             <artifactId>bcprov-jdk15on</artifactId>
-            <version>1.53</version>
+            <version>1.54</version>
         </dependency>
 
         <!-- Servlet -->
@@ -235,7 +235,7 @@
         <dependency>
             <groupId>commons-validator</groupId>
             <artifactId>commons-validator</artifactId>
-            <version>1.4.1</version>
+            <version>1.5.1</version>
         </dependency>
         <dependency>
             <groupId>javax.validation</groupId>
@@ -250,7 +250,7 @@
         <dependency>
             <groupId>commons-io</groupId>
             <artifactId>commons-io</artifactId>
-            <version>2.4</version>
+            <version>2.5</version>
         </dependency>
         <dependency>
             <groupId>commons-codec</groupId>
@@ -297,14 +297,14 @@
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
-            <version>1.7.13</version>
+            <version>1.7.21</version>
         </dependency>
 
         <!-- Testing -->
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-log4j12</artifactId>
-            <version>1.7.13</version>
+            <version>1.7.21</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -328,7 +328,7 @@
         <dependency>
             <groupId>org.easymock</groupId>
             <artifactId>easymock</artifactId>
-            <version>3.3</version>
+            <version>3.4</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -346,14 +346,14 @@
         <dependency>
             <groupId>mysql</groupId>
             <artifactId>mysql-connector-java</artifactId>
-            <version>5.1.38</version>
+            <version>5.1.39</version>
             <scope>test</scope>
         </dependency>
 
         <dependency>
             <groupId>com.amazonaws</groupId>
             <artifactId>aws-java-sdk</artifactId>
-            <version>1.10.73</version>
+            <version>1.11.4</version>
         </dependency>
 
         <!-- Wildfly provided dependencies -->

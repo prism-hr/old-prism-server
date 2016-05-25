@@ -709,7 +709,7 @@ public class AdvertDAO {
     public List<AdvertIndustrySummaryDTO> getAdvertIndustrySummaries(List<Integer> adverts, String searchTerm) {
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Advert.class) //
                 .setProjection(Projections.projectionList() //
-                        .add(Projections.groupProperty("industry.industry").as("id"))
+                        .add(Projections.groupProperty("industry.industry").as("industry"))
                         .add(Projections.countDistinct("id").as("advertCount"))) //
                 .createAlias("categories.industries", "industry", JoinType.INNER_JOIN) //
                 .add(Restrictions.in("id", adverts));
@@ -731,7 +731,7 @@ public class AdvertDAO {
     public List<AdvertFunctionSummaryDTO> getAdvertFunctionSummaries(List<Integer> adverts, String searchTerm) {
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Advert.class) //
                 .setProjection(Projections.projectionList() //
-                        .add(Projections.groupProperty("function.function").as("id"))
+                        .add(Projections.groupProperty("function.function").as("function"))
                         .add(Projections.countDistinct("id").as("advertCount"))) //
                 .createAlias("categories.functions", "function", JoinType.INNER_JOIN) //
                 .add(Restrictions.in("id", adverts));
@@ -745,8 +745,8 @@ public class AdvertDAO {
             }
         }
 
-        return (List<AdvertFunctionSummaryDTO>) criteria.addOrder(Order.asc("industry.industry")) //
-                .setResultTransformer(Transformers.aliasToBean(AdvertIndustrySummaryDTO.class)) //
+        return (List<AdvertFunctionSummaryDTO>) criteria.addOrder(Order.asc("function.function")) //
+                .setResultTransformer(Transformers.aliasToBean(AdvertFunctionSummaryDTO.class)) //
                 .list();
     }
 

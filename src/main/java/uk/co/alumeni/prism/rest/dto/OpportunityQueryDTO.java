@@ -1,22 +1,17 @@
 package uk.co.alumeni.prism.rest.dto;
 
-import java.math.BigDecimal;
-import java.util.List;
+import org.jboss.util.Objects;
+import uk.co.alumeni.prism.domain.definitions.*;
+import uk.co.alumeni.prism.domain.definitions.workflow.PrismScope;
 
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
+import java.io.Serializable;
+import java.math.BigDecimal;
+import java.util.List;
 
-import uk.co.alumeni.prism.domain.definitions.PrismAdvertFunction;
-import uk.co.alumeni.prism.domain.definitions.PrismAdvertIndustry;
-import uk.co.alumeni.prism.domain.definitions.PrismDurationUnit;
-import uk.co.alumeni.prism.domain.definitions.PrismOpportunityCategory;
-import uk.co.alumeni.prism.domain.definitions.PrismOpportunityType;
-import uk.co.alumeni.prism.domain.definitions.PrismResourceContext;
-import uk.co.alumeni.prism.domain.definitions.PrismStudyOption;
-import uk.co.alumeni.prism.domain.definitions.workflow.PrismScope;
-
-public class OpportunityQueryDTO {
+public class OpportunityQueryDTO implements Serializable {
 
     private Integer advertId;
 
@@ -304,6 +299,39 @@ public class OpportunityQueryDTO {
     public OpportunityQueryDTO withMaxAdverts(final Integer maxAdverts) {
         this.maxAdverts = maxAdverts;
         return this;
+    }
+
+    public OpportunityQueryDTO withoutLocations() {
+        this.locations = null;
+        return this;
+    }
+
+    public OpportunityQueryDTO withoutIndustries() {
+        this.industries = null;
+        return this;
+    }
+
+    public OpportunityQueryDTO withoutFunctions() {
+        this.functions = null;
+        return this;
+    }
+
+    public OpportunityQueryDTO withoutInstitutions() {
+        this.institutions = null;
+        return this;
+    }
+
+    public OpportunityQueryDTO withoutThemes() {
+        this.themes = null;
+        return this;
+    }
+
+    private OpportunityQueryDTO getCopy() {
+        try {
+            return (OpportunityQueryDTO) Objects.copy(this);
+        } catch (Exception e) {
+            throw new Error(e);
+        }
     }
 
 }

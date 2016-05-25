@@ -1,64 +1,40 @@
 package uk.co.alumeni.prism.domain.definitions.workflow;
 
-import static com.google.common.base.CaseFormat.LOWER_CAMEL;
-import static com.google.common.base.CaseFormat.UPPER_CAMEL;
-import static com.google.common.base.CaseFormat.UPPER_UNDERSCORE;
-import static com.google.common.collect.Lists.newArrayList;
-import static com.google.common.collect.Sets.newLinkedHashSet;
-import static java.time.Month.APRIL;
-import static java.time.Month.OCTOBER;
-import static jersey.repackaged.com.google.common.collect.Maps.newHashMap;
-import static org.apache.commons.lang.ArrayUtils.contains;
-import static org.apache.commons.lang3.StringUtils.isNotEmpty;
-import static uk.co.alumeni.prism.domain.definitions.PrismOpportunityCategory.EXPERIENCE;
-import static uk.co.alumeni.prism.domain.definitions.PrismOpportunityCategory.PERSONAL_DEVELOPMENT;
-import static uk.co.alumeni.prism.domain.definitions.PrismOpportunityCategory.STUDY;
-import static uk.co.alumeni.prism.domain.definitions.PrismOpportunityCategory.WORK;
-import static uk.co.alumeni.prism.domain.definitions.PrismResourceContext.EMPLOYER;
-import static uk.co.alumeni.prism.domain.definitions.PrismResourceContext.UNIVERSITY;
-
-import java.time.Month;
-import java.util.AbstractMap.SimpleEntry;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Set;
-
 import uk.co.alumeni.prism.api.model.advert.EnumDefinition;
 import uk.co.alumeni.prism.domain.application.Application;
 import uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition;
 import uk.co.alumeni.prism.domain.definitions.PrismLocalizableDefinition;
 import uk.co.alumeni.prism.domain.definitions.PrismOpportunityCategory;
 import uk.co.alumeni.prism.domain.definitions.PrismResourceContext;
-import uk.co.alumeni.prism.domain.resource.Department;
-import uk.co.alumeni.prism.domain.resource.Institution;
-import uk.co.alumeni.prism.domain.resource.Program;
-import uk.co.alumeni.prism.domain.resource.Project;
-import uk.co.alumeni.prism.domain.resource.Resource;
-import uk.co.alumeni.prism.domain.resource.ResourceParent;
+import uk.co.alumeni.prism.domain.resource.*;
 import uk.co.alumeni.prism.domain.resource.System;
-import uk.co.alumeni.prism.workflow.executors.action.ActionExecutor;
-import uk.co.alumeni.prism.workflow.executors.action.ApplicationExecutor;
-import uk.co.alumeni.prism.workflow.executors.action.DepartmentExecutor;
-import uk.co.alumeni.prism.workflow.executors.action.InstitutionExecutor;
-import uk.co.alumeni.prism.workflow.executors.action.ResourceOpportunityExecutor;
-import uk.co.alumeni.prism.workflow.executors.action.SystemExecutor;
-import uk.co.alumeni.prism.workflow.transition.creators.ApplicationCreator;
-import uk.co.alumeni.prism.workflow.transition.creators.DepartmentCreator;
-import uk.co.alumeni.prism.workflow.transition.creators.InstitutionCreator;
-import uk.co.alumeni.prism.workflow.transition.creators.ProgramCreator;
-import uk.co.alumeni.prism.workflow.transition.creators.ProjectCreator;
-import uk.co.alumeni.prism.workflow.transition.creators.ResourceCreator;
+import uk.co.alumeni.prism.workflow.executors.action.*;
+import uk.co.alumeni.prism.workflow.transition.creators.*;
 import uk.co.alumeni.prism.workflow.transition.populators.ApplicationPopulator;
 import uk.co.alumeni.prism.workflow.transition.populators.ResourcePopulator;
 import uk.co.alumeni.prism.workflow.transition.processors.ApplicationProcessor;
 import uk.co.alumeni.prism.workflow.transition.processors.ResourceProcessor;
-import uk.co.alumeni.prism.workflow.transition.processors.postprocessors.ApplicationPostprocessor;
-import uk.co.alumeni.prism.workflow.transition.processors.postprocessors.DepartmentPostprocessor;
-import uk.co.alumeni.prism.workflow.transition.processors.postprocessors.InstitutionPostprocessor;
-import uk.co.alumeni.prism.workflow.transition.processors.postprocessors.ProgramPostprocessor;
-import uk.co.alumeni.prism.workflow.transition.processors.postprocessors.ProjectPostprocessor;
+import uk.co.alumeni.prism.workflow.transition.processors.postprocessors.*;
 import uk.co.alumeni.prism.workflow.transition.processors.preprocessors.ApplicationPreprocessor;
+
+import java.time.Month;
+import java.util.AbstractMap.SimpleEntry;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
+
+import static com.google.common.base.CaseFormat.*;
+import static com.google.common.collect.Lists.newArrayList;
+import static com.google.common.collect.Sets.newLinkedHashSet;
+import static java.time.Month.APRIL;
+import static java.time.Month.OCTOBER;
+import static org.apache.commons.lang.ArrayUtils.contains;
+import static org.apache.commons.lang3.StringUtils.isNotEmpty;
+import static uk.co.alumeni.prism.domain.definitions.PrismOpportunityCategory.*;
+import static uk.co.alumeni.prism.domain.definitions.PrismResourceContext.EMPLOYER;
+import static uk.co.alumeni.prism.domain.definitions.PrismResourceContext.UNIVERSITY;
 
 public enum PrismScope implements EnumDefinition<uk.co.alumeni.prism.enums.PrismScope>, PrismLocalizableDefinition {
 
@@ -108,9 +84,9 @@ public enum PrismScope implements EnumDefinition<uk.co.alumeni.prism.enums.Prism
 
     private PrismScopeDefinition definition;
 
-    private static Map<PrismScope, PrismScope> parentScopes = newHashMap();
+    private static Map<PrismScope, PrismScope> parentScopes = new HashMap<>();
 
-    private static Map<Entry<PrismScope, PrismResourceContext>, PrismScopeCreationDefault> defaults = newHashMap();
+    private static Map<Entry<PrismScope, PrismResourceContext>, PrismScopeCreationDefault> defaults = new HashMap<>();
 
     static {
         PrismScope parentScope = null;

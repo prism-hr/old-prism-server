@@ -803,7 +803,7 @@ public class AdvertDAO {
                 .add(Restrictions.in("id", adverts));
 
         if (isNotEmpty(searchTerm)) {
-            criteria.add(Restrictions.like("institution.name", MatchMode.ANYWHERE));
+            criteria.add(Restrictions.like("institution.name", searchTerm, MatchMode.ANYWHERE));
         }
 
         return (List<AdvertInstitutionSummaryDTO>) criteria.addOrder(Order.asc("institution.name")) //

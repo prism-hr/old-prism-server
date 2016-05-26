@@ -3,6 +3,7 @@ package uk.co.alumeni.prism.services;
 import static com.google.common.base.Objects.equal;
 import static com.google.common.collect.Lists.newArrayList;
 import static com.google.common.collect.Lists.newLinkedList;
+import static com.google.common.collect.Lists.reverse;
 import static org.apache.commons.collections.CollectionUtils.containsAny;
 import static uk.co.alumeni.prism.PrismConstants.OK;
 
@@ -243,7 +244,7 @@ public class AddressService {
             AddressLocationPart parent = null;
             List<String> partNames = newLinkedList();
             Set<AddressLocation> locations = address.getAddressLocations();
-            for (GoogleAddressComponentDTO componentItem : Lists.reverse(componentData)) {
+            for (GoogleAddressComponentDTO componentItem : reverse(componentData)) {
                 if (containsAny(googleLocationTypes, componentItem.getTypes())) {
                     String name = componentItem.getName();
                     if (!partNames.contains(name)) {

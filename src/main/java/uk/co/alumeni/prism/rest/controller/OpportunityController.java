@@ -66,33 +66,33 @@ public class OpportunityController {
         }
     }
 
-    @RequestMapping(method = RequestMethod.GET, value = "industries")
+    @RequestMapping(method = RequestMethod.GET, value = "filterProperties/industries")
     public List<AdvertIndustrySummaryRepresentation> getAdvertIndustrySummaryRepresentations(OpportunityQueryDTO query, @RequestParam(required = false) String q) {
         return advertMapper.getAdvertIndustrySummaryRepresentations(query, q);
     }
 
-    @RequestMapping(method = RequestMethod.GET, value = "functions")
+    @RequestMapping(method = RequestMethod.GET, value = "filterProperties/functions")
     public List<AdvertFunctionSummaryRepresentation> getAdvertFunctionSummaryRepresentations(OpportunityQueryDTO query, @RequestParam(required = false) String q) {
         return advertMapper.getAdvertFunctionSummaryRepresentations(query, q);
     }
 
-    @RequestMapping(method = RequestMethod.GET, value = "themes")
+    @RequestMapping(method = RequestMethod.GET, value = "filterProperties/themes")
     public List<AdvertThemeSummaryRepresentation> getAdvertThemeSummaryRepresentations(OpportunityQueryDTO query, @RequestParam(required = false) String q) {
         return advertMapper.getAdvertThemeSummaryRepresentations(query, q);
     }
 
-    @RequestMapping(method = RequestMethod.GET, value = "locations")
+    @RequestMapping(method = RequestMethod.GET, value = "filterProperties/locations")
     public List<AdvertLocationSummaryRepresentation> getAdvertLocationSummaryRepresentations(OpportunityQueryDTO query, @RequestParam(required = false) String q) {
         return advertMapper.getAdvertLocationSummaryRepresentations(query, q);
     }
 
-    @RequestMapping(method = RequestMethod.GET, value = "institutions")
+    @RequestMapping(method = RequestMethod.GET, value = "filterProperties/institutions")
     public List<AdvertInstitutionSummaryRepresentation> getInstitutionSummaryRepresentations(OpportunityQueryDTO query, @RequestParam(required = false) String q) {
         return advertMapper.getAdvertInstitutionSummaryRepresentations(query, q);
     }
 
-    @RequestMapping(method = RequestMethod.GET, value = "filterValues")
-    public Map<String, List> getInstitutionSummaryRepresentations(OpportunityQueryDTO query) {
+    @RequestMapping(method = RequestMethod.GET, value = "filterProperties")
+    public Map<String, List> getFilterPropertiesRepresentations(OpportunityQueryDTO query) {
         return ImmutableMap.of("industries", advertMapper.getAdvertIndustrySummaryRepresentations(query, null),
                 "functions", advertMapper.getAdvertFunctionSummaryRepresentations(query, null),
                 "themes", advertMapper.getAdvertThemeSummaryRepresentations(query, null),

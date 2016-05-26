@@ -281,9 +281,9 @@ public class PrismApplicationWorkflow {
 
     private static List<PrismState> applicationNextStateExclusions(PrismState state) {
         List<PrismState> exclusions = Lists.newArrayList();
-        if (state.name().equals(state.getStateGroup().name())) {
-            exclusions.add(state);
-        }
+        // if (state.name().equals(state.getStateGroup().name())) {
+        //    exclusions.add(state);
+        // }
         return exclusions;
     }
 

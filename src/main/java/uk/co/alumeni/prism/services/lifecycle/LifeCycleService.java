@@ -1,27 +1,25 @@
 package uk.co.alumeni.prism.services.lifecycle;
 
-import static com.google.common.collect.Sets.newHashSet;
-import static java.util.concurrent.Executors.newFixedThreadPool;
-import static org.apache.commons.lang.BooleanUtils.isTrue;
-import static org.slf4j.LoggerFactory.getLogger;
-import static uk.co.alumeni.prism.utils.PrismExecutorUtils.shutdownExecutor;
-
-import java.util.Set;
-import java.util.concurrent.ExecutorService;
-
-import javax.annotation.PostConstruct;
-import javax.annotation.PreDestroy;
-import javax.inject.Inject;
-
 import org.apache.commons.lang.BooleanUtils;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
-
 import uk.co.alumeni.prism.domain.definitions.PrismMaintenanceTask;
 import uk.co.alumeni.prism.services.SystemService;
+
+import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
+import javax.inject.Inject;
+import java.util.Set;
+import java.util.concurrent.ExecutorService;
+
+import static com.google.common.collect.Sets.newHashSet;
+import static java.util.concurrent.Executors.newFixedThreadPool;
+import static org.apache.commons.lang.BooleanUtils.isTrue;
+import static org.slf4j.LoggerFactory.getLogger;
+import static uk.co.alumeni.prism.utils.PrismExecutorUtils.shutdownExecutor;
 
 @Service
 public class LifeCycleService {
@@ -52,6 +50,9 @@ public class LifeCycleService {
 
     @Value("${startup.section.completeness.initialize}")
     private Boolean initializeSectionCompleteness;
+
+    @Value("${startup.address.completeness.initialize.drop}")
+    private Boolean dropAddressCompleteness;
 
     @Value("${startup.address.completeness.initialize}")
     private Boolean initializeAddressCompleteness;
@@ -94,6 +95,10 @@ public class LifeCycleService {
 
         if (isTrue(initializeSectionCompleteness)) {
             systemService.initializeSectionCompleteness();
+        }
+
+        if (isTrue(dropAddressCompleteness)) {
+            systemService.dropAddressCompleteness();
         }
 
         if (isTrue(initializeAddressCompleteness)) {

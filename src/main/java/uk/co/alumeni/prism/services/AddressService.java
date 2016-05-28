@@ -1,19 +1,9 @@
 package uk.co.alumeni.prism.services;
 
-import static com.google.common.base.Objects.equal;
-import static com.google.common.collect.Lists.newArrayList;
-import static com.google.common.collect.Lists.newLinkedList;
-import static com.google.common.collect.Lists.reverse;
-import static org.apache.commons.collections.CollectionUtils.containsAny;
-import static uk.co.alumeni.prism.PrismConstants.OK;
-
-import java.net.URI;
-import java.net.URLEncoder;
-import java.util.List;
-import java.util.Set;
-
-import javax.inject.Inject;
-
+import com.google.common.base.Joiner;
+import com.google.common.base.Strings;
+import com.google.common.collect.LinkedHashMultimap;
+import com.google.common.collect.Lists;
 import org.apache.commons.collections.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,7 +13,6 @@ import org.springframework.core.io.DefaultResourceLoader;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
-
 import uk.co.alumeni.prism.dao.AddressDAO;
 import uk.co.alumeni.prism.domain.Domicile;
 import uk.co.alumeni.prism.domain.address.Address;
@@ -41,10 +30,16 @@ import uk.co.alumeni.prism.dto.json.LocationSearchResponseDTO;
 import uk.co.alumeni.prism.rest.dto.AddressDTO;
 import uk.co.alumeni.prism.services.helpers.PropertyLoader;
 
-import com.google.common.base.Joiner;
-import com.google.common.base.Strings;
-import com.google.common.collect.LinkedHashMultimap;
-import com.google.common.collect.Lists;
+import javax.inject.Inject;
+import java.net.URI;
+import java.net.URLEncoder;
+import java.util.List;
+import java.util.Set;
+
+import static com.google.common.base.Objects.equal;
+import static com.google.common.collect.Lists.*;
+import static org.apache.commons.collections.CollectionUtils.containsAny;
+import static uk.co.alumeni.prism.PrismConstants.OK;
 
 @Service
 @Transactional
@@ -53,8 +48,7 @@ public class AddressService {
     private static Logger logger = LoggerFactory.getLogger(AddressService.class);
 
     private static final List<String> googleLocationTypes = newArrayList("country", "administrative_area_level_1", "administrative_area_level_2",
-            "administrative_area_level_3", "administrative_area_level_4", "administrative_area_level_5", "political", "postal_town", "locality", "sublocality",
-            "sublocality_level_1", "sublocality_level_2", "sublocality_level_3", "sublocality_level_4", "sublocality_level_5", "neighborhood", "airport");
+            "administrative_area_level_3", "administrative_area_level_4", "administrative_area_level_5", "postal_town", "airport");
 
     @Value("${integration.google.api.key}")
     private String googleApiKey;
@@ -237,7 +231,7 @@ public class AddressService {
         }
 
         addressDAO.deleteAddressLocations(address);
-        addressDAO.getOrphanAddressLocationParts().stream().forEach(lp -> entityService.delete(lp));
+        addressDAO.getOrphanAddressLocationParts().stream().forEach(entityService::delete);
 
         List<GoogleAddressComponentDTO> componentData = addressData.getComponents();
         if (CollectionUtils.isNotEmpty(componentData)) {

@@ -1,13 +1,14 @@
 package uk.co.alumeni.prism.rest.representation.advert;
 
-import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
-
-import java.util.List;
-import java.util.Set;
-
 import uk.co.alumeni.prism.rest.representation.ListRepresentation;
 import uk.co.alumeni.prism.rest.representation.ListSummaryRepresentation;
 import uk.co.alumeni.prism.rest.representation.resource.ResourceRepresentationOccurrence;
+
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
 
 public class AdvertListRepresentation extends ListRepresentation<AdvertRepresentationExtended> {
 
@@ -16,6 +17,8 @@ public class AdvertListRepresentation extends ListRepresentation<AdvertRepresent
     private Integer invisibleAdvertCount;
 
     private Set<ResourceRepresentationOccurrence> invisibleAdvertInstitutions;
+
+    private Map<String, List<? extends AdvertCategorySummaryRepresentation>> filterValues;
 
     public List<AdvertRepresentationExtended> getRows() {
         return rows;
@@ -41,6 +44,14 @@ public class AdvertListRepresentation extends ListRepresentation<AdvertRepresent
         this.invisibleAdvertInstitutions = invisibleAdvertInstitutions;
     }
 
+    public Map<String, List<? extends AdvertCategorySummaryRepresentation>> getFilterValues() {
+        return filterValues;
+    }
+
+    public void setFilterValues(Map<String, List<? extends AdvertCategorySummaryRepresentation>> filterValues) {
+        this.filterValues = filterValues;
+    }
+
     public AdvertListRepresentation withRows(List<AdvertRepresentationExtended> rows) {
         this.rows = rows;
         return this;
@@ -58,6 +69,11 @@ public class AdvertListRepresentation extends ListRepresentation<AdvertRepresent
 
     public AdvertListRepresentation withSummaries(List<ListSummaryRepresentation> summaries) {
         setSummaries(summaries);
+        return this;
+    }
+
+    public AdvertListRepresentation withFilterValues(final Map<String, List<? extends AdvertCategorySummaryRepresentation>> filterProperties) {
+        this.filterValues = filterProperties;
         return this;
     }
 

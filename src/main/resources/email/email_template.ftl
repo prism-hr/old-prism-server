@@ -56,7 +56,7 @@
                 <td width="7">&nbsp;</td>
                 <td width="42"><img src="${IMAGES_PATH}/prism-logo.png" alt="Prism" height="40" class="logo" title="Prism"/></td>
                 <td><img src="${IMAGES_PATH}/opportunity.gif" alt="The Opportunity Portal" height="20" class="opportunity" title="The Opportunity Portal" style="margin-top:2px;"/></td>
-                <td align="right" width="107" valign="middle"><a a href="http://alumeni.co.uk/"><img src="${IMAGES_PATH}/alumeni.png" /></a></td>
+                <td align="right" width="107" valign="middle"><a a href="https://prism.hr"><img src="${IMAGES_PATH}/alumeni.png" /></a></td>
                 <td width="14">&nbsp;</td>
             </tr>
             <tr>

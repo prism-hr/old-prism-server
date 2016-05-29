@@ -17,13 +17,13 @@
 
     <distributionManagement>
         <repository>
-            <id>prism-dev.alumeni.co.uk</id>
-            <url>scp://prism-dev.alumeni.co.uk/home/bitnami/pgadmissions-releases/</url>
+            <id>dev.prism.hr</id>
+            <url>scp://dev.prism.hr/home/bitnami/pgadmissions-releases/</url>
         </repository>
     </distributionManagement>
 
     <scm>
-        <connection>scm:hg:http://mercurial.alumeni.co.uk/mercurial/pgadmissions/</connection>
+        <connection>scm:hg:http://mercurial.prism.hr/mercurial/pgadmissions/</connection>
         <tag>HEAD</tag>
     </scm>
 
@@ -538,66 +538,6 @@
                 <sql.host>localhost</sql.host>
                 <sql.db>pgadmissions</sql.db>
             </properties>
-        </profile>
-
-        <profile>
-            <id>sit</id>
-            <properties>
-                <sql.host>localhost</sql.host>
-                <sql.db>pgadmissions_sit</sql.db>
-            </properties>
-            <build>
-                <plugins>
-                    <plugin>
-                        <artifactId>maven-antrun-plugin</artifactId>
-                        <executions>
-                            <execution>
-                                <phase>test-compile</phase>
-                                <goals>
-                                    <goal>run</goal>
-                                </goals>
-                                <configuration>
-                                    <tasks>
-                                        <delete file="${project.build.outputDirectory}/environment.properties"/>
-                                        <copy file="src/environments/environment.sit.properties"
-                                              tofile="${project.build.outputDirectory}/environment.properties"/>
-                                    </tasks>
-                                </configuration>
-                            </execution>
-                        </executions>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-
-        <profile>
-            <id>uat</id>
-            <properties>
-                <sql.host>localhost</sql.host>
-                <sql.db>pgadmissions_uat</sql.db>
-            </properties>
-            <build>
-                <plugins>
-                    <plugin>
-                        <artifactId>maven-antrun-plugin</artifactId>
-                        <executions>
-                            <execution>
-                                <phase>test-compile</phase>
-                                <goals>
-                                    <goal>run</goal>
-                                </goals>
-                                <configuration>
-                                    <tasks>
-                                        <delete file="${project.build.outputDirectory}/environment.properties"/>
-                                        <copy file="src/environments/environment.uat.properties"
-                                              tofile="${project.build.outputDirectory}/environment.properties"/>
-                                    </tasks>
-                                </configuration>
-                            </execution>
-                        </executions>
-                    </plugin>
-                </plugins>
-            </build>
         </profile>
 
         <profile>

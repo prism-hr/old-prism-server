@@ -10,13 +10,13 @@ Make sure you've got that in your .m2/settings.xml
 ...
     <servers>
         <server>
-			<id>prism-dev.alumeni.co.uk</id>
+			<id>dev.prism.hr</id>
 			<username>bitnami</username>
 			<privateKey>!!!!!PATH TO DEVELOPMENT SERVER PRIVATE KEY!!!!!</privateKey>
 			<passphrase>!!!!!DEVELOPMENT SERVER PRIVATE KEY PASSPHRASE!!!!!</passphrase>
 		</server>
 		<server>
-			<id>mercurial.alumeni.co.uk</id>
+			<id>mercurial.prism.hr</id>
             <username>!!!!!YOUR MERCURIAL USERNAME!!!!!</username>
             <password>!!!!!YOUR MERCURIAL PASSWORD!!!!!</password>
 		</server>

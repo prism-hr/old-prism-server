@@ -12,7 +12,7 @@
     <repositories>
         <repository>
             <id>prism.dev.repository</id>
-            <url>http://mercurial.alumeni.co.uk/maven2</url>
+            <url>http://mercurial.prism.hr/maven2</url>
             <releases>
                 <enabled>true</enabled>
             </releases>
@@ -31,13 +31,13 @@
 
     <distributionManagement>
         <repository>
-            <id>prism-dev.alumeni.co.uk</id>
-            <url>scp://prism-dev.alumeni.co.uk/home/bitnami/pgadmissions-releases/</url>
+            <id>dev.prism.hr</id>
+            <url>scp://dev.prism.hr/home/bitnami/pgadmissions-releases/</url>
         </repository>
     </distributionManagement>
 
     <scm>
-        <connection>scm:hg:http://mercurial.alumeni.co.uk/mercurial/pgadmissions/</connection>
+        <connection>scm:hg:http://mercurial.prism.hr/mercurial/pgadmissions/</connection>
         <tag>HEAD</tag>
     </scm>
 

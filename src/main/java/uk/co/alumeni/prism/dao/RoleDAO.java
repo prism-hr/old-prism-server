@@ -324,10 +324,10 @@ public class RoleDAO {
         return (List<UserRole>) sessionFactory.getCurrentSession().createCriteria(UserRole.class) //
                 .createAlias("department", "department", JoinType.LEFT_OUTER_JOIN) //
                 .createAlias("department.resourceStates", "departmentResourceState", JoinType.LEFT_OUTER_JOIN) //
-                .createAlias("departmentResourceState", "departmentState", JoinType.LEFT_OUTER_JOIN) //
+                .createAlias("departmentResourceState.state", "departmentState", JoinType.LEFT_OUTER_JOIN) //
                 .createAlias("institution", "institution", JoinType.LEFT_OUTER_JOIN) //
                 .createAlias("institution.resourceStates", "institutionResourceState", JoinType.LEFT_OUTER_JOIN) //
-                .createAlias("institutionResourceState", "institutionState", JoinType.LEFT_OUTER_JOIN) //
+                .createAlias("institutionResourceState.state", "institutionState", JoinType.LEFT_OUTER_JOIN) //
                 .createAlias("role", "role", JoinType.INNER_JOIN) //
                 .add(Restrictions.disjunction() //
                         .add(getResourceParentManageableStateConstraint("departmentState")) //

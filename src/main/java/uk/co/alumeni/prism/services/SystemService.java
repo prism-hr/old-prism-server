@@ -35,7 +35,6 @@ import uk.co.alumeni.prism.dao.SystemDAO;
 import uk.co.alumeni.prism.domain.AgeRange;
 import uk.co.alumeni.prism.domain.Domicile;
 import uk.co.alumeni.prism.domain.UniqueEntity;
-import uk.co.alumeni.prism.domain.address.Address;
 import uk.co.alumeni.prism.domain.address.AddressLocation;
 import uk.co.alumeni.prism.domain.address.AddressLocationPart;
 import uk.co.alumeni.prism.domain.comment.Comment;
@@ -302,8 +301,7 @@ public class SystemService {
     public void initializeAddressCompleteness() throws Exception {
         logger.info("Initializing address location completeness");
         for (Integer addressId : addressService.getAddressesWithNoLocationParts()) {
-            Address address = addressService.getById(addressId);
-            addressService.geocodeAddress(address, address.getEstablishmentName());
+            addressService.geocodeAddress(addressId);
         }
     }
 

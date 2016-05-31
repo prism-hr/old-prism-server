@@ -457,15 +457,14 @@ public class UserDAO {
                         .add(Projections.property("sequenceIdentifier").as("sequenceIdentifier"))) //
                 .createAlias("user", "user", JoinType.INNER_JOIN) //
                 .createAlias("user.userRoles", "userRole", JoinType.INNER_JOIN) //
+                .createAlias("userRole." + scope.getLowerCamelName(), "resource", JoinType.INNER_JOIN) //
+                .createAlias("resource.advert", "advert", JoinType.INNER_JOIN) //
+                .createAlias("advert.departmentAdvert", "departmentAdvert", JoinType.LEFT_OUTER_JOIN) //
+                .createAlias("advert.institutionAdvert", "institutionAdvert", JoinType.INNER_JOIN) //
                 .createAlias("userRole.role", "role", JoinType.INNER_JOIN) //
-                .createAlias("qualifications", "qualification", JoinType.LEFT_OUTER_JOIN) //
-                .createAlias("qualification.advert", "qualificationAdvert", JoinType.LEFT_OUTER_JOIN) //
-                .createAlias("employmentPositions", "employmentPosition", JoinType.LEFT_OUTER_JOIN) //
-                .createAlias("employmentPosition.advert", "employmentPositionAdvert", JoinType.LEFT_OUTER_JOIN) //
-                .createAlias("document", "userDocument", JoinType.LEFT_OUTER_JOIN) //
                 .createAlias("user.applications", "application", JoinType.LEFT_OUTER_JOIN,
                         Restrictions.isNotNull("application.submittedTimestamp")) //
-                .add(Restrictions.in("userRole." + scope.getLowerCamelName() + ".id", resources)) //
+                .add(Restrictions.in("resource.id", resources)) //
                 .add(Restrictions.eq("role.roleCategory", STUDENT)) //
                 .add(Restrictions.eq("role.verified", true)) //
                 .add(Restrictions.eq("shared", true)) //
@@ -481,13 +480,12 @@ public class UserDAO {
             criteria.add(Restrictions.disjunction() //
                     .add(Restrictions.like("user.fullName", valueString, MatchMode.ANYWHERE)) //
                     .add(Restrictions.like("user.email", valueString, MatchMode.ANYWHERE)) //
-                    .add(Restrictions.like("qualificationAdvert.name", valueString, MatchMode.ANYWHERE)) //
-                    .add(Restrictions.like("qualificationAdvert.summary", valueString, MatchMode.ANYWHERE)) //
-                    .add(Restrictions.like("qualificationAdvert.description", valueString, MatchMode.ANYWHERE)) //
-                    .add(Restrictions.like("employmentPositionAdvert.name", valueString, MatchMode.ANYWHERE)) //
-                    .add(Restrictions.like("employmentPositionAdvert.summary", valueString, MatchMode.ANYWHERE)) //
-                    .add(Restrictions.like("employmentPositionAdvert.description", valueString, MatchMode.ANYWHERE)) //
-                    .add(Restrictions.like("userDocument.personalSummary", valueString, MatchMode.ANYWHERE)));
+                    .add(Restrictions.like("departmentAdvert.name", valueString, MatchMode.ANYWHERE)) //
+                    .add(Restrictions.like("departmentAdvert.summary", valueString, MatchMode.ANYWHERE)) //
+                    .add(Restrictions.like("departmentAdvert.description", valueString, MatchMode.ANYWHERE)) //
+                    .add(Restrictions.like("institutionAdvert.name", valueString, MatchMode.ANYWHERE)) //
+                    .add(Restrictions.like("institutionAdvert.summary", valueString, MatchMode.ANYWHERE)) //
+                    .add(Restrictions.like("institutionAdvert.description", valueString, MatchMode.ANYWHERE)));
         }
 
         if (lastSequenceIdentifier != null) {

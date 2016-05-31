@@ -1,9 +1,20 @@
 package uk.co.alumeni.prism.services;
 
-import com.google.common.base.Joiner;
-import com.google.common.base.Strings;
-import com.google.common.collect.LinkedHashMultimap;
-import com.google.common.collect.Lists;
+import static com.google.common.base.Objects.equal;
+import static com.google.common.collect.Lists.newArrayList;
+import static com.google.common.collect.Lists.newLinkedList;
+import static com.google.common.collect.Lists.reverse;
+import static org.apache.commons.collections.CollectionUtils.containsAny;
+import static org.slf4j.LoggerFactory.getLogger;
+import static uk.co.alumeni.prism.PrismConstants.OK;
+
+import java.net.URI;
+import java.net.URLEncoder;
+import java.util.List;
+import java.util.Set;
+
+import javax.inject.Inject;
+
 import org.apache.commons.collections.CollectionUtils;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Value;
@@ -12,6 +23,7 @@ import org.springframework.core.io.DefaultResourceLoader;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
+
 import uk.co.alumeni.prism.dao.AddressDAO;
 import uk.co.alumeni.prism.domain.Domicile;
 import uk.co.alumeni.prism.domain.address.Address;
@@ -29,16 +41,10 @@ import uk.co.alumeni.prism.dto.json.LocationSearchResponseDTO;
 import uk.co.alumeni.prism.rest.dto.AddressDTO;
 import uk.co.alumeni.prism.services.helpers.PropertyLoader;
 
-import javax.inject.Inject;
-import java.net.URI;
-import java.net.URLEncoder;
-import java.util.List;
-import java.util.Set;
-
-import static com.google.common.base.Objects.equal;
-import static com.google.common.collect.Lists.*;
-import static org.apache.commons.collections.CollectionUtils.containsAny;
-import static uk.co.alumeni.prism.PrismConstants.OK;
+import com.google.common.base.Joiner;
+import com.google.common.base.Strings;
+import com.google.common.collect.LinkedHashMultimap;
+import com.google.common.collect.Lists;
 
 @Service
 @Transactional

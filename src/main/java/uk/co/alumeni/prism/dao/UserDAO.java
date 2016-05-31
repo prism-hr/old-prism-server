@@ -463,7 +463,8 @@ public class UserDAO {
                 .createAlias("employmentPositions", "employmentPosition", JoinType.LEFT_OUTER_JOIN) //
                 .createAlias("employmentPosition.advert", "employmentPositionAdvert", JoinType.LEFT_OUTER_JOIN) //
                 .createAlias("document", "userDocument", JoinType.LEFT_OUTER_JOIN) //
-                .createAlias("user.applications", "application", JoinType.LEFT_OUTER_JOIN) //
+                .createAlias("user.applications", "application", JoinType.LEFT_OUTER_JOIN,
+                        Restrictions.isNotNull("application.submittedTimestamp")) //
                 .add(Restrictions.in("userRole." + scope.getLowerCamelName() + ".id", resources)) //
                 .add(Restrictions.eq("role.roleCategory", STUDENT)) //
                 .add(Restrictions.eq("role.verified", true)) //

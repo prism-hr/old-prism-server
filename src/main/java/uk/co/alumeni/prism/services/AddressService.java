@@ -148,10 +148,6 @@ public class AddressService {
         return addressDAO.getAddressesWithNoLocationParts();
     }
 
-    public void geocodeAddressAsEstablishment(Integer addressId) throws Exception {
-        geocodeAddressAsEstablishment(getById(addressId));
-    }
-
     public LinkedHashMultimap<Integer, String> getAddressLocationIndex(List<EntityLocationDTO> entityLocations, int precision) {
         Integer entityId = null;
         int entityLocationCount = 0;
@@ -170,7 +166,7 @@ public class AddressService {
         return entityLocationIndex;
     }
 
-    private void geocodeAddress(Address address, String establishmentName) {
+    public void geocodeAddress(Address address, String establishmentName) {
         try {
             if (!geocodeAddressAsEstablishment(address)) {
                 geocodeAddressAsLocation(address, establishmentName);
@@ -197,7 +193,7 @@ public class AddressService {
     }
 
     private void geocodeAddressAsLocation(Address address, String establishmentName) throws Exception {
-        List<String> addressTokens = Lists.reverse(address.getAddressTokens());
+        List<String> addressTokens = reverse(address.getAddressTokens());
         addressTokens.add(establishmentName);
 
         Domicile domicile = address.getDomicile();
@@ -242,7 +238,7 @@ public class AddressService {
         if (CollectionUtils.isNotEmpty(componentData)) {
             AddressLocationPart parent = null;
             List<String> partNames = newLinkedList();
-            Set<AddressLocation> locations = address.getAddressLocations();
+            Set<AddressLocation> locations = address.getLocations();
             for (GoogleAddressComponentDTO componentItem : reverse(componentData)) {
                 if (containsAny(googleLocationTypes, componentItem.getTypes())) {
                     String name = componentItem.getName();

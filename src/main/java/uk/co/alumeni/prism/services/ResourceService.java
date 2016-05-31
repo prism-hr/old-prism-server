@@ -1243,11 +1243,15 @@ public class ResourceService {
         return resourceDAO.getResourceTargets(targeterScope, targeterResources, targetScope);
     }
 
-    public HashMultimap<PrismScope, Integer> getResourcesForWhichUserCanViewProfiles(User user) {
+    public HashMultimap<PrismScope, Integer> getResourcesForWhichUserCanViewProfiles(User currentUser) {
+        return getResourcesForWhichUserCanViewProfiles(currentUser, null);
+    }
+
+    public HashMultimap<PrismScope, Integer> getResourcesForWhichUserCanViewProfiles(User currentUser, String searchTerm) {
         HashMultimap<PrismScope, Integer> resourceIndex = create();
-        ResourceListFilterDTO filterDTO = new ResourceListFilterDTO().withRoleCategories(ADMINISTRATOR, RECRUITER);
+        ResourceListFilterDTO filterDTO = new ResourceListFilterDTO().withRoleCategories(ADMINISTRATOR, RECRUITER).withValueString(searchTerm);
         stream(organizationScopes).forEach(organizationScope -> {
-            List<Integer> resources = getResources(user, organizationScope, scopeService.getParentScopesDescending(organizationScope, SYSTEM),
+            List<Integer> resources = getResources(currentUser, organizationScope, scopeService.getParentScopesDescending(organizationScope, SYSTEM),
                     filterDTO).stream().map(resource -> resource.getId()).collect(toList());
             resourceIndex.putAll(organizationScope, resources);
         });

@@ -166,7 +166,12 @@ public class AddressService {
         return entityLocationIndex;
     }
 
-    public void geocodeAddress(Address address, String establishmentName) {
+    public void geocodeAddress(Integer addressId) {
+        Address address = getById(addressId);
+        geocodeAddress(address, address.getEstablishmentName());
+    }
+
+    private void geocodeAddress(Address address, String establishmentName) {
         try {
             if (!geocodeAddressAsEstablishment(address)) {
                 geocodeAddressAsLocation(address, establishmentName);

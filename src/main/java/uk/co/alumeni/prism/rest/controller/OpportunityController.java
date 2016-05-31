@@ -89,8 +89,17 @@ public class OpportunityController {
     }
 
     @RequestMapping(method = RequestMethod.GET, value = "filterValues/institutions")
-    public List<AdvertInstitutionSummaryRepresentation> getInstitutionSummaryRepresentations(OpportunityQueryDTO query, @RequestParam(required = false) String q) {
+    public List<AdvertInstitutionSummaryRepresentation> getAdvertInstitutionSummaryRepresentations(OpportunityQueryDTO query, @RequestParam(required = false) String q) {
         return advertMapper.getAdvertInstitutionSummaryRepresentations(query, q);
+    }
+
+    @RequestMapping(method = RequestMethod.GET, value = "filterProperties")
+    public Map<String, List<?>> getFilterPropertiesRepresentations(OpportunityQueryDTO query) {
+        return ImmutableMap.of("industries", advertMapper.getAdvertIndustrySummaryRepresentations(query, null),
+                "functions", advertMapper.getAdvertFunctionSummaryRepresentations(query, null),
+                "themes", advertMapper.getAdvertThemeSummaryRepresentations(query, null),
+                "locations", advertMapper.getAdvertLocationSummaryRepresentations(query, null),
+                "institutions", advertMapper.getAdvertInstitutionSummaryRepresentations(query, null));
     }
 
 }

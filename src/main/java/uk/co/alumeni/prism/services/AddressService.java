@@ -1,12 +1,22 @@
 package uk.co.alumeni.prism.services;
 
-import com.google.common.base.Joiner;
-import com.google.common.base.Strings;
-import com.google.common.collect.LinkedHashMultimap;
-import com.google.common.collect.Lists;
+import static com.google.common.base.Objects.equal;
+import static com.google.common.collect.Lists.newArrayList;
+import static com.google.common.collect.Lists.newLinkedList;
+import static com.google.common.collect.Lists.reverse;
+import static org.apache.commons.collections.CollectionUtils.containsAny;
+import static org.slf4j.LoggerFactory.getLogger;
+import static uk.co.alumeni.prism.PrismConstants.OK;
+
+import java.net.URI;
+import java.net.URLEncoder;
+import java.util.List;
+import java.util.Set;
+
+import javax.inject.Inject;
+
 import org.apache.commons.collections.CollectionUtils;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
 import org.springframework.core.io.DefaultResourceLoader;
@@ -45,7 +55,7 @@ import static uk.co.alumeni.prism.PrismConstants.OK;
 @Transactional
 public class AddressService {
 
-    private static Logger logger = LoggerFactory.getLogger(AddressService.class);
+    private static Logger logger = getLogger(AddressService.class);
 
     private static final List<String> googleLocationTypes = newArrayList("country", "administrative_area_level_1", "administrative_area_level_2",
             "administrative_area_level_3", "administrative_area_level_4", "administrative_area_level_5", "postal_town", "airport");

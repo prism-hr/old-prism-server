@@ -65,7 +65,7 @@ public class OpportunityController {
 
     @RequestMapping(method = RequestMethod.GET, value = "{resourceScope:projects|programs|departments|institutions}/{resourceId}/badge", produces = "text/javascript")
     public String getAdvertBadge(@PathVariable String resourceScope, @PathVariable Integer resourceId, @RequestParam Optional<String> callback,
-                                 @RequestParam String options, HttpServletResponse response) {
+            @RequestParam String options, HttpServletResponse response) {
         response.setHeader("X-Frame-Options", null);
         Advert advert = advertService.getAdvert(PrismScope.valueOf(removeEnd(resourceScope, "s").toUpperCase()), resourceId);
         HashMap<String, String> widgetOptions = new Gson().fromJson(options, new TypeToken<HashMap<String, String>>() {
@@ -102,7 +102,7 @@ public class OpportunityController {
     }
 
     @RequestMapping(method = RequestMethod.GET, value = "filterValues/institutions")
-    public List<AdvertInstitutionSummaryRepresentation> getAdvertInstitutionSummaryRepresentations(OpportunityQueryDTO query, @RequestParam(required = false) String q) {
+    public List<AdvertInstitutionSummaryRepresentation> getInstitutionSummaryRepresentations(OpportunityQueryDTO query, @RequestParam(required = false) String q) {
         return advertMapper.getAdvertInstitutionSummaryRepresentations(query, q);
     }
 

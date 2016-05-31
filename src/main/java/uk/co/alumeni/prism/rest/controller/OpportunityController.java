@@ -89,7 +89,7 @@ public class OpportunityController {
     }
 
     @RequestMapping(method = RequestMethod.GET, value = "filterValues/institutions")
-    public List<AdvertInstitutionSummaryRepresentation> getInstitutionSummaryRepresentations(OpportunityQueryDTO query, @RequestParam(required = false) String q) {
+    public List<AdvertInstitutionSummaryRepresentation> getAdvertInstitutionSummaryRepresentations(OpportunityQueryDTO query, @RequestParam(required = false) String q) {
         return advertMapper.getAdvertInstitutionSummaryRepresentations(query, q);
     }
 

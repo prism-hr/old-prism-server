@@ -2,6 +2,7 @@ package uk.co.alumeni.prism.services;
 
 import static java.util.Arrays.asList;
 import static org.apache.commons.collections.CollectionUtils.isEmpty;
+import static org.slf4j.LoggerFactory.getLogger;
 import static uk.co.alumeni.prism.dao.WorkflowDAO.advertScopes;
 import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_COMMENT_INITIALIZED_SYSTEM;
 import static uk.co.alumeni.prism.domain.definitions.PrismOpportunityType.getSystemOpportunityType;
@@ -25,7 +26,6 @@ import javax.inject.Inject;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
@@ -35,6 +35,7 @@ import uk.co.alumeni.prism.dao.SystemDAO;
 import uk.co.alumeni.prism.domain.AgeRange;
 import uk.co.alumeni.prism.domain.Domicile;
 import uk.co.alumeni.prism.domain.UniqueEntity;
+import uk.co.alumeni.prism.domain.address.Address;
 import uk.co.alumeni.prism.domain.address.AddressLocation;
 import uk.co.alumeni.prism.domain.address.AddressLocationPart;
 import uk.co.alumeni.prism.domain.comment.Comment;
@@ -105,7 +106,7 @@ import com.google.common.collect.Maps;
 @Service
 public class SystemService {
 
-    private static final Logger logger = LoggerFactory.getLogger(SystemService.class);
+    private static final Logger logger = getLogger(SystemService.class);
 
     private PropertyLoader propertyLoader;
 
@@ -301,7 +302,8 @@ public class SystemService {
     public void initializeAddressCompleteness() throws Exception {
         logger.info("Initializing address location completeness");
         for (Integer addressId : addressService.getAddressesWithNoLocationParts()) {
-            addressService.geocodeAddressAsEstablishment(addressId);
+            Address address = addressService.getById(addressId);
+            addressService.geocodeAddress(address, address.getEstablishmentName());
         }
     }
 

@@ -155,12 +155,8 @@ public class Address extends AddressDefinition<Domicile> {
         this.locations = locations;
     }
 
-    public Set<AddressLocation> getAddressLocations() {
-        return locations;
-    }
-
-    public void addAddressLocationPart(AddressLocation location) {
-        locations.add(location);
+    public String getEstablishmentName() {
+        return advert == null ? null : advert.getName();
     }
 
     public List<String> getAddressTokens() {

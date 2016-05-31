@@ -134,7 +134,7 @@ public class ProfileMapper {
         User currentUser = userService.getCurrentUser();
         List<ProfileListRowRepresentation> representations = newLinkedList();
 
-        HashMultimap<PrismScope, Integer> resourceIndex = resourceService.getResourcesForWhichUserCanViewProfiles(currentUser);
+        HashMultimap<PrismScope, Integer> resourceIndex = resourceService.getResourcesForWhichUserCanViewProfiles(currentUser, filter.getValueString());
         List<ProfileListRowDTO> profiles = userService.getUserProfiles(resourceIndex, filter, currentUser, lastSequenceIdentifier);
         if (profiles.size() > 0) {
             DateTime baseline = now().minusDays(1);

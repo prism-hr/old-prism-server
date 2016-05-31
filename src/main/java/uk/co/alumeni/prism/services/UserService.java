@@ -554,15 +554,15 @@ public class UserService {
         return newLinkedList(profiles);
     }
 
-    public List<ProfileListRowDTO> getUserProfiles(HashMultimap<PrismScope, Integer> resourceIndex, ProfileListFilterDTO filter, User user,
+    public List<ProfileListRowDTO> getUserProfiles(HashMultimap<PrismScope, Integer> resourceIndex, ProfileListFilterDTO filter, User currentUser,
             String lastSequenceIdentifier) {
         if (isTrue(filter.getWithNewMessages())) {
-            filter.setUserIds(userDAO.getUsersWithUnreadMessages(user));
+            filter.setUserIds(userDAO.getUsersWithUnreadMessages(currentUser));
         }
 
         Set<ProfileListRowDTO> profiles = newLinkedHashSet();
         resourceIndex.keySet()
-                .forEach(scope -> profiles.addAll(userDAO.getUserProfiles(scope, resourceIndex.get(scope), filter, user, lastSequenceIdentifier)));
+                .forEach(scope -> profiles.addAll(userDAO.getUserProfiles(scope, resourceIndex.get(scope), filter, currentUser, lastSequenceIdentifier)));
 
         return newLinkedList(profiles);
     }

@@ -391,6 +391,7 @@ public class ApplicationDAO {
                         .add(Projections.sum("applicationRatingCount").as("ratingCount")) //
                         .add(Projections.avg("applicationRatingAverage").as("ratingAverage"))) //
                 .add(Restrictions.eq("user", user)) //
+                .add(Restrictions.isNotNull("submittedTimestamp")) //
                 .setResultTransformer(Transformers.aliasToBean(ResourceRatingSummaryDTO.class)) //
                 .uniqueResult();
     }

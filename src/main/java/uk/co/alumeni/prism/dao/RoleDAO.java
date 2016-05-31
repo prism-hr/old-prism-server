@@ -312,9 +312,9 @@ public class RoleDAO {
     }
 
     public List<UserRole> getUnacceptedRolesForUser(User user) {
-        // FIXME user argument not used, is that correct?
         return (List<UserRole>) sessionFactory.getCurrentSession().createCriteria(UserRole.class) //
                 .createAlias("role", "role", JoinType.INNER_JOIN) //
+                .add(Restrictions.eq("user", user)) //
                 .add(Restrictions.isNull("acceptedTimestamp")) //
                 .add(Restrictions.eq("role.verified", true)) //
                 .list();

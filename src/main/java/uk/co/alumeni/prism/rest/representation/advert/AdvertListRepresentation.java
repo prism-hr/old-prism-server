@@ -72,7 +72,7 @@ public class AdvertListRepresentation extends ListRepresentation<AdvertRepresent
         return this;
     }
 
-    public AdvertListRepresentation withFilterValues(final Map<String, List<? extends AdvertCategorySummaryRepresentation>> filterProperties) {
+    public AdvertListRepresentation withFilterValues(Map<String, List<? extends AdvertCategorySummaryRepresentation>> filterProperties) {
         this.filterValues = filterProperties;
         return this;
     }

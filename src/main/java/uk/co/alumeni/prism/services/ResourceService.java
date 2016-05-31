@@ -1244,12 +1244,8 @@ public class ResourceService {
     }
 
     public HashMultimap<PrismScope, Integer> getResourcesForWhichUserCanViewProfiles(User currentUser) {
-        return getResourcesForWhichUserCanViewProfiles(currentUser, null);
-    }
-
-    public HashMultimap<PrismScope, Integer> getResourcesForWhichUserCanViewProfiles(User currentUser, String searchTerm) {
         HashMultimap<PrismScope, Integer> resourceIndex = create();
-        ResourceListFilterDTO filterDTO = new ResourceListFilterDTO().withRoleCategories(ADMINISTRATOR, RECRUITER).withValueString(searchTerm);
+        ResourceListFilterDTO filterDTO = new ResourceListFilterDTO().withRoleCategories(ADMINISTRATOR, RECRUITER);
         stream(organizationScopes).forEach(organizationScope -> {
             List<Integer> resources = getResources(currentUser, organizationScope, scopeService.getParentScopesDescending(organizationScope, SYSTEM),
                     filterDTO).stream().map(resource -> resource.getId()).collect(toList());
@@ -1264,6 +1260,7 @@ public class ResourceService {
                 }
             });
         });
+        
         return resourceIndex;
     }
 

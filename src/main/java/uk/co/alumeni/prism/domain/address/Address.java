@@ -203,7 +203,8 @@ public class Address extends AddressDefinition<Domicile> {
 
     @Override
     public String toString() {
-        return Joiner.on(", ").skipNulls().join(addressLine1, addressLine2, addressTown, addressRegion, addressCode, domicile.getId().name());
+        return Joiner.on(", ").skipNulls()
+                .join(addressLine1, addressLine2, addressTown, addressRegion, addressCode, domicile == null ? null : domicile.getId().name());
     }
 
 }

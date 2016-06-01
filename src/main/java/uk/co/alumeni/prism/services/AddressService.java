@@ -5,6 +5,7 @@ import static com.google.common.collect.Lists.newArrayList;
 import static com.google.common.collect.Lists.newLinkedList;
 import static com.google.common.collect.Lists.reverse;
 import static org.apache.commons.collections.CollectionUtils.containsAny;
+import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
 import static org.slf4j.LoggerFactory.getLogger;
 import static uk.co.alumeni.prism.PrismConstants.OK;
 
@@ -15,7 +16,6 @@ import java.util.Set;
 
 import javax.inject.Inject;
 
-import org.apache.commons.collections.CollectionUtils;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
@@ -171,13 +171,19 @@ public class AddressService {
         geocodeAddress(address, address.getEstablishmentName());
     }
 
+    public void deleteAddressLocations() {
+        addressDAO.unlinkAddressLocationParts();
+        entityService.deleteAll(AddressLocation.class);
+        entityService.deleteAll(AddressLocationPart.class);
+    }
+
     private void geocodeAddress(Address address, String establishmentName) {
         try {
             if (!geocodeAddressAsEstablishment(address)) {
                 geocodeAddressAsLocation(address, establishmentName);
             }
         } catch (Exception e) {
-            logger.error("Problem obtaining location for " + address.toString(), e);
+            logger.warn("Problem obtaining location for " + address.toString());
         }
     }
 
@@ -239,18 +245,18 @@ public class AddressService {
         addressDAO.deleteAddressLocations(address);
         addressDAO.getOrphanAddressLocationParts().stream().forEach(entityService::delete);
 
-        List<GoogleAddressComponentDTO> componentData = addressData.getComponents();
-        if (CollectionUtils.isNotEmpty(componentData)) {
+        List<GoogleAddressComponentDTO> components = addressData.getComponents();
+        if (isNotEmpty(components)) {
             AddressLocationPart parent = null;
             List<String> partNames = newLinkedList();
             Set<AddressLocation> locations = address.getLocations();
-            for (GoogleAddressComponentDTO componentItem : reverse(componentData)) {
-                if (containsAny(googleLocationTypes, componentItem.getTypes())) {
-                    String name = componentItem.getName();
+            for (GoogleAddressComponentDTO component : reverse(components)) {
+                if (containsAny(googleLocationTypes, component.getTypes())) {
+                    String name = component.getName();
                     if (!partNames.contains(name)) {
                         partNames.add(name);
-                        AddressLocationPart part = entityService
-                                .getOrCreate(new AddressLocationPart().withParent(parent).withName(name).withNameIndex(Joiner.on("|").join(partNames)));
+                        AddressLocationPart part = entityService.getOrCreate(new AddressLocationPart()
+                                .withParent(parent).withName(name).withNameIndex(Joiner.on("|").join(partNames)));
                         locations.add(entityService.getOrCreate(new AddressLocation().withAddress(address).withLocationPart(part)));
                         parent = part;
                     }

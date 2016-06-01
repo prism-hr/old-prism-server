@@ -35,8 +35,6 @@ import uk.co.alumeni.prism.dao.SystemDAO;
 import uk.co.alumeni.prism.domain.AgeRange;
 import uk.co.alumeni.prism.domain.Domicile;
 import uk.co.alumeni.prism.domain.UniqueEntity;
-import uk.co.alumeni.prism.domain.address.AddressLocation;
-import uk.co.alumeni.prism.domain.address.AddressLocationPart;
 import uk.co.alumeni.prism.domain.comment.Comment;
 import uk.co.alumeni.prism.domain.definitions.PrismAgeRange;
 import uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition;
@@ -294,8 +292,7 @@ public class SystemService {
     @Transactional(timeout = 600)
     public void dropAddressCompleteness() {
         logger.info("Destroying address completeness");
-        entityService.deleteAll(AddressLocation.class);
-        entityService.deleteAll(AddressLocationPart.class);
+        addressService.deleteAddressLocations();
     }
 
     public void initializeAddressCompleteness() throws Exception {

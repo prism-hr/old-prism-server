@@ -1,11 +1,14 @@
 package uk.co.alumeni.prism.dao;
 
 import static com.google.common.collect.Lists.newArrayList;
+import static com.google.common.collect.Lists.newLinkedList;
 import static com.google.common.collect.Sets.newHashSet;
+import static com.google.common.collect.Sets.newTreeSet;
 import static java.math.RoundingMode.HALF_UP;
 import static java.util.Arrays.asList;
 import static java.util.Arrays.stream;
 import static java.util.stream.Collectors.toList;
+import static java.util.stream.Collectors.toSet;
 import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
 import static org.apache.commons.lang3.ArrayUtils.isNotEmpty;
 import static org.apache.commons.lang3.BooleanUtils.isTrue;
@@ -770,26 +773,25 @@ public class AdvertDAO {
     }
 
     public List<AdvertLocationSummaryDTO> getAdvertLocationSummaries(List<Integer> adverts, String searchTerm) {
-        Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Advert.class) //
-                .setProjection(Projections.projectionList() //
-                        .add(Projections.groupProperty("addressLocationPart.id").as("id")) //
-                        .add(Projections.property("addressLocationPart.parent.id").as("parentId")) //
-                        .add(Projections.property("addressLocationPart.name").as("name")) //
-                        .add(Projections.countDistinct("id").as("advertCount"))) //
-                .createAlias("categories.locations", "advertLocation", JoinType.INNER_JOIN) //
-                .createAlias("advertLocation.locationAdvert", "locationAdvert", JoinType.INNER_JOIN) //
-                .createAlias("locationAdvert.address", "locationAddress", JoinType.INNER_JOIN) //
-                .createAlias("locationAddress.locations", "location", JoinType.INNER_JOIN) //
-                .createAlias("location.locationPart", "addressLocationPart", JoinType.INNER_JOIN) //
+        Criteria criteria = getAdvertLocationSummaryCriteria() //
                 .add(Restrictions.in("id", adverts));
 
         if (isNotEmpty(searchTerm)) {
             criteria.add(Restrictions.like("addressLocationPart.name", searchTerm, MatchMode.ANYWHERE));
         }
 
-        return (List<AdvertLocationSummaryDTO>) criteria.addOrder(Order.asc("addressLocationPart.nameIndex")) //
-                .setResultTransformer(Transformers.aliasToBean(AdvertLocationSummaryDTO.class)) //
-                .list();
+        Set<AdvertLocationSummaryDTO> rows = newTreeSet(criteria.list());
+        Set<Integer> parentIds = getAdvertLocationSummaryParentIds(rows);
+        while (parentIds.size() > 0) {
+            List<AdvertLocationSummaryDTO> parentRows = getAdvertLocationSummaryCriteria() //
+                    .add(Restrictions.in("addressLocationPart.id", parentIds)) //
+                    .list();
+
+            parentIds = getAdvertLocationSummaryParentIds(parentRows);
+            rows.addAll(parentRows);
+        }
+
+        return newLinkedList(rows);
     }
 
     public List<AdvertInstitutionSummaryDTO> getAdvertInstitutionSummaries(List<Integer> adverts, String searchTerm) {
@@ -957,6 +959,16 @@ public class AdvertDAO {
                         .add(Restrictions.isNull("completionDate")) //
                         .add(Restrictions.eq("state.stateGroup.id", APPLICATION_WITHDRAWN))) //
                 .setResultTransformer(Transformers.aliasToBean(AdvertApplicationDTO.class))
+                .list();
+    }
+
+    public List<Advert> getBadgeAdverts(ResourceParent parentResource, int count) {
+        return (List<Advert>) sessionFactory.getCurrentSession().createCriteria(Advert.class)
+                .add(Restrictions.eq(parentResource.getResourceScope().getLowerCamelName(), parentResource))
+                .add(Restrictions.disjunction()
+                        .add(Restrictions.isNotNull("project"))
+                        .add(Restrictions.isNotNull("program")))
+                .setMaxResults(count)
                 .list();
     }
 
@@ -1224,14 +1236,24 @@ public class AdvertDAO {
         return conjunction;
     }
 
-    public List<Advert> getBadgeAdverts(ResourceParent parentResource, int count) {
-        return (List<Advert>) sessionFactory.getCurrentSession().createCriteria(Advert.class)
-                .add(Restrictions.eq(parentResource.getResourceScope().getLowerCamelName(), parentResource))
-                .add(Restrictions.disjunction()
-                        .add(Restrictions.isNotNull("project"))
-                        .add(Restrictions.isNotNull("program")))
-                .setMaxResults(count)
-                .list();
+    private Criteria getAdvertLocationSummaryCriteria() {
+        return sessionFactory.getCurrentSession().createCriteria(Advert.class) //
+                .setProjection(Projections.projectionList() //
+                        .add(Projections.groupProperty("addressLocationPart.id").as("id")) //
+                        .add(Projections.property("addressLocationPart.parent.id").as("parentId")) //
+                        .add(Projections.property("addressLocationPart.name").as("name")) //
+                        .add(Projections.countDistinct("id").as("advertCount"))) //
+                .createAlias("categories.locations", "advertLocation", JoinType.INNER_JOIN) //
+                .createAlias("advertLocation.locationAdvert", "locationAdvert", JoinType.INNER_JOIN) //
+                .createAlias("locationAdvert.address", "locationAddress", JoinType.INNER_JOIN) //
+                .createAlias("locationAddress.locations", "location", JoinType.INNER_JOIN) //
+                .createAlias("location.locationPart", "addressLocationPart", JoinType.INNER_JOIN) //
+                .addOrder(Order.asc("addressLocationPart.nameIndex")) //
+                .setResultTransformer(Transformers.aliasToBean(AdvertLocationSummaryDTO.class));
+    }
+    
+    private Set<Integer> getAdvertLocationSummaryParentIds(Collection<AdvertLocationSummaryDTO> rows) {
+        return rows.stream().filter(row -> row.getParentId() != null).map(row -> row.getParentId()).collect(toSet());
     }
 
 }

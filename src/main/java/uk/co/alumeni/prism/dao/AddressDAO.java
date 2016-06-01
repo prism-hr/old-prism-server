@@ -29,6 +29,13 @@ public class AddressDAO {
                 .executeUpdate();
     }
 
+    public void unlinkAddressLocationParts() {
+        sessionFactory.getCurrentSession().createQuery( //
+                "update AddressLocationPart " //
+                        + "set parent = null") //
+                .executeUpdate();
+    }
+
     public List<AddressLocationPart> getOrphanAddressLocationParts() {
         return (List<AddressLocationPart>) sessionFactory.getCurrentSession().createCriteria(AddressLocationPart.class) //
                 .createAlias("locations", "location", JoinType.LEFT_OUTER_JOIN) //

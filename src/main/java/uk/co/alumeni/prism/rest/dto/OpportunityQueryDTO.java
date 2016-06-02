@@ -37,13 +37,23 @@ public class OpportunityQueryDTO {
 
     private List<Integer> locations;
 
+    private Boolean ignoreLocations;
+
     private List<PrismAdvertIndustry> industries;
+
+    private Boolean ignoreIndustries;
 
     private List<PrismAdvertFunction> functions;
 
+    private Boolean ignoreFunctions;
+
     private List<Integer> themes;
 
+    private Boolean ignoreThemes;
+
     private List<Integer> institutions;
+
+    private Boolean ignoreInstitutions;
 
     private List<PrismOpportunityType> opportunityTypes;
 
@@ -145,12 +155,28 @@ public class OpportunityQueryDTO {
         this.locations = locations;
     }
 
+    public Boolean getIgnoreLocations() {
+        return ignoreLocations;
+    }
+
+    public void setIgnoreLocations(Boolean ignoreLocations) {
+        this.ignoreLocations = ignoreLocations;
+    }
+
     public List<PrismAdvertIndustry> getIndustries() {
         return industries;
     }
 
     public void setIndustries(List<PrismAdvertIndustry> industries) {
         this.industries = industries;
+    }
+
+    public Boolean getIgnoreIndustries() {
+        return ignoreIndustries;
+    }
+
+    public void setIgnoreIndustries(Boolean ignoreIndustries) {
+        this.ignoreIndustries = ignoreIndustries;
     }
 
     public List<PrismAdvertFunction> getFunctions() {
@@ -161,6 +187,14 @@ public class OpportunityQueryDTO {
         this.functions = functions;
     }
 
+    public Boolean getIgnoreFunctions() {
+        return ignoreFunctions;
+    }
+
+    public void setIgnoreFunctions(Boolean ignoreFunctions) {
+        this.ignoreFunctions = ignoreFunctions;
+    }
+
     public List<Integer> getThemes() {
         return themes;
     }
@@ -169,12 +203,28 @@ public class OpportunityQueryDTO {
         this.themes = themes;
     }
 
+    public Boolean getIgnoreThemes() {
+        return ignoreThemes;
+    }
+
+    public void setIgnoreThemes(Boolean ignoreThemes) {
+        this.ignoreThemes = ignoreThemes;
+    }
+
     public List<Integer> getInstitutions() {
         return institutions;
     }
 
     public void setInstitutions(List<Integer> institutions) {
         this.institutions = institutions;
+    }
+
+    public Boolean getIgnoreInstitutions() {
+        return ignoreInstitutions;
+    }
+
+    public void setIgnoreInstitutions(Boolean ignoreInstitutions) {
+        this.ignoreInstitutions = ignoreInstitutions;
     }
 
     public List<PrismOpportunityType> getOpportunityTypes() {
@@ -306,28 +356,28 @@ public class OpportunityQueryDTO {
         return this;
     }
 
-    public OpportunityQueryDTO withoutLocations() {
-        this.locations = null;
+    public OpportunityQueryDTO withIgnoreLocations(Boolean ignoreLocations) {
+        this.ignoreLocations = ignoreLocations;
         return this;
     }
 
-    public OpportunityQueryDTO withoutIndustries() {
-        this.industries = null;
+    public OpportunityQueryDTO withIgnoreIndustries(Boolean ignoreIndustries) {
+        this.ignoreIndustries = ignoreIndustries;
         return this;
     }
 
-    public OpportunityQueryDTO withoutFunctions() {
-        this.functions = null;
+    public OpportunityQueryDTO withIgnoreFunctions(Boolean ignoreFunctions) {
+        this.ignoreFunctions = ignoreFunctions;
         return this;
     }
 
-    public OpportunityQueryDTO withoutInstitutions() {
-        this.institutions = null;
+    public OpportunityQueryDTO withIgnoreThemes(Boolean ignoreThemes) {
+        this.ignoreThemes = ignoreThemes;
         return this;
     }
 
-    public OpportunityQueryDTO withoutThemes() {
-        this.themes = null;
+    public OpportunityQueryDTO withIgnoreInstitutions(Boolean ignoreInstitutions) {
+        this.ignoreInstitutions = ignoreInstitutions;
         return this;
     }
 

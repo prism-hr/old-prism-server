@@ -309,7 +309,7 @@ public class ResourceMapper {
             representation.setReadMessageCount(readMessageCount == null ? 0 : readMessageCount);
             representation.setUnreadMessageCount(unreadMessageCount == null ? 0 : unreadMessageCount);
 
-            representation.setRaisesUpdateFlag(isTrue(indexResource.getRecentUpdate()));
+            representation.setRaisesUpdateFlag(isTrue(row.getRecentUpdate()));
 
             String sequenceIdentifier = indexResource.toString();
             representation.setSequenceIdentifier(sequenceIdentifier);

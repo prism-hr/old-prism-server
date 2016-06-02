@@ -54,6 +54,8 @@ public class ResourceListRowDTO extends ResourceSimpleDTO implements ProfileEnti
 
     private DateTime updatedTimestamp;
 
+    private Boolean recentUpdate;
+    
     private String sequenceIdentifier;
 
     private String advertIncompleteSection;
@@ -236,6 +238,14 @@ public class ResourceListRowDTO extends ResourceSimpleDTO implements ProfileEnti
 
     public void setUpdatedTimestamp(DateTime updatedTimestamp) {
         this.updatedTimestamp = updatedTimestamp;
+    }
+
+    public Boolean getRecentUpdate() {
+        return recentUpdate;
+    }
+
+    public void setRecentUpdate(Boolean recentUpdate) {
+        this.recentUpdate = recentUpdate;
     }
 
     public String getSequenceIdentifier() {

@@ -309,7 +309,7 @@ public class ResourceMapper {
             representation.setReadMessageCount(readMessageCount == null ? 0 : readMessageCount);
             representation.setUnreadMessageCount(unreadMessageCount == null ? 0 : unreadMessageCount);
 
-            setRaisesUpdateFlag(representation, baseline, updatedTimestamp);
+            representation.setRaisesUpdateFlag(isTrue(indexResource.getRecentUpdate()));
 
             String sequenceIdentifier = indexResource.toString();
             representation.setSequenceIdentifier(sequenceIdentifier);
@@ -788,14 +788,14 @@ public class ResourceMapper {
     }
 
     @SuppressWarnings("unchecked")
-    private <T extends Resource, V extends ResourceRepresentationStandard> V getResourceRepresentationStandard(
-            T resource, Class<V> returnType, List<ActionRepresentationExtended> actions, List<PrismRole> overridingRoles, User user) {
+    private <T extends Resource, V extends ResourceRepresentationStandard> V getResourceRepresentationStandard(T resource, Class<V> returnType,
+            List<ActionRepresentationExtended> actions, List<PrismRole> overridingRoles, User user) {
         V representation = getResourceRepresentationRelation(resource, returnType, user);
 
         DateTime updatedTimestamp = resource.getUpdatedTimestamp();
 
         setRaisesUrgentFlag(representation, (List<ActionRepresentationSimple>) (List<?>) actions);
-        setRaisesUpdateFlag(representation, new DateTime(), updatedTimestamp);
+        representation.setRaisesUpdateFlag(isTrue(resource.getRecentUpdate()));
 
         Integer readMessageCount = resourceService.getResourceReadMessageCount(resource, user);
         Integer unreadMessageCount = resourceService.getResourceUnreadMessageCount(resource, user);
@@ -902,10 +902,6 @@ public class ResourceMapper {
                 break;
             }
         }
-    }
-
-    private void setRaisesUpdateFlag(ResourceRepresentationStandard representation, DateTime baseline, DateTime updatedTimestamp) {
-        representation.setRaisesUpdateFlag(updatedTimestamp.isAfter(baseline.minusDays(1)));
     }
 
     private void setInstitutionLogoImage(ResourceListRowDTO row, ResourceListRowRepresentation representation) {

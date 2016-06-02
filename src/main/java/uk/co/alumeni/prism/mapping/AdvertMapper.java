@@ -404,11 +404,11 @@ public class AdvertMapper {
     }
 
     public List<AdvertLocationSummaryRepresentation> getAdvertLocationSummaryRepresentations(OpportunityQueryDTO query, String searchTerm) {
-        List<AdvertLocationSummaryDTO> advertlocationSummaries = advertService.getAdvertLocationSummaries(query, searchTerm);
-        if (advertlocationSummaries.size() > 0) {
+        List<AdvertLocationSummaryDTO> advertLocationSummaries = advertService.getAdvertLocationSummaries(query, searchTerm);
+        if (advertLocationSummaries.size() > 0) {
             Set<AdvertLocationSummaryRepresentation> representations = newTreeSet();
             TreeMultimap<Integer, AdvertLocationSummaryRepresentation> representationIndex = TreeMultimap.create();
-            advertlocationSummaries.forEach(summaryDTO -> {
+            advertLocationSummaries.forEach(summaryDTO -> {
                 Integer parentId = summaryDTO.getParentId();
                 AdvertLocationSummaryRepresentation representation = new AdvertLocationSummaryRepresentation().withId(summaryDTO.getId())
                         .withName(summaryDTO.getName()).withAdvertCount(summaryDTO.getAdvertCount());
@@ -424,6 +424,13 @@ public class AdvertMapper {
         }
 
         return newArrayList();
+    }
+
+    public List<AdvertLocationSummaryRepresentation> getAdvertLocationSummaryRepresentations(List<Integer> ids) {
+        List<AdvertLocationSummaryDTO> summaries = advertService.getAdvertLocationSummaries(ids);
+        return summaries.stream().map(summary ->
+                new AdvertLocationSummaryRepresentation().withId(summary.getId())
+                        .withName(summary.getName())).collect(Collectors.toList());
     }
 
     public List<AdvertInstitutionSummaryRepresentation> getAdvertInstitutionSummaryRepresentations(OpportunityQueryDTO query, String searchTerm) {

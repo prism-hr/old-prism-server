@@ -153,7 +153,7 @@ public class MailSender {
                 Session mailSession = getInstance(mailSessionProperties);
 
                 MimeMessage message = new MimeMessage(mailSession);
-                message.setFrom(new InternetAddress(emailSource, "Prism.hr"));
+                message.setFrom(new InternetAddress(emailSource, "prism.hr"));
                 message.setRecipient(Message.RecipientType.TO, convertToInternetAddresses(recipient));
                 message.setSubject(subject);
 

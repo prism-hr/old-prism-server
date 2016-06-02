@@ -954,29 +954,39 @@ public class AdvertService {
         stream(advertScopes).forEach(advertScope -> enclosingAdverts.addAll(advertDAO.getPossibleAdvertLocations(advert, advertScope, enclosingAdverts)));
         return enclosingAdverts;
     }
+    
+    public List<AdvertLocationSummaryDTO> getAdvertLocationSummaries(OpportunityQueryDTO query, String searchTerm) {
+        List<Integer> visibleAdverts = getVisibleAdverts(query.withIgnoreLocations(true), opportunityScopes);
+        query.setIgnoreLocations(null);
+        
+        return visibleAdverts.size() > 0 ? advertDAO.getAdvertLocationSummaries(visibleAdverts, searchTerm) : newArrayList();
+    }
 
     public List<AdvertIndustrySummaryDTO> getAdvertIndustrySummaries(OpportunityQueryDTO query, String searchTerm) {
-        List<Integer> visibleAdverts = getVisibleAdverts(query.withoutIndustries(), opportunityScopes);
+        List<Integer> visibleAdverts = getVisibleAdverts(query.withIgnoreIndustries(true), opportunityScopes);
+        query.setIgnoreIndustries(null);
+        
         return visibleAdverts.size() > 0 ? advertDAO.getAdvertIndustrySummaries(visibleAdverts, searchTerm) : newArrayList();
     }
 
     public List<AdvertFunctionSummaryDTO> getAdvertFunctionSummaries(OpportunityQueryDTO query, String searchTerm) {
-        List<Integer> visibleAdverts = getVisibleAdverts(query.withoutFunctions(), opportunityScopes);
+        List<Integer> visibleAdverts = getVisibleAdverts(query.withIgnoreFunctions(true), opportunityScopes);
+        query.setIgnoreFunctions(null);
+        
         return visibleAdverts.size() > 0 ? advertDAO.getAdvertFunctionSummaries(visibleAdverts, searchTerm) : newArrayList();
     }
 
     public List<AdvertThemeSummaryDTO> getAdvertThemeSummaries(OpportunityQueryDTO query, String searchTerm) {
-        List<Integer> visibleAdverts = getVisibleAdverts(query.withoutThemes(), opportunityScopes);
+        List<Integer> visibleAdverts = getVisibleAdverts(query.withIgnoreThemes(true), opportunityScopes);
+        query.setIgnoreThemes(null);
+        
         return visibleAdverts.size() > 0 ? advertDAO.getAdvertThemeSummaries(visibleAdverts, searchTerm) : newArrayList();
     }
 
-    public List<AdvertLocationSummaryDTO> getAdvertLocationSummaries(OpportunityQueryDTO query, String searchTerm) {
-        List<Integer> visibleAdverts = getVisibleAdverts(query.withoutLocations(), opportunityScopes);
-        return visibleAdverts.size() > 0 ? advertDAO.getAdvertLocationSummaries(visibleAdverts, searchTerm) : newArrayList();
-    }
-
     public List<AdvertInstitutionSummaryDTO> getAdvertInstitutionSummaries(OpportunityQueryDTO query, String searchTerm) {
-        List<Integer> visibleAdverts = getVisibleAdverts(query.withoutInstitutions(), opportunityScopes);
+        List<Integer> visibleAdverts = getVisibleAdverts(query.withIgnoreInstitutions(true), opportunityScopes);
+        query.setIgnoreInstitutions(null);
+        
         return visibleAdverts.size() > 0 ? advertDAO.getAdvertInstitutionSummaries(visibleAdverts, searchTerm) : newArrayList();
     }
 

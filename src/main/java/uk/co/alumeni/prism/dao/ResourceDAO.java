@@ -149,8 +149,7 @@ public class ResourceDAO {
     }
 
     public List<ResourceListRowDTO> getResourceList(User user, PrismScope scope, List<PrismScope> parentScopes, Collection<Integer> resourceIds,
-            ResourceListFilterDTO filter,
-            boolean hasRedactions) {
+            ResourceListFilterDTO filter, boolean hasRedactions) {
         if (isNotEmpty(resourceIds)) {
             String scopeName = scope.getLowerCamelName();
             Criteria criteria = sessionFactory.getCurrentSession().createCriteria(scope.getResourceClass(), scopeName);
@@ -196,6 +195,7 @@ public class ResourceDAO {
             projectionList.add(Projections.property("state.id"), "stateId") //
                     .add(Projections.property("createdTimestamp"), "createdTimestamp") //
                     .add(Projections.property("updatedTimestamp"), "updatedTimestamp") //
+                    .add(Projections.property("recentUpdate"), "recentUpdate") //
                     .add(Projections.property("sequenceIdentifier"), "sequenceIdentifier"); //
 
             if (parentScope) {

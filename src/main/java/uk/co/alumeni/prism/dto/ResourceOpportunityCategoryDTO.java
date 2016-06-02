@@ -14,6 +14,8 @@ public class ResourceOpportunityCategoryDTO extends EntityOpportunityCategoryDTO
 
     private DateTime updatedTimestamp;
 
+    private Boolean recentUpdate;
+
     private Boolean onlyAsPartner;
 
     public Boolean getRaisesUrgentFlag() {
@@ -54,6 +56,14 @@ public class ResourceOpportunityCategoryDTO extends EntityOpportunityCategoryDTO
 
     public void setUpdatedTimestamp(DateTime updatedTimestamp) {
         this.updatedTimestamp = updatedTimestamp;
+    }
+
+    public Boolean getRecentUpdate() {
+        return recentUpdate;
+    }
+
+    public void setRecentUpdate(Boolean recentUpdate) {
+        this.recentUpdate = recentUpdate;
     }
 
     public Boolean getOnlyAsPartner() {

@@ -1222,7 +1222,7 @@ public class ResourceService {
                 Integer resourceId = resourceDTO.getId();
                 resources.put(scope, resourceId);
 
-                if (resourceDTO.getUpdatedTimestamp().compareTo(updateBaseline) > 0 && isTrue(resourceDTO.getRecentUpdate())) {
+                if (resourceDTO.getUpdatedTimestamp().compareTo(updateBaseline) < 0 && isTrue(resourceDTO.getRecentUpdate())) {
                     resourceExpiredUpdates.add(resourceId);
                 }
             });

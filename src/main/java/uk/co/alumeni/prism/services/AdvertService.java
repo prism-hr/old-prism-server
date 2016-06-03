@@ -1068,8 +1068,8 @@ public class AdvertService {
     }
 
 
-    public List<AdvertLocationSummaryDTO> getAdvertLocationSummaries(List<Integer> ids) {
-        return advertDAO.getAdvertLocationSummaries(ids);
+    public List<AdvertLocationSummaryDTO> getAdvertLocationSummaries(List<Integer> locationPartIds) {
+        return advertDAO.getAdvertLocationSummaries(locationPartIds);
     }
 
     public void retireAdvertClosingDate(Advert advert) {

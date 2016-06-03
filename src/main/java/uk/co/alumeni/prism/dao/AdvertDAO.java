@@ -61,7 +61,6 @@ import org.hibernate.transform.Transformers;
 import org.joda.time.LocalDate;
 import org.springframework.stereotype.Repository;
 
-import uk.co.alumeni.prism.domain.address.AddressLocationPart;
 import uk.co.alumeni.prism.domain.advert.Advert;
 import uk.co.alumeni.prism.domain.advert.AdvertAttribute;
 import uk.co.alumeni.prism.domain.advert.AdvertLocation;
@@ -222,7 +221,7 @@ public class AdvertDAO {
     }
 
     public List<AdvertOpportunityCategoryDTO> getVisibleAdverts(Collection<PrismScope> scopes, Collection<Integer> nodeAdverts, UserAdvertDTO userAdvertDTO,
-                                                                OpportunityQueryDTO query) {
+            OpportunityQueryDTO query) {
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Advert.class) //
                 .setProjection(Projections.projectionList()
                         .add(Projections.groupProperty("id").as("id")) //
@@ -398,7 +397,7 @@ public class AdvertDAO {
     }
 
     public List<AdvertTargetDTO> getAdvertTargets(PrismScope resourceScope, String thisAdvertReference, String otherAdvertReference, User user,
-                                                  Collection<Integer> connectAdverts, Collection<Integer> manageAdverts) {
+            Collection<Integer> connectAdverts, Collection<Integer> manageAdverts) {
         Criterion visibilityConstraint = Restrictions.conjunction() //
                 .add(Restrictions.eq("target.partnershipState", ENDORSEMENT_PROVIDED))
                 .add(Restrictions.eq("target.advertSevered", false))
@@ -420,7 +419,7 @@ public class AdvertDAO {
     }
 
     public List<AdvertTargetDTO> getAdvertTargetsReceived(PrismScope resourceScope, String thisAdvertReference, String otherAdvertReference, User user,
-                                                          Collection<Integer> connectAdverts) {
+            Collection<Integer> connectAdverts) {
         Criterion permissionsConstraint;
         if (user != null && isNotEmpty(connectAdverts)) {
             permissionsConstraint = Restrictions.disjunction() //
@@ -447,7 +446,7 @@ public class AdvertDAO {
     }
 
     public List<Advert> getAdvertsTargetsForWhichUserCanEndorse(Advert advert, User user, PrismScope scope, PrismScope targeterScope, PrismScope targetScope,
-                                                                List<Integer> targeterEntities) {
+            List<Integer> targeterEntities) {
         return (List<Advert>) workflowDAO
                 .getWorkflowCriteriaList(scope, targeterScope, targetScope, targeterEntities, Projections.groupProperty("targeterTarget.targetAdvert"))
                 .add(Restrictions.eq("targeterTarget.advert", advert)) //
@@ -777,7 +776,7 @@ public class AdvertDAO {
         Criteria criteria = getAdvertLocationSummaryCriteria(visibleAdverts);
 
         if (isNotEmpty(searchTerm)) {
-            criteria.add(Restrictions.like("addressLocationPart.name", searchTerm, MatchMode.ANYWHERE));
+            criteria.add(Restrictions.like("locationPart.name", searchTerm, MatchMode.ANYWHERE));
         }
 
         Set<AdvertLocationSummaryDTO> rows = newTreeSet(criteria.list());
@@ -791,11 +790,27 @@ public class AdvertDAO {
         });
         if (parentTokens.size() > 0) {
             rows.addAll(getAdvertLocationSummaryCriteria(visibleAdverts) //
-                    .add(Restrictions.in("addressLocationPart.name", parentTokens)) //
+                    .add(Restrictions.in("locationPart.name", parentTokens)) //
                     .list());
         }
 
         return newLinkedList(rows);
+    }
+    
+    public List<AdvertLocationSummaryDTO> getAdvertLocationSummaries(List<Integer> locationPartIds) {
+        return sessionFactory.getCurrentSession().createCriteria(Advert.class)
+                .setProjection(Projections.projectionList()
+                        .add(Projections.property("locationPart.id").as("id"))
+                        .add(Projections.property("locationPart.name").as("name"))
+                        .add(Projections.countDistinct("id").as("advertCount")))
+                .createAlias("categories.locations", "advertLocation", JoinType.INNER_JOIN) //
+                .createAlias("advertLocation.locationAdvert", "locationAdvert", JoinType.INNER_JOIN) //
+                .createAlias("locationAdvert.address", "locationAddress", JoinType.INNER_JOIN) //
+                .createAlias("locationAddress.locations", "location", JoinType.INNER_JOIN) //
+                .createAlias("location.locationPart", "locationPart", JoinType.INNER_JOIN) //
+                .add(Restrictions.in("locationPart.id", locationPartIds))
+                .setResultTransformer(Transformers.aliasToBean(AdvertLocationSummaryDTO.class))
+                .list();
     }
 
     public List<AdvertInstitutionSummaryDTO> getAdvertInstitutionSummaries(List<Integer> visibleAdverts, String searchTerm) {
@@ -814,17 +829,6 @@ public class AdvertDAO {
 
         return (List<AdvertInstitutionSummaryDTO>) criteria.addOrder(Order.asc("institution.name")) //
                 .setResultTransformer(Transformers.aliasToBean(AdvertInstitutionSummaryDTO.class)) //
-                .list();
-    }
-
-
-    public List<AdvertLocationSummaryDTO> getAdvertLocationSummaries(List<Integer> ids) {
-        return sessionFactory.getCurrentSession().createCriteria(AddressLocationPart.class)
-                .setProjection(Projections.projectionList()
-                        .add(Projections.property("id").as("id"))
-                        .add(Projections.property("name").as("name")))
-                .add(Restrictions.in("id", ids))
-                .setResultTransformer(Transformers.aliasToBean(AdvertLocationSummaryDTO.class))
                 .list();
     }
 
@@ -1195,7 +1199,7 @@ public class AdvertDAO {
     }
 
     private Junction getVisibleAdvertConstraint(String selectAdvertAlias, String restrictAdvertAlias, HashMultimap<PrismScope, Integer> userResources,
-                                                boolean publishedOnly, PrismScope... displayScopes) {
+            boolean publishedOnly, PrismScope... displayScopes) {
         String selectAdvertAliasResolved = getResolvedAliasReference(selectAdvertAlias);
 
         Junction visibilityConstraint = Restrictions.conjunction();
@@ -1254,18 +1258,18 @@ public class AdvertDAO {
     private Criteria getAdvertLocationSummaryCriteria(Collection<Integer> adverts) {
         return sessionFactory.getCurrentSession().createCriteria(Advert.class) //
                 .setProjection(Projections.projectionList() //
-                        .add(Projections.groupProperty("addressLocationPart.id").as("id")) //
-                        .add(Projections.property("addressLocationPart.parent.id").as("parentId")) //
-                        .add(Projections.property("addressLocationPart.name").as("name")) //
-                        .add(Projections.property("addressLocationPart.nameIndex").as("nameIndex")) //
+                        .add(Projections.groupProperty("locationPart.id").as("id")) //
+                        .add(Projections.property("locationPart.parent.id").as("parentId")) //
+                        .add(Projections.property("locationPart.name").as("name")) //
+                        .add(Projections.property("locationPart.nameIndex").as("nameIndex")) //
                         .add(Projections.countDistinct("id").as("advertCount"))) //
                 .createAlias("categories.locations", "advertLocation", JoinType.INNER_JOIN) //
                 .createAlias("advertLocation.locationAdvert", "locationAdvert", JoinType.INNER_JOIN) //
                 .createAlias("locationAdvert.address", "locationAddress", JoinType.INNER_JOIN) //
                 .createAlias("locationAddress.locations", "location", JoinType.INNER_JOIN) //
-                .createAlias("location.locationPart", "addressLocationPart", JoinType.INNER_JOIN) //
+                .createAlias("location.locationPart", "locationPart", JoinType.INNER_JOIN) //
                 .add(Restrictions.in("id", adverts)) //
-                .addOrder(Order.asc("addressLocationPart.nameIndex")) //
+                .addOrder(Order.asc("locationPart.nameIndex")) //
                 .setResultTransformer(Transformers.aliasToBean(AdvertLocationSummaryDTO.class));
     }
 

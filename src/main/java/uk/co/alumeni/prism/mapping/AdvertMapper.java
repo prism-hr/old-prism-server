@@ -243,7 +243,7 @@ public class AdvertMapper {
         representation.setUser(new UserRepresentationSimple().withFirstName(advert.getUserFirstName()).withLastName(advert.getUserLastName())
                 .withAccountProfileUrl(advert.getUserAccountProfileUrl()).withAccountImageUrl(advert.getUserAccountImageUrl()));
 
-        for (PrismScope scope : new PrismScope[]{PROJECT, PROGRAM, DEPARTMENT, INSTITUTION}) {
+        for (PrismScope scope : new PrismScope[] { PROJECT, PROGRAM, DEPARTMENT, INSTITUTION }) {
             ResourceRepresentationSimple resource = getAdvertResourceRepresentation(advert, scope);
             if (resource != null) {
                 setProperty(representation, scope.getLowerCamelName(), resource);
@@ -495,11 +495,10 @@ public class AdvertMapper {
         return newArrayList();
     }
 
-    public List<AdvertLocationSummaryRepresentation> getAdvertLocationSummaryRepresentations(List<Integer> ids) {
-        List<AdvertLocationSummaryDTO> summaries = advertService.getAdvertLocationSummaries(ids);
-        return summaries.stream().map(summary ->
-                new AdvertLocationSummaryRepresentation().withId(summary.getId())
-                        .withName(summary.getName())).collect(Collectors.toList());
+    public List<AdvertLocationSummaryRepresentation> getAdvertLocationSummaryRepresentations(List<Integer> locationPartIds) {
+        List<AdvertLocationSummaryDTO> summaries = advertService.getAdvertLocationSummaries(locationPartIds);
+        return summaries.stream().map(summary -> new AdvertLocationSummaryRepresentation().withId(summary.getId()).withName(summary.getName())
+                .withAdvertCount(summary.getAdvertCount())).collect(toList());
     }
 
     public List<AdvertInstitutionSummaryRepresentation> getAdvertInstitutionSummaryRepresentations(OpportunityQueryDTO query, String searchTerm) {
@@ -517,7 +516,7 @@ public class AdvertMapper {
     }
 
     private void mapAdvertLocationAddressPartRepresentations(Set<AdvertLocationSummaryRepresentation> representations,
-                                                             TreeMultimap<Integer, AdvertLocationSummaryRepresentation> representationIndex) {
+            TreeMultimap<Integer, AdvertLocationSummaryRepresentation> representationIndex) {
         Set<AdvertLocationSummaryRepresentation> newRepresentations = newHashSet();
         if (representations.size() > 0) {
             representations.forEach(representation -> {
@@ -537,7 +536,7 @@ public class AdvertMapper {
 
     private AdvertListRepresentation getAdvertListRepresentation(User user, OpportunityQueryDTO query) {
         PrismScope filterScope = query.getContextScope();
-        PrismScope[] filterScopes = filterScope != null ? new PrismScope[]{filterScope} : query.getContext().getFilterScopes();
+        PrismScope[] filterScopes = filterScope != null ? new PrismScope[] { filterScope } : query.getContext().getFilterScopes();
 
         Map<String, Integer> summaries = Maps.newHashMap();
         VisibleAdvertDTO visibleAdvertDTO = advertService.getVisibleAdverts(user, query, filterScopes);
@@ -710,7 +709,7 @@ public class AdvertMapper {
     }
 
     private void setAdvertFinancialDetailBenefitsRepresentation(String benefit, String benefitDescription,
-                                                                AdvertFinancialDetailRepresentation financialDetailRepresentation) {
+            AdvertFinancialDetailRepresentation financialDetailRepresentation) {
         if (benefit != null) {
             financialDetailRepresentation.setBenefits(stream(benefit.split("\\|")).map(PrismAdvertBenefit::valueOf).collect(toList()));
             financialDetailRepresentation.setBenefitsDescription(benefitDescription);
@@ -796,7 +795,7 @@ public class AdvertMapper {
     }
 
     private void setAdvertJoinStates(User user, HashMultimap<String, AdvertCategoryDTO> advertUserRoles,
-                                     Map<Integer, AdvertRepresentationExtended> representations) {
+            Map<Integer, AdvertRepresentationExtended> representations) {
         List<Integer> advertsAsStaff = advertUserRoles.get("staff").stream().map(advert -> advert.getAdvert()).collect(toList());
         List<Integer> advertsAsStaffPending = advertUserRoles.get("staffPending").stream().map(advert -> advert.getAdvert()).collect(toList());
         List<Integer> advertsAsStudent = advertUserRoles.get("student").stream().map(advert -> advert.getAdvert()).collect(toList());
@@ -877,7 +876,7 @@ public class AdvertMapper {
     }
 
     private void setAdvertConnectState(HashMultimap<Integer, Integer> pendingForIndex, HashMultimap<Integer, Integer> acceptedForIndex, AdvertTarget target,
-                                       Integer ownerAdvert, Integer targetAdvert) {
+            Integer ownerAdvert, Integer targetAdvert) {
         if (target.getPartnershipState().equals(ENDORSEMENT_PROVIDED)) {
             acceptedForIndex.put(targetAdvert, ownerAdvert);
         } else {
@@ -891,7 +890,7 @@ public class AdvertMapper {
     }
 
     private List<ResourceRepresentationLocationRelation> getAdvertLocationRepresentations(Collection<Advert> locationAdverts, boolean selected,
-                                                                                          User currentUser) {
+            User currentUser) {
         return locationAdverts.stream().map(locationAdvert -> resourceMapper.getResourceRepresentationRelationLocation(locationAdvert.getResource(),
                 locationAdvert.getAddress(), selected, currentUser)).collect(toList());
     }

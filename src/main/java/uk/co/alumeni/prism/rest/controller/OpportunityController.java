@@ -1,12 +1,12 @@
 package uk.co.alumeni.prism.rest.controller;
 
+import static java.util.stream.Collectors.toList;
 import static org.apache.commons.lang3.StringUtils.removeEnd;
 
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import javax.inject.Inject;
@@ -105,7 +105,7 @@ public class OpportunityController {
 
     @RequestMapping(method = RequestMethod.GET, value = "filterValues/locations", params = "ids")
     public List<AdvertLocationSummaryRepresentation> getAdvertLocationSummaryRepresentations(String ids) {
-        return advertMapper.getAdvertLocationSummaryRepresentations(Stream.of(ids.split(",")).map(Integer::parseInt).collect(Collectors.toList()));
+        return advertMapper.getAdvertLocationSummaryRepresentations(Stream.of(ids.split(",")).map(Integer::parseInt).collect(toList()));
     }
 
     @RequestMapping(method = RequestMethod.GET, value = "filterValues/institutions")

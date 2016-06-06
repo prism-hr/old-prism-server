@@ -4,11 +4,7 @@
     </a>
     <span class="label label-primary">${opportunity.opportunityType}</span>
 </h1>
-
-<p class="summary">
-${opportunity.advert.summary}
-</p>
-
+<h2>at <span>${opportunity.advert.institution.name}</span></h2>
 <div class="short-description-holder">
     <ul class="short-description-details">
         <li>
@@ -35,4 +31,14 @@ ${opportunity.advert.summary}
         </li>
     </ul>
 </div>
+<div class="image-container">
+    <div class="image-flex">
+        <div class="image-logo">
+            <img src="${applicationUrl}/prism/api/images/${opportunity.advert.institution.logoImage.id}">
+        </div>
+    </div>
+</div>
+<p class="summary">
+${opportunity.advert.summary}
+</p>
 

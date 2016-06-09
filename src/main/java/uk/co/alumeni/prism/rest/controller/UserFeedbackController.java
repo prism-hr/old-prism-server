@@ -1,7 +1,18 @@
 package uk.co.alumeni.prism.rest.controller;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
+import javax.inject.Inject;
+import javax.validation.Valid;
+
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
 import uk.co.alumeni.prism.domain.user.User;
 import uk.co.alumeni.prism.domain.user.UserFeedback;
 import uk.co.alumeni.prism.mapping.UserMapper;
@@ -10,11 +21,6 @@ import uk.co.alumeni.prism.rest.dto.user.UserFeedbackDTO;
 import uk.co.alumeni.prism.rest.representation.user.UserFeedbackRepresentation;
 import uk.co.alumeni.prism.services.UserFeedbackService;
 import uk.co.alumeni.prism.services.UserService;
-
-import javax.inject.Inject;
-import javax.validation.Valid;
-import java.util.List;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api")

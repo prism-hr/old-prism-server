@@ -1,7 +1,8 @@
 package uk.co.alumeni.prism.domain.definitions;
 
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.SYSTEM;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismScope;
+
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.SYSTEM;
 
 public enum PrismDisplayPropertyCategory {
 
@@ -39,6 +40,7 @@ public enum PrismDisplayPropertyCategory {
     SYSTEM_MONTH(SYSTEM),
     SYSTEM_DECLINE_ACTION(SYSTEM),
     SYSTEM_GENERAL(SYSTEM),
+    SYSTEM_CONTACT_SECTION(SYSTEM),
     SYSTEM_ACTIVITY_SECTION(SYSTEM),
     SYSTEM_CONNECT_SECTION(SYSTEM),
     SYSTEM_AUTHENTICATE(SYSTEM),

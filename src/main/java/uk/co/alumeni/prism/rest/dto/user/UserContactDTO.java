@@ -1,10 +1,11 @@
 package uk.co.alumeni.prism.rest.dto.user;
 
+import javax.validation.constraints.Size;
+
 import org.hibernate.validator.constraints.Email;
 import org.hibernate.validator.constraints.NotEmpty;
-import uk.co.alumeni.prism.utils.validation.PhoneNumber;
 
-import javax.validation.constraints.Size;
+import uk.co.alumeni.prism.utils.validation.PhoneNumber;
 
 public class UserContactDTO {
 

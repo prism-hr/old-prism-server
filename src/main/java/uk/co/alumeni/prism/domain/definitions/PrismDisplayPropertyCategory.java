@@ -1,8 +1,7 @@
 package uk.co.alumeni.prism.domain.definitions;
 
-import uk.co.alumeni.prism.domain.definitions.workflow.PrismScope;
-
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.SYSTEM;
+import uk.co.alumeni.prism.domain.definitions.workflow.PrismScope;
 
 public enum PrismDisplayPropertyCategory {
 

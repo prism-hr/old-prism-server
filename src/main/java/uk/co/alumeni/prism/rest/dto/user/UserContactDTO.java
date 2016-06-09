@@ -1,11 +1,10 @@
 package uk.co.alumeni.prism.rest.dto.user;
 
-import javax.validation.constraints.Size;
-
 import org.hibernate.validator.constraints.Email;
 import org.hibernate.validator.constraints.NotEmpty;
-
 import uk.co.alumeni.prism.utils.validation.PhoneNumber;
+
+import javax.validation.constraints.Size;
 
 public class UserContactDTO {
 
@@ -25,6 +24,9 @@ public class UserContactDTO {
     @NotEmpty
     @Size(max = 1000)
     private String content;
+
+//    @NotEmpty
+    private String recaptchaResponse;
 
     public String getName() {
         return name;
@@ -64,5 +66,13 @@ public class UserContactDTO {
 
     public void setContent(String content) {
         this.content = content;
+    }
+
+    public String getRecaptchaResponse() {
+        return recaptchaResponse;
+    }
+
+    public void setRecaptchaResponse(String recaptchaResponse) {
+        this.recaptchaResponse = recaptchaResponse;
     }
 }

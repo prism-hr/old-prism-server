@@ -604,7 +604,7 @@ public class UserService {
     }
 
     public Set<Integer> getUsersWithActivitiesToCache(PrismScope scope, Collection<Integer> resources, DateTime baseline) {
-        Set<Integer> users = Sets.newHashSet();
+        Set<Integer> users = newHashSet();
 
         scopeService.getEnclosingScopesDescending(scope, SYSTEM).forEach(roleScope ->
                 users.addAll(userDAO.getUsersWithActivitiesToCache(scope, resources, roleScope)));

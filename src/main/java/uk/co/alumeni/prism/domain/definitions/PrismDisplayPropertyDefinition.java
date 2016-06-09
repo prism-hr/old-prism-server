@@ -1369,8 +1369,8 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     SYSTEM_HTML_GENERAL_HEADER_PROFILE(PrismDisplayPropertyCategory.SYSTEM_GENERAL, "Profile"),
     SYSTEM_HTML_GENERAL_HEADER_LOGOUT(PrismDisplayPropertyCategory.SYSTEM_GENERAL, "Logout"),
     SYSTEM_HTML_GENERAL_ENQUIRY_SUBJECT(PrismDisplayPropertyCategory.SYSTEM_GENERAL, "Question Regarding UCL Prism Application {{code}}"),
-    SYSTEM_HTML_GENERAL_ABOUT(PrismDisplayPropertyCategory.SYSTEM_GENERAL, "About Prism"),
-    SYSTEM_HTML_GENERAL_CONTACT(PrismDisplayPropertyCategory.SYSTEM_GENERAL, "Contact us"),
+    SYSTEM_HTML_GENERAL_ABOUT(PrismDisplayPropertyCategory.SYSTEM_GENERAL, "About"),
+    SYSTEM_HTML_GENERAL_CONTACT(PrismDisplayPropertyCategory.SYSTEM_GENERAL, "Contact Us"),
     SYSTEM_HTML_GENERAL_PRIVACY_POLICY(PrismDisplayPropertyCategory.SYSTEM_GENERAL, "Privacy Policy"),
     SYSTEM_HTML_GENERAL_TERMS_AND_CONDITIONS(PrismDisplayPropertyCategory.SYSTEM_GENERAL, "Terms & Conditions"),
     SYSTEM_HTML_GENERAL_MEMBER_UNIVERSITY(PrismDisplayPropertyCategory.SYSTEM_GENERAL, " Are you part of this university?"),
@@ -1429,16 +1429,16 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
      * *************** SYSTEM CONTACT SECTION *********************
      */
 
-    SYSTEM_CONTACT_NAME_LABEL(PrismDisplayPropertyCategory.SYSTEM_CONTACT_SECTION, "Your name"),
+    SYSTEM_CONTACT_NAME_LABEL(PrismDisplayPropertyCategory.SYSTEM_CONTACT_SECTION, "Your Name"),
     SYSTEM_CONTACT_NAME_HINT(PrismDisplayPropertyCategory.SYSTEM_CONTACT_SECTION, "Please enter your name."),
     SYSTEM_CONTACT_EMAIL_LABEL(PrismDisplayPropertyCategory.SYSTEM_CONTACT_SECTION, "Your Email"),
     SYSTEM_CONTACT_EMAIL_HINT(PrismDisplayPropertyCategory.SYSTEM_CONTACT_SECTION, "Please enter your e-mail address."),
-    SYSTEM_CONTACT_PHONE_LABEL(PrismDisplayPropertyCategory.SYSTEM_CONTACT_SECTION, "Your Phone"),
-    SYSTEM_CONTACT_PHONE_HINT(PrismDisplayPropertyCategory.SYSTEM_CONTACT_SECTION, "Please enter your phone number."),
+    SYSTEM_CONTACT_PHONE_LABEL(PrismDisplayPropertyCategory.SYSTEM_CONTACT_SECTION, "Your Telephone Number"),
+    SYSTEM_CONTACT_PHONE_HINT(PrismDisplayPropertyCategory.SYSTEM_CONTACT_SECTION, "Please enter your telephone number."),
     SYSTEM_CONTACT_TITLE_LABEL(PrismDisplayPropertyCategory.SYSTEM_CONTACT_SECTION, "Title"),
-    SYSTEM_CONTACT_TITLE_HINT(PrismDisplayPropertyCategory.SYSTEM_CONTACT_SECTION, "Please enter the title of your message"),
+    SYSTEM_CONTACT_TITLE_HINT(PrismDisplayPropertyCategory.SYSTEM_CONTACT_SECTION, "Please enter the title of your message."),
     SYSTEM_CONTACT_CONTENT_LABEL(PrismDisplayPropertyCategory.SYSTEM_CONTACT_SECTION, "Content"),
-    SYSTEM_CONTACT_CONTENT_HINT(PrismDisplayPropertyCategory.SYSTEM_CONTACT_SECTION, "Please enter the content of your message"),
+    SYSTEM_CONTACT_CONTENT_HINT(PrismDisplayPropertyCategory.SYSTEM_CONTACT_SECTION, "Please enter the content of your message."),
     SYSTEM_CONTACT_SEND_BUTTON(PrismDisplayPropertyCategory.SYSTEM_CONTACT_SECTION, "Send Message!"),
 
     /*

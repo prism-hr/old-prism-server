@@ -1,23 +1,22 @@
 package uk.co.alumeni.prism.services;
 
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.SYSTEM;
-
-import java.util.List;
-
-import javax.inject.Inject;
-
 import org.joda.time.DateTime;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
 import uk.co.alumeni.prism.dao.UserFeedbackDAO;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismRole.PrismRoleCategory;
 import uk.co.alumeni.prism.domain.resource.Resource;
 import uk.co.alumeni.prism.domain.user.User;
 import uk.co.alumeni.prism.domain.user.UserFeedback;
 import uk.co.alumeni.prism.domain.workflow.Action;
+import uk.co.alumeni.prism.rest.dto.user.UserContactDTO;
 import uk.co.alumeni.prism.rest.dto.user.UserFeedbackContentDTO;
 import uk.co.alumeni.prism.rest.dto.user.UserFeedbackDTO;
+
+import javax.inject.Inject;
+import java.util.List;
+
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.SYSTEM;
 
 @Service
 @Transactional
@@ -75,6 +74,10 @@ public class UserFeedbackService {
             }
         }
         return null;
+    }
+
+    public void postContactMessage(UserContactDTO userContactDTO) {
+        System.out.println("Sent from " + userContactDTO.getName());
     }
 
     private void setLastSequenceIdentifier(UserFeedback userFeedback) {

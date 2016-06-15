@@ -1,11 +1,7 @@
 package uk.co.alumeni.prism.rest.validation;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-
-import javax.inject.Inject;
-
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Maps;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpHeaders;
@@ -26,20 +22,17 @@ import org.springframework.web.context.request.ServletWebRequest;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.HandlerMapping;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
-
 import uk.co.alumeni.prism.domain.resource.Resource;
 import uk.co.alumeni.prism.domain.user.User;
-import uk.co.alumeni.prism.exceptions.PrismBadRequestException;
-import uk.co.alumeni.prism.exceptions.PrismForbiddenException;
-import uk.co.alumeni.prism.exceptions.PrismValidationException;
-import uk.co.alumeni.prism.exceptions.ResourceNotFoundException;
-import uk.co.alumeni.prism.exceptions.WorkflowPermissionException;
+import uk.co.alumeni.prism.exceptions.*;
 import uk.co.alumeni.prism.services.UserService;
 import uk.co.alumeni.prism.utils.PrismDiagnosticUtils;
 
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
+import javax.inject.Inject;
+import java.util.Collections;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 
 @ControllerAdvice
 public class PrismControllerExceptionHandler extends ResponseEntityExceptionHandler {
@@ -66,8 +59,8 @@ public class PrismControllerExceptionHandler extends ResponseEntityExceptionHand
         return handleExceptionInternal(ex, body, new HttpHeaders(), HttpStatus.FORBIDDEN, request);
     }
 
-    @ExceptionHandler(value = { PrismBadRequestException.class, ResourceNotFoundException.class, AccessDeniedException.class,
-            BadCredentialsException.class, PrismForbiddenException.class })
+    @ExceptionHandler(value = {PrismBadRequestException.class, ResourceNotFoundException.class, AccessDeniedException.class,
+            BadCredentialsException.class, PrismForbiddenException.class})
     public final ResponseEntity<Object> handleResourceNotFoundException(Exception ex, WebRequest request) {
         request.removeAttribute(HandlerMapping.PRODUCIBLE_MEDIA_TYPES_ATTRIBUTE, RequestAttributes.SCOPE_REQUEST);
         HttpHeaders headers = new HttpHeaders();
@@ -95,14 +88,17 @@ public class PrismControllerExceptionHandler extends ResponseEntityExceptionHand
     }
 
     protected ResponseEntity<Object> handleValidationErrors(Exception ex, HttpHeaders headers, WebRequest request, Errors errors) {
-        List<FieldError> fieldErrors = errors.getFieldErrors();
-        List<ValidationErrorRepresentation> validationErrorRepresentations = Lists.newLinkedList();
-        for (FieldError fieldError : fieldErrors) {
-            ValidationErrorRepresentation errorRepresentation = new ValidationErrorRepresentation();
-            errorRepresentation.setErrorCode(fieldError.getCode());
-            errorRepresentation.setErrorMessage(fieldError.getDefaultMessage());
-            errorRepresentation.setFieldNames(new String[] { fieldError.getField() });
-            validationErrorRepresentations.add(errorRepresentation);
+        List<ValidationErrorRepresentation> validationErrorRepresentations = null;
+        if (errors != null) {
+            validationErrorRepresentations = new LinkedList<>();
+            List<FieldError> fieldErrors = errors.getFieldErrors();
+            for (FieldError fieldError : fieldErrors) {
+                ValidationErrorRepresentation errorRepresentation = new ValidationErrorRepresentation();
+                errorRepresentation.setErrorCode(fieldError.getCode());
+                errorRepresentation.setErrorMessage(fieldError.getDefaultMessage());
+                errorRepresentation.setFieldNames(new String[]{fieldError.getField()});
+                validationErrorRepresentations.add(errorRepresentation);
+            }
         }
 
         ErrorResponseRepresentation error = new ErrorResponseRepresentation(ex.getMessage(), validationErrorRepresentations);

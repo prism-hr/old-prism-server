@@ -1,15 +1,6 @@
 package uk.co.alumeni.prism.services;
 
-import static org.apache.commons.lang.BooleanUtils.isTrue;
-import static org.joda.time.DateTime.now;
-import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition.PROFILE_SHARED;
-import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition.PROFILE_UNSHARED;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismAction.SYSTEM_MANAGE_ACCOUNT;
-import static uk.co.alumeni.prism.utils.PrismEncryptionUtils.getMD5;
-
-import javax.inject.Inject;
-import javax.servlet.http.HttpSession;
-
+import com.google.common.base.Preconditions;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
@@ -20,7 +11,6 @@ import org.springframework.social.linkedin.connect.LinkedInServiceProvider;
 import org.springframework.social.oauth2.AccessGrant;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
 import uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition;
 import uk.co.alumeni.prism.domain.resource.System;
 import uk.co.alumeni.prism.domain.user.User;
@@ -29,6 +19,7 @@ import uk.co.alumeni.prism.domain.user.UserAccountUpdate;
 import uk.co.alumeni.prism.domain.user.UserDocument;
 import uk.co.alumeni.prism.domain.workflow.Action;
 import uk.co.alumeni.prism.dto.ActionOutcomeDTO;
+import uk.co.alumeni.prism.exceptions.PrismValidationException;
 import uk.co.alumeni.prism.exceptions.ResourceNotFoundException;
 import uk.co.alumeni.prism.rest.dto.auth.OauthAssociationType;
 import uk.co.alumeni.prism.rest.dto.auth.OauthLoginDTO;
@@ -37,7 +28,15 @@ import uk.co.alumeni.prism.rest.dto.comment.CommentDTO;
 import uk.co.alumeni.prism.rest.dto.user.UserRegistrationDTO;
 import uk.co.alumeni.prism.services.helpers.PropertyLoader;
 
-import com.google.common.base.Preconditions;
+import javax.inject.Inject;
+import javax.servlet.http.HttpSession;
+
+import static org.apache.commons.lang.BooleanUtils.isTrue;
+import static org.joda.time.DateTime.now;
+import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition.PROFILE_SHARED;
+import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition.PROFILE_UNSHARED;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismAction.SYSTEM_MANAGE_ACCOUNT;
+import static uk.co.alumeni.prism.utils.PrismEncryptionUtils.getMD5;
 
 @Service
 @Transactional
@@ -85,6 +84,9 @@ public class UserAccountService {
     private UserService userService;
 
     @Inject
+    private CaptchaService captchaService;
+
+    @Inject
     private ApplicationContext applicationContext;
 
     public UserAccount getById(Integer id) {
@@ -110,6 +112,9 @@ public class UserAccountService {
     }
 
     public User registerUser(UserRegistrationDTO userRegistrationDTO, HttpSession session) {
+        if (!captchaService.verifyCaptcha(userRegistrationDTO.getRecaptchaResponse())) {
+            throw new PrismValidationException("Captcha verification failed");
+        }
         User user = userService.getUserByEmail(userRegistrationDTO.getEmail());
 
         boolean enableAccount = user != null;

@@ -17,6 +17,7 @@ import uk.co.alumeni.prism.domain.resource.Resource;
 import uk.co.alumeni.prism.domain.user.User;
 import uk.co.alumeni.prism.domain.user.UserFeedback;
 import uk.co.alumeni.prism.domain.workflow.Action;
+import uk.co.alumeni.prism.exceptions.PrismValidationException;
 import uk.co.alumeni.prism.rest.dto.user.UserContactDTO;
 import uk.co.alumeni.prism.rest.dto.user.UserFeedbackContentDTO;
 import uk.co.alumeni.prism.rest.dto.user.UserFeedbackDTO;
@@ -51,6 +52,9 @@ public class UserFeedbackService {
 
     @Inject
     private SystemService systemService;
+
+    @Inject
+    private CaptchaService captchaService;
 
     @Value("${email.source}")
     private String emailSource;
@@ -98,19 +102,9 @@ public class UserFeedbackService {
     }
 
     public void postContactMessage(UserContactDTO userContactDTO) {
-
-//        HttpClient captchaClient = HttpClientBuilder.create().build();
-//        try {
-//            HttpPost httpPost = new HttpPost("https://www.google.com/recaptcha/api/siteverify");
-//            List<NameValuePair> captchaParameters = Arrays.asList(
-//                    new BasicNameValuePair("secret", "6LeUOSITAAAAAB3I1E80w-w5x-Ic2hvClIX8Zu4v"),
-//                    new BasicNameValuePair("response", userContactDTO.getRecaptchaResponse()));
-//            httpPost.setEntity(new UrlEncodedFormEntity(captchaParameters));
-//            InputStream captchaResponse = captchaClient.execute(httpPost).getEntity().getContent();
-//            new Gson().fromJson(Streams.asString(captchaResponse), Map.class);
-//        } catch (IOException e) {
-//            throw new Error("Could not connect to Google");
-//        }
+        if (!captchaService.verifyCaptcha(userContactDTO.getRecaptchaResponse())) {
+            throw new PrismValidationException("Captcha verification failed");
+        }
 
         AWSCredentials credentials = systemService.getAmazonCredentials();
         AmazonSimpleEmailServiceClient amazonClient = new AmazonSimpleEmailServiceClient(credentials);

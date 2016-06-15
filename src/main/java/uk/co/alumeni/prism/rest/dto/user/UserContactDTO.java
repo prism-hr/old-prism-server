@@ -25,7 +25,7 @@ public class UserContactDTO {
     @Size(max = 1000)
     private String content;
 
-//    @NotEmpty
+    @NotEmpty
     private String recaptchaResponse;
 
     public String getName() {

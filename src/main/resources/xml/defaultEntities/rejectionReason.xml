@@ -13,7 +13,7 @@
 		</name>
 	</rejectionReason>
 	<rejectionReason>
-		<code>UNQUALIFIED_FOR_OPPORTUNITYY</code>
+		<code>UNQUALIFIED_FOR_OPPORTUNITY</code>
 		<name>Your qualifications and experience are not appropriate for your
 			preferred course of study.
 		</name>
@@ -27,6 +27,10 @@
 	<rejectionReason>
 		<code>DID_NOT_ATTEND_INTERVIEW</code>
 		<name>You failed to present for interview as arranged.</name>
+	</rejectionReason>
+	<rejectionReason>
+		<code>INELIGIBLE_FOR_FUNDING</code>
+		<name>Your personal circumstances make you ineligible for the funding that is offered.</name>
 	</rejectionReason>
 	<rejectionReason>
 		<code>OPPORTUNITY_OVERSUBSCRIBED</code>

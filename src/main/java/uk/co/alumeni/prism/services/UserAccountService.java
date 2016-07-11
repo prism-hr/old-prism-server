@@ -273,8 +273,8 @@ public class UserAccountService {
                 session.setAttribute(OAUTH_USER_TO_CONFIRM, oauthUserDefinition);
                 return null;
             }
-            updateLinkedinDetails(oauthUser.getUserAccount(), oauthUserDefinition);
         }
+        updateLinkedinDetails(oauthUser.getUserAccount(), oauthUserDefinition);
         return oauthUser;
     }
 

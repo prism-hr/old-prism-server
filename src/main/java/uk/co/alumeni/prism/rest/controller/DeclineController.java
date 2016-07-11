@@ -1,15 +1,6 @@
 package uk.co.alumeni.prism.rest.controller;
 
-import java.util.Map;
-
-import javax.inject.Inject;
-
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
-
+import org.springframework.web.bind.annotation.*;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismAction;
 import uk.co.alumeni.prism.domain.resource.Resource;
 import uk.co.alumeni.prism.domain.user.User;
@@ -19,6 +10,9 @@ import uk.co.alumeni.prism.rest.dto.resource.ResourceCreationDTO;
 import uk.co.alumeni.prism.rest.representation.resource.ResourceRepresentationStandard;
 import uk.co.alumeni.prism.services.ResourceService;
 import uk.co.alumeni.prism.services.UserService;
+
+import javax.inject.Inject;
+import java.util.Map;
 
 @RestController
 @RequestMapping(value = { "api/decline" })
@@ -47,7 +41,7 @@ public class DeclineController {
 
     @RequestMapping(method = RequestMethod.GET)
     public ResourceRepresentationStandard getDeclineResource(@RequestParam Integer resourceId, @RequestParam PrismAction actionId,
-            @RequestParam String activationCode) throws Exception {
+            @RequestParam String activationCode) {
         User user = userService.getUserByActivationCode(activationCode);
         if (user == null || !actionId.isDeclinableAction()) {
             throw new UnsupportedOperationException(actionId.getScope() + " action cannot be declined");

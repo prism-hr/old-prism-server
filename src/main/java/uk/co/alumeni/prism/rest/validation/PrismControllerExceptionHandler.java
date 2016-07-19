@@ -87,6 +87,12 @@ public class PrismControllerExceptionHandler extends ResponseEntityExceptionHand
         return handleValidationErrors(ex, headers, request, bindingResult);
     }
 
+    @Override
+    protected ResponseEntity<Object> handleExceptionInternal(Exception ex, Object body, HttpHeaders headers, HttpStatus status, WebRequest request) {
+        log.error("Temporary exception handle", ex);
+        return super.handleExceptionInternal(ex, body, headers, status, request);
+    }
+
     protected ResponseEntity<Object> handleValidationErrors(Exception ex, HttpHeaders headers, WebRequest request, Errors errors) {
         List<ValidationErrorRepresentation> validationErrorRepresentations = null;
         if (errors != null) {

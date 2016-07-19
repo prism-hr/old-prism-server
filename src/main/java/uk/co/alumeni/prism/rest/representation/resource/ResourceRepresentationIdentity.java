@@ -64,6 +64,11 @@ public class ResourceRepresentationIdentity implements Comparable<ResourceRepres
         return this;
     }
 
+    public ResourceRepresentationIdentity withLogoImage(DocumentRepresentation logoImage) {
+        this.logoImage = logoImage;
+        return this;
+    }
+
     @Override
     public int hashCode() {
         return Objects.hashCode(scope, id);

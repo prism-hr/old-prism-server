@@ -33,6 +33,7 @@ import static uk.co.alumeni.prism.domain.definitions.workflow.PrismActionConditi
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismActionCondition.ACCEPT_DEPARTMENT;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismActionCondition.ACCEPT_PROGRAM;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismActionCondition.ACCEPT_PROJECT;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismPartnershipState.ENDORSEMENT_REVOKED;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRole.PrismRoleCategory.ADMINISTRATOR;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRole.PrismRoleCategory.RECRUITER;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRoleTransitionType.CREATE;
@@ -83,6 +84,7 @@ import uk.co.alumeni.prism.domain.comment.CommentState;
 import uk.co.alumeni.prism.domain.comment.CommentStateDefinition;
 import uk.co.alumeni.prism.domain.comment.CommentTransitionState;
 import uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition;
+import uk.co.alumeni.prism.domain.definitions.PrismOpportunityCategory;
 import uk.co.alumeni.prism.domain.definitions.PrismOpportunityType;
 import uk.co.alumeni.prism.domain.definitions.PrismResourceContext;
 import uk.co.alumeni.prism.domain.definitions.PrismResourceListFilterExpression;
@@ -93,6 +95,7 @@ import uk.co.alumeni.prism.domain.definitions.workflow.PrismAction;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismRole;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismRoleGroup;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismScope;
+import uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.PrismScopeCreationDefault;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismScopeSectionDefinition;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismState;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismStateDurationEvaluation;
@@ -130,6 +133,7 @@ import uk.co.alumeni.prism.dto.ResourceListRowDTO;
 import uk.co.alumeni.prism.dto.ResourceOpportunityCategoryDTO;
 import uk.co.alumeni.prism.dto.ResourceRoleDTO;
 import uk.co.alumeni.prism.dto.ResourceSimpleDTO;
+import uk.co.alumeni.prism.dto.ResourceUpdateDTO;
 import uk.co.alumeni.prism.dto.UserResourceDTO;
 import uk.co.alumeni.prism.exceptions.PrismForbiddenException;
 import uk.co.alumeni.prism.exceptions.WorkflowEngineException;
@@ -354,13 +358,13 @@ public class ResourceService {
 
     @SuppressWarnings("unchecked")
     public <T extends Resource> void persistResource(T resource, Comment comment) {
-        DateTime baseline = new DateTime();
+        DateTime baseline = now();
         if (comment.isCreateComment()) {
             Advert advert = resource.getAdvert();
             resource.setAdvert(null);
 
             resource.setCreatedTimestamp(baseline);
-            resource.setUpdatedTimestamp(baseline);
+            setResourceUpdated(resource, baseline);
 
             boolean resourceParent = asList(OPPORTUNITY, ORGANIZATION).contains(resource.getResourceScope().getScopeCategory());
             if (resourceParent) {
@@ -374,8 +378,6 @@ public class ResourceService {
                 advertService.persistAdvert((ResourceParent) resource, advert);
             }
 
-            resource.setAdvert(advert);
-
             activityService.setSequenceIdentifier(resource, baseline);
             Class<? extends ResourcePopulator<T>> populator = (Class<? extends ResourcePopulator<T>>) resource.getResourceScope().getResourcePopulator();
             if (populator != null) {
@@ -385,7 +387,7 @@ public class ResourceService {
             resource.setCode(generateResourceCode(resource));
             entityService.flush();
         } else if (comment.isUserComment() || resource.getSequenceIdentifier() == null) {
-            resource.setUpdatedTimestamp(baseline);
+            setResourceUpdated(resource, baseline);
             activityService.setSequenceIdentifier(resource, baseline);
             entityService.flush();
         }
@@ -695,11 +697,47 @@ public class ResourceService {
         return resourceDAO.getResourceForWhichUserCanConnect(user, resource);
     }
 
-    public List<ResourceConnectionDTO> getResourcesForWhichUserCanConnect(User user, String searchTerm) {
-        Set<ResourceConnectionDTO> resources = Sets.newTreeSet();
-        for (PrismScope resourceScope : new PrismScope[] { INSTITUTION, DEPARTMENT }) {
-            resourceDAO.getResourcesForWhichUserCanConnect(user, resourceScope, searchTerm).forEach(resource -> resources.add(resource));
+    public List<ResourceConnectionDTO> getResourcesForWhichUserCanConnect(User user, Resource resourceTarget, PrismResourceContext motivation, String searchTerm) {
+        Set<Integer> connections = newHashSet();
+        if (resourceTarget != null) {
+            Advert advertTarget = resourceTarget.getAdvert();
+            connections.add(advertTarget.getId());
+
+            advertTarget.getTargets().stream().forEach(target -> {
+                if (!target.getPartnershipState().equals(ENDORSEMENT_REVOKED)) {
+                    connections.add(target.getTargetAdvert().getId());
+                }
+            });
+
+            advertTarget.getTargetsIndirect().stream().forEach(targetIndirect -> {
+                if (!targetIndirect.getPartnershipState().equals(ENDORSEMENT_REVOKED)) {
+                    connections.add(targetIndirect.getAdvert().getId());
+                }
+            });
         }
+
+        Set<ResourceConnectionDTO> resources = newTreeSet();
+        for (PrismScope scope : new PrismScope[] { INSTITUTION, DEPARTMENT }) {
+            PrismScopeCreationDefault scopeDefault = scope.getDefault(motivation);
+            PrismOpportunityCategory[] scopeOpportunityCategories = scopeDefault.getDefaultOpportunityCategories();
+            for (ResourceConnectionDTO resourceConnect : resourceDAO.getResourcesForWhichUserCanConnect(user, scope, searchTerm)) {
+                boolean matchedOpportunityCategory = false;
+                for (PrismOpportunityCategory opportunityCategory : stream(resourceConnect.getOpportunityCategories().split("\\|"))
+                        .map(PrismOpportunityCategory::valueOf).collect(toList())) {
+                    if (contains(scopeOpportunityCategories, opportunityCategory)) {
+                        matchedOpportunityCategory = true;
+                        break;
+                    }
+                }
+
+                if (matchedOpportunityCategory) {
+                    if (!connections.contains(resourceConnect.getAdvertId())) {
+                        resources.add(resourceConnect);
+                    }
+                }
+            }
+        }
+
         return new ArrayList<>(resources);
     }
 
@@ -1007,12 +1045,12 @@ public class ResourceService {
         return getResources(user, scope, parentScopes, targeterEntities, filter, getFilterConditions(scope, filter));
     }
 
-    public <T extends EntityOpportunityCategoryDTO<?>> Set<T> getResources(User user, PrismScope scope, List<PrismScope> parentScopes,
+    public <T extends EntityOpportunityCategoryDTO> Set<T> getResources(User user, PrismScope scope, List<PrismScope> parentScopes,
             List<Integer> targeterEntities, ProjectionList columns, Class<T> responseClass) {
         return getResources(user, scope, parentScopes, targeterEntities, new ResourceListFilterDTO(), columns, responseClass);
     }
 
-    public <T extends EntityOpportunityCategoryDTO<?>> Set<T> getResources(User user, PrismScope scope, List<PrismScope> parentScopes,
+    public <T extends EntityOpportunityCategoryDTO> Set<T> getResources(User user, PrismScope scope, List<PrismScope> parentScopes,
             List<Integer> targeterEntities, ResourceListFilterDTO filter, ProjectionList columns, Class<T> responseClass) {
         return getResources(user, scope, parentScopes, targeterEntities, filter, columns, getFilterConditions(scope, filter), responseClass);
     }
@@ -1175,26 +1213,41 @@ public class ResourceService {
     }
 
     public HashMultimap<PrismScope, Integer> getResourcesWithActivitiesToCache(DateTime baseline) {
-        HashMultimap<PrismScope, Integer> resourceIndex = HashMultimap.create();
+        DateTime updateBaseline = baseline.minusDays(1);
+        Set<Integer> resourceExpiredUpdates = newHashSet();
+        HashMultimap<PrismScope, Integer> resources = HashMultimap.create();
         stream(PrismScope.values()).forEach(scope -> {
-            Set<Integer> resources = resourceDAO.getResourcesWithActivitiesToCache(scope, baseline);
-            if (resources.size() > 0) {
-                resourceIndex.putAll(scope, resources);
-                resourceDAO.setResourceActivityCachedTimestamp(scope, resources, baseline);
+            Set<ResourceUpdateDTO> resourceDTOs = resourceDAO.getResourcesWithActivitiesToCache(scope, baseline, updateBaseline);
+            resourceDTOs.stream().forEach(resourceDTO -> {
+                Integer resourceId = resourceDTO.getId();
+                resources.put(scope, resourceId);
+
+                if (resourceDTO.getUpdatedTimestamp().compareTo(updateBaseline) < 0 && isTrue(resourceDTO.getRecentUpdate())) {
+                    resourceExpiredUpdates.add(resourceId);
+                }
+            });
+
+            Set<Integer> resourceIds = resources.get(scope);
+            if (isNotEmpty(resourceIds)) {
+                resourceDAO.setResourceActivityCachedTimestamp(scope, resourceIds, baseline);
+
+                if (isNotEmpty(resourceExpiredUpdates)) {
+                    resourceDAO.setResourceRecentUpdate(scope, resourceExpiredUpdates, null);
+                }
             }
         });
-        return resourceIndex;
+        return resources;
     }
 
     public List<Integer> getResourceTargets(PrismScope targeterScope, Collection<Integer> targeterResources, PrismScope targetScope) {
         return resourceDAO.getResourceTargets(targeterScope, targeterResources, targetScope);
     }
 
-    public HashMultimap<PrismScope, Integer> getResourcesForWhichUserCanViewProfiles(User user) {
+    public HashMultimap<PrismScope, Integer> getResourcesForWhichUserCanViewProfiles(User currentUser) {
         HashMultimap<PrismScope, Integer> resourceIndex = create();
         ResourceListFilterDTO filterDTO = new ResourceListFilterDTO().withRoleCategories(ADMINISTRATOR, RECRUITER);
         stream(organizationScopes).forEach(organizationScope -> {
-            List<Integer> resources = getResources(user, organizationScope, scopeService.getParentScopesDescending(organizationScope, SYSTEM),
+            List<Integer> resources = getResources(currentUser, organizationScope, scopeService.getParentScopesDescending(organizationScope, SYSTEM),
                     filterDTO).stream().map(resource -> resource.getId()).collect(toList());
             resourceIndex.putAll(organizationScope, resources);
         });
@@ -1207,6 +1260,7 @@ public class ResourceService {
                 }
             });
         });
+        
         return resourceIndex;
     }
 
@@ -1268,7 +1322,7 @@ public class ResourceService {
                 conditions, ResourceOpportunityCategoryDTO.class);
     }
 
-    private <T extends EntityOpportunityCategoryDTO<?>> Set<T> getResources(User user, PrismScope scope, List<PrismScope> parentScopes,
+    private <T extends EntityOpportunityCategoryDTO> Set<T> getResources(User user, PrismScope scope, List<PrismScope> parentScopes,
             List<Integer> targeterEntities, ResourceListFilterDTO filter, ProjectionList columns, Junction conditions, Class<T> responseClass) {
         Set<T> resources = newTreeSet();
         if (!(setReplicableActionFilter(scope, filter) && isEmpty(filter.getResourceIds()))) {
@@ -1552,6 +1606,11 @@ public class ResourceService {
         PrismRole role = PrismRole.valueOf(commentDTO.getResource().getScope().name() + "_ENQUIRER");
         CommentAssignedUserDTO assignedUser = new CommentAssignedUserDTO().withUser(userDTO).withRole(role);
         commentDTO.setAssignedUsers(singletonList(assignedUser));
+    }
+
+    private <T extends Resource> void setResourceUpdated(T resource, DateTime baseline) {
+        resource.setRecentUpdate(true);
+        resource.setUpdatedTimestamp(baseline);
     }
 
 }

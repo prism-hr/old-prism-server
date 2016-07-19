@@ -1,16 +1,19 @@
 package uk.co.alumeni.prism.dao;
 
 import static com.google.common.collect.Lists.newArrayList;
+import static com.google.common.collect.Lists.newLinkedList;
 import static com.google.common.collect.Sets.newHashSet;
+import static com.google.common.collect.Sets.newTreeSet;
 import static java.math.RoundingMode.HALF_UP;
 import static java.util.Arrays.asList;
 import static java.util.Arrays.stream;
 import static java.util.stream.Collectors.toList;
-import static org.apache.commons.collections.CollectionUtils.isEmpty;
 import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
-import static org.apache.commons.lang.BooleanUtils.isTrue;
+import static org.apache.commons.lang.BooleanUtils.isNotTrue;
 import static org.apache.commons.lang3.ArrayUtils.isNotEmpty;
+import static org.apache.commons.lang3.BooleanUtils.isTrue;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
+import static org.apache.commons.lang3.StringUtils.isNotEmpty;
 import static uk.co.alumeni.prism.PrismConstants.COMMA;
 import static uk.co.alumeni.prism.PrismConstants.SPACE;
 import static uk.co.alumeni.prism.dao.WorkflowDAO.advertScopes;
@@ -31,7 +34,10 @@ import static uk.co.alumeni.prism.domain.definitions.workflow.PrismPartnershipSt
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismPartnershipState.ENDORSEMENT_REVOKED;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRole.PrismRoleCategory.STUDENT;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.APPLICATION;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismStateGroup.APPLICATION_WITHDRAWN;
+import static uk.co.alumeni.prism.utils.PrismEnumUtils.getSimilar;
 import static uk.co.alumeni.prism.utils.PrismEnumUtils.values;
+import static uk.co.alumeni.prism.utils.PrismIterableUtils.noneNull;
 
 import java.math.BigDecimal;
 import java.util.Collection;
@@ -40,7 +46,6 @@ import java.util.Set;
 
 import javax.inject.Inject;
 
-import org.apache.commons.collections.CollectionUtils;
 import org.hibernate.Criteria;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Criterion;
@@ -73,24 +78,30 @@ import uk.co.alumeni.prism.domain.definitions.workflow.PrismPartnershipState;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismRole;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismScope;
 import uk.co.alumeni.prism.domain.resource.Institution;
+import uk.co.alumeni.prism.domain.resource.ResourceParent;
 import uk.co.alumeni.prism.domain.resource.ResourceState;
 import uk.co.alumeni.prism.domain.user.User;
+import uk.co.alumeni.prism.dto.AdvertApplicationDTO;
 import uk.co.alumeni.prism.dto.AdvertApplicationSummaryDTO;
 import uk.co.alumeni.prism.dto.AdvertCategoryDTO;
 import uk.co.alumeni.prism.dto.AdvertDTO;
 import uk.co.alumeni.prism.dto.AdvertFunctionDTO;
+import uk.co.alumeni.prism.dto.AdvertFunctionSummaryDTO;
 import uk.co.alumeni.prism.dto.AdvertIndustryDTO;
-import uk.co.alumeni.prism.dto.AdvertLocationAddressPartSummaryDTO;
+import uk.co.alumeni.prism.dto.AdvertIndustrySummaryDTO;
+import uk.co.alumeni.prism.dto.AdvertInstitutionSummaryDTO;
 import uk.co.alumeni.prism.dto.AdvertLocationDTO;
+import uk.co.alumeni.prism.dto.AdvertLocationSummaryDTO;
+import uk.co.alumeni.prism.dto.AdvertOpportunityCategoryDTO;
 import uk.co.alumeni.prism.dto.AdvertPartnerActionDTO;
 import uk.co.alumeni.prism.dto.AdvertStudyOptionDTO;
 import uk.co.alumeni.prism.dto.AdvertTargetAdvertDTO;
 import uk.co.alumeni.prism.dto.AdvertTargetDTO;
 import uk.co.alumeni.prism.dto.AdvertThemeDTO;
+import uk.co.alumeni.prism.dto.AdvertThemeSummaryDTO;
 import uk.co.alumeni.prism.dto.AdvertUserDTO;
-import uk.co.alumeni.prism.dto.EntityOpportunityCategoryDTO;
 import uk.co.alumeni.prism.dto.UserAdvertDTO;
-import uk.co.alumeni.prism.rest.dto.OpportunitiesQueryDTO;
+import uk.co.alumeni.prism.rest.dto.OpportunityQueryDTO;
 import uk.co.alumeni.prism.rest.representation.advert.AdvertThemeRepresentation;
 
 import com.google.common.base.Joiner;
@@ -126,7 +137,22 @@ public class AdvertDAO {
                 .uniqueResult();
     }
 
-    public List<AdvertDTO> getAdverts(OpportunitiesQueryDTO query, Collection<Integer> adverts) {
+    public List<Integer> getAdverts(PrismScope resourceScope, Collection<Integer> resourceIds) {
+        return (List<Integer>) sessionFactory.getCurrentSession().createCriteria(resourceScope.getResourceClass()) //
+                .setProjection(Projections.groupProperty("advert.id")) //
+                .add(Restrictions.in("id", resourceIds)) //
+                .list();
+    }
+
+    public List<Integer> getEnclosingAdverts(PrismScope enclosingScope, PrismScope resourceScope, Collection<Integer> advertIds) {
+        return (List<Integer>) sessionFactory.getCurrentSession().createCriteria(resourceScope.getResourceClass()) //
+                .setProjection(Projections.groupProperty("enclosingResource.advert.id")) //
+                .createAlias(enclosingScope.getLowerCamelName(), "enclosingResource", JoinType.INNER_JOIN) //
+                .add(Restrictions.in("advert.id", advertIds)) //
+                .list();
+    }
+
+    public List<AdvertDTO> getAdverts(OpportunityQueryDTO query, Collection<Integer> adverts) {
         return (List<AdvertDTO>) sessionFactory.getCurrentSession().createCriteria(Advert.class)
                 .setProjection(Projections.projectionList()
                         .add(Projections.groupProperty("id").as("advertId"))
@@ -150,6 +176,7 @@ public class AdvertDAO {
                         .add(Projections.property("summary").as("summary"))
                         .add(Projections.property("description").as("description"))
                         .add(Projections.property("globallyVisible").as("globallyVisible"))
+                        .add(Projections.property("published").as("published"))
                         .add(Projections.property("homepage").as("homepage"))
                         .add(Projections.property("applyHomepage").as("applyHomepage"))
                         .add(Projections.property("telephone").as("telephone"))
@@ -193,51 +220,48 @@ public class AdvertDAO {
                 .list();
     }
 
-    public List<EntityOpportunityCategoryDTO<?>> getVisibleAdverts(Collection<PrismScope> scopes,
-            Collection<Integer> nodeAdverts, UserAdvertDTO userAdvertDTO, OpportunitiesQueryDTO query) {
+    public List<AdvertOpportunityCategoryDTO> getVisibleAdverts(Collection<PrismScope> scopes, Collection<Integer> nodeAdverts, UserAdvertDTO userAdvertDTO,
+            OpportunityQueryDTO query) {
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Advert.class) //
                 .setProjection(Projections.projectionList()
                         .add(Projections.groupProperty("id").as("id")) //
+                        .add(Projections.property("globallyVisible").as("globallyVisible")) //
+                        .add(Projections.property("institution.id").as("institutionId")) //
+                        .add(Projections.property("institution.name").as("institutionName")) //
+                        .add(Projections.property("institution.logoImage.id").as("institutionLogoImageId")) //
                         .add(Projections.property("opportunityCategories").as("opportunityCategories")) //
-                        .add(Projections.property("opportunityType.id").as("opportunityType"))
+                        .add(Projections.property("opportunityType.id").as("opportunityType")) //
                         .add(Projections.property("sequenceIdentifier").as("sequenceIdentifier"))) //
-                .createAlias("targets", "target", JoinType.LEFT_OUTER_JOIN) //
-                .createAlias("categories.industries", "industry", JoinType.LEFT_OUTER_JOIN) //
+                .createAlias("institution", "institution", JoinType.INNER_JOIN);
+
+        stream(advertScopes).forEach(advertScope -> {
+            String advertReference = advertScope.getLowerCamelName() + "Advert";
+            criteria.createAlias(advertReference, advertReference, JoinType.LEFT_OUTER_JOIN);
+        });
+
+        criteria.createAlias("categories.industries", "industry", JoinType.LEFT_OUTER_JOIN) //
                 .createAlias("categories.functions", "function", JoinType.LEFT_OUTER_JOIN) //
-                .createAlias("address", "address", JoinType.LEFT_OUTER_JOIN) //
+                .createAlias("categories.themes", "theme", JoinType.LEFT_OUTER_JOIN) //
                 .createAlias("categories.locations", "location", JoinType.LEFT_OUTER_JOIN) //
                 .createAlias("location.locationAdvert", "locationAdvert", JoinType.LEFT_OUTER_JOIN) //
-                .createAlias("locationAdvert.address", "locationAddress", JoinType.LEFT_OUTER_JOIN); //
+                .createAlias("locationAdvert.address", "locationAddress", JoinType.LEFT_OUTER_JOIN) //
+                .createAlias("locationAddress.locations", "locationAddressLocation", JoinType.LEFT_OUTER_JOIN); //
 
-        for (PrismScope advertScope : advertScopes) {
-            String scopeReference = advertScope.getLowerCamelName();
-            String advertReference = scopeReference + "Advert";
-            criteria.createAlias(scopeReference, scopeReference, JoinType.LEFT_OUTER_JOIN)
-                    .createAlias(scopeReference + ".advert", advertReference, JoinType.LEFT_OUTER_JOIN);
-        }
-
-        if (isNotEmpty(scopes)) {
-            criteria.add(Restrictions.in("scope.id", scopes)); //
-        }
-
+        appendScopeConstraint(criteria, scopes);
         appendContextConstraint(criteria, query);
-
-        boolean recommended = isTrue(query.getRecommendation());
-        if (isEmpty(nodeAdverts)) {
-            appendVisibilityConstraint(criteria, userAdvertDTO, recommended);
-        } else {
-            appendNodeVisibilityConstraint(criteria, nodeAdverts, userAdvertDTO, recommended);
-        }
-
         appendKeywordConstraint(query, criteria);
-        appendLocationConstraint(criteria, query);
         appendIndustryConstraint(criteria, query);
         appendFunctionConstraint(criteria, query);
+        appendThemeConstraint(criteria, query);
+        appendLocationConstraint(criteria, query);
         appendStudyOptionConstraint(query, criteria);
         appendPayConstraint(criteria, query);
         appendDurationConstraint(criteria, query);
+        appendInstitutionConstraint(criteria, query);
 
-        return criteria.setResultTransformer(Transformers.aliasToBean(EntityOpportunityCategoryDTO.class))
+        appendVisibilityConstraint(criteria, query, userAdvertDTO, nodeAdverts);
+        return (List<AdvertOpportunityCategoryDTO>) criteria //
+                .setResultTransformer(Transformers.aliasToBean(AdvertOpportunityCategoryDTO.class)) //
                 .list();
     }
 
@@ -674,7 +698,7 @@ public class AdvertDAO {
                         .add(Restrictions.eq("advert.department", advert.getDepartment())) //
                         .add(Restrictions.eq("advert.program", advert.getProgram())) //
                         .add(Restrictions.eq("advert.project", advert.getProject()))) //
-                .add(WorkflowDAO.getResourceParentManageableStateConstraint(locationScope));
+                .add(getResourceParentManageableStateConstraint("state"));
 
         if (isNotEmpty(exclusions)) {
             criteria.add(Restrictions.not( //
@@ -685,21 +709,126 @@ public class AdvertDAO {
                 .list(); //
     }
 
-    public List<AdvertLocationAddressPartSummaryDTO> getAdvertLocationSummaries(PrismScope scope, UserAdvertDTO userAdvertDTO, String searchTerm) {
-        return (List<AdvertLocationAddressPartSummaryDTO>) sessionFactory.getCurrentSession().createCriteria(Advert.class) //
+    public List<AdvertIndustrySummaryDTO> getAdvertIndustrySummaries(List<Integer> visibleAdverts, String searchTerm) {
+        Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Advert.class) //
                 .setProjection(Projections.projectionList() //
-                        .add(Projections.groupProperty("addressLocationPart.id").as("id"))
-                        .add(Projections.property("addressLocationPart.parent.id").as("parentId")) //
-                        .add(Projections.property("addressLocationPart.name").as("name")) //
-                        .add(Projections.countDistinct("advert.id").as("advertCount"))) //
+                        .add(Projections.groupProperty("industry.industry").as("industry"))
+                        .add(Projections.countDistinct("id").as("advertCount"))) //
+                .createAlias("categories.industries", "industry", JoinType.INNER_JOIN) //
+                .add(Restrictions.in("id", visibleAdverts));
+
+        if (isNotEmpty(searchTerm)) {
+            List<PrismAdvertIndustry> matchingValues = getSimilar(PrismAdvertIndustry.class, searchTerm);
+            if (matchingValues.size() > 0) {
+                criteria.add(Restrictions.in("industry.industry", matchingValues));
+            } else {
+                criteria.add(Restrictions.eq("id", 0));
+            }
+        }
+
+        return (List<AdvertIndustrySummaryDTO>) criteria.addOrder(Order.asc("industry.industry")) //
+                .setResultTransformer(Transformers.aliasToBean(AdvertIndustrySummaryDTO.class)) //
+                .list();
+    }
+
+    public List<AdvertFunctionSummaryDTO> getAdvertFunctionSummaries(List<Integer> visibleAdverts, String searchTerm) {
+        Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Advert.class) //
+                .setProjection(Projections.projectionList() //
+                        .add(Projections.groupProperty("function.function").as("function"))
+                        .add(Projections.countDistinct("id").as("advertCount"))) //
+                .createAlias("categories.functions", "function", JoinType.INNER_JOIN) //
+                .add(Restrictions.in("id", visibleAdverts));
+
+        if (isNotEmpty(searchTerm)) {
+            List<PrismAdvertIndustry> matchingValues = getSimilar(PrismAdvertIndustry.class, searchTerm);
+            if (matchingValues.size() > 0) {
+                criteria.add(Restrictions.in("function.function", matchingValues));
+            } else {
+                criteria.add(Restrictions.eq("id", 0));
+            }
+        }
+
+        return (List<AdvertFunctionSummaryDTO>) criteria.addOrder(Order.asc("function.function")) //
+                .setResultTransformer(Transformers.aliasToBean(AdvertFunctionSummaryDTO.class)) //
+                .list();
+    }
+
+    public List<AdvertThemeSummaryDTO> getAdvertThemeSummaries(List<Integer> visibleAdverts, String searchTerm) {
+        Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Advert.class) //
+                .setProjection(Projections.projectionList() //
+                        .add(Projections.groupProperty("theme.id").as("id")) //
+                        .add(Projections.property("theme.name").as("name"))
+                        .add(Projections.countDistinct("id").as("advertCount"))) //
+                .createAlias("categories.themes", "advertTheme", JoinType.INNER_JOIN) //
+                .createAlias("advertTheme.theme", "theme", JoinType.INNER_JOIN) //
+                .add(Restrictions.in("id", visibleAdverts));
+
+        if (isNotEmpty(searchTerm)) {
+            criteria.add(Restrictions.like("theme.name", searchTerm, MatchMode.ANYWHERE));
+        }
+
+        return (List<AdvertThemeSummaryDTO>) criteria.addOrder(Order.asc("theme.name")) //
+                .setResultTransformer(Transformers.aliasToBean(AdvertThemeSummaryDTO.class)) //
+                .list();
+    }
+
+    public List<AdvertLocationSummaryDTO> getAdvertLocationSummaries(List<Integer> visibleAdverts, String searchTerm) {
+        Criteria criteria = getAdvertLocationSummaryCriteria(visibleAdverts);
+
+        if (isNotEmpty(searchTerm)) {
+            criteria.add(Restrictions.like("locationPart.name", searchTerm, MatchMode.ANYWHERE));
+        }
+
+        Set<AdvertLocationSummaryDTO> rows = newTreeSet(criteria.list());
+
+        Set<String> parentTokens = newHashSet();
+        rows.stream().forEach(row -> {
+            Set<String> nameIndexSplit = newHashSet(row.getNameIndex().split("\\|"));
+            nameIndexSplit.remove(row.getName());
+            parentTokens.addAll(nameIndexSplit);
+
+        });
+        if (parentTokens.size() > 0) {
+            rows.addAll(getAdvertLocationSummaryCriteria(visibleAdverts) //
+                    .add(Restrictions.in("locationPart.name", parentTokens)) //
+                    .list());
+        }
+
+        return newLinkedList(rows);
+    }
+    
+    public List<AdvertLocationSummaryDTO> getAdvertLocationSummaries(List<Integer> locationPartIds) {
+        return sessionFactory.getCurrentSession().createCriteria(Advert.class)
+                .setProjection(Projections.projectionList()
+                        .add(Projections.property("locationPart.id").as("id"))
+                        .add(Projections.property("locationPart.name").as("name"))
+                        .add(Projections.countDistinct("id").as("advertCount")))
                 .createAlias("categories.locations", "advertLocation", JoinType.INNER_JOIN) //
                 .createAlias("advertLocation.locationAdvert", "locationAdvert", JoinType.INNER_JOIN) //
                 .createAlias("locationAdvert.address", "locationAddress", JoinType.INNER_JOIN) //
-                .createAlias("locationAddress.addressLocationParts", "addressLocationPart", JoinType.INNER_JOIN) //
-                .add(getVisibilityConstraint(userAdvertDTO, false)) //
-                .add(Restrictions.like("addressLocationPart.name", searchTerm)) //
-                .addOrder(Order.asc("addressLocationPart.nameIndex")) //
-                .setResultTransformer(Transformers.aliasToBean(AdvertLocationAddressPartSummaryDTO.class)) //
+                .createAlias("locationAddress.locations", "location", JoinType.INNER_JOIN) //
+                .createAlias("location.locationPart", "locationPart", JoinType.INNER_JOIN) //
+                .add(Restrictions.in("locationPart.id", locationPartIds))
+                .setResultTransformer(Transformers.aliasToBean(AdvertLocationSummaryDTO.class))
+                .list();
+    }
+
+    public List<AdvertInstitutionSummaryDTO> getAdvertInstitutionSummaries(List<Integer> visibleAdverts, String searchTerm) {
+        Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Advert.class) //
+                .setProjection(Projections.projectionList() //
+                        .add(Projections.groupProperty("institution.id").as("id")) //
+                        .add(Projections.property("institution.name").as("name")) //
+                        .add(Projections.property("institution.logoImage.id").as("logoImageId")) //
+                        .add(Projections.countDistinct("id").as("advertCount"))) //
+                .createAlias("institution", "institution", JoinType.INNER_JOIN) //
+                .add(Restrictions.in("id", visibleAdverts));
+
+        if (isNotEmpty(searchTerm)) {
+            criteria.add(Restrictions.like("institution.name", searchTerm, MatchMode.ANYWHERE));
+        }
+
+        return (List<AdvertInstitutionSummaryDTO>) criteria.addOrder(Order.asc("institution.name")) //
+                .setResultTransformer(Transformers.aliasToBean(AdvertInstitutionSummaryDTO.class)) //
                 .list();
     }
 
@@ -801,6 +930,17 @@ public class AdvertDAO {
         return newArrayList(adverts);
     }
 
+    public List<Integer> getAdvertsRevoked() {
+        return (List<Integer>) sessionFactory.getCurrentSession().createCriteria(AdvertTarget.class) //
+                .setProjection(Projections.groupProperty("advert.id")) //
+                .createAlias("advert", "advert", JoinType.INNER_JOIN) //
+                .add(Restrictions.eq("partnershipState", ENDORSEMENT_REVOKED)) //
+                .add(Restrictions.disjunction() //
+                        .add(Restrictions.isNotNull("advert.project.id")) //
+                        .add(Restrictions.isNotNull("advert.program.id"))) //
+                .list();
+    }
+
     public List<Integer> getUserAdvertsRevoked(Collection<Integer> userAdverts, HashMultimap<PrismScope, Integer> userResources, PrismScope[] displayScopes) {
         return (List<Integer>) sessionFactory.getCurrentSession().createCriteria(AdvertTarget.class) //
                 .setProjection(Projections.groupProperty("advert.id")) //
@@ -825,7 +965,39 @@ public class AdvertDAO {
                 .list();
     }
 
-    private void appendContextConstraint(Criteria criteria, OpportunitiesQueryDTO queryDTO) {
+    public List<AdvertApplicationDTO> getAdvertsUserApplyingFor(User user, Collection<Integer> adverts) {
+        return (List<AdvertApplicationDTO>) sessionFactory.getCurrentSession().createCriteria(Application.class) //
+                .setProjection(Projections.projectionList()
+                        .add(Projections.groupProperty("advert.id"), "advertId")
+                        .add(Projections.property("id"), "applicationId")) //
+                .createAlias("resourceStates", "resourceState", JoinType.INNER_JOIN) //
+                .createAlias("resourceState.state", "state", JoinType.INNER_JOIN) //
+                .add(Restrictions.eq("user", user)) //
+                .add(Restrictions.in("advert.id", adverts)) //
+                .add(Restrictions.disjunction() //
+                        .add(Restrictions.isNull("completionDate")) //
+                        .add(Restrictions.eq("state.stateGroup.id", APPLICATION_WITHDRAWN))) //
+                .setResultTransformer(Transformers.aliasToBean(AdvertApplicationDTO.class))
+                .list();
+    }
+
+    public List<Advert> getBadgeAdverts(ResourceParent parentResource, int count) {
+        return (List<Advert>) sessionFactory.getCurrentSession().createCriteria(Advert.class)
+                .add(Restrictions.eq(parentResource.getResourceScope().getLowerCamelName(), parentResource))
+                .add(Restrictions.disjunction()
+                        .add(Restrictions.isNotNull("project"))
+                        .add(Restrictions.isNotNull("program")))
+                .setMaxResults(count)
+                .list();
+    }
+
+    private void appendScopeConstraint(Criteria criteria, Collection<PrismScope> scopes) {
+        if (isNotEmpty(scopes)) {
+            criteria.add(Restrictions.in("scope.id", scopes)); //
+        }
+    }
+
+    private void appendContextConstraint(Criteria criteria, OpportunityQueryDTO queryDTO) {
         PrismResourceContext context = queryDTO.getContext();
         if (context != null) {
             if (context.equals(EMPLOYER)) {
@@ -838,72 +1010,84 @@ public class AdvertDAO {
         }
     }
 
-    private void appendVisibilityConstraint(Criteria criteria, UserAdvertDTO userAdvertDTO, boolean recommendation) {
-        criteria.add(getVisibilityConstraint(userAdvertDTO, recommendation));
-    }
-
-    private void appendNodeVisibilityConstraint(Criteria criteria, Collection<Integer> nodeAdverts, UserAdvertDTO userAdvertDTO, boolean recommendation) {
-        criteria.add(Restrictions.in("id", nodeAdverts));
-        appendVisibilityConstraint(criteria, userAdvertDTO, recommendation);
-    }
-
-    private void appendKeywordConstraint(OpportunitiesQueryDTO queryDTO, Criteria criteria) {
+    private void appendKeywordConstraint(OpportunityQueryDTO queryDTO, Criteria criteria) {
         String keyword = queryDTO.getKeyword();
-        if (keyword != null) {
+        if (isNotEmpty(keyword)) {
             Junction constraint = Restrictions.disjunction();
-            for (PrismScope scope : WorkflowDAO.advertScopes) {
-                String scopeReference = scope.getLowerCamelName();
-                constraint.add(Restrictions.like(scopeReference + "Advert.name", keyword, MatchMode.ANYWHERE)) //
-                        .add(Restrictions.like(scopeReference + "Advert.summary", keyword, MatchMode.ANYWHERE)) //
-                        .add(Restrictions.like(scopeReference + "Advert.description", keyword, MatchMode.ANYWHERE));
+            for (PrismScope advertScope : advertScopes) {
+                String enclosingAdvertReference = advertScope.getLowerCamelName() + "Advert.";
+                constraint.add(Restrictions.like(enclosingAdvertReference + "name", keyword, MatchMode.ANYWHERE)) //
+                        .add(Restrictions.like(enclosingAdvertReference + "summary", keyword, MatchMode.ANYWHERE)) //
+                        .add(Restrictions.like(enclosingAdvertReference + "description", keyword, MatchMode.ANYWHERE));
             }
             criteria.add(constraint);
         }
     }
 
-    private void appendLocationConstraint(Criteria criteria, OpportunitiesQueryDTO queryDTO) {
-        if (queryDTO.getNeLat() != null) {
-            criteria.add(Restrictions.disjunction() //
-                    .add(Restrictions.conjunction() //
-                            .add(Restrictions.between("address.addressCoordinates.latitude", queryDTO.getSwLat(), queryDTO.getNeLat()))
-                            .add(Restrictions.between("address.addressCoordinates.longitude", queryDTO.getSwLon(), queryDTO.getNeLon())))
-                    .add(Restrictions.conjunction() //
-                            .add(Restrictions.between("locationAddress.addressCoordinates.latitude", queryDTO.getSwLat(), queryDTO.getNeLat()))
-                            .add(Restrictions.between("locationAddress.addressCoordinates.longitude", queryDTO.getSwLon(), queryDTO.getNeLon()))));
+    private void appendLocationConstraint(Criteria criteria, OpportunityQueryDTO queryDTO) {
+        BigDecimal swLat = queryDTO.getSwLat();
+        BigDecimal swLon = queryDTO.getSwLon();
+        BigDecimal neLat = queryDTO.getNeLat();
+        BigDecimal neLon = queryDTO.getNeLon();
+        if (noneNull(swLat, swLon, neLat, neLon)) {
+            criteria.add(Restrictions.conjunction() //
+                    .add(Restrictions.between("locationAddress.addressCoordinates.latitude", swLat, neLat)) //
+                    .add(Restrictions.between("locationAddress.addressCoordinates.longitude", swLon, neLon)));
+        }
+
+        List<Integer> locations = queryDTO.getLocations();
+        if (isNotTrue(queryDTO.getIgnoreLocations()) && isNotEmpty(locations)) {
+            criteria.add(Restrictions.in("locationAddressLocation.locationPart.id", locations));
         }
     }
 
-    private void appendIndustryConstraint(Criteria criteria, OpportunitiesQueryDTO queryDTO) {
+    private void appendIndustryConstraint(Criteria criteria, OpportunityQueryDTO queryDTO) {
         List<PrismAdvertIndustry> industries = queryDTO.getIndustries();
-        if (CollectionUtils.isNotEmpty(industries)) {
+        if (isNotTrue(queryDTO.getIgnoreIndustries()) && isNotEmpty(industries)) {
             criteria.add(Restrictions.in("industry.industry", industries));
         }
     }
 
-    private void appendFunctionConstraint(Criteria criteria, OpportunitiesQueryDTO queryDTO) {
+    private void appendFunctionConstraint(Criteria criteria, OpportunityQueryDTO queryDTO) {
         List<PrismAdvertFunction> functions = queryDTO.getFunctions();
-        if (CollectionUtils.isNotEmpty(functions)) {
+        if (isNotTrue(queryDTO.getIgnoreFunctions()) && isNotEmpty(functions)) {
             criteria.add(Restrictions.in("function.function", functions));
         }
     }
 
-    private void appendStudyOptionConstraint(OpportunitiesQueryDTO queryDTO, Criteria criteria) {
+    private void appendThemeConstraint(Criteria criteria, OpportunityQueryDTO queryDTO) {
+        List<Integer> themes = queryDTO.getThemes();
+        if (isNotTrue(queryDTO.getIgnoreThemes()) && isNotEmpty(themes)) {
+            criteria.add(Restrictions.in("theme.theme.id", themes));
+        }
+    }
+
+    private void appendInstitutionConstraint(Criteria criteria, OpportunityQueryDTO queryDTO) {
+        List<Integer> institutions = queryDTO.getInstitutions();
+        if (isNotTrue(queryDTO.getIgnoreInstitutions()) && isNotEmpty(institutions)) {
+            criteria.add(Restrictions.in("institution.id", institutions));
+        }
+    }
+
+    private void appendStudyOptionConstraint(OpportunityQueryDTO queryDTO, Criteria criteria) {
         List<PrismStudyOption> studyOptions = queryDTO.getStudyOptions();
         if (isNotEmpty(studyOptions)) {
             Disjunction studyOptionConstraint = Restrictions.disjunction();
             for (PrismStudyOption studyOption : studyOptions) {
-                studyOptionConstraint.add(getMatchingFlattenedPropertyConstraint("studyOption", studyOption.name()));
+                studyOptionConstraint.add(getMatchingFlattenedPropertyConstraint("studyOptions", studyOption.name()));
             }
             criteria.add(studyOptionConstraint);
         }
     }
 
-    private void appendPayConstraint(Criteria criteria, OpportunitiesQueryDTO queryDTO) {
+    private void appendPayConstraint(Criteria criteria, OpportunityQueryDTO queryDTO) {
+        BigDecimal minSalary = queryDTO.getMinSalary();
+        BigDecimal maxSalary = queryDTO.getMaxSalary();
         PrismDurationUnit interval = queryDTO.getSalaryInterval();
-        if (interval != null) {
+        if (noneNull(minSalary, maxSalary, interval)) {
             BigDecimal durationAsHours = new BigDecimal(getDurationUnitAsHours(interval));
-            BigDecimal minSalary = queryDTO.getMinSalary().divide(durationAsHours, 2, HALF_UP);
-            BigDecimal maxSalary = queryDTO.getMaxSalary().divide(durationAsHours, 2, HALF_UP);
+            minSalary = queryDTO.getMinSalary().divide(durationAsHours, 2, HALF_UP);
+            maxSalary = queryDTO.getMaxSalary().divide(durationAsHours, 2, HALF_UP);
             if (!interval.equals(HOUR)) {
                 appendRangeConstraint(criteria, "pay.minimumNormalized", "pay.maximumNormalized", minSalary, maxSalary);
             } else {
@@ -912,8 +1096,28 @@ public class AdvertDAO {
         }
     }
 
-    private void appendDurationConstraint(Criteria criteria, OpportunitiesQueryDTO queryDTO) {
+    private void appendDurationConstraint(Criteria criteria, OpportunityQueryDTO queryDTO) {
         appendRangeConstraint(criteria, "durationMinimum", "durationMaximum", queryDTO.getMinDuration(), queryDTO.getMaxDuration());
+    }
+
+    private void appendVisibilityConstraint(Criteria criteria, OpportunityQueryDTO query, UserAdvertDTO userAdvertDTO, Collection<Integer> nodeAdverts) {
+        Junction constraint = Restrictions.conjunction();
+        if (isTrue(query.getRecommendation())) {
+            constraint.add(Restrictions.in("id", userAdvertDTO.getVisibleDirect()));
+        }
+
+        List<Integer> invisible = userAdvertDTO.getInvisible();
+        if (isNotEmpty(invisible)) {
+            constraint.add(Restrictions.not( //
+                    Restrictions.in("id", invisible)));
+        }
+
+        constraint.add(Restrictions.eq("published", true));
+
+        criteria.add(constraint);
+        if (isNotEmpty(nodeAdverts)) {
+            criteria.add(Restrictions.in("id", nodeAdverts));
+        }
     }
 
     private Criteria getAdvertTargetCriteria(PrismScope resourceScope, String thisAdvertReference, String otherAdvertReference, User user, boolean received) {
@@ -966,8 +1170,9 @@ public class AdvertDAO {
                 .createAlias("otherDepartment.advert", "otherDepartmentAdvert", JoinType.LEFT_OUTER_JOIN)
                 .createAlias(otherAdvertReference + "User", "otherUser", JoinType.LEFT_OUTER_JOIN) //
                 .createAlias("otherUser.userAccount", "otherUserAccount", JoinType.LEFT_OUTER_JOIN) //
+                .createAlias("state", "state", JoinType.INNER_JOIN) //
                 .add(Restrictions.neProperty("thisAdvert.id", "otherAdvert.id")) //
-                .add(getResourceParentManageableStateConstraint(resourceScope));
+                .add(getResourceParentManageableStateConstraint("state"));
     }
 
     private Junction getAdvertTargetAcceptUserConstraint(User user) {
@@ -993,29 +1198,34 @@ public class AdvertDAO {
         criteria.add(Restrictions.eq(selectAdvertAlias + "published", true));
     }
 
-    private Junction getVisibleAdvertConstraint(String selectAdvertAlias, String restrictAdvertAlias,
-            HashMultimap<PrismScope, Integer> userResources, boolean publishedOnly, PrismScope... displayScopes) {
+    private Junction getVisibleAdvertConstraint(String selectAdvertAlias, String restrictAdvertAlias, HashMultimap<PrismScope, Integer> userResources,
+            boolean publishedOnly, PrismScope... displayScopes) {
         String selectAdvertAliasResolved = getResolvedAliasReference(selectAdvertAlias);
-        String restrictAdvertAliasResolved = getResolvedAliasReference(restrictAdvertAlias);
 
-        Junction permissionConstraint = Restrictions.disjunction();
-        userResources.keySet().stream().forEach(userResourceScope -> {
-            Set<Integer> userResourcesScope = userResources.get(userResourceScope);
-            if (isNotEmpty(userResourcesScope)) {
-                permissionConstraint.add(Restrictions.in(restrictAdvertAliasResolved + userResourceScope.getLowerCamelName() + ".id", userResourcesScope));
+        Junction visibilityConstraint = Restrictions.conjunction();
+        if (userResources == null || userResources.isEmpty()) {
+            visibilityConstraint.add(Restrictions.eq(selectAdvertAliasResolved + "id", 0));
+        } else {
+            String restrictAdvertAliasResolved = getResolvedAliasReference(restrictAdvertAlias);
+
+            Junction permissionConstraint = Restrictions.disjunction();
+            userResources.keySet().stream().forEach(userResourceScope -> {
+                Set<Integer> userResourcesScope = userResources.get(userResourceScope);
+                if (isNotEmpty(userResourcesScope)) {
+                    permissionConstraint.add(Restrictions.in(restrictAdvertAliasResolved + userResourceScope.getLowerCamelName() + ".id", userResourcesScope));
+                }
+            });
+
+            visibilityConstraint.add(permissionConstraint);
+
+            if (isNotEmpty(displayScopes)) {
+                visibilityConstraint.add(Restrictions.in(selectAdvertAliasResolved + "scope.id", displayScopes));
             }
-        });
 
-        Junction visibilityConstraint = Restrictions.conjunction() //
-                .add(permissionConstraint);
-
-        if (isNotEmpty(displayScopes)) {
-            visibilityConstraint.add(Restrictions.in(selectAdvertAliasResolved + "scope.id", displayScopes));
-        }
-
-        visibilityConstraint.add(Restrictions.eq(selectAdvertAliasResolved + "submitted", true));
-        if (publishedOnly) {
-            visibilityConstraint.add(Restrictions.eq(selectAdvertAliasResolved + "published", true));
+            visibilityConstraint.add(Restrictions.eq(selectAdvertAliasResolved + "submitted", true));
+            if (publishedOnly) {
+                visibilityConstraint.add(Restrictions.eq(selectAdvertAliasResolved + "published", true));
+            }
         }
 
         return visibilityConstraint;
@@ -1041,32 +1251,26 @@ public class AdvertDAO {
         if (hiValue != null) {
             conjunction.add(Restrictions.le(hiColumn, loValue != null && loValue.intValue() > hiValue.intValue() ? loValue : hiValue));
         }
+
         return conjunction;
     }
 
-    private Junction getVisibilityConstraint(UserAdvertDTO userAdvertDTO, boolean recommendation) {
-        Junction constraint = Restrictions.conjunction();
-        if (recommendation) {
-            constraint.add(Restrictions.in("id", userAdvertDTO.getVisibleDirect()));
-        } else if (!userAdvertDTO.isAllVisible()) {
-            Set<Integer> visible = userAdvertDTO.getVisible();
-            if (isNotEmpty(visible)) {
-                constraint.add(Restrictions.disjunction() //
-                        .add(Restrictions.eq("globallyVisible", true))
-                        .add(Restrictions.in("id", visible)));
-            } else {
-                constraint.add(Restrictions.eq("globallyVisible", true));
-            }
-        }
-
-        List<Integer> invisible = userAdvertDTO.getInvisible();
-        if (isNotEmpty(invisible)) {
-            constraint.add(Restrictions.not( //
-                    Restrictions.in("id", invisible)));
-        }
-
-        constraint.add(Restrictions.eq("published", true));
-        return constraint;
+    private Criteria getAdvertLocationSummaryCriteria(Collection<Integer> adverts) {
+        return sessionFactory.getCurrentSession().createCriteria(Advert.class) //
+                .setProjection(Projections.projectionList() //
+                        .add(Projections.groupProperty("locationPart.id").as("id")) //
+                        .add(Projections.property("locationPart.parent.id").as("parentId")) //
+                        .add(Projections.property("locationPart.name").as("name")) //
+                        .add(Projections.property("locationPart.nameIndex").as("nameIndex")) //
+                        .add(Projections.countDistinct("id").as("advertCount"))) //
+                .createAlias("categories.locations", "advertLocation", JoinType.INNER_JOIN) //
+                .createAlias("advertLocation.locationAdvert", "locationAdvert", JoinType.INNER_JOIN) //
+                .createAlias("locationAdvert.address", "locationAddress", JoinType.INNER_JOIN) //
+                .createAlias("locationAddress.locations", "location", JoinType.INNER_JOIN) //
+                .createAlias("location.locationPart", "locationPart", JoinType.INNER_JOIN) //
+                .add(Restrictions.in("id", adverts)) //
+                .addOrder(Order.asc("locationPart.nameIndex")) //
+                .setResultTransformer(Transformers.aliasToBean(AdvertLocationSummaryDTO.class));
     }
 
 }

@@ -1,7 +1,12 @@
 package uk.co.alumeni.prism.services;
 
 import static com.google.common.base.Objects.equal;
+import static com.google.common.collect.Lists.newArrayList;
 import static com.google.common.collect.Lists.newLinkedList;
+import static com.google.common.collect.Lists.reverse;
+import static org.apache.commons.collections.CollectionUtils.containsAny;
+import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
+import static org.slf4j.LoggerFactory.getLogger;
 import static uk.co.alumeni.prism.PrismConstants.OK;
 
 import java.net.URI;
@@ -11,9 +16,7 @@ import java.util.Set;
 
 import javax.inject.Inject;
 
-import org.apache.commons.collections.CollectionUtils;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
 import org.springframework.core.io.DefaultResourceLoader;
@@ -47,12 +50,10 @@ import com.google.common.collect.Lists;
 @Transactional
 public class AddressService {
 
-    private static Logger logger = LoggerFactory.getLogger(AddressService.class);
+    private static Logger logger = getLogger(AddressService.class);
 
-    private static final List<String> googleLocationTypes = Lists.newArrayList("country", "administrative_area_level_1", "administrative_area_level_2",
-            "administrative_area_level_3", "administrative_area_level_4", "administrative_area_level_5", "political", "postal_town", "locality", "sublocality",
-            "sublocality_level_1", "sublocality_level_2", "sublocality_level_3", "sublocality_level_4", "sublocality_level_5", "neighborhood", "premise",
-            "subpremise", "airport");
+    private static final List<String> googleLocationTypes = newArrayList("country", "administrative_area_level_1", "administrative_area_level_2",
+            "administrative_area_level_3", "administrative_area_level_4", "administrative_area_level_5", "postal_town", "airport");
 
     @Value("${integration.google.api.key}")
     private String googleApiKey;
@@ -147,14 +148,10 @@ public class AddressService {
         return addressDAO.getAddressesWithNoLocationParts();
     }
 
-    public void geocodeAddressAsEstablishment(Integer addressId) throws Exception {
-        geocodeAddressAsEstablishment(getById(addressId));
-    }
-    
     public LinkedHashMultimap<Integer, String> getAddressLocationIndex(List<EntityLocationDTO> entityLocations, int precision) {
         Integer entityId = null;
         int entityLocationCount = 0;
-        
+
         LinkedHashMultimap<Integer, String> entityLocationIndex = LinkedHashMultimap.create();
         for (EntityLocationDTO entityLocation : entityLocations) {
             Integer thisEntityId = entityLocation.getId();
@@ -165,8 +162,19 @@ public class AddressService {
                 entityLocationIndex.put(entityId, entityLocation.getLocation());
             }
         }
-        
+
         return entityLocationIndex;
+    }
+
+    public void geocodeAddress(Integer addressId) {
+        Address address = getById(addressId);
+        geocodeAddress(address, address.getEstablishmentName());
+    }
+
+    public void deleteAddressLocations() {
+        addressDAO.unlinkAddressLocationParts();
+        entityService.deleteAll(AddressLocation.class);
+        entityService.deleteAll(AddressLocationPart.class);
     }
 
     private void geocodeAddress(Address address, String establishmentName) {
@@ -175,7 +183,7 @@ public class AddressService {
                 geocodeAddressAsLocation(address, establishmentName);
             }
         } catch (Exception e) {
-            logger.error("Problem obtaining location for " + address.toString(), e);
+            logger.warn("Problem obtaining location for " + address.toString());
         }
     }
 
@@ -196,7 +204,7 @@ public class AddressService {
     }
 
     private void geocodeAddressAsLocation(Address address, String establishmentName) throws Exception {
-        List<String> addressTokens = Lists.reverse(address.getAddressTokens());
+        List<String> addressTokens = reverse(address.getAddressTokens());
         addressTokens.add(establishmentName);
 
         Domicile domicile = address.getDomicile();
@@ -235,20 +243,20 @@ public class AddressService {
         }
 
         addressDAO.deleteAddressLocations(address);
-        addressDAO.getOrphanAddressLocationParts().stream().forEach(lp -> entityService.delete(lp));
+        addressDAO.getOrphanAddressLocationParts().stream().forEach(entityService::delete);
 
-        List<GoogleAddressComponentDTO> componentData = addressData.getComponents();
-        if (CollectionUtils.isNotEmpty(componentData)) {
+        List<GoogleAddressComponentDTO> components = addressData.getComponents();
+        if (isNotEmpty(components)) {
             AddressLocationPart parent = null;
             List<String> partNames = newLinkedList();
-            Set<AddressLocation> locations = address.getAddressLocations();
-            for (GoogleAddressComponentDTO componentItem : Lists.reverse(componentData)) {
-                if (CollectionUtils.containsAny(googleLocationTypes, componentItem.getTypes())) {
-                    String name = componentItem.getName();
+            Set<AddressLocation> locations = address.getLocations();
+            for (GoogleAddressComponentDTO component : reverse(components)) {
+                if (containsAny(googleLocationTypes, component.getTypes())) {
+                    String name = component.getName();
                     if (!partNames.contains(name)) {
                         partNames.add(name);
-                        AddressLocationPart part = entityService
-                                .getOrCreate(new AddressLocationPart().withParent(parent).withName(name).withNameIndex(Joiner.on("|").join(partNames)));
+                        AddressLocationPart part = entityService.getOrCreate(new AddressLocationPart()
+                                .withParent(parent).withName(name).withNameIndex(Joiner.on("|").join(partNames)));
                         locations.add(entityService.getOrCreate(new AddressLocation().withAddress(address).withLocationPart(part)));
                         parent = part;
                     }

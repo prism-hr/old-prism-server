@@ -4,7 +4,16 @@ import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
 
 import java.util.Collection;
 
-public class PrismCollectionUtils {
+public class PrismIterableUtils {
+
+    public static boolean noneNull(Object... objects) {
+        for (Object object : objects) {
+            if (object == null) {
+                return false;
+            }
+        }
+        return true;
+    }
 
     public static boolean containsSome(Collection<?> collection, Collection<?> otherCollection) {
         if (isNotEmpty(collection) && isNotEmpty(otherCollection)) {

@@ -25,7 +25,8 @@ public class UserActivityCacheServiceHelper extends PrismServiceHelperAbstract {
 
     @Override
     public void execute() throws Exception {
-        userService.getUsersWithActivitiesToCache(now()).stream().forEach(user -> updateUserActivityCache(user, now()));
+        DateTime baseline = now();
+        userService.getUsersWithActivitiesToCache(baseline).stream().forEach(user -> updateUserActivityCache(user, baseline));
     }
 
     @Override

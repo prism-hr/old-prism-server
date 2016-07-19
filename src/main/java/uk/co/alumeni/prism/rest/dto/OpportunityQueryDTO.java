@@ -3,6 +3,8 @@ package uk.co.alumeni.prism.rest.dto;
 import java.math.BigDecimal;
 import java.util.List;
 
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 
 import uk.co.alumeni.prism.domain.definitions.PrismAdvertFunction;
@@ -14,7 +16,7 @@ import uk.co.alumeni.prism.domain.definitions.PrismResourceContext;
 import uk.co.alumeni.prism.domain.definitions.PrismStudyOption;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismScope;
 
-public class OpportunitiesQueryDTO {
+public class OpportunityQueryDTO {
 
     private Integer advertId;
 
@@ -33,9 +35,25 @@ public class OpportunitiesQueryDTO {
 
     private String keyword;
 
+    private List<Integer> locations;
+
+    private Boolean ignoreLocations;
+
     private List<PrismAdvertIndustry> industries;
 
+    private Boolean ignoreIndustries;
+
     private List<PrismAdvertFunction> functions;
+
+    private Boolean ignoreFunctions;
+
+    private List<Integer> themes;
+
+    private Boolean ignoreThemes;
+
+    private List<Integer> institutions;
+
+    private Boolean ignoreInstitutions;
 
     private List<PrismOpportunityType> opportunityTypes;
 
@@ -60,6 +78,10 @@ public class OpportunitiesQueryDTO {
     private BigDecimal swLon;
 
     private String lastSequenceIdentifier;
+
+    @Max(25)
+    @Min(1)
+    private Integer maxAdverts = 25;
 
     public Integer getAdvertId() {
         return advertId;
@@ -125,6 +147,22 @@ public class OpportunitiesQueryDTO {
         this.keyword = keyword;
     }
 
+    public List<Integer> getLocations() {
+        return locations;
+    }
+
+    public void setLocations(List<Integer> locations) {
+        this.locations = locations;
+    }
+
+    public Boolean getIgnoreLocations() {
+        return ignoreLocations;
+    }
+
+    public void setIgnoreLocations(Boolean ignoreLocations) {
+        this.ignoreLocations = ignoreLocations;
+    }
+
     public List<PrismAdvertIndustry> getIndustries() {
         return industries;
     }
@@ -133,12 +171,60 @@ public class OpportunitiesQueryDTO {
         this.industries = industries;
     }
 
+    public Boolean getIgnoreIndustries() {
+        return ignoreIndustries;
+    }
+
+    public void setIgnoreIndustries(Boolean ignoreIndustries) {
+        this.ignoreIndustries = ignoreIndustries;
+    }
+
     public List<PrismAdvertFunction> getFunctions() {
         return functions;
     }
 
     public void setFunctions(List<PrismAdvertFunction> functions) {
         this.functions = functions;
+    }
+
+    public Boolean getIgnoreFunctions() {
+        return ignoreFunctions;
+    }
+
+    public void setIgnoreFunctions(Boolean ignoreFunctions) {
+        this.ignoreFunctions = ignoreFunctions;
+    }
+
+    public List<Integer> getThemes() {
+        return themes;
+    }
+
+    public void setThemes(List<Integer> themes) {
+        this.themes = themes;
+    }
+
+    public Boolean getIgnoreThemes() {
+        return ignoreThemes;
+    }
+
+    public void setIgnoreThemes(Boolean ignoreThemes) {
+        this.ignoreThemes = ignoreThemes;
+    }
+
+    public List<Integer> getInstitutions() {
+        return institutions;
+    }
+
+    public void setInstitutions(List<Integer> institutions) {
+        this.institutions = institutions;
+    }
+
+    public Boolean getIgnoreInstitutions() {
+        return ignoreInstitutions;
+    }
+
+    public void setIgnoreInstitutions(Boolean ignoreInstitutions) {
+        this.ignoreInstitutions = ignoreInstitutions;
     }
 
     public List<PrismOpportunityType> getOpportunityTypes() {
@@ -237,13 +323,61 @@ public class OpportunitiesQueryDTO {
         this.lastSequenceIdentifier = lastSequenceIdentifier;
     }
 
-    public OpportunitiesQueryDTO withContext(PrismResourceContext context) {
+    public Integer getMaxAdverts() {
+        return maxAdverts;
+    }
+
+    public void setMaxAdverts(Integer maxAdverts) {
+        this.maxAdverts = maxAdverts;
+    }
+
+    public OpportunityQueryDTO withContext(PrismResourceContext context) {
         this.context = context;
         return this;
     }
 
-    public OpportunitiesQueryDTO withRecommendation(Boolean recommendation) {
+    public OpportunityQueryDTO withRecommendation(Boolean recommendation) {
         this.recommendation = recommendation;
+        return this;
+    }
+
+    public OpportunityQueryDTO withResourceScope(final PrismScope resourceScope) {
+        this.resourceScope = resourceScope;
+        return this;
+    }
+
+    public OpportunityQueryDTO withResourceId(final Integer resourceId) {
+        this.resourceId = resourceId;
+        return this;
+    }
+
+    public OpportunityQueryDTO withMaxAdverts(final Integer maxAdverts) {
+        this.maxAdverts = maxAdverts;
+        return this;
+    }
+
+    public OpportunityQueryDTO withIgnoreLocations(Boolean ignoreLocations) {
+        this.ignoreLocations = ignoreLocations;
+        return this;
+    }
+
+    public OpportunityQueryDTO withIgnoreIndustries(Boolean ignoreIndustries) {
+        this.ignoreIndustries = ignoreIndustries;
+        return this;
+    }
+
+    public OpportunityQueryDTO withIgnoreFunctions(Boolean ignoreFunctions) {
+        this.ignoreFunctions = ignoreFunctions;
+        return this;
+    }
+
+    public OpportunityQueryDTO withIgnoreThemes(Boolean ignoreThemes) {
+        this.ignoreThemes = ignoreThemes;
+        return this;
+    }
+
+    public OpportunityQueryDTO withIgnoreInstitutions(Boolean ignoreInstitutions) {
+        this.ignoreInstitutions = ignoreInstitutions;
         return this;
     }
 

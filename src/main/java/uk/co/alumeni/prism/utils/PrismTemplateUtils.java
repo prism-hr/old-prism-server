@@ -12,7 +12,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.view.freemarker.FreeMarkerConfig;
 
 import com.google.common.base.Charsets;
-import com.google.common.io.Resources;
 
 import freemarker.template.Template;
 
@@ -34,10 +33,9 @@ public class PrismTemplateUtils {
         }
     }
 
-    public String getContentFromLocation(String templateName, String templateLocation, Map<String, Object> model) {
+    public String getContentFromLocation(String templateLocation, Map<String, Object> model) {
         try {
-            String templateSource = Resources.toString(Resources.getResource(templateLocation), Charsets.UTF_8);
-            Template template = new Template(templateName, templateSource, freemarkerConfig.getConfiguration());
+            Template template = freemarkerConfig.getConfiguration().getTemplate(templateLocation, Charsets.UTF_8.name());
             return processTemplateIntoString(template, model);
         } catch (Exception e) {
             logger.error("Unable to process template", e);

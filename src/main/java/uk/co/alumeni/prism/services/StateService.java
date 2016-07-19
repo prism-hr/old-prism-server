@@ -3,11 +3,13 @@ package uk.co.alumeni.prism.services;
 import static com.google.common.collect.Lists.newArrayList;
 import static java.util.stream.Collectors.toList;
 import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
-import static org.apache.commons.lang.BooleanUtils.isFalse;
+import static org.apache.commons.lang.ArrayUtils.contains;
 import static org.apache.commons.lang.BooleanUtils.isTrue;
+import static uk.co.alumeni.prism.dao.WorkflowDAO.advertScopes;
 import static uk.co.alumeni.prism.dao.WorkflowDAO.organizationScopes;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismConfiguration.STATE_DURATION;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.SYSTEM;
+import static uk.co.alumeni.prism.utils.PrismStringUtils.endsWith;
 
 import java.util.Collection;
 import java.util.List;
@@ -381,56 +383,55 @@ public class StateService {
         }
     }
 
-    public void setHiddenPublishedStates() {
-        List<State> states = getStates();
-
+    public void setParameterizedStates() {
         List<PrismState> hiddenStates = newArrayList();
-        states.stream().forEach(state -> {
-            Set<StateAction> stateActions = state.getStateActions();
-            if (stateActions.isEmpty()) {
-                hiddenStates.add(state.getId());
-            } else {
-                int userActions = 0;
-                int userAssignments = 0;
-                for (StateAction stateAction : stateActions) {
-                    userAssignments = userAssignments + stateAction.getStateActionAssignments().size();
-                    if (isFalse(stateAction.getAction().getSystemInvocationOnly())) {
-                        userActions++;
-                    }
-                }
-
-                if (userActions == 0 || userAssignments == 0) {
-                    hiddenStates.add(state.getId());
+        List<PrismState> publishedStates = newArrayList();
+        List<PrismState> manageableStates = newArrayList();
+        List<PrismState> parallelizableStates = newArrayList();
+        getStates().stream().forEach(state -> {
+            PrismState prismState = state.getId();
+            if (contains(advertScopes, state.getScope().getId())) {
+                String prismStateName = prismState.name();
+                if (endsWith(prismStateName, "UNSUBMITTED")) {
+                    hiddenStates.add(prismState);
+                } else if (endsWith(prismStateName, "APPROVED")) {
+                    publishedStates.add(prismState);
+                    manageableStates.add(prismState);
+                } else if (endsWith(prismStateName, "APPROVAL", "APPROVAL_PARENT_APPROVAL", "APPROVAL_PENDING_CORRECTION")) {
+                    manageableStates.add(prismState);
                 }
             }
-        });
 
-        List<PrismState> publishedStates = newArrayList();
-        states.stream().forEach(state -> {
-            PrismState prismState = state.getId();
-            if (!hiddenStates.contains(prismState) && prismState.name().endsWith("_APPROVED")) {
-                for (StateAction stateAction : state.getStateActions()) {
-                    if (stateAction.getAction().getCreationScope() != null) {
-                        publishedStates.add(prismState);
+            boolean foundParallelizable = false;
+            for (StateAction stateAction : state.getStateActions()) {
+                for (StateTransition stateTransition : stateAction.getStateTransitions()) {
+                    if (stateTransition.getTransitionState() == null) {
+                        parallelizableStates.add(prismState);
+                        foundParallelizable = true;
                         break;
                     }
+                }
+
+                if (foundParallelizable) {
+                    break;
                 }
             }
         });
 
         if (hiddenStates.size() > 0) {
-            stateDAO.setHiddenStates(hiddenStates);
+            stateDAO.setParameterizedStates("hidden", hiddenStates);
         }
 
         if (publishedStates.size() > 0) {
-            stateDAO.setPublishedStates(publishedStates);
+            stateDAO.setParameterizedStates("published", publishedStates);
         }
-    }
 
-    public void setParallelizableStates() {
-        List<PrismState> states = stateDAO.getParallelizableStates();
-        if (!states.isEmpty()) {
-            stateDAO.setParallelizableStates(states);
+        if (manageableStates.size() > 0) {
+            stateDAO.setParameterizedStates("manageable", manageableStates);
+        }
+
+        if (parallelizableStates.size() > 0) {
+            stateDAO.setParameterizedStates("parallelizable", parallelizableStates);
         }
     }
 

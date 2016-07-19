@@ -1,5 +1,7 @@
 package uk.co.alumeni.prism.domain.advert;
 
+import static com.google.common.base.Objects.equal;
+
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
@@ -7,6 +9,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
+
+import com.google.common.base.Objects;
 
 @Entity
 @Table(name = "advert_location", uniqueConstraints = { @UniqueConstraint(columnNames = { "advert_id", "location_advert_id" }) })
@@ -60,6 +64,23 @@ public class AdvertLocation extends AdvertAttribute {
     public AdvertLocation withLocationAdvert(Advert locationAdvert) {
         this.locationAdvert = locationAdvert;
         return this;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(advert, locationAdvert);
+    }
+
+    @Override
+    public boolean equals(Object object) {
+        if (object == null) {
+            return false;
+        }
+        if (getClass() != object.getClass()) {
+            return false;
+        }
+        AdvertLocation other = (AdvertLocation) object;
+        return equal(advert, other.getAdvert()) && equal(locationAdvert, other.getLocationAdvert());
     }
 
     @Override

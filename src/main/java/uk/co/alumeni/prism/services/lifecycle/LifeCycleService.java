@@ -53,6 +53,9 @@ public class LifeCycleService {
     @Value("${startup.section.completeness.initialize}")
     private Boolean initializeSectionCompleteness;
 
+    @Value("${startup.address.completeness.initialize.drop}")
+    private Boolean dropAddressCompleteness;
+
     @Value("${startup.address.completeness.initialize}")
     private Boolean initializeAddressCompleteness;
 
@@ -94,6 +97,10 @@ public class LifeCycleService {
 
         if (isTrue(initializeSectionCompleteness)) {
             systemService.initializeSectionCompleteness();
+        }
+
+        if (isTrue(dropAddressCompleteness)) {
+            systemService.dropAddressCompleteness();
         }
 
         if (isTrue(initializeAddressCompleteness)) {

@@ -272,36 +272,10 @@ public class StateDAO {
                 .list();
     }
 
-    public void setHiddenStates(List<PrismState> states) {
+    public void setParameterizedStates(String parameter, List<PrismState> states) {
         sessionFactory.getCurrentSession().createQuery( //
                 "update State " //
-                        + "set hidden = true " //
-                        + "where id in (:states)")
-                .setParameterList("states", states) //
-                .executeUpdate();
-    }
-
-    public void setPublishedStates(List<PrismState> states) {
-        sessionFactory.getCurrentSession().createQuery( //
-                "update State " //
-                        + "set published = true " //
-                        + "where id in (:states)")
-                .setParameterList("states", states) //
-                .executeUpdate();
-    }
-
-    public List<PrismState> getParallelizableStates() {
-        return (List<PrismState>) sessionFactory.getCurrentSession().createCriteria(StateAction.class) //
-                .setProjection(Projections.groupProperty("state.id")) //
-                .createAlias("stateTransitions", "stateTransition", JoinType.INNER_JOIN) //
-                .add(Restrictions.isNull("stateTransition.transitionState")) //
-                .list();
-    }
-
-    public void setParallelizableStates(List<PrismState> states) {
-        sessionFactory.getCurrentSession().createQuery( //
-                "update State " //
-                        + "set parallelizable = true " //
+                        + "set " + parameter + " = true " //
                         + "where id in (:states)")
                 .setParameterList("states", states) //
                 .executeUpdate();

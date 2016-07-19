@@ -446,7 +446,7 @@ public class ProfileService {
 
             applicationPersonalDetail.setEthnicity(userPersonalDetail.getEthnicity());
             applicationPersonalDetail.setDisability(userPersonalDetail.getDisability());
-            applicationPersonalDetail.setLastUpdatedTimestamp(new DateTime());
+            applicationPersonalDetail.setLastUpdatedTimestamp(now());
         }
     }
 
@@ -458,7 +458,7 @@ public class ProfileService {
             applicationAddress.setAssociation(application);
             applicationAddress.setCurrentAddress(addressService.cloneAddress(userAddress.getCurrentAddress()));
             applicationAddress.setContactAddress(addressService.cloneAddress(userAddress.getContactAddress()));
-            applicationAddress.setLastUpdatedTimestamp(new DateTime());
+            applicationAddress.setLastUpdatedTimestamp(now());
         }
     }
 
@@ -489,7 +489,7 @@ public class ProfileService {
         applicationQualification.setGrade(userQualification.getGrade());
         applicationQualification.setCompleted(userQualification.getCompleted());
         applicationQualification.setDocument(documentService.cloneDocument(userQualification.getDocument()));
-        applicationQualification.setLastUpdatedTimestamp(new DateTime());
+        applicationQualification.setLastUpdatedTimestamp(now());
     }
 
     private void fillAward(ApplicationAward applicationAward, UserAward userAward) {
@@ -497,7 +497,7 @@ public class ProfileService {
         applicationAward.setDescription(userAward.getDescription());
         applicationAward.setAwardYear(userAward.getAwardYear());
         applicationAward.setAwardMonth(userAward.getAwardMonth());
-        applicationAward.setLastUpdatedTimestamp(new DateTime());
+        applicationAward.setLastUpdatedTimestamp(now());
     }
 
     private void fillApplicationEmploymentPositions(Application application, UserAccount userAccount) {
@@ -516,7 +516,7 @@ public class ProfileService {
         applicationEmploymentPosition.setEndYear(userEmploymentPosition.getEndYear());
         applicationEmploymentPosition.setEndMonth(userEmploymentPosition.getEndMonth());
         applicationEmploymentPosition.setCurrent(userEmploymentPosition.getCurrent());
-        applicationEmploymentPosition.setLastUpdatedTimestamp(new DateTime());
+        applicationEmploymentPosition.setLastUpdatedTimestamp(now());
     }
 
     private void fillApplicationReferees(Application application, UserAccount userAccount) {
@@ -533,7 +533,7 @@ public class ProfileService {
         applicationReferee.setUser(userReferee.getUser());
         applicationReferee.setPhone(userReferee.getPhone());
         applicationReferee.setSkype(userReferee.getSkype());
-        applicationReferee.setLastUpdatedTimestamp(new DateTime());
+        applicationReferee.setLastUpdatedTimestamp(now());
     }
 
     private void fillApplicationDocument(Application application, UserAccount userAccount) {
@@ -561,7 +561,7 @@ public class ProfileService {
             additionalInformation.setAssociation(application);
             additionalInformation.setRequirements(userAdditionalInformation.getRequirements());
             additionalInformation.setConvictions(userAdditionalInformation.getConvictions());
-            additionalInformation.setLastUpdatedTimestamp(new DateTime());
+            additionalInformation.setLastUpdatedTimestamp(now());
         }
     }
 

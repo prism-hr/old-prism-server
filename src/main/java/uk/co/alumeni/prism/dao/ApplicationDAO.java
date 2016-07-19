@@ -391,6 +391,7 @@ public class ApplicationDAO {
                         .add(Projections.sum("applicationRatingCount").as("ratingCount")) //
                         .add(Projections.avg("applicationRatingAverage").as("ratingAverage"))) //
                 .add(Restrictions.eq("user", user)) //
+                .add(Restrictions.isNotNull("submittedTimestamp")) //
                 .setResultTransformer(Transformers.aliasToBean(ResourceRatingSummaryDTO.class)) //
                 .uniqueResult();
     }
@@ -437,7 +438,7 @@ public class ApplicationDAO {
         }
 
         ImmutableMap<String, Object> model = ImmutableMap.of("columnExpression", (Object) columnExpression, "constraintExpression", constraintExpression);
-        return sessionFactory.getCurrentSession().createSQLQuery(prismTemplateUtils.getContentFromLocation("statement", templateLocation, model))
+        return sessionFactory.getCurrentSession().createSQLQuery(prismTemplateUtils.getContentFromLocation(templateLocation, model))
                 .addScalar("advertCount", LongType.INSTANCE) //
                 .addScalar("applicationYear", StringType.INSTANCE) //
                 .addScalar("submittedApplicationCount", LongType.INSTANCE) //

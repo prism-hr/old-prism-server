@@ -54,6 +54,9 @@ public class State extends WorkflowDefinition {
     @Column(name = "published")
     private Boolean published;
 
+    @Column(name = "manageable")
+    private Boolean manageable;
+
     @Column(name = "parallelizable")
     private Boolean parallelizable;
 
@@ -143,6 +146,14 @@ public class State extends WorkflowDefinition {
 
     public void setPublished(Boolean published) {
         this.published = published;
+    }
+
+    public Boolean getManageable() {
+        return manageable;
+    }
+
+    public void setManageable(Boolean manageable) {
+        this.manageable = manageable;
     }
 
     public Boolean getParallelizable() {

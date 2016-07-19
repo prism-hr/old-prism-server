@@ -23,21 +23,21 @@ import com.google.common.collect.Sets;
 
 public class PrismListUtils {
 
-    public static <T extends EntityOpportunityCategoryDTO<?>> void processRowDescriptors(Set<T> entities, Map<String, Integer> summaries) {
+    public static <T extends EntityOpportunityCategoryDTO> void processRowDescriptors(Set<T> entities, Map<String, Integer> summaries) {
         processRowDescriptors(entities, null, summaries);
     }
 
-    public static <T extends EntityOpportunityCategoryDTO<?>> void processRowDescriptors(Set<T> entities, Set<Integer> onlyAsPartnerEntityIds,
+    public static <T extends EntityOpportunityCategoryDTO> void processRowDescriptors(Set<T> entities, Set<Integer> onlyAsPartnerEntityIds,
             Map<String, Integer> summaries) {
         processRowDescriptors(entities, onlyAsPartnerEntityIds, summaries, null);
     }
 
-    public static <T extends EntityOpportunityCategoryDTO<?>> void processRowDescriptors(Set<T> entities, Map<String, Integer> summaries,
+    public static <T extends EntityOpportunityCategoryDTO> void processRowDescriptors(Set<T> entities, Map<String, Integer> summaries,
             List<PrismOpportunityType> opportunityTypes) {
         processRowDescriptors(entities, null, summaries, opportunityTypes);
     }
 
-    public static <T extends EntityOpportunityCategoryDTO<?>> void processRowDescriptors(Set<T> entities, Set<Integer> onlyAsPartnerEntityIds,
+    public static <T extends EntityOpportunityCategoryDTO> void processRowDescriptors(Set<T> entities, Set<Integer> onlyAsPartnerEntityIds,
             Map<String, Integer> summaries, List<PrismOpportunityType> opportunityTypes) {
         boolean processOnlyAsPartner = false;
         boolean filterByOpportunityType = isNotEmpty(opportunityTypes);
@@ -73,7 +73,7 @@ public class PrismListUtils {
         return representations;
     }
 
-    public static <T extends EntityOpportunityCategoryDTO<?>> Map<Integer, BigDecimal> getRowsToReturn(Collection<T> entities,
+    public static <T extends EntityOpportunityCategoryDTO> Map<Integer, BigDecimal> getRowsToReturn(Collection<T> entities,
             PrismOpportunityCategory filterOpportunityCategory, Collection<PrismOpportunityType> filterOpportunityTypes, String lastSequenceIdentifier,
             Integer maxEntities) {
         Integer returned = 0;
@@ -84,7 +84,7 @@ public class PrismListUtils {
         String filterOpportunityCategoryName = filteringOpportunityCategory ? filterOpportunityCategory.name() : null;
 
         Map<Integer, BigDecimal> entityIndex = newLinkedHashMap();
-        for (EntityOpportunityCategoryDTO<?> entity : entities) {
+        for (EntityOpportunityCategoryDTO entity : entities) {
             if (returning) {
                 boolean included;
                 if (!(filteringOpportunityCategory || filteringOpportunityType)) {

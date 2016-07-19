@@ -2,7 +2,7 @@ package uk.co.alumeni.prism.dto;
 
 import org.joda.time.DateTime;
 
-public class ResourceOpportunityCategoryDTO extends EntityOpportunityCategoryDTO<ResourceOpportunityCategoryDTO> {
+public class ResourceOpportunityCategoryDTO extends EntityOpportunityCategoryDTO {
 
     private Boolean raisesUrgentFlag;
 
@@ -13,6 +13,8 @@ public class ResourceOpportunityCategoryDTO extends EntityOpportunityCategoryDTO
     private Integer creatorMessageCount;
 
     private DateTime updatedTimestamp;
+
+    private Boolean recentUpdate;
 
     private Boolean onlyAsPartner;
 
@@ -54,6 +56,14 @@ public class ResourceOpportunityCategoryDTO extends EntityOpportunityCategoryDTO
 
     public void setUpdatedTimestamp(DateTime updatedTimestamp) {
         this.updatedTimestamp = updatedTimestamp;
+    }
+
+    public Boolean getRecentUpdate() {
+        return recentUpdate;
+    }
+
+    public void setRecentUpdate(Boolean recentUpdate) {
+        this.recentUpdate = recentUpdate;
     }
 
     public Boolean getOnlyAsPartner() {

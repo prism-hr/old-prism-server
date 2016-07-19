@@ -1,6 +1,7 @@
 package uk.co.alumeni.prism.rest.controller;
 
-import java.util.Collections;
+import static java.util.Collections.emptyList;
+
 import java.util.List;
 
 import javax.inject.Inject;
@@ -29,7 +30,7 @@ import uk.co.alumeni.prism.rest.dto.advert.AdvertSettingsDTO;
 import uk.co.alumeni.prism.rest.dto.resource.ResourceParentDTO;
 import uk.co.alumeni.prism.rest.dto.resource.ResourceRelationDTO;
 import uk.co.alumeni.prism.rest.representation.advert.AdvertTargetRepresentation.AdvertTargetConnectionRepresentation;
-import uk.co.alumeni.prism.rest.representation.resource.ResourceLocationRepresentationRelation;
+import uk.co.alumeni.prism.rest.representation.resource.ResourceRepresentationLocationRelation;
 import uk.co.alumeni.prism.services.AdvertService;
 import uk.co.alumeni.prism.services.ResourceService;
 import uk.co.alumeni.prism.services.UserService;
@@ -59,13 +60,13 @@ public class AdvertController {
     }
 
     @RequestMapping(value = "/locations", method = RequestMethod.GET)
-    public List<ResourceLocationRepresentationRelation> getLocations(@ModelAttribute ResourceDescriptor resourceDescriptor, @PathVariable Integer resourceId) {
+    public List<ResourceRepresentationLocationRelation> getLocations(@ModelAttribute ResourceDescriptor resourceDescriptor, @PathVariable Integer resourceId) {
         Advert advert = advertService.getAdvert(resourceDescriptor.getResourceScope(), resourceId);
         AdvertCategories categories = advertService.getAdvertCategories(advert);
         if (categories != null) {
-            return advertMapper.getAdvertLocationRepresentations(advert, categories);
+            return advertMapper.getAdvertLocationRepresentations(advert, categories, userService.getCurrentUser());
         }
-        return Collections.emptyList();
+        return emptyList();
     }
 
     @RequestMapping(value = "/details", method = RequestMethod.PUT)
@@ -83,26 +84,26 @@ public class AdvertController {
     @RequestMapping(value = "/address", method = RequestMethod.PUT)
     public void updateAddress(@ModelAttribute ResourceDescriptor resourceDescriptor, @PathVariable Integer resourceId, @Valid @RequestBody AddressDTO addressDTO) {
         Resource resource = resourceService.getById(resourceDescriptor.getResourceScope(), resourceId);
-        advertService.updateAddress(resource.getParentResource(), resource.getAdvert(), addressDTO);
+        advertService.updateAdvertAddress(resource.getAdvert(), addressDTO);
     }
 
     @RequestMapping(value = "/locations", method = RequestMethod.PUT)
     public void updateLocations(@ModelAttribute ResourceDescriptor resourceDescriptor, @PathVariable Integer resourceId,
             @Valid @RequestBody List<ResourceRelationDTO> locations) {
         ResourceOpportunity resource = (ResourceOpportunity) resourceService.getById(resourceDescriptor.getResourceScope(), resourceId);
-        advertService.updateLocations(resource, locations);
+        advertService.updateAdvertLocations(resource, locations);
     }
 
     @RequestMapping(value = "/categories", method = RequestMethod.PUT)
     public void updateCategories(@ModelAttribute ResourceDescriptor resourceDescriptor, @PathVariable Integer resourceId,
             @Valid @RequestBody AdvertCategoriesDTO categoriesDTO) {
-        advertService.updateCategories(resourceDescriptor.getResourceScope(), resourceId, categoriesDTO);
+        advertService.updateAdvertCategories(resourceDescriptor.getResourceScope(), resourceId, categoriesDTO);
     }
 
     @RequestMapping(value = "/competences", method = RequestMethod.PUT)
     public void updateCompetences(@ModelAttribute ResourceDescriptor resourceDescriptor, @PathVariable Integer resourceId,
             @Valid @RequestBody List<AdvertCompetenceDTO> competencesDTO) {
-        advertService.updateCompetences(resourceDescriptor.getResourceScope(), resourceId, competencesDTO);
+        advertService.updateAdvertCompetences(resourceDescriptor.getResourceScope(), resourceId, competencesDTO);
     }
 
     @ModelAttribute

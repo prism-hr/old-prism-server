@@ -1,5 +1,6 @@
 package uk.co.alumeni.prism.services;
 
+import static com.google.common.base.Objects.equal;
 import static com.google.common.collect.Lists.newArrayList;
 import static com.google.common.collect.Lists.newLinkedList;
 import static com.google.common.collect.Maps.newHashMap;
@@ -19,6 +20,7 @@ import static org.apache.commons.lang.WordUtils.capitalize;
 import static org.apache.commons.lang3.ArrayUtils.isEmpty;
 import static org.joda.time.DateTime.now;
 import static org.springframework.beans.BeanUtils.instantiate;
+import static org.springframework.security.core.context.SecurityContextHolder.getContext;
 import static uk.co.alumeni.prism.PrismConstants.ADDRESS_LOCATION_PRECISION;
 import static uk.co.alumeni.prism.PrismConstants.RATING_PRECISION;
 import static uk.co.alumeni.prism.PrismConstants.SYSTEM_NOTIFICATION_INTERVAL;
@@ -46,7 +48,6 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Objects;
 import java.util.Set;
 
 import javax.annotation.PostConstruct;
@@ -60,7 +61,6 @@ import org.joda.time.DateTime;
 import org.springframework.beans.BeanUtils;
 import org.springframework.context.ApplicationContext;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.BeanPropertyBindingResult;
@@ -191,7 +191,7 @@ public class UserService {
     }
 
     public User getCurrentUser() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        Authentication authentication = getContext().getAuthentication();
         if (authentication != null && authentication.getDetails() instanceof User) {
             User user = (User) authentication.getDetails();
             user = getById(user.getId());
@@ -328,7 +328,7 @@ public class UserService {
 
     public void unlinkUser(Integer userId) {
         User user = getById(userId);
-        if (Objects.equals(user.getId(), user.getParentUser().getId())) {
+        if (equal(user.getId(), user.getParentUser().getId())) {
             User newParent = getCurrentUser();
             List<User> childUsers = Lists.asList(user, user.getChildUsers().toArray(new User[user.getChildUsers().size()]));
             for (User childUser : childUsers) {
@@ -405,7 +405,7 @@ public class UserService {
     }
 
     public String getSecuredUserEmailAddress(String email, User currentUser, boolean forceReturnEmail) {
-        return (forceReturnEmail || Objects.equals(email, (currentUser == null ? null : currentUser.getEmail()))) ? email : getObfuscatedEmail(email);
+        return (forceReturnEmail || equal(email, (currentUser == null ? null : currentUser.getEmail()))) ? email : getObfuscatedEmail(email);
     }
 
     public List<User> getResourceUsers(Resource resource, PrismRole role) {
@@ -554,15 +554,15 @@ public class UserService {
         return newLinkedList(profiles);
     }
 
-    public List<ProfileListRowDTO> getUserProfiles(HashMultimap<PrismScope, Integer> resourceIndex, ProfileListFilterDTO filter, User user,
+    public List<ProfileListRowDTO> getUserProfiles(HashMultimap<PrismScope, Integer> resourceIndex, ProfileListFilterDTO filter, User currentUser,
             String lastSequenceIdentifier) {
         if (isTrue(filter.getWithNewMessages())) {
-            filter.setUserIds(userDAO.getUsersWithUnreadMessages(user));
+            filter.setUserIds(userDAO.getUsersWithUnreadMessages(currentUser));
         }
 
         Set<ProfileListRowDTO> profiles = newLinkedHashSet();
         resourceIndex.keySet()
-                .forEach(scope -> profiles.addAll(userDAO.getUserProfiles(scope, resourceIndex.get(scope), filter, user, lastSequenceIdentifier)));
+                .forEach(scope -> profiles.addAll(userDAO.getUserProfiles(scope, resourceIndex.get(scope), filter, currentUser, lastSequenceIdentifier)));
 
         return newLinkedList(profiles);
     }
@@ -591,7 +591,7 @@ public class UserService {
     }
 
     public Set<Integer> getUsersWithActivitiesToCache(PrismScope scope, Collection<Integer> resources, DateTime baseline) {
-        Set<Integer> users = Sets.newHashSet();
+        Set<Integer> users = newHashSet();
 
         scopeService.getEnclosingScopesDescending(scope, SYSTEM).forEach(roleScope ->
                 users.addAll(userDAO.getUsersWithActivitiesToCache(scope, resources, roleScope)));

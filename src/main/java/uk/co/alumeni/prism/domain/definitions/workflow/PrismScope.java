@@ -7,7 +7,6 @@ import static com.google.common.collect.Lists.newArrayList;
 import static com.google.common.collect.Sets.newLinkedHashSet;
 import static java.time.Month.APRIL;
 import static java.time.Month.OCTOBER;
-import static jersey.repackaged.com.google.common.collect.Maps.newHashMap;
 import static org.apache.commons.lang.ArrayUtils.contains;
 import static org.apache.commons.lang3.StringUtils.isNotEmpty;
 import static uk.co.alumeni.prism.domain.definitions.PrismOpportunityCategory.EXPERIENCE;
@@ -19,6 +18,7 @@ import static uk.co.alumeni.prism.domain.definitions.PrismResourceContext.UNIVER
 
 import java.time.Month;
 import java.util.AbstractMap.SimpleEntry;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -108,9 +108,9 @@ public enum PrismScope implements EnumDefinition<uk.co.alumeni.prism.enums.Prism
 
     private PrismScopeDefinition definition;
 
-    private static Map<PrismScope, PrismScope> parentScopes = newHashMap();
+    private static Map<PrismScope, PrismScope> parentScopes = new HashMap<>();
 
-    private static Map<Entry<PrismScope, PrismResourceContext>, PrismScopeCreationDefault> defaults = newHashMap();
+    private static Map<Entry<PrismScope, PrismResourceContext>, PrismScopeCreationDefault> defaults = new HashMap<>();
 
     static {
         PrismScope parentScope = null;

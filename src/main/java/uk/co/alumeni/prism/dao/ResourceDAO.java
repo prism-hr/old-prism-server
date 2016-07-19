@@ -5,16 +5,19 @@ import static com.google.common.collect.Lists.newArrayList;
 import static com.google.common.collect.Sets.newHashSet;
 import static java.util.Arrays.asList;
 import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
+import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.apache.commons.lang3.StringUtils.isNotEmpty;
 import static org.hibernate.transform.Transformers.aliasToBean;
 import static uk.co.alumeni.prism.dao.WorkflowDAO.getLikeConstraint;
 import static uk.co.alumeni.prism.dao.WorkflowDAO.getMatchMode;
 import static uk.co.alumeni.prism.dao.WorkflowDAO.getMatchingUserConstraint;
 import static uk.co.alumeni.prism.dao.WorkflowDAO.getReadOrUnreadMessageConstraint;
-import static uk.co.alumeni.prism.dao.WorkflowDAO.getResourceParentConnectableConstraint;
+import static uk.co.alumeni.prism.dao.WorkflowDAO.getResourceParentManageableStateConstraint;
 import static uk.co.alumeni.prism.dao.WorkflowDAO.getUnreadMessageConstraint;
 import static uk.co.alumeni.prism.dao.WorkflowDAO.getVisibleMessageConstraint;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismPartnershipState.ENDORSEMENT_PROVIDED;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRole.PrismRoleCategory.ADMINISTRATOR;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRole.PrismRoleCategory.RECRUITER;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.APPLICATION;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.DEPARTMENT;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.INSTITUTION;
@@ -34,6 +37,7 @@ import java.util.Set;
 import javax.inject.Inject;
 
 import org.apache.commons.lang3.BooleanUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -80,6 +84,7 @@ import uk.co.alumeni.prism.dto.ResourceListRowDTO;
 import uk.co.alumeni.prism.dto.ResourceRatingSummaryDTO;
 import uk.co.alumeni.prism.dto.ResourceRoleDTO;
 import uk.co.alumeni.prism.dto.ResourceSimpleDTO;
+import uk.co.alumeni.prism.dto.ResourceUpdateDTO;
 import uk.co.alumeni.prism.rest.dto.resource.ResourceListFilterDTO;
 import uk.co.alumeni.prism.rest.representation.resource.ResourceRepresentationIdentity;
 import uk.co.alumeni.prism.rest.representation.resource.ResourceRepresentationRobotMetadata;
@@ -144,8 +149,7 @@ public class ResourceDAO {
     }
 
     public List<ResourceListRowDTO> getResourceList(User user, PrismScope scope, List<PrismScope> parentScopes, Collection<Integer> resourceIds,
-            ResourceListFilterDTO filter,
-            boolean hasRedactions) {
+            ResourceListFilterDTO filter, boolean hasRedactions) {
         if (isNotEmpty(resourceIds)) {
             String scopeName = scope.getLowerCamelName();
             Criteria criteria = sessionFactory.getCurrentSession().createCriteria(scope.getResourceClass(), scopeName);
@@ -191,6 +195,7 @@ public class ResourceDAO {
             projectionList.add(Projections.property("state.id"), "stateId") //
                     .add(Projections.property("createdTimestamp"), "createdTimestamp") //
                     .add(Projections.property("updatedTimestamp"), "updatedTimestamp") //
+                    .add(Projections.property("recentUpdate"), "recentUpdate") //
                     .add(Projections.property("sequenceIdentifier"), "sequenceIdentifier"); //
 
             if (parentScope) {
@@ -444,6 +449,7 @@ public class ResourceDAO {
                 .createAlias(resourceReference, "resource", JoinType.INNER_JOIN) //
                 .createAlias("resource.userRoles", "userRole", JoinType.INNER_JOIN) //
                 .createAlias("userRole.role", "role", JoinType.INNER_JOIN) //
+                .createAlias("state", "state", JoinType.INNER_JOIN) //
                 .add(Restrictions.eq(resourceReference, resource)) //
                 .add(getResourceParentConnectableConstraint(resourceScope, user)) //
                 .uniqueResult();
@@ -451,20 +457,20 @@ public class ResourceDAO {
 
     public List<ResourceConnectionDTO> getResourcesForWhichUserCanConnect(User user, PrismScope resourceScope, String searchTerm) {
         ProjectionList projections = Projections.projectionList() //
-                .add(Projections.groupProperty("institution.id").as("institutionId")) //
+                .add(Projections.property("institution.id").as("institutionId")) //
                 .add(Projections.property("institution.name").as("institutionName")) //
                 .add(Projections.property("institution.logoImage.id").as("logoImageId"));
 
         boolean isDepartment = resourceScope.equals(DEPARTMENT);
         if (isDepartment) {
-            projections.add(Projections.groupProperty("department.id").as("departmentId")) //
+            projections.add(Projections.property("department.id").as("departmentId")) //
                     .add(Projections.property("department.name").as("departmentName"));
 
         }
 
         String resourceReference = resourceScope.getLowerCamelName();
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(ResourceState.class) //
-                .setProjection(projections //
+                .setProjection(projections.add(Projections.groupProperty(resourceReference + ".advert.id").as("advertId")) //
                         .add(Projections.property(resourceReference + ".opportunityCategories").as("opportunityCategories"))) //
                 .createAlias(resourceReference, resourceReference, JoinType.INNER_JOIN);
 
@@ -474,6 +480,7 @@ public class ResourceDAO {
 
         criteria.createAlias(resourceReference + ".userRoles", "userRole", JoinType.INNER_JOIN) //
                 .createAlias("userRole.role", "role", JoinType.INNER_JOIN) //
+                .createAlias("state", "state", JoinType.INNER_JOIN) //
                 .add(getResourceParentConnectableConstraint(resourceScope, user));
 
         if (!isNullOrEmpty(searchTerm)) {
@@ -669,20 +676,22 @@ public class ResourceDAO {
                 .list();
     }
 
-    public Set<Integer> getResourcesWithActivitiesToCache(PrismScope scope, DateTime baseline) {
+    public Set<ResourceUpdateDTO> getResourcesWithActivitiesToCache(PrismScope scope, DateTime baseline, DateTime updateBaseline) {
         Session session = sessionFactory.getCurrentSession();
         Class<? extends Resource> resourceClass = scope.getResourceClass();
-        Set<Integer> resources = newHashSet(session.createCriteria(resourceClass) //
-                .setProjection(Projections.groupProperty("id")) //
+        Set<ResourceUpdateDTO> resources = newHashSet();
+        resources.addAll((List<ResourceUpdateDTO>) session.createCriteria(resourceClass) //
+                .setProjection(getResourceUpdateProjection(EMPTY)) //
                 .createAlias("comments", "comment", JoinType.INNER_JOIN) //
                 .add(Restrictions.le("comment.submittedTimestamp", baseline)) //
                 .add(Restrictions.disjunction() //
                         .add(Restrictions.isNull("activityCachedTimestamp")) //
                         .add(Restrictions.gtProperty("comment.submittedTimestamp", "activityCachedTimestamp"))) //
+                .setResultTransformer(Transformers.aliasToBean(ResourceUpdateDTO.class)) //
                 .list());
 
-        resources.addAll(session.createCriteria(resourceClass) //
-                .setProjection(Projections.groupProperty("id")) //
+        resources.addAll((List<ResourceUpdateDTO>) session.createCriteria(resourceClass) //
+                .setProjection(getResourceUpdateProjection(EMPTY)) //
                 .createAlias("comments", "comment", JoinType.INNER_JOIN) //
                 .createAlias("comment.thread", "thread", JoinType.INNER_JOIN) //
                 .createAlias("thread.messages", "message", JoinType.INNER_JOIN) //
@@ -690,22 +699,31 @@ public class ResourceDAO {
                 .add(Restrictions.disjunction() //
                         .add(Restrictions.isNull("activityCachedTimestamp")) //
                         .add(Restrictions.gtProperty("message.createdTimestamp", "activityCachedTimestamp"))) //
+                .setResultTransformer(Transformers.aliasToBean(ResourceUpdateDTO.class)) //
+                .list());
+
+        resources.addAll((List<ResourceUpdateDTO>) session.createCriteria(resourceClass) //
+                .setProjection(getResourceUpdateProjection(EMPTY)) //
+                .add(Restrictions.eq("recentUpdate", true)) //
+                .add(Restrictions.lt("updatedTimestamp", updateBaseline)) //
+                .setResultTransformer(Transformers.aliasToBean(ResourceUpdateDTO.class)) //
                 .list());
 
         if (scope.getScopeCategory().equals(ORGANIZATION)) {
             String scopeReference = scope.getLowerCamelName();
-            resources.addAll(session.createCriteria(AdvertTarget.class) //
-                    .setProjection(Projections.groupProperty("resource.id")) //
+            resources.addAll((List<ResourceUpdateDTO>) session.createCriteria(AdvertTarget.class) //
+                    .setProjection(getResourceUpdateProjection("resource")) //
                     .createAlias("acceptAdvert", "acceptAdvert", JoinType.INNER_JOIN) //
                     .createAlias("acceptAdvert." + scopeReference, "resource", JoinType.INNER_JOIN) //
                     .add(Restrictions.le("createdTimestamp", baseline)) //
                     .add(Restrictions.disjunction() //
                             .add(Restrictions.isNull("resource.activityCachedTimestamp"))
                             .add(Restrictions.gtProperty("createdTimestamp", "resource.activityCachedTimestamp"))) //
+                    .setResultTransformer(Transformers.aliasToBean(ResourceUpdateDTO.class)) //
                     .list());
 
-            resources.addAll(session.createCriteria(UserRole.class) //
-                    .setProjection(Projections.groupProperty("resource.id")) //
+            resources.addAll((List<ResourceUpdateDTO>) session.createCriteria(UserRole.class) //
+                    .setProjection(getResourceUpdateProjection("resource")) //
                     .createAlias(scopeReference, "resource", JoinType.INNER_JOIN) //
                     .createAlias("role", "role", JoinType.INNER_JOIN) //
                     .add(Restrictions.le("assignedTimestamp", baseline)) //
@@ -713,6 +731,7 @@ public class ResourceDAO {
                             .add(Restrictions.isNull("resource.activityCachedTimestamp"))
                             .add(Restrictions.gtProperty("assignedTimestamp", "resource.activityCachedTimestamp"))) //
                     .add(Restrictions.in("role.id", PrismEnumUtils.values(PrismRole.class, scope, "VIEWER_UNVERIFIED", "STUDENT_UNVERIFIED"))) //
+                    .setResultTransformer(Transformers.aliasToBean(ResourceUpdateDTO.class)) //
                     .list());
         }
 
@@ -725,6 +744,16 @@ public class ResourceDAO {
                         + "set activityCachedTimestamp = :baseline " //
                         + "where id in (:resources)") //
                 .setParameter("baseline", baseline) //
+                .setParameterList("resources", resources) //
+                .executeUpdate();
+    }
+
+    public void setResourceRecentUpdate(PrismScope scope, Collection<Integer> resources, Boolean recentUpdate) {
+        sessionFactory.getCurrentSession().createQuery( //
+                "update " + scope.getUpperCamelName() + " " //
+                        + "set recentUpdate = :recentUpdate " //
+                        + "where id in (:resources)") //
+                .setParameter("recentUpdate", recentUpdate) //
                 .setParameterList("resources", resources) //
                 .executeUpdate();
     }
@@ -877,6 +906,23 @@ public class ResourceDAO {
                 .add(getReadOrUnreadMessageConstraint(read)) //
                 .setResultTransformer(aliasToBean(ActivityMessageCountDTO.class)) //
                 .list();
+    }
+
+    private static Junction getResourceParentConnectableConstraint(PrismScope resourceScope, User user) {
+        return Restrictions.conjunction() //
+                .add(getResourceParentManageableStateConstraint("state")) //
+                .add(Restrictions.disjunction() //
+                        .add(Restrictions.eq("role.roleCategory", ADMINISTRATOR)) //
+                        .add(Restrictions.eq("role.roleCategory", RECRUITER))) //
+                .add(Restrictions.eq("userRole.user", user));
+    }
+
+    private static ProjectionList getResourceUpdateProjection(String resourceReference) {
+        resourceReference = StringUtils.isEmpty(resourceReference) ? EMPTY : resourceReference + ".";
+        return Projections.projectionList() //
+                .add(Projections.groupProperty(resourceReference + "id").as("id")) //
+                .add(Projections.groupProperty(resourceReference + "recentUpdate").as("recentUpdate")) //
+                .add(Projections.groupProperty(resourceReference + "updatedTimestamp").as("updatedTimestamp"));
     }
 
 }

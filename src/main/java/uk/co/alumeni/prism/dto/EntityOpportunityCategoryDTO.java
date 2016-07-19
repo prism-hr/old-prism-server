@@ -13,7 +13,7 @@ import uk.co.alumeni.prism.domain.definitions.PrismOpportunityType;
 
 import com.google.common.base.Objects;
 
-public class EntityOpportunityCategoryDTO<T extends EntityOpportunityCategoryDTO<?>> implements Comparable<T> {
+public class EntityOpportunityCategoryDTO implements Comparable<EntityOpportunityCategoryDTO> {
 
     private Integer id;
 
@@ -71,7 +71,6 @@ public class EntityOpportunityCategoryDTO<T extends EntityOpportunityCategoryDTO
     }
 
     @Override
-    @SuppressWarnings("unchecked")
     public boolean equals(Object object) {
         if (object == null) {
             return false;
@@ -79,7 +78,7 @@ public class EntityOpportunityCategoryDTO<T extends EntityOpportunityCategoryDTO
         if (!getClass().equals(object.getClass())) {
             return false;
         }
-        T other = (T) object;
+        EntityOpportunityCategoryDTO other = (EntityOpportunityCategoryDTO) object;
         return equal(id, other.getId());
     }
 
@@ -90,7 +89,7 @@ public class EntityOpportunityCategoryDTO<T extends EntityOpportunityCategoryDTO
     }
 
     @Override
-    public int compareTo(T other) {
+    public int compareTo(EntityOpportunityCategoryDTO other) {
         return compare(other.toString(), toString());
     }
 

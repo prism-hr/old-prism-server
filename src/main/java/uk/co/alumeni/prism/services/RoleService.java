@@ -125,7 +125,7 @@ public class RoleService {
     }
 
     public void acceptUnnacceptedUserRoles(User user, DateTime baseline) {
-        roleDAO.getUnnacceptedRolesForUser(user).forEach(userRole -> {
+        roleDAO.getUnacceptedRolesForUser(user).forEach(userRole -> {
             userRole.setAcceptedTimestamp(baseline);
             activityService.setSequenceIdentifier(userRole, baseline);
         });

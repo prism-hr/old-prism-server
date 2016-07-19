@@ -1,14 +1,16 @@
 package uk.co.alumeni.prism.services;
 
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.DEPARTMENT;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.INSTITUTION;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.PROGRAM;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.PROJECT;
-
-import java.io.StringWriter;
-import java.io.UnsupportedEncodingException;
-import java.util.List;
-import java.util.Map;
+import com.google.common.collect.Maps;
+import org.joda.time.DateTime;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Text;
+import uk.co.alumeni.prism.PrismConstants;
+import uk.co.alumeni.prism.domain.definitions.workflow.PrismScope;
+import uk.co.alumeni.prism.rest.representation.resource.ResourceRepresentationSitemap;
 
 import javax.inject.Inject;
 import javax.xml.parsers.DocumentBuilder;
@@ -19,20 +21,12 @@ import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
+import java.io.StringWriter;
+import java.io.UnsupportedEncodingException;
+import java.util.List;
+import java.util.Map;
 
-import org.joda.time.DateTime;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.Text;
-
-import uk.co.alumeni.prism.PrismConstants;
-import uk.co.alumeni.prism.domain.definitions.workflow.PrismScope;
-import uk.co.alumeni.prism.rest.representation.resource.ResourceRepresentationSitemap;
-
-import com.google.common.collect.Maps;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.*;
 
 @Service
 @Transactional
@@ -64,7 +58,6 @@ public class SearchEngineOptimisationService {
         Map<PrismScope, DateTime> latestUpdateTimestamps = Maps.newLinkedHashMap();
 
         latestUpdateTimestamps.put(PROJECT, resourceService.getLatestUpdatedTimestampSitemap(PROJECT));
-        latestUpdateTimestamps.put(PROGRAM, resourceService.getLatestUpdatedTimestampSitemap(PROGRAM));
         latestUpdateTimestamps.put(DEPARTMENT, resourceService.getLatestUpdatedTimestampSitemap(DEPARTMENT));
         latestUpdateTimestamps.put(INSTITUTION, resourceService.getLatestUpdatedTimestampSitemap(INSTITUTION));
 
@@ -132,7 +125,7 @@ public class SearchEngineOptimisationService {
             Element location = document.createElement("loc");
             url.appendChild(location);
 
-            Text locationString = document.createTextNode(applicationUrl + "/" + PrismConstants.ANGULAR_HASH + "/?" + scope.getLowerCamelName() + "="
+            Text locationString = document.createTextNode(applicationUrl + "/" + PrismConstants.ANGULAR_HASH + "/applicant/main/?" + scope.getLowerCamelName() + "="
                     + sitemapEntryDTO.getId());
             location.appendChild(locationString);
 

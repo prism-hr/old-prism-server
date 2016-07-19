@@ -163,7 +163,7 @@ public class MailSender {
                 Session mailSession = getInstance(mailSessionProperties);
 
                 MimeMessage message = new MimeMessage(mailSession);
-                message.setFrom(new InternetAddress(emailSource));
+                message.setFrom(new InternetAddress(emailSource, "prism.hr"));
                 message.setRecipient(Message.RecipientType.TO, convertToInternetAddresses(recipient));
                 message.setSubject(subject);
 
@@ -214,7 +214,7 @@ public class MailSender {
 
         model.put("SUBJECT", subject);
         model.put("CONTENT", content);
-        return prismTemplateUtils.getContentFromLocation("email_template", "email/email_template.ftl", model);
+        return prismTemplateUtils.getContentFromLocation("email/email_template.ftl", model);
     }
 
     private Map<String, Object> createNotificationModel(NotificationDefinition notificationDefinition, NotificationDefinitionDTO notificationDefinitionDTO,

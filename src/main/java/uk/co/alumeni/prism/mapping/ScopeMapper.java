@@ -24,7 +24,6 @@ import java.util.Set;
 import javax.inject.Inject;
 
 import org.hibernate.criterion.Projections;
-import org.joda.time.DateTime;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -95,7 +94,6 @@ public class ScopeMapper {
 
     public List<ResourceActivityRepresentation> getResourceActivityRepresentation(User user, Map<PrismScope, PrismRoleCategory> defaultRoleCategories) {
         System system = systemService.getSystem();
-        DateTime baseline = new DateTime().minusDays(1);
 
         List<PrismScope> scopesCreatorFor = newArrayList();
         List<PrismRoleCategory> creatorRoleCategories = asList(ADMINISTRATOR, RECRUITER);
@@ -114,7 +112,7 @@ public class ScopeMapper {
                             .add(Projections.groupProperty("resource.id").as("id")) //
                             .add(Projections.groupProperty("stateAction.action.id").as("actionId")) //
                             .add(Projections.property("stateAction.raisesUrgentFlag").as("raisesUrgentFlag")) //
-                            .add(Projections.property("resource.updatedTimestamp").as("updatedTimestamp")) //
+                            .add(Projections.property("resource.recentUpdate").as("recentUpdate")) //
                             .add(Projections.property("resource.sequenceIdentifier").as("sequenceIdentifier")),
                     ResourceActionOpportunityCategoryDTO.class);
 
@@ -135,7 +133,7 @@ public class ScopeMapper {
                         urgentCounts.put(actionId, existingCount == null ? 1 : existingCount + 1);
                     }
 
-                    if (resourceAction.getUpdatedTimestamp().isAfter(baseline)) {
+                    if (isTrue(resourceAction.getRecentUpdate())) {
                         updateResources.add(resourceId);
                     }
 

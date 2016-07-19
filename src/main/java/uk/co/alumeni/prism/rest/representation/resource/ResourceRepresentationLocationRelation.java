@@ -3,7 +3,7 @@ package uk.co.alumeni.prism.rest.representation.resource;
 import static org.apache.commons.lang3.ObjectUtils.compare;
 import uk.co.alumeni.prism.rest.representation.address.AddressRepresentation;
 
-public class ResourceLocationRepresentationRelation extends ResourceRepresentationRelation {
+public class ResourceRepresentationLocationRelation extends ResourceRepresentationRelation {
 
     private AddressRepresentation address;
 
@@ -25,11 +25,21 @@ public class ResourceLocationRepresentationRelation extends ResourceRepresentati
         this.address = address;
     }
 
+    public ResourceRepresentationLocationRelation withAddress(AddressRepresentation address) {
+        this.address = address;
+        return this;
+    }
+
+    public ResourceRepresentationLocationRelation withSelected(Boolean selected) {
+        this.selected = selected;
+        return this;
+    }
+
     @Override
     public int compareTo(ResourceRepresentationIdentity other) {
         int compare = super.compareTo(other);
-        if (compare == 0 && ResourceLocationRepresentationRelation.class.isAssignableFrom(other.getClass())) {
-            return compare(address, ((ResourceLocationRepresentationRelation) other).getAddress());
+        if (compare == 0 && ResourceRepresentationLocationRelation.class.isAssignableFrom(other.getClass())) {
+            return compare(address, ((ResourceRepresentationLocationRelation) other).getAddress());
         }
         return compare;
     }

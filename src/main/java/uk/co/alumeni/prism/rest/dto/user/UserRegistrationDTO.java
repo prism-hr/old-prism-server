@@ -1,9 +1,10 @@
 package uk.co.alumeni.prism.rest.dto.user;
 
+import org.hibernate.validator.constraints.NotEmpty;
+import uk.co.alumeni.prism.rest.dto.comment.CommentDTO;
+
 import javax.validation.Valid;
 import javax.validation.constraints.Size;
-
-import uk.co.alumeni.prism.rest.dto.comment.CommentDTO;
 
 public class UserRegistrationDTO extends UserDTO {
 
@@ -14,6 +15,9 @@ public class UserRegistrationDTO extends UserDTO {
 
     @Valid
     private CommentDTO comment;
+
+    @NotEmpty
+    private String recaptchaResponse;
 
     public String getActivationCode() {
         return activationCode;
@@ -37,6 +41,14 @@ public class UserRegistrationDTO extends UserDTO {
 
     public void setComment(CommentDTO comment) {
         this.comment = comment;
+    }
+
+    public String getRecaptchaResponse() {
+        return recaptchaResponse;
+    }
+
+    public void setRecaptchaResponse(String recaptchaResponse) {
+        this.recaptchaResponse = recaptchaResponse;
     }
 
     public UserRegistrationDTO withFirstName(String firstName) {

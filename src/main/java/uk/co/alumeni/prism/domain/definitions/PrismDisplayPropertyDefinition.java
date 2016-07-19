@@ -1238,11 +1238,10 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     SYSTEM_VALIDATION_MAX(PrismDisplayPropertyCategory.SYSTEM_VALIDATION_ERROR, "This field must be at most {1}."),
     SYSTEM_VALIDATION_MINLENGTH(PrismDisplayPropertyCategory.SYSTEM_VALIDATION_ERROR, "This field must be at least {1} character(s)."),
     SYSTEM_VALIDATION_MAXLENGTH(PrismDisplayPropertyCategory.SYSTEM_VALIDATION_ERROR, "This field must be less than {1} character(s)."),
-    SYSTEM_VALIDATION_MIN_ITEMS(PrismDisplayPropertyCategory.SYSTEM_VALIDATION_ERROR, "You have to select at least 1 element."), // FIXME
-                                                                                                                                 // soon,
-                                                                                                                                 // hack
-                                                                                                                                 // for
-                                                                                                                                 // ui-select
+
+    SYSTEM_VALIDATION_MIN_ITEMS(PrismDisplayPropertyCategory.SYSTEM_VALIDATION_ERROR, "You have to select at least 1 element."),
+    // FIXME soon, hack for ui-select
+
     SYSTEM_VALIDATION_MAX_ITEMS(PrismDisplayPropertyCategory.SYSTEM_VALIDATION_ERROR, "You have to select at most {1} element(s)."),
     SYSTEM_VALIDATION_PATTERN(PrismDisplayPropertyCategory.SYSTEM_VALIDATION_ERROR, "This field is invalid."),
     SYSTEM_VALIDATION_URL(PrismDisplayPropertyCategory.SYSTEM_VALIDATION_ERROR, "This field must be a valid URL."),
@@ -1370,6 +1369,8 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     SYSTEM_HTML_GENERAL_HEADER_PROFILE(PrismDisplayPropertyCategory.SYSTEM_GENERAL, "Profile"),
     SYSTEM_HTML_GENERAL_HEADER_LOGOUT(PrismDisplayPropertyCategory.SYSTEM_GENERAL, "Logout"),
     SYSTEM_HTML_GENERAL_ENQUIRY_SUBJECT(PrismDisplayPropertyCategory.SYSTEM_GENERAL, "Question Regarding UCL Prism Application {{code}}"),
+    SYSTEM_HTML_GENERAL_ABOUT(PrismDisplayPropertyCategory.SYSTEM_GENERAL, "About"),
+    SYSTEM_HTML_GENERAL_CONTACT(PrismDisplayPropertyCategory.SYSTEM_GENERAL, "Contact Us"),
     SYSTEM_HTML_GENERAL_PRIVACY_POLICY(PrismDisplayPropertyCategory.SYSTEM_GENERAL, "Privacy Policy"),
     SYSTEM_HTML_GENERAL_TERMS_AND_CONDITIONS(PrismDisplayPropertyCategory.SYSTEM_GENERAL, "Terms & Conditions"),
     SYSTEM_HTML_GENERAL_MEMBER_UNIVERSITY(PrismDisplayPropertyCategory.SYSTEM_GENERAL, " Are you part of this university?"),
@@ -1380,6 +1381,7 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     SYSTEM_HTML_GENERAL_CONNECT_UNIVERSITY(PrismDisplayPropertyCategory.SYSTEM_GENERAL, "Connect with Universities"),
     SYSTEM_HTML_GENERAL_JOIN_UNIVERSITY(PrismDisplayPropertyCategory.SYSTEM_GENERAL, "Join University"),
     SYSTEM_HTML_GENERAL_CONNECT_EMPLOYER(PrismDisplayPropertyCategory.SYSTEM_GENERAL, "Connect with Employers"),
+    SYSTEM_HTML_GENERAL_PRIVATE(PrismDisplayPropertyCategory.SYSTEM_GENERAL, "Private"),
     SYSTEM_HTML_SEARCH_OPPORTUNITIES(PrismDisplayPropertyCategory.SYSTEM_GENERAL, "Search Opportunities"),
     SYSTEM_HTML_SEARCH_CONNECTIONS(PrismDisplayPropertyCategory.SYSTEM_GENERAL, "Search Connections"),
     SYSTEM_HTML_ADVERTISE_OPPORTUNITIES(PrismDisplayPropertyCategory.SYSTEM_GENERAL, "Advertise Opportunity"),
@@ -1422,6 +1424,22 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     SYSTEM_HTML_LOOKUP_RETURN_TO_SEARCH(PrismDisplayPropertyCategory.SYSTEM_GENERAL, "Return to search"),
     SYSTEM_HTML_LOOKUP_DONT_KNOW_ANY(PrismDisplayPropertyCategory.SYSTEM_GENERAL, "I don't know any one"),
     SYSTEM_HTML_LOOKUP_NOT_SPECIFIED(PrismDisplayPropertyCategory.SYSTEM_GENERAL, "User not specified"),
+
+    /*
+     * *************** SYSTEM CONTACT SECTION *********************
+     */
+
+    SYSTEM_CONTACT_NAME_LABEL(PrismDisplayPropertyCategory.SYSTEM_CONTACT_SECTION, "Your Name"),
+    SYSTEM_CONTACT_NAME_HINT(PrismDisplayPropertyCategory.SYSTEM_CONTACT_SECTION, "Please enter your name."),
+    SYSTEM_CONTACT_EMAIL_LABEL(PrismDisplayPropertyCategory.SYSTEM_CONTACT_SECTION, "Your Email"),
+    SYSTEM_CONTACT_EMAIL_HINT(PrismDisplayPropertyCategory.SYSTEM_CONTACT_SECTION, "Please enter your e-mail address."),
+    SYSTEM_CONTACT_PHONE_LABEL(PrismDisplayPropertyCategory.SYSTEM_CONTACT_SECTION, "Your Telephone Number"),
+    SYSTEM_CONTACT_PHONE_HINT(PrismDisplayPropertyCategory.SYSTEM_CONTACT_SECTION, "Please enter your telephone number."),
+    SYSTEM_CONTACT_TITLE_LABEL(PrismDisplayPropertyCategory.SYSTEM_CONTACT_SECTION, "Title"),
+    SYSTEM_CONTACT_TITLE_HINT(PrismDisplayPropertyCategory.SYSTEM_CONTACT_SECTION, "Please enter the title of your message."),
+    SYSTEM_CONTACT_CONTENT_LABEL(PrismDisplayPropertyCategory.SYSTEM_CONTACT_SECTION, "Content"),
+    SYSTEM_CONTACT_CONTENT_HINT(PrismDisplayPropertyCategory.SYSTEM_CONTACT_SECTION, "Please enter the content of your message."),
+    SYSTEM_CONTACT_SEND_BUTTON(PrismDisplayPropertyCategory.SYSTEM_CONTACT_SECTION, "Send Message!"),
 
     /*
      * *************** SYSTEM ACTIVITY SECTION *********************
@@ -1524,6 +1542,8 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     SYSTEM_OPPORTUNITIES_FILTER_DURATION(PrismDisplayPropertyCategory.SYSTEM_OPPORTUNITIES, "Duration"),
     SYSTEM_OPPORTUNITIES_FILTER_INSTITUTION_LABEL(PrismDisplayPropertyCategory.SYSTEM_OPPORTUNITIES, "Organization"),
     SYSTEM_OPPORTUNITIES_FILTER_CLEAR(PrismDisplayPropertyCategory.SYSTEM_OPPORTUNITIES, "Clear"),
+    SYSTEM_OPPORTUNITIES_ACCESS_PRIVATE(PrismDisplayPropertyCategory.SYSTEM_GENERAL, "To access private opportunities"),
+    SYSTEM_OPPORTUNITIES_LOADING(PrismDisplayPropertyCategory.SYSTEM_GENERAL, "Loading"),
     SYSTEM_OPPORTUNITIES_LOAD_MORE(PrismDisplayPropertyCategory.SYSTEM_OPPORTUNITIES, "Load More"),
     SYSTEM_OPPORTUNITIES_PROPERTY_CLOSING_DATE_LABEL(PrismDisplayPropertyCategory.SYSTEM_OPPORTUNITIES, "Closing Date"),
     SYSTEM_OPPORTUNITIES_PROPERTY_NO_CLOSING_DATE(PrismDisplayPropertyCategory.SYSTEM_OPPORTUNITIES, "No closing date"),
@@ -1554,6 +1574,7 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     SYSTEM_OPPORTUNITIES_ENQUIRE_WORK_EXPERIENCE(PrismDisplayPropertyCategory.SYSTEM_OPPORTUNITIES, "Work Experience"),
     SYSTEM_OPPORTUNITIES_ENQUIRE_SUBMIT(PrismDisplayPropertyCategory.SYSTEM_OPPORTUNITIES, "Submit"),
     SYSTEM_OPPORTUNITIES_APPLY_NOW(PrismDisplayPropertyCategory.SYSTEM_OPPORTUNITIES, "Apply Now"),
+    SYSTEM_OPPORTUNITIES_VIEW_APPLICATION(PrismDisplayPropertyCategory.SYSTEM_OPPORTUNITIES, "View Application"),
     SYSTEM_OPPORTUNITIES_NOT_ACCEPTING_APPLICATIONS(PrismDisplayPropertyCategory.SYSTEM_OPPORTUNITIES, "Not accepting applications at the current time."),
     SYSTEM_OPPORTUNITIES_NO_OPPORTUNITY(PrismDisplayPropertyCategory.SYSTEM_OPPORTUNITIES, "Can't find the opportunity that you're looking for?"),
     SYSTEM_OPPORTUNITIES_NO_EMPLOYER_DEPARTMENT(PrismDisplayPropertyCategory.SYSTEM_OPPORTUNITIES, "Can't find the department that you're looking for?"),
@@ -1738,6 +1759,8 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
             "Complete your advert, to help candidates understand whether they wish to apply."),
     SYSTEM_RESOURCE_APPLICATION_OPTIONS_HEADER(PrismDisplayPropertyCategory.SYSTEM_RESOURCE, "Application Options"),
     SYSTEM_RESOURCE_MANAGEMENT_HEADER(PrismDisplayPropertyCategory.SYSTEM_RESOURCE, "Resource Management"),
+    SYSTEM_RESOURCE_ADVERT_EMPLOYER(PrismDisplayPropertyCategory.SYSTEM_RESOURCE, "Employer"),
+    SYSTEM_RESOURCE_ADVERT_UNIVERSITY(PrismDisplayPropertyCategory.SYSTEM_RESOURCE, "University"),
     SYSTEM_RESOURCE_ADVERT_CATEGORIES_HEADER(PrismDisplayPropertyCategory.SYSTEM_RESOURCE, "Categories and Themes"),
     SYSTEM_RESOURCE_ADVERT_BADGE_HEADER(PrismDisplayPropertyCategory.SYSTEM_RESOURCE, "Sharing and Embeddable Badges"),
     SYSTEM_RESOURCE_CATEGORIES_INCOMPLETE(PrismDisplayPropertyCategory.SYSTEM_RESOURCE, "Provide some tags to help candidates discover your advert."),
@@ -1849,7 +1872,8 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     SYSTEM_RESOURCE_PARENT_VISIBILITY_HINT(PrismDisplayPropertyCategory.SYSTEM_RESOURCE_PARENT, "Set the visibility that you want for your opportunity."),
     SYSTEM_RESOURCE_PARENT_PRIMARY_CONTACT_LABEL(PrismDisplayPropertyCategory.SYSTEM_RESOURCE_PARENT, "Primary Contact"),
     SYSTEM_RESOURCE_PARENT_PRIMARY_CONTACT_HINT(PrismDisplayPropertyCategory.SYSTEM_RESOURCE_PARENT,
-            "To change the primary owner go to Manage User and change the owner fo the project"),
+            "The primary contact for enquiries."),
+    SYSTEM_RESOURCE_PARENT_PRIMARY_CONTACT_CHANGE(PrismDisplayPropertyCategory.SYSTEM_RESOURCE_PARENT, "Change"),
     SYSTEM_RESOURCE_PARENT_VISIBILITY_EVERYONE_OPTION(PrismDisplayPropertyCategory.SYSTEM_RESOURCE_PARENT, "Visible to everybody"),
     SYSTEM_RESOURCE_PARENT_VISIBILITY_MY_CONNECTIONS_OPTION(PrismDisplayPropertyCategory.SYSTEM_RESOURCE_PARENT, "Visible to my connections"),
     SYSTEM_RESOURCE_PARENT_VISIBILITY_CUSTOM_OPTION(PrismDisplayPropertyCategory.SYSTEM_RESOURCE_PARENT, "Custom"),
@@ -2054,12 +2078,19 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
 
     SYSTEM_RESOURCE_SHARE_PREVIEW(PrismDisplayPropertyCategory.SYSTEM_RESOURCE_SHARE, "Preview"),
     SYSTEM_RESOURCE_SHARE_OPPORTUNITIES(PrismDisplayPropertyCategory.SYSTEM_RESOURCE_SHARE, "Jobs & Work Experience"),
-    SYSTEM_RESOURCE_SHARE_VIEW_OPPORTUNITIES(PrismDisplayPropertyCategory.SYSTEM_RESOURCE_SHARE, "View Opportunities"),
+    SYSTEM_RESOURCE_SHARE_VIEW_OPPORTUNITIES(PrismDisplayPropertyCategory.SYSTEM_RESOURCE_SHARE, "Opportunities"),
     SYSTEM_RESOURCE_SHARE_POST_OPPORTUNITY(PrismDisplayPropertyCategory.SYSTEM_RESOURCE_SHARE, "Post Opportunity"),
     SYSTEM_RESOURCE_SHARE_OTHER_OPPORTUNITIES(PrismDisplayPropertyCategory.SYSTEM_RESOURCE_SHARE, "Other Opportunities"),
     SYSTEM_RESOURCE_SHARE_READ_MORE(PrismDisplayPropertyCategory.SYSTEM_RESOURCE_SHARE, "Read More"),
     SYSTEM_RESOURCE_SHARE_HTML_LABEL(PrismDisplayPropertyCategory.SYSTEM_RESOURCE_SHARE, "HTML to embed in your website"),
     SYSTEM_RESOURCE_SHARE_HTML_HINT(PrismDisplayPropertyCategory.SYSTEM_RESOURCE_SHARE, "Embed this HTML in your website to display the badge."),
+    SYSTEM_RESOURCE_SHARE_OPTIONS(PrismDisplayPropertyCategory.SYSTEM_RESOURCE_SHARE, "Badge Options"),
+    SYSTEM_RESOURCE_SHARE_OPTIONS_BASIC(PrismDisplayPropertyCategory.SYSTEM_RESOURCE_SHARE, "Basic"),
+    SYSTEM_RESOURCE_SHARE_OPTIONS_POSITION_LIST(PrismDisplayPropertyCategory.SYSTEM_RESOURCE_SHARE, "Position List"),
+    SYSTEM_RESOURCE_SHARE_OPTIONS_POSITION_LIST_STATIC(PrismDisplayPropertyCategory.SYSTEM_RESOURCE_SHARE, "Static List"),
+    SYSTEM_RESOURCE_SHARE_OPTIONS_POSITION_LIST_SLIDER(PrismDisplayPropertyCategory.SYSTEM_RESOURCE_SHARE, "Slider"),
+    SYSTEM_RESOURCE_SHARE_DISABLED(PrismDisplayPropertyCategory.SYSTEM_RESOURCE_SHARE,
+            "You cannot create a badge for this resource as it is not publically visible. Update the application options to change the visibility."),
 
     /*
      * *************** SYSTEM RESOURCE TARGETS *********************
@@ -2129,7 +2160,7 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     SYSTEM_MANAGE_USERS_ROLES_HINT(PrismDisplayPropertyCategory.SYSTEM_MANAGE_USERS, "Select the roles that you wish to assign."),
     SYSTEM_MANAGE_USERS_ADD_USER_BUTTON(PrismDisplayPropertyCategory.SYSTEM_MANAGE_USERS, "Add User"),
     SYSTEM_MANAGE_USERS_ADD_USER_BULK_BUTTON(PrismDisplayPropertyCategory.SYSTEM_MANAGE_USERS, "Add users in bulk"),
-    SYSTEM_MANAGE_USERS_ADD_USER_SINGLE_BUTTON(PrismDisplayPropertyCategory.SYSTEM_MANAGE_USERS, "Add single users"),
+    SYSTEM_MANAGE_USERS_ADD_USER_SINGLE_BUTTON(PrismDisplayPropertyCategory.SYSTEM_MANAGE_USERS, "Add users individually"),
     SYSTEM_MANAGE_USERS_EXISTING_USERS_SUBHEADER(PrismDisplayPropertyCategory.SYSTEM_MANAGE_USERS, "Existing users and roles"),
     SYSTEM_MANAGE_USERS_BULK_CSV_DOWNLOAD_TEMPLATE_BUTTON(PrismDisplayPropertyCategory.SYSTEM_MANAGE_USERS, "Download XLS template"),
     SYSTEM_MANAGE_USERS_BULK_CSV_DRAG_DROP_AREA(PrismDisplayPropertyCategory.SYSTEM_MANAGE_USERS, "Click to upload or Drag and Drop CSV/Excel file"),

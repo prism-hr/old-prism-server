@@ -14,4 +14,8 @@ public class PrismEnumUtils {
         return stream(extensions).map(ex -> Enum.valueOf(enumClass, scopeReference + "_" + ex)).collect(toList());
     }
 
+    public static <T extends Enum<T>> List<T> getSimilar(Class<T> enumClass, String searchTerm) {
+        return stream(enumClass.getEnumConstants()).filter(enumConstant -> enumConstant.name().contains(searchTerm)).collect(toList());
+    }
+
 }

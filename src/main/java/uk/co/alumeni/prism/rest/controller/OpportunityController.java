@@ -1,10 +1,13 @@
 package uk.co.alumeni.prism.rest.controller;
 
+import static java.util.stream.Collectors.toList;
 import static org.apache.commons.lang3.StringUtils.removeEnd;
 
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Stream;
 
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletResponse;
@@ -20,14 +23,19 @@ import uk.co.alumeni.prism.domain.advert.Advert;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismScope;
 import uk.co.alumeni.prism.exceptions.ResourceNotFoundException;
 import uk.co.alumeni.prism.mapping.AdvertMapper;
-import uk.co.alumeni.prism.rest.dto.OpportunitiesQueryDTO;
+import uk.co.alumeni.prism.rest.dto.OpportunityQueryDTO;
+import uk.co.alumeni.prism.rest.representation.advert.AdvertFunctionSummaryRepresentation;
+import uk.co.alumeni.prism.rest.representation.advert.AdvertIndustrySummaryRepresentation;
+import uk.co.alumeni.prism.rest.representation.advert.AdvertInstitutionSummaryRepresentation;
 import uk.co.alumeni.prism.rest.representation.advert.AdvertListRepresentation;
-import uk.co.alumeni.prism.rest.representation.advert.AdvertLocationAddressPartRepresentation;
+import uk.co.alumeni.prism.rest.representation.advert.AdvertLocationSummaryRepresentation;
 import uk.co.alumeni.prism.rest.representation.advert.AdvertRepresentationExtended;
+import uk.co.alumeni.prism.rest.representation.advert.AdvertThemeSummaryRepresentation;
 import uk.co.alumeni.prism.services.AdvertService;
 import uk.co.alumeni.prism.services.WidgetService;
 
 import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
 @RestController
 @RequestMapping("/api/opportunities")
@@ -44,9 +52,8 @@ public class OpportunityController {
     private WidgetService widgetService;
 
     @RequestMapping(method = RequestMethod.GET)
-    public AdvertListRepresentation getAdverts(OpportunitiesQueryDTO query) {
-        AdvertListRepresentation representation = advertMapper.getAdvertExtendedRepresentations(query);
-        return representation;
+    public AdvertListRepresentation getAdverts(OpportunityQueryDTO query) {
+        return advertMapper.getAdvertExtendedRepresentations(query);
     }
 
     @RequestMapping(method = RequestMethod.GET, value = "{resourceScope:projects|programs|departments|institutions}/{resourceId}")
@@ -59,10 +66,13 @@ public class OpportunityController {
     }
 
     @RequestMapping(method = RequestMethod.GET, value = "{resourceScope:projects|programs|departments|institutions}/{resourceId}/badge", produces = "text/javascript")
-    public String getAdvertBadge(@PathVariable String resourceScope, @PathVariable Integer resourceId, @RequestParam Optional<String> callback, HttpServletResponse response) {
+    public String getAdvertBadge(@PathVariable String resourceScope, @PathVariable Integer resourceId, @RequestParam Optional<String> callback,
+            @RequestParam String options, HttpServletResponse response) {
         response.setHeader("X-Frame-Options", null);
         Advert advert = advertService.getAdvert(PrismScope.valueOf(removeEnd(resourceScope, "s").toUpperCase()), resourceId);
-        String badge = widgetService.getOpportunityBadge(advert);
+        HashMap<String, String> widgetOptions = new Gson().fromJson(options, new TypeToken<HashMap<String, String>>() {
+        }.getType());
+        String badge = widgetService.getAdvertBadge(advert, widgetOptions);
         if (callback.isPresent()) {
             response.setHeader("content-type", "text/javascript");
             badge = new Gson().toJson(Collections.singletonMap("html", badge));
@@ -73,9 +83,34 @@ public class OpportunityController {
         }
     }
 
-    @RequestMapping(method = RequestMethod.GET, value = "locations")
-    public List<AdvertLocationAddressPartRepresentation> getAdvertLocationAddressPartRepresentations(@RequestParam String q) {
-        return advertMapper.getAdvertLocationAddressPartRepresentations(q);
+    @RequestMapping(method = RequestMethod.GET, value = "filterValues/industries")
+    public List<AdvertIndustrySummaryRepresentation> getAdvertIndustrySummaryRepresentations(OpportunityQueryDTO query, @RequestParam(required = false) String q) {
+        return advertMapper.getAdvertIndustrySummaryRepresentations(query, q);
+    }
+
+    @RequestMapping(method = RequestMethod.GET, value = "filterValues/functions")
+    public List<AdvertFunctionSummaryRepresentation> getAdvertFunctionSummaryRepresentations(OpportunityQueryDTO query, @RequestParam(required = false) String q) {
+        return advertMapper.getAdvertFunctionSummaryRepresentations(query, q);
+    }
+
+    @RequestMapping(method = RequestMethod.GET, value = "filterValues/themes")
+    public List<AdvertThemeSummaryRepresentation> getAdvertThemeSummaryRepresentations(OpportunityQueryDTO query, @RequestParam(required = false) String q) {
+        return advertMapper.getAdvertThemeSummaryRepresentations(query, q);
+    }
+
+    @RequestMapping(method = RequestMethod.GET, value = "filterValues/locations")
+    public List<AdvertLocationSummaryRepresentation> getAdvertLocationSummaryRepresentations(OpportunityQueryDTO query, @RequestParam(required = false) String q) {
+        return advertMapper.getAdvertLocationSummaryRepresentations(query, q);
+    }
+
+    @RequestMapping(method = RequestMethod.GET, value = "filterValues/locations", params = "ids")
+    public List<AdvertLocationSummaryRepresentation> getAdvertLocationSummaryRepresentations(String ids) {
+        return advertMapper.getAdvertLocationSummaryRepresentations(Stream.of(ids.split(",")).map(Integer::parseInt).collect(toList()));
+    }
+
+    @RequestMapping(method = RequestMethod.GET, value = "filterValues/institutions")
+    public List<AdvertInstitutionSummaryRepresentation> getInstitutionSummaryRepresentations(OpportunityQueryDTO query, @RequestParam(required = false) String q) {
+        return advertMapper.getAdvertInstitutionSummaryRepresentations(query, q);
     }
 
 }

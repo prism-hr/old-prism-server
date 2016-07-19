@@ -1,5 +1,6 @@
 package uk.co.alumeni.prism.domain.address;
 
+import static com.google.common.base.Objects.equal;
 import static com.google.common.collect.Lists.newLinkedList;
 
 import java.util.List;
@@ -22,6 +23,7 @@ import uk.co.alumeni.prism.domain.Domicile;
 import uk.co.alumeni.prism.domain.advert.Advert;
 
 import com.google.common.base.Joiner;
+import com.google.common.base.Objects;
 import com.google.common.collect.Sets;
 
 @Entity
@@ -153,12 +155,8 @@ public class Address extends AddressDefinition<Domicile> {
         this.locations = locations;
     }
 
-    public Set<AddressLocation> getAddressLocations() {
-        return locations;
-    }
-
-    public void addAddressLocationPart(AddressLocation location) {
-        locations.add(location);
+    public String getEstablishmentName() {
+        return advert == null ? null : advert.getName();
     }
 
     public List<String> getAddressTokens() {
@@ -185,10 +183,28 @@ public class Address extends AddressDefinition<Domicile> {
 
         return tokens;
     }
-    
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(id);
+    }
+
+    @Override
+    public boolean equals(Object object) {
+        if (object == null) {
+            return false;
+        }
+        if (getClass() != object.getClass()) {
+            return false;
+        }
+        Address other = (Address) object;
+        return equal(id, other.getId());
+    }
+
     @Override
     public String toString() {
-        return Joiner.on(", ").skipNulls().join(addressLine1, addressLine2, addressTown, addressRegion, addressCode, domicile.getId().name());
+        return Joiner.on(", ").skipNulls()
+                .join(addressLine1, addressLine2, addressTown, addressRegion, addressCode, domicile == null ? null : domicile.getId().name());
     }
 
 }

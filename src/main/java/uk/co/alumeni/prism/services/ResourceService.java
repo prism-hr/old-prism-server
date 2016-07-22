@@ -361,13 +361,13 @@ public class ResourceService {
         DateTime baseline = now();
         if (comment.isCreateComment()) {
             Advert advert = resource.getAdvert();
-            resource.setAdvert(null);
 
             resource.setCreatedTimestamp(baseline);
             setResourceUpdated(resource, baseline);
 
             boolean resourceParent = asList(OPPORTUNITY, ORGANIZATION).contains(resource.getResourceScope().getScopeCategory());
             if (resourceParent) {
+                resource.setAdvert(null);
                 ((ResourceParent) resource).setUpdatedTimestampSitemap(baseline);
             }
 
@@ -1260,7 +1260,7 @@ public class ResourceService {
                 }
             });
         });
-        
+
         return resourceIndex;
     }
 

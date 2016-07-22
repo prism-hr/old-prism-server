@@ -1,6 +1,12 @@
 package uk.co.alumeni.prism.mail;
 
+import static org.springframework.beans.factory.config.BeanDefinition.SCOPE_PROTOTYPE;
+
 import java.util.List;
+
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismNotificationDefinition;
 import uk.co.alumeni.prism.domain.resource.Resource;
@@ -12,6 +18,9 @@ import uk.co.alumeni.prism.services.NotificationService;
 
 import com.google.common.collect.Lists;
 
+@Service
+@Transactional
+@Scope(SCOPE_PROTOTYPE)
 public class MailSenderMock extends MailSender {
 
     private List<NotificationConfiguration> sentMessages = Lists.newLinkedList();

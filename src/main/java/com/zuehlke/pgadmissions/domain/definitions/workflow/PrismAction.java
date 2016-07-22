@@ -250,6 +250,7 @@ public enum PrismAction {
     PROJECT_RESTORE(SYSTEM_INVOCATION, PROPAGATE_RESOURCE, false, false, false, null, PROJECT, null), //
     PROJECT_PROVIDE_SPONSORSHIP(USER_INVOCATION, SPONSOR_RESOURCE, false, false, true, null, PROJECT, null), //
     PROJECT_SUSPEND(SYSTEM_INVOCATION, PROPAGATE_RESOURCE, false, false, true, null, PROJECT, null), //
+	PROJECT_DEACTIVATE(USER_INVOCATION, PROCESS_RESOURCE, false, false, true, null, PROJECT, null), //
     PROJECT_TERMINATE(SYSTEM_INVOCATION, PROPAGATE_RESOURCE, false, false, true, null, PROJECT, null), //
     PROJECT_WITHDRAW(USER_INVOCATION, WITHDRAW_RESOURCE, false, false, true, null, PROJECT, null), //
     SYSTEM_VIEW_EDIT(USER_INVOCATION, VIEW_EDIT_RESOURCE, false, false, false, null, SYSTEM, null), //

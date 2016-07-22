@@ -67,6 +67,14 @@ public class PrismProjectWorkflow {
                         .withTransitionState(PROJECT_DISABLED_PENDING_REACTIVATION) //
                         .withTransitionAction(PROJECT_SUSPEND));
     }
+	
+	public static PrismStateAction projectDeactivate() {
+        return new PrismStateAction() //
+                .withAction(PROJECT_DEACTIVATE) //
+                .withTransitions(new PrismStateTransition() //
+                        .withTransitionState(PROJECT_DISABLED_PENDING_REACTIVATION) //
+                        .withTransitionAction(SYSTEM_VIEW_PROJECT_LIST));
+    }
 
     public static PrismStateAction projectTerminateUnapproved() {
         return projectTerminateAbstract()

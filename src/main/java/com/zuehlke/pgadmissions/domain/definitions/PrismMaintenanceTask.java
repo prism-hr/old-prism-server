@@ -26,7 +26,6 @@ public enum PrismMaintenanceTask {
     SYSTEM_IMPORT_SYSTEM_REFERENCE_DATA(ImportedEntityServiceHelperSystem.class), //
     SYSTEM_UPDATE_ADVERT_CLOSING_DATE(AdvertServiceHelperClosingDate.class), //
     SYSTEM_UPDATE_ADVERT_EXCHANGE_RATE(AdvertServiceHelperExchangeRate.class), //
-    SYSTEM_SEND_RECOMMENDATION_NOTIFICATION(NotificationServiceHelperRecommendation.class), //
     SYSTEM_EXPORT_DOCUMENT(DocumentServiceHelperExport.class), //
     SYSTEM_DELETE_DOCUMENT(DocumentServiceHelperDelete.class), //
     SYSTEM_EMAIL_BOUNCE_HANDLE(EmailBounceServiceHelper.class);

@@ -1,7 +1,15 @@
 package uk.co.alumeni.prism.services;
 
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
+import static org.slf4j.LoggerFactory.getLogger;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.lang.reflect.Type;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
 import org.apache.commons.fileupload.util.Streams;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.HttpClient;
@@ -12,21 +20,15 @@ import org.apache.http.message.BasicNameValuePair;
 import org.slf4j.Logger;
 import org.springframework.stereotype.Service;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.lang.reflect.Type;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
-
-import static org.slf4j.LoggerFactory.getLogger;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
 @Service
 public class CaptchaService {
 
     private static final Logger logger = getLogger(CaptchaService.class);
 
+    @SuppressWarnings("unchecked")
     public boolean verifyCaptcha(String captchaResponse) {
         HttpClient captchaClient = HttpClientBuilder.create().build();
         try {

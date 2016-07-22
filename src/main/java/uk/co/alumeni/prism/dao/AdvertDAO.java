@@ -34,7 +34,6 @@ import static uk.co.alumeni.prism.domain.definitions.workflow.PrismPartnershipSt
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismPartnershipState.ENDORSEMENT_REVOKED;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRole.PrismRoleCategory.STUDENT;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.APPLICATION;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismStateGroup.APPLICATION_WITHDRAWN;
 import static uk.co.alumeni.prism.utils.PrismEnumUtils.getSimilar;
 import static uk.co.alumeni.prism.utils.PrismEnumUtils.values;
 import static uk.co.alumeni.prism.utils.PrismIterableUtils.noneNull;
@@ -796,7 +795,7 @@ public class AdvertDAO {
 
         return newLinkedList(rows);
     }
-    
+
     public List<AdvertLocationSummaryDTO> getAdvertLocationSummaries(List<Integer> locationPartIds) {
         return sessionFactory.getCurrentSession().createCriteria(Advert.class)
                 .setProjection(Projections.projectionList()
@@ -974,9 +973,7 @@ public class AdvertDAO {
                 .createAlias("resourceState.state", "state", JoinType.INNER_JOIN) //
                 .add(Restrictions.eq("user", user)) //
                 .add(Restrictions.in("advert.id", adverts)) //
-                .add(Restrictions.disjunction() //
-                        .add(Restrictions.isNull("completionDate")) //
-                        .add(Restrictions.eq("state.stateGroup.id", APPLICATION_WITHDRAWN))) //
+                .add(Restrictions.isNull("completionDate")) //
                 .setResultTransformer(Transformers.aliasToBean(AdvertApplicationDTO.class))
                 .list();
     }

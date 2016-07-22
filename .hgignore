@@ -12,3 +12,4 @@ bin/*
 prism.iml
 prism-development.ppk
 mvn
+.tern-project

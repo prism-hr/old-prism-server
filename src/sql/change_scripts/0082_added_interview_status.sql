@@ -1,8 +1,3 @@
-ALTER TABLE comment
-ADD COLUMN application_interview_status VARCHAR(20)
-AFTER application_interested
-;
-
 UPDATE comment
 SET application_interview_status = 'TAKEN_PLACE'
 WHERE action_id = 'APPLICATION_ASSIGN_INTERVIEWERS'

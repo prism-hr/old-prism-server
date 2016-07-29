@@ -112,9 +112,6 @@ public class UserAccountService {
     }
 
     public User registerUser(UserRegistrationDTO userRegistrationDTO, HttpSession session) {
-        if (!captchaService.verifyCaptcha(userRegistrationDTO.getRecaptchaResponse())) {
-            throw new PrismValidationException("Captcha verification failed");
-        }
         User user = userService.getUserByEmail(userRegistrationDTO.getEmail());
 
         boolean enableAccount = user != null;
@@ -126,7 +123,10 @@ public class UserAccountService {
             } else {
                 throw new ResourceNotFoundException("User is already registered");
             }
+        } else if (!captchaService.verifyCaptcha(userRegistrationDTO.getRecaptchaResponse())) {
+            throw new PrismValidationException("Captcha verification failed");
         }
+
 
         user = userService.getOrCreateUser(userRegistrationDTO);
 

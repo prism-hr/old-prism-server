@@ -1,6 +1,5 @@
 package uk.co.alumeni.prism.rest.dto.user;
 
-import org.hibernate.validator.constraints.NotEmpty;
 import uk.co.alumeni.prism.rest.dto.comment.CommentDTO;
 
 import javax.validation.Valid;
@@ -16,7 +15,6 @@ public class UserRegistrationDTO extends UserDTO {
     @Valid
     private CommentDTO comment;
 
-    @NotEmpty
     private String recaptchaResponse;
 
     public String getActivationCode() {

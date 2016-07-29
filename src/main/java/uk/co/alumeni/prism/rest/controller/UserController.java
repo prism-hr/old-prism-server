@@ -1,6 +1,15 @@
 package uk.co.alumeni.prism.rest.controller;
 
-import com.google.common.collect.ImmutableMap;
+import static org.slf4j.LoggerFactory.getLogger;
+import static org.springframework.http.HttpStatus.NOT_MODIFIED;
+
+import java.util.List;
+import java.util.Map;
+
+import javax.annotation.Resource;
+import javax.inject.Inject;
+import javax.validation.Valid;
+
 import org.slf4j.Logger;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -9,24 +18,48 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.web.bind.WebDataBinder;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.InitBinder;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.context.request.async.DeferredResult;
+
 import uk.co.alumeni.prism.domain.definitions.PrismResourceContext;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismScope;
-import uk.co.alumeni.prism.domain.user.*;
+import uk.co.alumeni.prism.domain.user.User;
+import uk.co.alumeni.prism.domain.user.UserAccount;
+import uk.co.alumeni.prism.domain.user.UserAward;
+import uk.co.alumeni.prism.domain.user.UserEmploymentPosition;
+import uk.co.alumeni.prism.domain.user.UserQualification;
+import uk.co.alumeni.prism.domain.user.UserReferee;
 import uk.co.alumeni.prism.domain.workflow.Scope;
 import uk.co.alumeni.prism.exceptions.ResourceNotFoundException;
 import uk.co.alumeni.prism.mapping.MessageMapper;
 import uk.co.alumeni.prism.mapping.ProfileMapper;
 import uk.co.alumeni.prism.mapping.ResourceMapper;
 import uk.co.alumeni.prism.mapping.UserMapper;
-import uk.co.alumeni.prism.rest.dto.profile.*;
+import uk.co.alumeni.prism.rest.dto.profile.ProfileAdditionalInformationDTO;
+import uk.co.alumeni.prism.rest.dto.profile.ProfileAddressDTO;
+import uk.co.alumeni.prism.rest.dto.profile.ProfileAwardDTO;
+import uk.co.alumeni.prism.rest.dto.profile.ProfileDocumentDTO;
+import uk.co.alumeni.prism.rest.dto.profile.ProfileEmploymentPositionDTO;
+import uk.co.alumeni.prism.rest.dto.profile.ProfilePersonalDetailDTO;
+import uk.co.alumeni.prism.rest.dto.profile.ProfileQualificationDTO;
+import uk.co.alumeni.prism.rest.dto.profile.ProfileRefereeDTO;
 import uk.co.alumeni.prism.rest.dto.resource.ResourceListFilterDTO;
 import uk.co.alumeni.prism.rest.dto.user.UserAccountDTO;
+import uk.co.alumeni.prism.rest.dto.user.UserActivateDTO;
 import uk.co.alumeni.prism.rest.dto.user.UserEmailDTO;
 import uk.co.alumeni.prism.rest.dto.user.UserLinkingDTO;
 import uk.co.alumeni.prism.rest.representation.message.MessageThreadRepresentation;
-import uk.co.alumeni.prism.rest.representation.profile.*;
+import uk.co.alumeni.prism.rest.representation.profile.ProfileEmploymentPositionRepresentation;
+import uk.co.alumeni.prism.rest.representation.profile.ProfileQualificationRepresentation;
+import uk.co.alumeni.prism.rest.representation.profile.ProfileRefereeRepresentation;
+import uk.co.alumeni.prism.rest.representation.profile.ProfileRepresentationUser;
 import uk.co.alumeni.prism.rest.representation.resource.ResourceRepresentationConnection;
 import uk.co.alumeni.prism.rest.representation.user.UserActivityRepresentation;
 import uk.co.alumeni.prism.rest.representation.user.UserRepresentationExtended;
@@ -34,17 +67,15 @@ import uk.co.alumeni.prism.rest.representation.user.UserRepresentationSimple;
 import uk.co.alumeni.prism.rest.validation.UserLinkingValidator;
 import uk.co.alumeni.prism.rest.validation.UserRegistrationValidator;
 import uk.co.alumeni.prism.security.AuthenticationTokenHelper;
-import uk.co.alumeni.prism.services.*;
+import uk.co.alumeni.prism.services.EntityService;
+import uk.co.alumeni.prism.services.ProfileService;
+import uk.co.alumeni.prism.services.ResourceListFilterService;
+import uk.co.alumeni.prism.services.UserAccountService;
+import uk.co.alumeni.prism.services.UserService;
 import uk.co.alumeni.prism.services.delegates.UserActivityCacheServiceDelegate;
 
-import javax.annotation.Resource;
-import javax.inject.Inject;
-import javax.validation.Valid;
-import java.util.List;
-import java.util.Map;
-
-import static org.slf4j.LoggerFactory.getLogger;
-import static org.springframework.http.HttpStatus.NOT_MODIFIED;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Maps;
 
 @RestController
 @RequestMapping("/api/user")
@@ -142,19 +173,51 @@ public class UserController {
 
     @PreAuthorize("isAuthenticated()")
     @RequestMapping(value = "/switch", method = RequestMethod.POST)
-    public Map<String, String> switchUser(@RequestParam Map<String, String> body) {
+    public Map<String, String> switchUser(@RequestParam String username) {
         User currentUser = userService.getCurrentUser();
-        String email = body.get("email");
-        User user = userService.getUserByEmail(email);
+        User user = userService.getUserByEmail(username);
         List<User> linkedUsers = userService.getLinkedUsers(currentUser);
         if (!linkedUsers.contains(user)) {
             throw new AccessDeniedException("Users are not linked");
         }
 
-        UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(email, null);
+        UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(username, null);
         SecurityContextHolder.getContext().setAuthentication(authentication);
-        UserDetails userDetails = this.userDetailsService.loadUserByUsername(email);
+        UserDetails userDetails = this.userDetailsService.loadUserByUsername(username);
         return ImmutableMap.of("token", authenticationTokenHelper.createToken(userDetails));
+    }
+
+    @PreAuthorize("permitAll")
+    @RequestMapping(value = "/activate", method = RequestMethod.PUT)
+    public Map<String, Object> activateAccount(@RequestBody UserActivateDTO activateDTO) {
+        User user = userService.getUserByActivationCode(activateDTO.getActivationCode());
+        if (user == null) {
+            throw new ResourceNotFoundException("User not found");
+        }
+        String status;
+        String loginProvider = null;
+        if (user.getUserAccount() == null) {
+            status = "NOT_REGISTERED";
+        } else {
+            userService.enableUser(user.getId());
+            status = "ACTIVATED";
+            loginProvider = user.getUserAccount().getLinkedinId() != null ? "linkedin" : null;
+        }
+        UserRepresentationSimple userRepresentation = userMapper.getUserRepresentationSimple(user, user);
+
+        Map<String, Object> result = Maps.newHashMap();
+        result.put("status", status);
+        result.put("user", userRepresentation);
+        if (loginProvider != null) {
+            result.put("loginProvider", loginProvider);
+        }
+        return result;
+    }
+
+    @PreAuthorize("permitAll")
+    @RequestMapping(value = "/resetPassword", method = RequestMethod.POST)
+    public void resetPassword(@RequestBody Map<String, String> body) {
+        userService.resetPassword(body.get("email"));
     }
 
     @PreAuthorize("permitAll")
@@ -247,13 +310,6 @@ public class UserController {
     @RequestMapping(value = "/qualifications/{qualificationId}", method = RequestMethod.DELETE)
     public void deleteQualification(@PathVariable Integer qualificationId) {
         profileService.deleteQualificationUser(qualificationId);
-    }
-
-    @PreAuthorize("isAuthenticated()")
-    @RequestMapping(value = "/awards", method = RequestMethod.GET)
-    public List<ProfileAwardRepresentation> getAwards() {
-        UserAccount userAccount = userService.getCurrentUser().getUserAccount();
-        return profileMapper.getAwardRepresentations(userAccount.getAwards());
     }
 
     @PreAuthorize("isAuthenticated()")

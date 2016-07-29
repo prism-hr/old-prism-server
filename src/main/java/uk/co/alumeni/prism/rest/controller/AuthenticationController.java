@@ -1,7 +1,17 @@
 package uk.co.alumeni.prism.rest.controller;
 
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Maps;
+import static org.springframework.http.HttpStatus.I_AM_A_TEAPOT;
+import static uk.co.alumeni.prism.services.UserAccountService.OAUTH_USER_TO_CONFIRM;
+
+import java.util.Map;
+
+import javax.annotation.Resource;
+import javax.inject.Inject;
+import javax.inject.Named;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.validation.Valid;
+
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -14,29 +24,17 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
+
 import uk.co.alumeni.prism.domain.user.User;
-import uk.co.alumeni.prism.exceptions.ResourceNotFoundException;
-import uk.co.alumeni.prism.mapping.UserMapper;
 import uk.co.alumeni.prism.rest.dto.auth.OauthLoginDTO;
 import uk.co.alumeni.prism.rest.dto.auth.OauthUserDefinition;
 import uk.co.alumeni.prism.rest.dto.auth.UsernamePasswordLoginDTO;
 import uk.co.alumeni.prism.rest.dto.user.UserRegistrationDTO;
 import uk.co.alumeni.prism.rest.representation.user.UserRepresentation;
-import uk.co.alumeni.prism.rest.representation.user.UserRepresentationSimple;
 import uk.co.alumeni.prism.security.AuthenticationTokenHelper;
 import uk.co.alumeni.prism.services.UserAccountService;
-import uk.co.alumeni.prism.services.UserService;
 
-import javax.annotation.Resource;
-import javax.inject.Inject;
-import javax.inject.Named;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.validation.Valid;
-import java.util.Map;
-
-import static org.springframework.http.HttpStatus.I_AM_A_TEAPOT;
-import static uk.co.alumeni.prism.services.UserAccountService.OAUTH_USER_TO_CONFIRM;
+import com.google.common.collect.ImmutableMap;
 
 @RestController
 @RequestMapping("/api/auth")
@@ -54,12 +52,6 @@ public class AuthenticationController {
 
     @Inject
     private UserAccountService authenticationService;
-
-    @Inject
-    private UserService userService;
-
-    @Inject
-    private UserMapper userMapper;
 
     @PreAuthorize("permitAll")
     @RequestMapping(value = "/login", method = RequestMethod.POST)
@@ -80,44 +72,10 @@ public class AuthenticationController {
     @PreAuthorize("permitAll")
     @RequestMapping(value = "/oauth/linkedin", method = RequestMethod.POST)
     public Map<String, Object> oauthLogin(@Valid @RequestBody OauthLoginDTO oauthLoginDTO, HttpServletRequest request,
-                                          HttpServletResponse response) {
+            HttpServletResponse response) {
         User user = authenticationService.getOrCreateUserAccountExternal(oauthLoginDTO, request.getSession());
         return generateTokenOrSuggestedDetails(user, request, response);
     }
-
-    @PreAuthorize("permitAll")
-    @RequestMapping(value = "/activate", method = RequestMethod.POST)
-    public Map<String, Object> activateAccount(@RequestBody Map<String, String> body) {
-        User user = userService.getUserByActivationCode(body.get("activationCode"));
-        if (user == null) {
-            throw new ResourceNotFoundException("User not found");
-        }
-        String status;
-        String loginProvider = null;
-        if (user.getUserAccount() == null) {
-            status = "NOT_REGISTERED";
-        } else {
-            userService.enableUser(user.getId());
-            status = "ACTIVATED";
-            loginProvider = user.getUserAccount().getLinkedinId() != null ? "linkedin" : null;
-        }
-        UserRepresentationSimple userRepresentation = userMapper.getUserRepresentationSimple(user, user);
-
-        Map<String, Object> result = Maps.newHashMap();
-        result.put("status", status);
-        result.put("user", userRepresentation);
-        if (loginProvider != null) {
-            result.put("loginProvider", loginProvider);
-        }
-        return result;
-    }
-
-    @PreAuthorize("permitAll")
-    @RequestMapping(value = "/resetPassword", method = RequestMethod.POST)
-    public void resetPassword(@RequestBody Map<String, String> body) {
-        userService.resetPassword(body.get("email"));
-    }
-
 
     private Map<String, Object> generateTokenOrSuggestedDetails(User user, HttpServletRequest request, HttpServletResponse response) {
         if (user == null) {

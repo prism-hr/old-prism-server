@@ -98,23 +98,20 @@ public class UserAccountService {
         OauthUserDefinition oauthUserDefinition = getLinkedinUserDefinition(oauthLoginDTO);
 
         switch (oauthAssociationType) {
-        case ASSOCIATE_CURRENT_USER:
-            return oauthAssociateUser(userService.getCurrentUser(), oauthUserDefinition);
-        case ASSOCIATE_NEW_USER:
-            return oauthAssociateNewUser(oauthUserDefinition, session);
-        case ASSOCIATE_SPECIFIED_USER:
-            return oauthAssociateUser(userService.getUserByActivationCode(oauthLoginDTO.getActivationCode()), oauthUserDefinition);
-        case AUTHENTICATE:
-            return oauthAuthenticate(oauthUserDefinition);
-        default:
-            throw new UnsupportedOperationException("Unsupported Oauth association type: " + oauthAssociationType);
+            case ASSOCIATE_CURRENT_USER:
+                return oauthAssociateUser(userService.getCurrentUser(), oauthUserDefinition);
+            case ASSOCIATE_NEW_USER:
+                return oauthAssociateNewUser(oauthUserDefinition, session);
+            case ASSOCIATE_SPECIFIED_USER:
+                return oauthAssociateUser(userService.getUserByActivationCode(oauthLoginDTO.getActivationCode()), oauthUserDefinition);
+            case AUTHENTICATE:
+                return oauthAuthenticate(oauthUserDefinition);
+            default:
+                throw new UnsupportedOperationException("Unsupported Oauth association type: " + oauthAssociationType);
         }
     }
 
     public User registerUser(UserRegistrationDTO userRegistrationDTO, HttpSession session) {
-        if (!captchaService.verifyCaptcha(userRegistrationDTO.getRecaptchaResponse())) {
-            throw new PrismValidationException("Captcha verification failed");
-        }
         User user = userService.getUserByEmail(userRegistrationDTO.getEmail());
 
         boolean enableAccount = user != null;
@@ -126,7 +123,10 @@ public class UserAccountService {
             } else {
                 throw new ResourceNotFoundException("User is already registered");
             }
+        } else if (!captchaService.verifyCaptcha(userRegistrationDTO.getRecaptchaResponse())) {
+            throw new PrismValidationException("Captcha verification failed");
         }
+
 
         user = userService.getOrCreateUser(userRegistrationDTO);
 

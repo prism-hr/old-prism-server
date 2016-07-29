@@ -425,11 +425,6 @@ public class CommentDTO {
         return !(roleContext == null && resourceInvitation == null);
     }
 
-    public CommentDTO withUser(Integer user) {
-        this.user = user;
-        return this;
-    }
-    
     public CommentDTO withAction(PrismAction action) {
         this.action = action;
         return this;
@@ -437,6 +432,11 @@ public class CommentDTO {
 
     public CommentDTO withResource(ResourceCreationDTO resource) {
         this.resource = resource;
+        return this;
+    }
+
+    public CommentDTO withUser(Integer user) {
+        this.user = user;
         return this;
     }
 

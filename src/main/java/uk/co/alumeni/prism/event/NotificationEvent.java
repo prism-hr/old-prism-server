@@ -4,13 +4,13 @@ import static com.google.common.base.Objects.equal;
 
 import org.springframework.context.ApplicationEvent;
 
+import com.google.common.base.Objects;
+
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismAction;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismNotificationDefinition;
 import uk.co.alumeni.prism.rest.dto.resource.ResourceDTO;
 import uk.co.alumeni.prism.rest.representation.advert.AdvertListRepresentation;
 import uk.co.alumeni.prism.rest.representation.user.UserActivityRepresentation;
-
-import com.google.common.base.Objects;
 
 public class NotificationEvent extends ApplicationEvent {
 
@@ -45,8 +45,6 @@ public class NotificationEvent extends ApplicationEvent {
     private AdvertListRepresentation advertListRepresentation;
 
     private Boolean buffered;
-
-    private Boolean sent;
 
     public NotificationEvent(Object source) {
         super(source);
@@ -170,14 +168,6 @@ public class NotificationEvent extends ApplicationEvent {
 
     public void setBuffered(Boolean buffered) {
         this.buffered = buffered;
-    }
-
-    public Boolean getSent() {
-        return sent;
-    }
-
-    public void setSent(Boolean sent) {
-        this.sent = sent;
     }
 
     public NotificationEvent withNotificationDefinition(PrismNotificationDefinition notificationDefinition) {

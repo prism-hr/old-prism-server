@@ -47,7 +47,7 @@ public class UserActivityCacheService {
     public synchronized void updateUserActivityCache(Integer user, DateTime baseline) {
         if (!executions.contains(user)) {
             executions.add(user);
-            userActivityCacheServiceDelegate.updateUserActivityCacheAsynchronous(user, baseline);
+            userActivityCacheServiceDelegate.updateUserActivityCache(user, baseline);
         }
     }
 

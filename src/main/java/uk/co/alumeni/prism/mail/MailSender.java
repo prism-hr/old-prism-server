@@ -196,8 +196,7 @@ public class MailSender {
         } catch (Exception e) {
             logger.error(String.format("Failed to send email %s", getMessageString(prismNotificationDefinition, notificationDefinitionDTO)), e);
         }
-
-        notificationEvent.setSent(true);
+        
         applicationEventPublisher.publishEvent(notificationEvent);
     }
 

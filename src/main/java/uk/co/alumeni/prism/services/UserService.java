@@ -27,8 +27,6 @@ import static uk.co.alumeni.prism.PrismConstants.SYSTEM_NOTIFICATION_INTERVAL;
 import static uk.co.alumeni.prism.dao.WorkflowDAO.organizationScopes;
 import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_VALIDATION_EMAIL_ALREADY_IN_USE;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismAction.SYSTEM_VIEW_APPLICATION_LIST;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismNotificationDefinition.SYSTEM_ACTIVITY_NOTIFICATION;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismNotificationDefinition.SYSTEM_REMINDER_NOTIFICATION;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.APPLICATION;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.DEPARTMENT;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.INSTITUTION;
@@ -65,6 +63,14 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.BeanPropertyBindingResult;
 
+import com.google.common.base.Strings;
+import com.google.common.collect.HashMultimap;
+import com.google.common.collect.LinkedHashMultimap;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
+import com.google.common.collect.TreeMultimap;
+
 import uk.co.alumeni.prism.dao.UserDAO;
 import uk.co.alumeni.prism.dao.WorkflowDAO;
 import uk.co.alumeni.prism.domain.UniqueEntity;
@@ -98,18 +104,9 @@ import uk.co.alumeni.prism.rest.dto.user.UserDTO;
 import uk.co.alumeni.prism.rest.dto.user.UserSimpleDTO;
 import uk.co.alumeni.prism.rest.representation.user.UserActivityRepresentation;
 import uk.co.alumeni.prism.rest.representation.user.UserRepresentationSimple;
-import uk.co.alumeni.prism.services.delegates.NotificationServiceDelegate;
 import uk.co.alumeni.prism.services.helpers.PropertyLoader;
 import uk.co.alumeni.prism.utils.PrismEncryptionUtils;
 import uk.co.alumeni.prism.utils.PrismJsonMappingUtils;
-
-import com.google.common.base.Strings;
-import com.google.common.collect.HashMultimap;
-import com.google.common.collect.LinkedHashMultimap;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
-import com.google.common.collect.TreeMultimap;
 
 @Service
 @Transactional
@@ -131,9 +128,6 @@ public class UserService {
 
     @Inject
     private NotificationService notificationService;
-
-    @Inject
-    private NotificationServiceDelegate notificationServiceDelegate;
 
     @Inject
     private EntityService entityService;
@@ -419,7 +413,7 @@ public class UserService {
             HashMultimap<PrismScope, Integer> enclosedResources = resourceService.getEnclosedResources(resource);
             return userDAO.getBouncedOrUnverifiedUsers(enclosedResources, userListFilterDTO);
         }
-        return Lists.<User> newArrayList();
+        return Lists.<User>newArrayList();
     }
 
     public void reassignBouncedOrUnverifiedUser(Resource resource, Integer userId, UserDTO userDTO) {
@@ -521,23 +515,19 @@ public class UserService {
 
     public Set<Integer> getUsersForActivityNotification() {
         Set<Integer> users = newHashSet();
-        if (!notificationServiceDelegate.getExecutionBatches().contains(SYSTEM_ACTIVITY_NOTIFICATION)) {
-            DateTime baseline = now().minusDays(SYSTEM_NOTIFICATION_INTERVAL);
-            stream(values()).forEach(scope -> {
-                users.addAll(userDAO.getUsersForActivityNotification(scope, baseline));
-            });
-        }
+        DateTime baseline = now().minusDays(SYSTEM_NOTIFICATION_INTERVAL);
+        stream(values()).forEach(scope -> {
+            users.addAll(userDAO.getUsersForActivityNotification(scope, baseline));
+        });
         return users;
     }
 
     public Set<Integer> getUsersForReminderNotification() {
         Set<Integer> users = newHashSet();
-        if (!notificationServiceDelegate.getExecutionBatches().contains(SYSTEM_REMINDER_NOTIFICATION)) {
-            DateTime baseline = now().minusDays(SYSTEM_NOTIFICATION_INTERVAL);
-            stream(values()).forEach(scope -> {
-                users.addAll(userDAO.getUsersForReminderNotification(scope, baseline));
-            });
-        }
+        DateTime baseline = now().minusDays(SYSTEM_NOTIFICATION_INTERVAL);
+        stream(values()).forEach(scope -> {
+            users.addAll(userDAO.getUsersForReminderNotification(scope, baseline));
+        });
         return users;
     }
 
@@ -593,8 +583,7 @@ public class UserService {
     public Set<Integer> getUsersWithActivitiesToCache(PrismScope scope, Collection<Integer> resources, DateTime baseline) {
         Set<Integer> users = newHashSet();
 
-        scopeService.getEnclosingScopesDescending(scope, SYSTEM).forEach(roleScope ->
-                users.addAll(userDAO.getUsersWithActivitiesToCache(scope, resources, roleScope)));
+        scopeService.getEnclosingScopesDescending(scope, SYSTEM).forEach(roleScope -> users.addAll(userDAO.getUsersWithActivitiesToCache(scope, resources, roleScope)));
 
         if (!scope.equals(SYSTEM)) {
             stream(organizationScopes).forEach(targeterScope -> {

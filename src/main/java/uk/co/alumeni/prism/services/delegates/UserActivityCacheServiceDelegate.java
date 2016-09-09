@@ -11,7 +11,6 @@ import java.util.concurrent.ConcurrentHashMap;
 import javax.inject.Inject;
 
 import org.joda.time.DateTime;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.event.TransactionalEventListener;
 import org.springframework.web.context.request.async.DeferredResult;
@@ -37,7 +36,6 @@ public class UserActivityCacheServiceDelegate {
     @Inject
     private UserService userService;
 
-    @Async
     @TransactionalEventListener
     public void updateUserActivityCaches(UserActivityUpdateEvent userActivityUpdateEvent) {
         List<Integer> users = userActivityUpdateEvent.getUsers();
@@ -62,17 +60,11 @@ public class UserActivityCacheServiceDelegate {
     public UserActivityRepresentation updateUserActivityCache(Integer userId, DateTime baseline) {
         UserActivityRepresentation userActivityRepresentation = userMapper.getUserActivityRepresentationFresh(userId);
         userService.setUserActivityCache(userId, userActivityRepresentation, baseline);
-        return userActivityRepresentation;
-    }
-
-    @Async
-    public void updateUserActivityCacheAsynchronous(Integer userId, DateTime baseline) {
-        UserActivityRepresentation userActivityRepresentation = updateUserActivityCache(userId, baseline);
-        userActivityCacheService.updateUserActivityCache(userId);
         DeferredResult<UserActivityRepresentation> result = pollingUsers.get(userId);
         if (result != null) {
             result.setResult(userActivityRepresentation);
         }
+        return userActivityRepresentation;
     }
 
     public void addPollingUser(Integer userId, DeferredResult<UserActivityRepresentation> result) {

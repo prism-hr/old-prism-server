@@ -5,6 +5,10 @@ import static uk.co.alumeni.prism.domain.definitions.workflow.PrismNotificationD
 
 import java.util.List;
 
+import org.apache.log4j.ConsoleAppender;
+import org.apache.log4j.Level;
+import org.apache.log4j.Logger;
+import org.apache.log4j.PatternLayout;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,6 +43,12 @@ public class LifeCycleTest {
 
     @Autowired
     private ApplicationContext applicationContext;
+    
+    static {
+        Logger rootLogger = Logger.getRootLogger();
+        rootLogger.setLevel(Level.INFO);
+        rootLogger.addAppender(new ConsoleAppender(new PatternLayout("%d %p [%c] - <%m>%n")));
+    }
 
     @Test
     public void run() throws Exception {

@@ -48,11 +48,8 @@ public class UserActivityCacheService {
         if (!executions.contains(user)) {
             executions.add(user);
             userActivityCacheServiceDelegate.updateUserActivityCache(user, baseline);
+            executions.remove(user);
         }
-    }
-
-    public synchronized void updateUserActivityCache(Integer user) {
-        executions.remove(user);
     }
 
     private Integer getCurrentUserId(User currentUser) {

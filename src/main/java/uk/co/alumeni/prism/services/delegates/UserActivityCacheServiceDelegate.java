@@ -25,7 +25,7 @@ import uk.co.alumeni.prism.services.UserService;
 @Service
 public class UserActivityCacheServiceDelegate {
 
-    private ConcurrentHashMap<Integer, DeferredResult<UserActivityRepresentation>> pollingUsers = new ConcurrentHashMap<>();
+    private static final ConcurrentHashMap<Integer, DeferredResult<UserActivityRepresentation>> POLLING_USERS = new ConcurrentHashMap<>(8, 0.9f, 1);
 
     @Inject
     private UserActivityCacheService userActivityCacheService;
@@ -60,7 +60,7 @@ public class UserActivityCacheServiceDelegate {
     public UserActivityRepresentation updateUserActivityCache(Integer userId, DateTime baseline) {
         UserActivityRepresentation userActivityRepresentation = userMapper.getUserActivityRepresentationFresh(userId);
         userService.setUserActivityCache(userId, userActivityRepresentation, baseline);
-        DeferredResult<UserActivityRepresentation> result = pollingUsers.get(userId);
+        DeferredResult<UserActivityRepresentation> result = POLLING_USERS.get(userId);
         if (result != null) {
             result.setResult(userActivityRepresentation);
         }
@@ -68,11 +68,11 @@ public class UserActivityCacheServiceDelegate {
     }
 
     public void addPollingUser(Integer userId, DeferredResult<UserActivityRepresentation> result) {
-        pollingUsers.put(userId, result);
+        POLLING_USERS.put(userId, result);
     }
 
     public void removePollingUser(Integer userId, DeferredResult<UserActivityRepresentation> result) {
-        pollingUsers.remove(userId, result);
+        POLLING_USERS.remove(userId, result);
     }
 
 }

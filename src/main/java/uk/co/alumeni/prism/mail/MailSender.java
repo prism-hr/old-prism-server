@@ -7,7 +7,6 @@ import static javax.mail.Session.getInstance;
 import static org.apache.commons.lang.BooleanUtils.isTrue;
 import static org.joda.time.DateTime.now;
 import static org.slf4j.LoggerFactory.getLogger;
-import static org.springframework.beans.factory.config.BeanDefinition.SCOPE_PROTOTYPE;
 import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_EMAIL_LINK_MESSAGE;
 import static uk.co.alumeni.prism.utils.PrismConversionUtils.htmlToPlainText;
 import static uk.co.alumeni.prism.utils.PrismEmailUtils.getMessageData;
@@ -32,7 +31,6 @@ import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
-import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -71,7 +69,6 @@ import uk.co.alumeni.prism.utils.PrismTemplateUtils;
 
 @Service
 @Transactional
-@Scope(SCOPE_PROTOTYPE)
 public class MailSender {
 
     private static final Logger logger = getLogger(MailSender.class);

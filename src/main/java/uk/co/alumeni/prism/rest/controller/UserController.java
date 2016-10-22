@@ -237,7 +237,6 @@ public class UserController {
         } else {
             result.onTimeout(() -> {
                 userActivityCacheServiceDelegate.removePollingUser(currentUser.getId(), result);
-                throw new UserActivityNotModifiedException();
             });
             userActivityCacheServiceDelegate.addPollingUser(currentUser.getId(), result);
         }
@@ -416,7 +415,7 @@ public class UserController {
     }
 
     @ResponseStatus(value = NOT_MODIFIED, reason = "No updates to user activity")
-    private static class UserActivityNotModifiedException extends RuntimeException {
+    public static class UserActivityNotModifiedException extends RuntimeException {
 
         private static final long serialVersionUID = -5269664043567085353L;
 

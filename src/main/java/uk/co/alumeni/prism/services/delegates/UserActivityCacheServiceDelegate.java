@@ -10,6 +10,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import javax.inject.Inject;
 
+import org.apache.http.util.EntityUtils;
 import org.joda.time.DateTime;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.event.TransactionalEventListener;
@@ -17,6 +18,7 @@ import org.springframework.web.context.request.async.DeferredResult;
 
 import uk.co.alumeni.prism.event.UserActivityUpdateEvent;
 import uk.co.alumeni.prism.mapping.UserMapper;
+import uk.co.alumeni.prism.rest.controller.UserController;
 import uk.co.alumeni.prism.rest.dto.resource.ResourceDTO;
 import uk.co.alumeni.prism.rest.representation.user.UserActivityRepresentation;
 import uk.co.alumeni.prism.services.UserActivityCacheService;
@@ -73,6 +75,7 @@ public class UserActivityCacheServiceDelegate {
 
     public void removePollingUser(Integer userId, DeferredResult<UserActivityRepresentation> result) {
         requests.remove(userId, result);
+        result.setErrorResult(new UserController.UserActivityNotModifiedException());
     }
 
 }

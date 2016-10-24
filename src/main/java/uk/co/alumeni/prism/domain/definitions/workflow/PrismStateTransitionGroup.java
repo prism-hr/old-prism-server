@@ -159,7 +159,7 @@ public enum PrismStateTransitionGroup {
             new PrismStateTransition() //
                     .withTransitionState(APPLICATION_VALIDATION) //
                     .withTransitionAction(SYSTEM_VIEW_APPLICATION_LIST)
-                    .withStateTransitionNotifications(APPLICATION_CREATOR, APPLICATION_COMPLETE_NOTIFICATION)), //
+                    .withStateTransitionNotification(APPLICATION_CREATOR, APPLICATION_COMPLETE_NOTIFICATION)), //
 
     APPLICATION_COMPLETE_STATE_TRANSITION( //
             new PrismStateTransition() //
@@ -190,7 +190,7 @@ public enum PrismStateTransitionGroup {
                     .withTransitionAction(SYSTEM_VIEW_APPLICATION_LIST) //
                     .withReplicableSequenceClose() //
                     .withStateTransitionEvaluation(APPLICATION_COMPLETED_STATE_OUTCOME) //
-                    .withStateTransitionNotifications(APPLICATION_CREATOR, APPLICATION_RESERVE_NOTIFICATION), //
+                    .withStateTransitionNotification(APPLICATION_CREATOR, APPLICATION_RESERVE_NOTIFICATION), //
             new PrismStateTransition() //
                     .withTransitionState(APPLICATION_APPROVED) //
                     .withTransitionAction(APPLICATION_CONFIRM_OFFER) //
@@ -262,7 +262,7 @@ public enum PrismStateTransitionGroup {
                     .withTransitionState(APPLICATION_REJECTED_COMPLETED) //
                     .withTransitionAction(SYSTEM_VIEW_APPLICATION_LIST)
                     .withReplicableSequenceClose() //
-                    .withStateTransitionNotifications(APPLICATION_CREATOR, APPLICATION_CONFIRM_REJECTION_NOTIFICATION) //
+                    .withStateTransitionNotification(APPLICATION_CREATOR, APPLICATION_CONFIRM_REJECTION_NOTIFICATION) //
                     .withRoleTransitions(APPLICATION_RETIRE_REFEREE_GROUP) //
                     .withStateTerminations(APPLICATION_TERMINATE_REFERENCE_GROUP.getStateTerminations())),
 
@@ -275,7 +275,7 @@ public enum PrismStateTransitionGroup {
             new PrismStateTransition() //
                     .withTransitionState(APPLICATION_REJECTED_COMPLETED) //
                     .withTransitionAction(APPLICATION_ESCALATE)
-                    .withStateTransitionNotifications(APPLICATION_CREATOR, APPLICATION_TERMINATE_NOTIFICATION)), //
+                    .withStateTransitionNotification(APPLICATION_CREATOR, APPLICATION_TERMINATE_NOTIFICATION)), //
 
     APPLICATION_PROVIDE_REVIEW_TRANSITION( //
             new PrismStateTransition() //
@@ -325,7 +325,7 @@ public enum PrismStateTransitionGroup {
                     .withTransitionAction(SYSTEM_VIEW_APPLICATION_LIST) //
                     .withStateTransitionEvaluation(APPLICATION_CONFIRMED_OFFER_ACCEPTANCE_OUTCOME) //
                     .withStateTransitionNotifications(APPLICATION_PARENT_APPROVER_GROUP, APPLICATION_CONFIRM_OFFER_ACCEPTANCE_NOTIFICATION) //
-                    .withStateTransitionNotifications(APPLICATION_HIRING_MANAGER, APPLICATION_CONFIRM_OFFER_ACCEPTANCE_NOTIFICATION) //
+                    .withStateTransitionNotification(APPLICATION_HIRING_MANAGER, APPLICATION_CONFIRM_OFFER_ACCEPTANCE_NOTIFICATION) //
                     .withRoleTransitions(APPLICATION_RETIRE_HIRING_MANAGER_GROUP, APPLICATION_RETIRE_APPOINTEE_GROUP), //
             new PrismStateTransition() //
                     .withTransitionState(APPLICATION_APPROVED_PENDING_OFFER_REVISION) //
@@ -378,12 +378,12 @@ public enum PrismStateTransitionGroup {
                     .withTransitionState(PROJECT_APPROVED) //
                     .withTransitionAction(PROJECT_VIEW_EDIT) //
                     .withStateTransitionEvaluation(PROJECT_APPROVED_OUTCOME) //
-                    .withStateTransitionNotifications(PROJECT_ADMINISTRATOR, PROJECT_COMPLETE_APPROVAL_STAGE_NOTIFICATION), //
+                    .withStateTransitionNotification(PROJECT_ADMINISTRATOR, PROJECT_COMPLETE_APPROVAL_STAGE_NOTIFICATION), //
             new PrismStateTransition() //
                     .withTransitionState(PROJECT_REJECTED) //
                     .withTransitionAction(SYSTEM_VIEW_PROJECT_LIST) //
                     .withStateTransitionEvaluation(PROJECT_APPROVED_OUTCOME)
-                    .withStateTransitionNotifications(PROJECT_ADMINISTRATOR, PROJECT_COMPLETE_APPROVAL_STAGE_NOTIFICATION)), //
+                    .withStateTransitionNotification(PROJECT_ADMINISTRATOR, PROJECT_COMPLETE_APPROVAL_STAGE_NOTIFICATION)), //
 
     PROJECT_VIEW_EDIT_TRANSITION( //
             new PrismStateTransition() //
@@ -441,13 +441,13 @@ public enum PrismStateTransitionGroup {
                     .withTransitionState(PROGRAM_APPROVED) //
                     .withTransitionAction(SYSTEM_VIEW_PROGRAM_LIST) //
                     .withStateTransitionEvaluation(PROGRAM_APPROVED_OUTCOME) //
-                    .withStateTransitionNotifications(PROGRAM_ADMINISTRATOR, PROGRAM_COMPLETE_APPROVAL_STAGE_NOTIFICATION) //
+                    .withStateTransitionNotification(PROGRAM_ADMINISTRATOR, PROGRAM_COMPLETE_APPROVAL_STAGE_NOTIFICATION) //
                     .withPropagatedActions(PROJECT_COMPLETE_PARENT_APPROVAL_STAGE),
             new PrismStateTransition() //
                     .withTransitionState(PROGRAM_REJECTED) //
                     .withTransitionAction(SYSTEM_VIEW_PROGRAM_LIST) //
                     .withStateTransitionEvaluation(PROGRAM_APPROVED_OUTCOME) //
-                    .withStateTransitionNotifications(PROGRAM_ADMINISTRATOR, PROGRAM_COMPLETE_APPROVAL_STAGE_NOTIFICATION)), //
+                    .withStateTransitionNotification(PROGRAM_ADMINISTRATOR, PROGRAM_COMPLETE_APPROVAL_STAGE_NOTIFICATION)), //
 
     PROGRAM_VIEW_EDIT_TRANSITION( //
             new PrismStateTransition() //
@@ -506,13 +506,13 @@ public enum PrismStateTransitionGroup {
                     .withTransitionState(DEPARTMENT_APPROVED) //
                     .withTransitionAction(SYSTEM_VIEW_DEPARTMENT_LIST) //
                     .withStateTransitionEvaluation(DEPARTMENT_APPROVED_OUTCOME) //
-                    .withStateTransitionNotifications(DEPARTMENT_ADMINISTRATOR, DEPARTMENT_COMPLETE_APPROVAL_STAGE_NOTIFICATION) //
+                    .withStateTransitionNotification(DEPARTMENT_ADMINISTRATOR, DEPARTMENT_COMPLETE_APPROVAL_STAGE_NOTIFICATION) //
                     .withPropagatedActions(PROJECT_COMPLETE_PARENT_APPROVAL_STAGE, PROGRAM_COMPLETE_PARENT_APPROVAL_STAGE),
             new PrismStateTransition() //
                     .withTransitionState(DEPARTMENT_REJECTED) //
                     .withTransitionAction(SYSTEM_VIEW_DEPARTMENT_LIST) //
                     .withStateTransitionEvaluation(DEPARTMENT_APPROVED_OUTCOME) //
-                    .withStateTransitionNotifications(DEPARTMENT_ADMINISTRATOR, DEPARTMENT_COMPLETE_APPROVAL_STAGE_NOTIFICATION)), //
+                    .withStateTransitionNotification(DEPARTMENT_ADMINISTRATOR, DEPARTMENT_COMPLETE_APPROVAL_STAGE_NOTIFICATION)), //
 
     DEPARTMENT_VIEW_EDIT_TRANSITION( //
             new PrismStateTransition() //
@@ -558,14 +558,14 @@ public enum PrismStateTransitionGroup {
                     .withTransitionState(INSTITUTION_APPROVED) //
                     .withTransitionAction(INSTITUTION_VIEW_EDIT) //
                     .withStateTransitionEvaluation(INSTITUTION_APPROVED_OUTCOME) //
-                    .withStateTransitionNotifications(INSTITUTION_ADMINISTRATOR, INSTITUTION_COMPLETE_APPROVAL_STAGE_NOTIFICATION) //
+                    .withStateTransitionNotification(INSTITUTION_ADMINISTRATOR, INSTITUTION_COMPLETE_APPROVAL_STAGE_NOTIFICATION) //
                     .withPropagatedActions(PROJECT_COMPLETE_PARENT_APPROVAL_STAGE, PROGRAM_COMPLETE_PARENT_APPROVAL_STAGE,
                             DEPARTMENT_COMPLETE_PARENT_APPROVAL_STAGE),
             new PrismStateTransition() //
                     .withTransitionState(INSTITUTION_REJECTED) //
                     .withTransitionAction(SYSTEM_VIEW_INSTITUTION_LIST)
                     .withStateTransitionEvaluation(INSTITUTION_APPROVED_OUTCOME) //
-                    .withStateTransitionNotifications(INSTITUTION_ADMINISTRATOR, INSTITUTION_COMPLETE_APPROVAL_STAGE_NOTIFICATION)),
+                    .withStateTransitionNotification(INSTITUTION_ADMINISTRATOR, INSTITUTION_COMPLETE_APPROVAL_STAGE_NOTIFICATION)),
 
     INSTITUTION_VIEW_EDIT_TRANSITION( //
             new PrismStateTransition() //

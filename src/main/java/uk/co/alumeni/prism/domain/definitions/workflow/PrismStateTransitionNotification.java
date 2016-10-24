@@ -8,14 +8,14 @@ public class PrismStateTransitionNotification {
 
     private PrismRole role;
 
-    private PrismNotificationDefinition notificationdDefinition;
+    private PrismNotificationDefinition notificationDefinition;
 
     public PrismRole getRole() {
         return role;
     }
 
-    public PrismNotificationDefinition getNotificationdDefinition() {
-        return notificationdDefinition;
+    public PrismNotificationDefinition getNotificationDefinition() {
+        return notificationDefinition;
     }
 
     public PrismStateTransitionNotification withRole(PrismRole role) {
@@ -24,7 +24,7 @@ public class PrismStateTransitionNotification {
     }
 
     public PrismStateTransitionNotification withNotificationDefinition(PrismNotificationDefinition notificationDefinition) {
-        this.notificationdDefinition = notificationDefinition;
+        this.notificationDefinition = notificationDefinition;
         return this;
     }
 
@@ -42,7 +42,7 @@ public class PrismStateTransitionNotification {
             return false;
         }
         PrismStateTransitionNotification other = (PrismStateTransitionNotification) object;
-        return equal(role, other.getRole()) && equal(notificationdDefinition, other.getNotificationdDefinition());
+        return equal(role, other.getRole()) && equal(notificationDefinition, other.getNotificationDefinition());
     }
 
 }

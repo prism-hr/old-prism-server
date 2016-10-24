@@ -1,5 +1,38 @@
 package uk.co.alumeni.prism.services;
 
+import com.google.common.base.Objects;
+import com.google.common.base.Splitter;
+import com.google.common.base.Strings;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.LinkedHashMultimap;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
+import org.joda.time.DateTime;
+import org.springframework.context.ApplicationContext;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import uk.co.alumeni.prism.dao.StateDAO;
+import uk.co.alumeni.prism.domain.comment.Comment;
+import uk.co.alumeni.prism.domain.definitions.workflow.*;
+import uk.co.alumeni.prism.domain.resource.Resource;
+import uk.co.alumeni.prism.domain.user.User;
+import uk.co.alumeni.prism.domain.workflow.*;
+import uk.co.alumeni.prism.dto.*;
+import uk.co.alumeni.prism.exceptions.WorkflowEngineException;
+import uk.co.alumeni.prism.rest.dto.StateActionPendingDTO;
+import uk.co.alumeni.prism.rest.dto.user.UserDTO;
+import uk.co.alumeni.prism.utils.PrismJsonMappingUtils;
+import uk.co.alumeni.prism.workflow.resolvers.state.termination.StateTerminationResolver;
+import uk.co.alumeni.prism.workflow.resolvers.state.transition.StateTransitionResolver;
+import uk.co.alumeni.prism.workflow.resolvers.state.transition.selection.StateTransitionSelectionResolver;
+
+import javax.inject.Inject;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
+
 import static com.google.common.collect.Lists.newArrayList;
 import static java.util.stream.Collectors.toList;
 import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
@@ -10,66 +43,6 @@ import static uk.co.alumeni.prism.dao.WorkflowDAO.organizationScopes;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismConfiguration.STATE_DURATION;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.SYSTEM;
 import static uk.co.alumeni.prism.utils.PrismStringUtils.endsWith;
-
-import java.util.Collection;
-import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
-
-import javax.inject.Inject;
-
-import org.joda.time.DateTime;
-import org.springframework.context.ApplicationContext;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import uk.co.alumeni.prism.dao.StateDAO;
-import uk.co.alumeni.prism.domain.comment.Comment;
-import uk.co.alumeni.prism.domain.definitions.workflow.PrismAction;
-import uk.co.alumeni.prism.domain.definitions.workflow.PrismScope;
-import uk.co.alumeni.prism.domain.definitions.workflow.PrismState;
-import uk.co.alumeni.prism.domain.definitions.workflow.PrismStateDurationDefinition;
-import uk.co.alumeni.prism.domain.definitions.workflow.PrismStateGroup;
-import uk.co.alumeni.prism.domain.definitions.workflow.PrismStateTerminationEvaluation;
-import uk.co.alumeni.prism.domain.definitions.workflow.PrismStateTransitionEvaluation;
-import uk.co.alumeni.prism.domain.resource.Resource;
-import uk.co.alumeni.prism.domain.user.User;
-import uk.co.alumeni.prism.domain.workflow.Action;
-import uk.co.alumeni.prism.domain.workflow.Role;
-import uk.co.alumeni.prism.domain.workflow.RoleTransition;
-import uk.co.alumeni.prism.domain.workflow.State;
-import uk.co.alumeni.prism.domain.workflow.StateAction;
-import uk.co.alumeni.prism.domain.workflow.StateActionAssignment;
-import uk.co.alumeni.prism.domain.workflow.StateActionPending;
-import uk.co.alumeni.prism.domain.workflow.StateActionRecipient;
-import uk.co.alumeni.prism.domain.workflow.StateDurationConfiguration;
-import uk.co.alumeni.prism.domain.workflow.StateDurationDefinition;
-import uk.co.alumeni.prism.domain.workflow.StateGroup;
-import uk.co.alumeni.prism.domain.workflow.StateTermination;
-import uk.co.alumeni.prism.domain.workflow.StateTransition;
-import uk.co.alumeni.prism.domain.workflow.StateTransitionEvaluation;
-import uk.co.alumeni.prism.domain.workflow.StateTransitionNotification;
-import uk.co.alumeni.prism.domain.workflow.StateTransitionPending;
-import uk.co.alumeni.prism.dto.StateActionRecipientDTO;
-import uk.co.alumeni.prism.dto.StateSelectableDTO;
-import uk.co.alumeni.prism.dto.StateTransitionDTO;
-import uk.co.alumeni.prism.dto.StateTransitionPendingDTO;
-import uk.co.alumeni.prism.dto.UserNotificationDefinitionDTO;
-import uk.co.alumeni.prism.exceptions.WorkflowEngineException;
-import uk.co.alumeni.prism.rest.dto.StateActionPendingDTO;
-import uk.co.alumeni.prism.rest.dto.user.UserDTO;
-import uk.co.alumeni.prism.utils.PrismJsonMappingUtils;
-import uk.co.alumeni.prism.workflow.resolvers.state.termination.StateTerminationResolver;
-import uk.co.alumeni.prism.workflow.resolvers.state.transition.StateTransitionResolver;
-import uk.co.alumeni.prism.workflow.resolvers.state.transition.selection.StateTransitionSelectionResolver;
-
-import com.google.common.base.Objects;
-import com.google.common.base.Splitter;
-import com.google.common.base.Strings;
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.LinkedHashMultimap;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
 
 @Service
 @Transactional
@@ -210,6 +183,14 @@ public class StateService {
         state = state == null ? transitionState : state;
 
         Set<UserNotificationDefinitionDTO> updates = notificationService.getIndividualUpdateDefinitions(resource, stateTransition);
+        Iterator<UserNotificationDefinitionDTO> updatesIterator = updates.iterator();
+        while (updatesIterator.hasNext()) {
+            UserNotificationDefinitionDTO update = updatesIterator.next();
+            if (update.getNotificationDefinitionId().equals(PrismNotificationDefinition.APPLICATION_PROVIDE_REFERENCE_NOTIFICATION)
+                    && !update.getUserId().equals(comment.getUser().getId())) {
+                updatesIterator.remove();
+            }
+        }
 
         Set<State> stateTerminations = getStateTerminations(resource, action, stateTransition);
         commentService.recordStateTransition(comment, state, transitionState, stateTerminations);

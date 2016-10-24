@@ -969,20 +969,6 @@ public class AdvertDAO {
                 .list();
     }
 
-    public List<String> getPossibleLocations() {
-        return (List<String>) sessionFactory.getCurrentSession().createCriteria(AdvertLocation.class)
-                .setProjection(Projections.groupProperty("locationAdvert.name"))
-                .createAlias("locationAdvert", "locationAdvert", JoinType.INNER_JOIN)
-                .list();
-    }
-
-    public List<String> getPossibleThemes() {
-        return (List<String>) sessionFactory.getCurrentSession().createCriteria(AdvertTheme.class)
-                .setProjection(Projections.groupProperty("theme.name"))
-                .createAlias("theme", "theme")
-                .list();
-    }
-
     private void appendScopeConstraint(Criteria criteria, Collection<PrismScope> scopes) {
         if (isNotEmpty(scopes)) {
             criteria.add(Restrictions.in("scope.id", scopes)); //

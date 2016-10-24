@@ -1,5 +1,9 @@
 package uk.co.alumeni.prism.rest.representation.advert;
 
+import uk.co.alumeni.prism.domain.definitions.PrismCompetenceMode;
+
+import javax.validation.constraints.NotNull;
+
 public class AdvertCompetenceRepresentation {
 
     private Integer competenceId;
@@ -9,6 +13,8 @@ public class AdvertCompetenceRepresentation {
     private String description;
 
     private Integer importance;
+
+    private PrismCompetenceMode mode;
 
     public Integer getCompetenceId() {
         return competenceId;
@@ -42,6 +48,14 @@ public class AdvertCompetenceRepresentation {
         this.importance = importance;
     }
 
+    public PrismCompetenceMode getMode() {
+        return mode;
+    }
+
+    public void setMode(PrismCompetenceMode mode) {
+        this.mode = mode;
+    }
+
     public AdvertCompetenceRepresentation withCompetenceId(final Integer competenceId) {
         this.competenceId = competenceId;
         return this;
@@ -59,6 +73,11 @@ public class AdvertCompetenceRepresentation {
 
     public AdvertCompetenceRepresentation withImportance(Integer importance) {
         this.importance = importance;
+        return this;
+    }
+
+    public AdvertCompetenceRepresentation withMode(PrismCompetenceMode mode) {
+        this.mode = mode;
         return this;
     }
 

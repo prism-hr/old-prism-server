@@ -1,20 +1,7 @@
 package uk.co.alumeni.prism.rest.controller;
 
-import static java.util.Collections.emptyList;
-
-import java.util.List;
-
-import javax.inject.Inject;
-import javax.validation.Valid;
-
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
-
+import org.springframework.web.bind.annotation.*;
 import uk.co.alumeni.prism.domain.advert.Advert;
 import uk.co.alumeni.prism.domain.advert.AdvertCategories;
 import uk.co.alumeni.prism.domain.resource.Resource;
@@ -34,6 +21,12 @@ import uk.co.alumeni.prism.rest.representation.resource.ResourceRepresentationLo
 import uk.co.alumeni.prism.services.AdvertService;
 import uk.co.alumeni.prism.services.ResourceService;
 import uk.co.alumeni.prism.services.UserService;
+
+import javax.inject.Inject;
+import javax.validation.Valid;
+import java.util.List;
+
+import static java.util.Collections.emptyList;
 
 @RestController
 @RequestMapping("api/{resourceScope:projects|programs|departments|institutions}/{resourceId}")
@@ -57,16 +50,6 @@ public class AdvertController {
         Advert advert = advertService.getAdvert(resourceDescriptor.getResourceScope(), resourceId);
         List<AdvertTargetDTO> advertTargets = advertService.getAdvertTargets(advert);
         return advertMapper.getAdvertTargetConnectionRepresentations(advertTargets, userService.getCurrentUser());
-    }
-
-    @RequestMapping(value = "/possibleLocations", method = RequestMethod.GET)
-    public List<String> getPossibleLocations() {
-        return advertService.getPossibleLocations();
-    }
-
-    @RequestMapping(value = "/possibleThemes", method = RequestMethod.GET)
-    public List<String> getPossibleThemes() {
-        return advertService.getPossibleThemes();
     }
 
     @RequestMapping(value = "/locations", method = RequestMethod.GET)

@@ -59,6 +59,16 @@ public class AdvertController {
         return advertMapper.getAdvertTargetConnectionRepresentations(advertTargets, userService.getCurrentUser());
     }
 
+    @RequestMapping(value = "/possibleLocations", method = RequestMethod.GET)
+    public List<String> getPossibleLocations() {
+        return advertService.getPossibleLocations();
+    }
+
+    @RequestMapping(value = "/possibleThemes", method = RequestMethod.GET)
+    public List<String> getPossibleThemes() {
+        return advertService.getPossibleThemes();
+    }
+
     @RequestMapping(value = "/locations", method = RequestMethod.GET)
     public List<ResourceRepresentationLocationRelation> getLocations(@ModelAttribute ResourceDescriptor resourceDescriptor, @PathVariable Integer resourceId) {
         Advert advert = advertService.getAdvert(resourceDescriptor.getResourceScope(), resourceId);

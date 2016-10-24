@@ -227,6 +227,16 @@ public class ResourceController {
         response.setHeader("file-name", fileName);
     }
 
+    @RequestMapping(value = "/possibleLocations", method = RequestMethod.GET)
+    public List<String> getPossibleLocations() {
+        return resourceService.getPossibleLocations();
+    }
+
+    @RequestMapping(value = "/possibleThemes", method = RequestMethod.GET)
+    public List<String> getPossibleThemes() {
+        return resourceService.getPossibleThemes();
+    }
+
     @RequestMapping(method = RequestMethod.GET, value = "{resourceId}/plot")
     @PreAuthorize("isAuthenticated()")
     public ResourceSummaryPlotRepresentation getPlot(@ModelAttribute ResourceDescriptor resourceDescriptor, @PathVariable Integer resourceId,

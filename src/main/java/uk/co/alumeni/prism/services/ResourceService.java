@@ -1310,6 +1310,14 @@ public class ResourceService {
         }
     }
 
+    public List<String> getPossibleLocations() {
+        return resourceDAO.getPossibleLocations();
+    }
+
+    public List<String> getPossibleThemes() {
+        return resourceDAO.getPossibleThemes();
+    }
+
     private Set<ResourceOpportunityCategoryDTO> getResources(User user, PrismScope scope, List<PrismScope> parentScopes, List<Integer> targeterEntities,
             ResourceListFilterDTO filter, Junction conditions) {
         return getResources(user, scope, parentScopes, targeterEntities, filter, //

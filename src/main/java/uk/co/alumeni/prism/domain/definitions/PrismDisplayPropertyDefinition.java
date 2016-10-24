@@ -1,13 +1,12 @@
 package uk.co.alumeni.prism.domain.definitions;
 
-import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyCategory.PROFILE_UPDATE;
-
-import java.util.Set;
-
+import com.google.common.collect.LinkedHashMultimap;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismConfigurationCategorizable;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismScope;
 
-import com.google.common.collect.LinkedHashMultimap;
+import java.util.Set;
+
+import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyCategory.PROFILE_UPDATE;
 
 public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategorizable<PrismDisplayPropertyCategory> {
 
@@ -1079,7 +1078,8 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     SYSTEM_NOTIFICATION_APPLICATION_PROVIDE_INTERVIEW_AVAILABILITY_REQUEST(PrismDisplayPropertyCategory.SYSTEM_NOTIFICATION,
             "Provide Interview Availability Request"),
     SYSTEM_NOTIFICATION_APPLICATION_PROVIDE_INTERVIEW_FEEDBACK_REQUEST(PrismDisplayPropertyCategory.SYSTEM_NOTIFICATION, "Provide Interview Feedback Request"),
-    SYSTEM_NOTIFICATION_APPLICATION_PROVIDE_PARTNER_APPROVAL_REQUEST(PrismDisplayPropertyCategory.SYSTEM_NOTIFICATION, "Provide Partner Appproval Request"),
+    SYSTEM_NOTIFICATION_APPLICATION_PROVIDE_PARTNER_APPROVAL_REQUEST(PrismDisplayPropertyCategory.SYSTEM_NOTIFICATION, "Provide Partner Approval Request"),
+    SYSTEM_NOTIFICATION_APPLICATION_PROVIDE_REFERENCE_NOTIFICATION(PrismDisplayPropertyCategory.SYSTEM_NOTIFICATION, "Provide Reference Request"),
     SYSTEM_NOTIFICATION_APPLICATION_PROVIDE_REFERENCE_REQUEST(PrismDisplayPropertyCategory.SYSTEM_NOTIFICATION, "Provide Reference Request"),
     SYSTEM_NOTIFICATION_APPLICATION_PROVIDE_REFERENCE_HAVE_RESPONDED(PrismDisplayPropertyCategory.SYSTEM_NOTIFICATION, "All the referees have responded"),
     SYSTEM_NOTIFICATION_APPLICATION_PROVIDE_REVIEW_REQUEST(PrismDisplayPropertyCategory.SYSTEM_NOTIFICATION, "Provide Review Request"),

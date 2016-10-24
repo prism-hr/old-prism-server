@@ -155,12 +155,12 @@ public class PrismStateTransition {
 
     public PrismStateTransition withStateTransitionNotifications(PrismRoleGroup roleGroup, PrismNotificationDefinition stateTransitionNotification) {
         for (PrismRole role : roleGroup.getRoles()) {
-            withStateTransitionNotifications(role, stateTransitionNotification);
+            withStateTransitionNotification(role, stateTransitionNotification);
         }
         return this;
     }
 
-    public PrismStateTransition withStateTransitionNotifications(PrismRole role, PrismNotificationDefinition stateTransitionNotification) {
+    public PrismStateTransition withStateTransitionNotification(PrismRole role, PrismNotificationDefinition stateTransitionNotification) {
         this.stateTransitionNotifications.add(new PrismStateTransitionNotification().withRole(role).withNotificationDefinition(stateTransitionNotification));
         return this;
     }

@@ -1320,11 +1320,13 @@ public class AdvertService {
             if (!competence.getDescription().equals(competenceDTO.getDescription())) {
                 customDescription = competenceDTO.getDescription();
             }
+
             AdvertCompetence advertCompetence = new AdvertCompetence();
             advertCompetence.setAdvert(advert);
             advertCompetence.setCompetence(competence);
             advertCompetence.setDescription(customDescription);
             advertCompetence.setImportance(competenceDTO.getImportance());
+            advertCompetence.setMode(competenceDTO.getMode());
             advert.getCompetences().add(advertCompetence);
             entityService.save(advertCompetence);
         }

@@ -8,6 +8,8 @@ public class CommentCompetenceRepresentation {
 
     private String description;
 
+    private Boolean fulfil;
+
     private Integer rating;
 
     private String remark;
@@ -34,6 +36,14 @@ public class CommentCompetenceRepresentation {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public Boolean getFulfil() {
+        return fulfil;
+    }
+
+    public void setFulfil(Boolean fulfil) {
+        this.fulfil = fulfil;
     }
 
     public Integer getRating() {
@@ -64,6 +74,11 @@ public class CommentCompetenceRepresentation {
 
     public CommentCompetenceRepresentation withDescription(String description) {
         this.description = description;
+        return this;
+    }
+
+    public CommentCompetenceRepresentation withFulfil(Boolean fulfil) {
+        this.fulfil = fulfil;
         return this;
     }
 

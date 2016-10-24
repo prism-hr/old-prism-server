@@ -20,14 +20,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyCategory;
-import uk.co.alumeni.prism.domain.definitions.PrismDurationUnit;
-import uk.co.alumeni.prism.domain.definitions.PrismFilterEntity;
-import uk.co.alumeni.prism.domain.definitions.PrismGender;
-import uk.co.alumeni.prism.domain.definitions.PrismPerformanceIndicator;
-import uk.co.alumeni.prism.domain.definitions.PrismRejectionReason;
-import uk.co.alumeni.prism.domain.definitions.PrismStudyOption;
-import uk.co.alumeni.prism.domain.definitions.PrismYesNoUnsureResponse;
+import uk.co.alumeni.prism.domain.definitions.*;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismActionCondition;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismConfiguration;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismScope;
@@ -177,7 +170,7 @@ public class StaticDataMapper {
 
         for (Class<?> enumClass : new Class[] { PrismStudyOption.class, PrismYesNoUnsureResponse.class, PrismDurationUnit.class,
                 PrismDisplayPropertyCategory.class, PrismFilterEntity.class, PrismStateGroup.class, PrismRejectionReason.class,
-                PrismGender.class }) {
+                PrismGender.class, PrismCompetenceMode.class}) {
             String simpleName = enumClass.getSimpleName().replaceFirst("Prism", "");
             simpleName = uncapitalize(simpleName);
             staticData.put(pluralize(simpleName), enumClass.getEnumConstants());

@@ -50,7 +50,7 @@ public class PrismApplicationRejected extends PrismWorkflowState {
                 .withStateTransitions(new PrismStateTransition() //
                         .withTransitionState(APPLICATION_REJECTED) //
                         .withTransitionAction(APPLICATION_COMPLETE_REJECTED_STAGE) //
-                        .withStateTransitionNotifications(APPLICATION_CREATOR, APPLICATION_REVERSE_REJECTION_NOTIFICATION) //
+                        .withStateTransitionNotification(APPLICATION_CREATOR, APPLICATION_REVERSE_REJECTION_NOTIFICATION) //
                         .withRoleTransitions(APPLICATION_EXHUME_REFEREE_GROUP));
     }
 

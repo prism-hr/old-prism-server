@@ -153,8 +153,7 @@ public class ApplicationMapper {
         Advert advert = application.getAdvert();
         AdvertCategoriesRepresentation advertCategories = advertMapper.getAdvertCategoriesRepresentation(advert, currentUser);
         representation.setPossibleThemes(advertCategories.getThemes());
-        representation.setPossibleLocations(advertCategories.getLocations().stream().filter(location -> isTrue(location.getSelected()))
-                .collect(toList()));
+        representation.setPossibleLocations(advertCategories.getLocations().stream().filter(location -> isTrue(location.getSelected())).collect(toList()));
 
         List<UserSelectionDTO> usersInterested = userService.getUsersInterestedInApplication(application);
         representation.setUsersInterestedInApplication(userMapper.getUserRepresentations(usersInterested));

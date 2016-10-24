@@ -372,8 +372,8 @@ public class ResourceController {
         messageService.viewMessageThread(body.get("latestUnreadMessageId"));
     }
 
-    @PreAuthorize("isAuthenticated()")
     @RequestMapping(value = "{resourceId}/connections", method = RequestMethod.GET)
+    @PreAuthorize("isAuthenticated()")
     public List<ResourceRepresentationConnection> getResourcesForWhichUserCanConnect(@PathVariable Integer resourceId,
             @ModelAttribute ResourceDescriptor resourceDescriptor, @RequestParam PrismResourceContext motivation, @RequestParam(required = false) String q) {
         Resource resource = loadResource(resourceId, resourceDescriptor);

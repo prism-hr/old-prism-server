@@ -15,6 +15,7 @@ import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.INSTITU
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 
 import javax.inject.Inject;
@@ -139,10 +140,13 @@ public class ApplicationPostprocessor implements ResourceProcessor<Application> 
             List<Integer> scores = Lists.newArrayList();
             BigDecimal sumImportance = new BigDecimal(0).setScale(RATING_PRECISION);
             for (CommentCompetence competence : competences) {
-                Integer importance = importances.get(competence.getId());
-                importance = importance == null ? CONFIDENCE_MEDIUM : importance;
-                scores.add(importance * competence.getRating());
-                sumImportance = sumImportance.add(new BigDecimal(importance).setScale(RATING_PRECISION));
+                Integer rating = competence.getRating();
+                if (rating != null) {
+                    Integer importance = importances.get(competence.getId());
+                    importance = importance == null ? CONFIDENCE_MEDIUM : importance;
+                    scores.add(importance * competence.getRating());
+                    sumImportance = sumImportance.add(new BigDecimal(importance).setScale(RATING_PRECISION));
+                }
             }
 
             BigDecimal rating = new BigDecimal(0).setScale(RATING_PRECISION, HALF_UP);

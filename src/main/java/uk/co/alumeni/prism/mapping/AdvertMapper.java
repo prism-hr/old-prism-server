@@ -450,7 +450,7 @@ public class AdvertMapper {
                 .map(competence -> new AdvertCompetenceRepresentation().withCompetenceId(competence.getCompetence().getId())
                         .withName(competence.getCompetence().getName())
                         .withDescription(Objects.firstNonNull(competence.getDescription(), competence.getCompetence().getDescription()))
-                        .withImportance(competence.getImportance()))
+                        .withImportance(competence.getImportance()).withMode(competence.getMode()))
                 .collect(toList());
     }
 

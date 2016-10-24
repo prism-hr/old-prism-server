@@ -24,6 +24,7 @@ import java.util.stream.Stream;
 import javax.inject.Inject;
 import javax.transaction.Transactional;
 
+import org.apache.commons.lang.BooleanUtils;
 import org.joda.time.LocalDateTime;
 import org.springframework.stereotype.Service;
 
@@ -323,11 +324,15 @@ public class CommentMapper {
 
         for (CommentCompetence commentCompetence : commentCompetences) {
             Competence competence = commentCompetence.getCompetence();
+            Integer rating = null;
+            Boolean fulfil = commentCompetence.getFulfil();
+            if (fulfil == null) {
+                rating = commentCompetence.getRating();
+            }
+
             CommentCompetenceGroupRepresentation group = groups.get(commentCompetence.getImportance());
-            group.getCompetences().add(new CommentCompetenceRepresentation()
-                    .withCompetenceId(competence.getId()).withName(competence.getName())
-                    .withDescription(competence.getDescription()).withRating(commentCompetence.getRating())
-                    .withRemark(commentCompetence.getRemark()));
+            group.getCompetences().add(new CommentCompetenceRepresentation().withCompetenceId(competence.getId()).withName(competence.getName())
+                    .withDescription(competence.getDescription()).withFulfil(fulfil).withRating(rating).withRemark(commentCompetence.getRemark()));
         }
         return Stream.of(3, 2, 1)
                 .map(groups::get)

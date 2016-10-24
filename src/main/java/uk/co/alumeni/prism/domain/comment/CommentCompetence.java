@@ -32,6 +32,9 @@ public class CommentCompetence {
     @Column(name = "importance", nullable = false)
     private Integer importance;
 
+    @Column(name = "fulfil")
+    private Boolean fulfil;
+
     @Column(name = "rating")
     private Integer rating;
 
@@ -70,6 +73,14 @@ public class CommentCompetence {
         this.importance = importance;
     }
 
+    public Boolean getFulfil() {
+        return fulfil;
+    }
+
+    public void setFulfil(Boolean fulfil) {
+        this.fulfil = fulfil;
+    }
+
     public Integer getRating() {
         return rating;
     }
@@ -98,6 +109,11 @@ public class CommentCompetence {
 
     public CommentCompetence withImportance(final Integer importance) {
         this.importance = importance;
+        return this;
+    }
+
+    public CommentCompetence withFulfil(Boolean fulfil) {
+        this.fulfil = fulfil;
         return this;
     }
 

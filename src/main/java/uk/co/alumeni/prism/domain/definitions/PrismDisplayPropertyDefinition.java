@@ -2112,6 +2112,9 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     SYSTEM_RESOURCE_COMPETENCES_ESSENTIAL(PrismDisplayPropertyCategory.SYSTEM_RESOURCE_COMPETENCES, "Essential"),
     SYSTEM_RESOURCE_COMPETENCES_EXPECTED(PrismDisplayPropertyCategory.SYSTEM_RESOURCE_COMPETENCES, "Expected"),
     SYSTEM_RESOURCE_COMPETENCES_DESIRABLE(PrismDisplayPropertyCategory.SYSTEM_RESOURCE_COMPETENCES, "Desirable"),
+    SYSTEM_RESOURCE_COMPETENCES_FULFIL(PrismDisplayPropertyCategory.SYSTEM_RESOURCE_COMPETENCES, "Yes/No"),
+    SYSTEM_RESOURCE_COMPETENCES_RATING(PrismDisplayPropertyCategory.SYSTEM_RESOURCE_COMPETENCES, "Rating"),
+    SYSTEM_RESOURCE_COMPETENCES_REMARK(PrismDisplayPropertyCategory.SYSTEM_RESOURCE_COMPETENCES, "Remark Only"),
 
     /*
      * *************** SYSTEM RESOURCE ADVERT *********************

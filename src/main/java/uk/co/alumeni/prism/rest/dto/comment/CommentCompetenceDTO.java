@@ -14,6 +14,8 @@ public class CommentCompetenceDTO {
     @Range(min = 1, max = 3)
     private Integer importance;
 
+    private Boolean fulfil;
+
     private Integer rating;
 
     @Size(max = 2000)
@@ -33,6 +35,14 @@ public class CommentCompetenceDTO {
 
     public void setImportance(Integer importance) {
         this.importance = importance;
+    }
+
+    public Boolean getFulfil() {
+        return fulfil;
+    }
+
+    public void setFulfil(Boolean fulfil) {
+        this.fulfil = fulfil;
     }
 
     public Integer getRating() {

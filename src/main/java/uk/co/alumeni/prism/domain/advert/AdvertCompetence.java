@@ -1,15 +1,10 @@
 package uk.co.alumeni.prism.domain.advert;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
-import javax.persistence.UniqueConstraint;
+import javax.persistence.*;
 
 import uk.co.alumeni.prism.domain.Competence;
+import uk.co.alumeni.prism.domain.definitions.PrismCompetenceMode;
+import uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyCategory;
 
 @Entity
 @Table(name = "advert_competence", uniqueConstraints = { @UniqueConstraint(columnNames = { "advert_id", "competence_id" }) })
@@ -32,6 +27,10 @@ public class AdvertCompetence extends AdvertAttribute {
 
     @Column(name = "importance", nullable = false)
     private Integer importance;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "mode")
+    private PrismCompetenceMode mode;
 
     @Override
     public Integer getId() {
@@ -75,6 +74,14 @@ public class AdvertCompetence extends AdvertAttribute {
 
     public void setImportance(Integer importance) {
         this.importance = importance;
+    }
+
+    public PrismCompetenceMode getMode() {
+        return mode;
+    }
+
+    public void setMode(PrismCompetenceMode mode) {
+        this.mode = mode;
     }
 
     @Override

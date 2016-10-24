@@ -682,8 +682,8 @@ public class Comment extends WorkflowResourceExecution implements Activity, User
         return this;
     }
 
-    public Comment addCompetence(Competence competence, Integer importance, Integer rating, String remark) {
-        competences.add(new CommentCompetence().withCompetence(competence).withImportance(importance).withRating(rating).withRemark(remark));
+    public Comment addCompetence(Competence competence, Integer importance, Boolean fulfil, Integer rating, String remark) {
+        competences.add(new CommentCompetence().withCompetence(competence).withImportance(importance).withFulfil(fulfil).withRating(rating).withRemark(remark));
         return this;
     }
 

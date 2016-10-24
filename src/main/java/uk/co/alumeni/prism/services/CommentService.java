@@ -26,6 +26,7 @@ import java.util.Set;
 
 import javax.inject.Inject;
 
+import org.apache.commons.lang.BooleanUtils;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDateTime;
 import org.springframework.context.ApplicationContext;
@@ -554,8 +555,14 @@ public class CommentService {
 
     private void appendCompetences(Comment comment, CommentDTO commentDTO) {
         for (CommentCompetenceDTO commentCompetenceDTO : commentDTO.getCompetences()) {
-            comment.addCompetence(entityService.getById(Competence.class, commentCompetenceDTO.getCompetenceId()), commentCompetenceDTO.getImportance(),
-                    commentCompetenceDTO.getRating(), commentCompetenceDTO.getRemark());
+            Boolean fulfil = commentCompetenceDTO.getFulfil();
+            Integer rating = commentCompetenceDTO.getRating();
+            if (BooleanUtils.isTrue(fulfil)) {
+                rating = 5;
+            }
+
+            comment.addCompetence(entityService.getById(Competence.class, commentCompetenceDTO.getCompetenceId()),
+                    commentCompetenceDTO.getImportance(), fulfil, rating, commentCompetenceDTO.getRemark());
         }
     }
 

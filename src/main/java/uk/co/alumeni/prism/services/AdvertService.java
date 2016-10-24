@@ -1122,6 +1122,14 @@ public class AdvertService {
         addressService.updateAndGeocodeAddress(advert.getAddress(), addressDTO, advert.getName());
     }
 
+    public List<String> getPossibleLocations() {
+        return advertDAO.getPossibleLocations();
+    }
+
+    public List<String> getPossibleThemes() {
+        return advertDAO.getPossibleThemes();
+    }
+
     private List<Integer> getVisibleAdverts(OpportunityQueryDTO query, PrismScope[] scopes) {
         VisibleAdvertDTO visibleAdvertDTO = getVisibleAdverts(userService.getCurrentUser(), query, scopes);
         return visibleAdvertDTO.getVisible().stream().map(advertDTO -> advertDTO.getId()).collect(toList());

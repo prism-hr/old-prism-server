@@ -5,6 +5,7 @@ import javax.validation.constraints.Size;
 
 import org.hibernate.validator.constraints.Range;
 
+import uk.co.alumeni.prism.domain.definitions.PrismCompetenceMode;
 import uk.co.alumeni.prism.rest.dto.TagDTO;
 
 public class AdvertCompetenceDTO extends TagDTO {
@@ -15,6 +16,9 @@ public class AdvertCompetenceDTO extends TagDTO {
     @NotNull
     @Range(min = 1, max = 3)
     private Integer importance;
+
+    @NotNull
+    private PrismCompetenceMode mode;
 
     public String getDescription() {
         return description;
@@ -30,6 +34,14 @@ public class AdvertCompetenceDTO extends TagDTO {
 
     public void setImportance(Integer importance) {
         this.importance = importance;
+    }
+
+    public PrismCompetenceMode getMode() {
+        return mode;
+    }
+
+    public void setMode(PrismCompetenceMode mode) {
+        this.mode = mode;
     }
 
 }

@@ -1,7 +1,6 @@
 package uk.co.alumeni.prism.services;
 
 import static com.google.common.collect.Lists.newArrayList;
-import static org.springframework.beans.factory.config.BeanDefinition.SCOPE_PROTOTYPE;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.APPLICATION;
 
 import java.io.OutputStream;
@@ -13,8 +12,11 @@ import javax.inject.Inject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
-import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
+
+import com.google.common.collect.Maps;
+import com.itextpdf.text.Document;
+import com.itextpdf.text.pdf.PdfWriter;
 
 import uk.co.alumeni.prism.domain.application.Application;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismRole;
@@ -26,12 +28,7 @@ import uk.co.alumeni.prism.services.builders.download.ApplicationDownloadBuilder
 import uk.co.alumeni.prism.services.builders.download.ApplicationDownloadBuilderHelper;
 import uk.co.alumeni.prism.services.helpers.PropertyLoader;
 
-import com.google.common.collect.Maps;
-import com.itextpdf.text.Document;
-import com.itextpdf.text.pdf.PdfWriter;
-
 @Component
-@Scope(SCOPE_PROTOTYPE)
 public class ApplicationDownloadService {
 
     private static final Logger logger = LoggerFactory.getLogger(ApplicationDownloadService.class);
@@ -58,8 +55,8 @@ public class ApplicationDownloadService {
         User user = userService.getCurrentUser();
 
         PropertyLoader generalPropertyLoader = applicationContext.getBean(PropertyLoader.class).localizeLazy(systemService.getSystem());
-        ApplicationDownloadBuilderHelper generalApplicationDownloadBuilderHelper = applicationContext.getBean(ApplicationDownloadBuilderHelper.class).localize(
-                generalPropertyLoader);
+        ApplicationDownloadBuilderHelper generalApplicationDownloadBuilderHelper = applicationContext.getBean(ApplicationDownloadBuilderHelper.class)
+                .localize(generalPropertyLoader);
 
         try {
             Document pdfDocument = generalApplicationDownloadBuilderHelper.startDocument();

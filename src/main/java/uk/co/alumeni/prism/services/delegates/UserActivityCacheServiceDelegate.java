@@ -10,14 +10,15 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import javax.inject.Inject;
 
+import org.apache.http.util.EntityUtils;
 import org.joda.time.DateTime;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.event.TransactionalEventListener;
 import org.springframework.web.context.request.async.DeferredResult;
 
 import uk.co.alumeni.prism.event.UserActivityUpdateEvent;
 import uk.co.alumeni.prism.mapping.UserMapper;
+import uk.co.alumeni.prism.rest.controller.UserController;
 import uk.co.alumeni.prism.rest.dto.resource.ResourceDTO;
 import uk.co.alumeni.prism.rest.representation.user.UserActivityRepresentation;
 import uk.co.alumeni.prism.services.UserActivityCacheService;
@@ -26,7 +27,7 @@ import uk.co.alumeni.prism.services.UserService;
 @Service
 public class UserActivityCacheServiceDelegate {
 
-    private ConcurrentHashMap<Integer, DeferredResult<UserActivityRepresentation>> pollingUsers = new ConcurrentHashMap<>();
+    private final ConcurrentHashMap<Integer, DeferredResult<UserActivityRepresentation>> requests = new ConcurrentHashMap<>(8, 0.9f, 1);
 
     @Inject
     private UserActivityCacheService userActivityCacheService;
@@ -37,7 +38,6 @@ public class UserActivityCacheServiceDelegate {
     @Inject
     private UserService userService;
 
-    @Async
     @TransactionalEventListener
     public void updateUserActivityCaches(UserActivityUpdateEvent userActivityUpdateEvent) {
         List<Integer> users = userActivityUpdateEvent.getUsers();
@@ -62,25 +62,20 @@ public class UserActivityCacheServiceDelegate {
     public UserActivityRepresentation updateUserActivityCache(Integer userId, DateTime baseline) {
         UserActivityRepresentation userActivityRepresentation = userMapper.getUserActivityRepresentationFresh(userId);
         userService.setUserActivityCache(userId, userActivityRepresentation, baseline);
-        return userActivityRepresentation;
-    }
-
-    @Async
-    public void updateUserActivityCacheAsynchronous(Integer userId, DateTime baseline) {
-        UserActivityRepresentation userActivityRepresentation = updateUserActivityCache(userId, baseline);
-        userActivityCacheService.updateUserActivityCache(userId);
-        DeferredResult<UserActivityRepresentation> result = pollingUsers.get(userId);
+        DeferredResult<UserActivityRepresentation> result = requests.get(userId);
         if (result != null) {
             result.setResult(userActivityRepresentation);
         }
+        return userActivityRepresentation;
     }
 
     public void addPollingUser(Integer userId, DeferredResult<UserActivityRepresentation> result) {
-        pollingUsers.put(userId, result);
+        requests.put(userId, result);
     }
 
     public void removePollingUser(Integer userId, DeferredResult<UserActivityRepresentation> result) {
-        pollingUsers.remove(userId, result);
+        requests.remove(userId, result);
+        result.setErrorResult(new UserController.UserActivityNotModifiedException());
     }
 
 }

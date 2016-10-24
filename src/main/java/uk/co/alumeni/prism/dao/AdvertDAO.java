@@ -34,7 +34,6 @@ import static uk.co.alumeni.prism.domain.definitions.workflow.PrismPartnershipSt
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismPartnershipState.ENDORSEMENT_REVOKED;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRole.PrismRoleCategory.STUDENT;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.APPLICATION;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismStateGroup.APPLICATION_WITHDRAWN;
 import static uk.co.alumeni.prism.utils.PrismEnumUtils.getSimilar;
 import static uk.co.alumeni.prism.utils.PrismEnumUtils.values;
 import static uk.co.alumeni.prism.utils.PrismIterableUtils.noneNull;
@@ -81,26 +80,7 @@ import uk.co.alumeni.prism.domain.resource.Institution;
 import uk.co.alumeni.prism.domain.resource.ResourceParent;
 import uk.co.alumeni.prism.domain.resource.ResourceState;
 import uk.co.alumeni.prism.domain.user.User;
-import uk.co.alumeni.prism.dto.AdvertApplicationDTO;
-import uk.co.alumeni.prism.dto.AdvertApplicationSummaryDTO;
-import uk.co.alumeni.prism.dto.AdvertCategoryDTO;
-import uk.co.alumeni.prism.dto.AdvertDTO;
-import uk.co.alumeni.prism.dto.AdvertFunctionDTO;
-import uk.co.alumeni.prism.dto.AdvertFunctionSummaryDTO;
-import uk.co.alumeni.prism.dto.AdvertIndustryDTO;
-import uk.co.alumeni.prism.dto.AdvertIndustrySummaryDTO;
-import uk.co.alumeni.prism.dto.AdvertInstitutionSummaryDTO;
-import uk.co.alumeni.prism.dto.AdvertLocationDTO;
-import uk.co.alumeni.prism.dto.AdvertLocationSummaryDTO;
-import uk.co.alumeni.prism.dto.AdvertOpportunityCategoryDTO;
-import uk.co.alumeni.prism.dto.AdvertPartnerActionDTO;
-import uk.co.alumeni.prism.dto.AdvertStudyOptionDTO;
-import uk.co.alumeni.prism.dto.AdvertTargetAdvertDTO;
-import uk.co.alumeni.prism.dto.AdvertTargetDTO;
-import uk.co.alumeni.prism.dto.AdvertThemeDTO;
-import uk.co.alumeni.prism.dto.AdvertThemeSummaryDTO;
-import uk.co.alumeni.prism.dto.AdvertUserDTO;
-import uk.co.alumeni.prism.dto.UserAdvertDTO;
+import uk.co.alumeni.prism.dto.*;
 import uk.co.alumeni.prism.rest.dto.OpportunityQueryDTO;
 import uk.co.alumeni.prism.rest.representation.advert.AdvertThemeRepresentation;
 
@@ -796,7 +776,7 @@ public class AdvertDAO {
 
         return newLinkedList(rows);
     }
-    
+
     public List<AdvertLocationSummaryDTO> getAdvertLocationSummaries(List<Integer> locationPartIds) {
         return sessionFactory.getCurrentSession().createCriteria(Advert.class)
                 .setProjection(Projections.projectionList()
@@ -974,9 +954,7 @@ public class AdvertDAO {
                 .createAlias("resourceState.state", "state", JoinType.INNER_JOIN) //
                 .add(Restrictions.eq("user", user)) //
                 .add(Restrictions.in("advert.id", adverts)) //
-                .add(Restrictions.disjunction() //
-                        .add(Restrictions.isNull("completionDate")) //
-                        .add(Restrictions.eq("state.stateGroup.id", APPLICATION_WITHDRAWN))) //
+                .add(Restrictions.isNull("completionDate")) //
                 .setResultTransformer(Transformers.aliasToBean(AdvertApplicationDTO.class))
                 .list();
     }
@@ -988,6 +966,20 @@ public class AdvertDAO {
                         .add(Restrictions.isNotNull("project"))
                         .add(Restrictions.isNotNull("program")))
                 .setMaxResults(count)
+                .list();
+    }
+
+    public List<String> getPossibleLocations() {
+        return (List<String>) sessionFactory.getCurrentSession().createCriteria(AdvertLocation.class)
+                .setProjection(Projections.groupProperty("locationAdvert.name"))
+                .createAlias("locationAdvert", "locationAdvert", JoinType.INNER_JOIN)
+                .list();
+    }
+
+    public List<String> getPossibleThemes() {
+        return (List<String>) sessionFactory.getCurrentSession().createCriteria(AdvertTheme.class)
+                .setProjection(Projections.groupProperty("theme.name"))
+                .createAlias("theme", "theme")
                 .list();
     }
 

@@ -1,9 +1,8 @@
 package uk.co.alumeni.prism.domain.definitions.workflow.application;
 
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismAction.APPLICATION_COMPLETE_REFERENCE_STAGE;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismAction.APPLICATION_PROVIDE_REFERENCE;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismAction.APPLICATION_VIEW_EDIT;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismAction.SYSTEM_VIEW_APPLICATION_LIST;
+import uk.co.alumeni.prism.domain.definitions.workflow.*;
+
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismAction.*;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismActionEnhancement.APPLICATION_VIEW_AS_REFEREE;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismNotificationDefinition.APPLICATION_PROVIDE_REFERENCE_REQUEST;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRole.APPLICATION_REFEREE;
@@ -15,18 +14,7 @@ import static uk.co.alumeni.prism.domain.definitions.workflow.PrismState.APPLICA
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismStateTerminationEvaluation.APPLICATION_REFERENCED_TERMINATION;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismStateTerminationGroup.APPLICATION_TERMINATE_REFERENCE_GROUP;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismStateTransitionEvaluation.APPLICATION_PROVIDED_REFERENCE_OUTCOME;
-import static uk.co.alumeni.prism.domain.definitions.workflow.application.PrismApplicationWorkflow.applicationCommentViewerRecruiter;
-import static uk.co.alumeni.prism.domain.definitions.workflow.application.PrismApplicationWorkflow.applicationCompleteState;
-import static uk.co.alumeni.prism.domain.definitions.workflow.application.PrismApplicationWorkflow.applicationEscalate;
-import static uk.co.alumeni.prism.domain.definitions.workflow.application.PrismApplicationWorkflow.applicationSendMessageViewerRecruiter;
-import static uk.co.alumeni.prism.domain.definitions.workflow.application.PrismApplicationWorkflow.applicationUploadReference;
-import static uk.co.alumeni.prism.domain.definitions.workflow.application.PrismApplicationWorkflow.applicationViewEditWithViewerRecruiter;
-import static uk.co.alumeni.prism.domain.definitions.workflow.application.PrismApplicationWorkflow.applicationWithdrawSubmitted;
-import uk.co.alumeni.prism.domain.definitions.workflow.PrismState;
-import uk.co.alumeni.prism.domain.definitions.workflow.PrismStateAction;
-import uk.co.alumeni.prism.domain.definitions.workflow.PrismStateTermination;
-import uk.co.alumeni.prism.domain.definitions.workflow.PrismStateTransition;
-import uk.co.alumeni.prism.domain.definitions.workflow.PrismWorkflowState;
+import static uk.co.alumeni.prism.domain.definitions.workflow.application.PrismApplicationWorkflow.*;
 
 public class PrismApplicationReference extends PrismWorkflowState {
 
@@ -46,10 +34,11 @@ public class PrismApplicationReference extends PrismWorkflowState {
 
         stateActions.add(applicationProvideReference() //
                 .withStateTransitions(new PrismStateTransition() //
-                        .withTransitionState(APPLICATION_REFERENCE) //
-                        .withTransitionAction(SYSTEM_VIEW_APPLICATION_LIST) //
-                        .withStateTransitionEvaluation(APPLICATION_PROVIDED_REFERENCE_OUTCOME) //
-                        .withRoleTransitions(APPLICATION_PROVIDE_REFERENCE_GROUP),
+                                .withTransitionState(APPLICATION_REFERENCE) //
+                                .withTransitionAction(SYSTEM_VIEW_APPLICATION_LIST) //
+                                .withStateTransitionEvaluation(APPLICATION_PROVIDED_REFERENCE_OUTCOME) //
+                                .withRoleTransitions(APPLICATION_PROVIDE_REFERENCE_GROUP)
+                                .withStateTransitionNotification(PrismRole.APPLICATION_REFEREE, PrismNotificationDefinition.APPLICATION_PROVIDE_REFERENCE_NOTIFICATION),
                         new PrismStateTransition() //
                                 .withTransitionState(APPLICATION_REFERENCE_PENDING_COMPLETION) //
                                 .withTransitionAction(APPLICATION_COMPLETE_REFERENCE_STAGE) //

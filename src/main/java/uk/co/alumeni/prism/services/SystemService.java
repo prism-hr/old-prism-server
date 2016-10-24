@@ -656,7 +656,7 @@ public class SystemService {
     private void initializeStateTransitionNotifications(PrismStateTransition prismStateTransition, StateTransition stateTransition) {
         for (PrismStateTransitionNotification prismStateActionNotification : prismStateTransition.getStateTransitionNotifications()) {
             Role role = roleService.getById(prismStateActionNotification.getRole());
-            NotificationDefinition notificationDefinition = notificationService.getById(prismStateActionNotification.getNotificationdDefinition());
+            NotificationDefinition notificationDefinition = notificationService.getById(prismStateActionNotification.getNotificationDefinition());
             StateTransitionNotification stateTransitionNotification = new StateTransitionNotification().withStateAction(stateTransition).withRole(role)
                     .withNotificationDefinition(notificationDefinition);
             entityService.save(stateTransitionNotification);

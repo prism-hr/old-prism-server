@@ -54,20 +54,22 @@ public class EntityService {
         return persistentResource;
     }
 
-    public <T extends UniqueEntity> T createOrUpdate(T transientResource) throws DeduplicationException {
-        T persistentResource = getDuplicateEntity(transientResource);
-        if (persistentResource == null) {
-            save(transientResource);
-            persistentResource = transientResource;
+    public <T extends UniqueEntity> T createOrUpdate(T transientEntity) throws DeduplicationException {
+        T persistentEntity = getDuplicateEntity(transientEntity);
+        if (persistentEntity == null) {
+            save(transientEntity);
+            persistentEntity = transientEntity;
         } else {
-            persistentResource = replace(persistentResource, transientResource);
+            persistentEntity = replace(persistentEntity, transientEntity);
         }
-        return persistentResource;
+        
+        return persistentEntity;
     }
 
-    public <T extends UniqueEntity> T replace(T persistentResource, T transientResource) {
-        persistentResource = overwriteProperties(persistentResource, transientResource);
-        return persistentResource;
+    public <T extends UniqueEntity> T replace(T persistentEntity, T transientEntity) {
+        persistentEntity = overwriteProperties(persistentEntity, transientEntity);
+        flush();
+        return persistentEntity;
     }
 
     public Serializable save(Object entity) {
@@ -86,10 +88,6 @@ public class EntityService {
         entityDAO.clear();
     }
 
-    public Object merge(Object entity) {
-        return entityDAO.merge(entity);
-    }
-
     public void evict(Object entity) {
         entityDAO.evict(entity);
     }
@@ -99,10 +97,12 @@ public class EntityService {
     }
 
     @SuppressWarnings("unchecked")
-    private <T extends UniqueEntity> T overwriteProperties(T persistentResource, T transientResource) {
-        Object persistentId = PrismReflectionUtils.getProperty(persistentResource, "id");
-        PrismReflectionUtils.setProperty(transientResource, "id", persistentId);
-        return (T) merge(transientResource);
+    private <T extends UniqueEntity> T overwriteProperties(T persistentEntity, T transientEntity) {
+        Object persistentId = PrismReflectionUtils.getProperty(persistentEntity, "id");
+        PrismReflectionUtils.setProperty(transientEntity, "id", persistentId);
+        T mergedEntity = (T) entityDAO.merge(transientEntity);
+        flush();
+        return mergedEntity;
     }
 
 }

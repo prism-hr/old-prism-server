@@ -1146,11 +1146,9 @@ public class ResourceService {
         replicableSequenceResources.removeAll(resourceDAO.getResourcesWithStateActionsPending(templateScope, actions));
 
         templateComments.iterator().next().getCommentTransitionStates().forEach(transition -> { //
-                    Class<? extends PrismResourceByParentResourceSelector> replicableActionExclusionSelector = transition.getState().getId()
-                            .getReplicableActionExclusionSelector();
+                    Class<? extends PrismResourceByParentResourceSelector> replicableActionExclusionSelector = transition.getState().getId().getReplicableActionExclusionSelector();
                     if (replicableActionExclusionSelector != null) {
-                        replicableSequenceResources.removeAll(applicationContext.getBean(replicableActionExclusionSelector).getPossible(
-                                templateResource.getParentResource()));
+                        replicableSequenceResources.removeAll(applicationContext.getBean(replicableActionExclusionSelector).getPossible(templateResource.getParentResource()));
                     }
                 });
 

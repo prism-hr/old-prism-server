@@ -45,13 +45,29 @@ public class ApplicationReportListRowDTO {
 
     private String secondaryTheme;
 
-    private String primaryLocation;
-    
+    private String primaryLocationInstitution;
+
+    private String primaryLocationDepartment;
+
     private String primaryLocationDescription;
 
-    private String secondaryLocation;
+    private String secondaryLocationInstitution;
+
+    private String secondaryLocationDepartment;
     
     private String secondaryLocationDescription;
+
+    private String userSupervisorInitialFirstName;
+
+    private String userSupervisorInitialLastName;
+
+    private String userSupervisorInitialEmail;
+
+    private String userSupervisorFinalFirstName;
+
+    private String userSupervisorFinalLastName;
+
+    private String userSupervisorFinalEmail;
 
     private String applicationYear;
 
@@ -197,12 +213,20 @@ public class ApplicationReportListRowDTO {
         this.secondaryTheme = secondaryTheme;
     }
 
-    public String getPrimaryLocation() {
-        return primaryLocation;
+    public String getPrimaryLocationInstitution() {
+        return primaryLocationInstitution;
     }
 
-    public void setPrimaryLocation(String primaryLocation) {
-        this.primaryLocation = primaryLocation;
+    public void setPrimaryLocationInstitution(String primaryLocationInstitution) {
+        this.primaryLocationInstitution = primaryLocationInstitution;
+    }
+
+    public String getPrimaryLocationDepartment() {
+        return primaryLocationDepartment;
+    }
+
+    public void setPrimaryLocationDepartment(String primaryLocationDepartment) {
+        this.primaryLocationDepartment = primaryLocationDepartment;
     }
 
     public String getPrimaryLocationDescription() {
@@ -213,12 +237,20 @@ public class ApplicationReportListRowDTO {
         this.primaryLocationDescription = primaryLocationDescription;
     }
 
-    public String getSecondaryLocation() {
-        return secondaryLocation;
+    public String getSecondaryLocationInstitution() {
+        return secondaryLocationInstitution;
     }
 
-    public void setSecondaryLocation(String secondaryLocation) {
-        this.secondaryLocation = secondaryLocation;
+    public void setSecondaryLocationInstitution(String secondaryLocationInstitution) {
+        this.secondaryLocationInstitution = secondaryLocationInstitution;
+    }
+
+    public String getSecondaryLocationDepartment() {
+        return secondaryLocationDepartment;
+    }
+
+    public void setSecondaryLocationDepartment(String secondaryLocationDepartment) {
+        this.secondaryLocationDepartment = secondaryLocationDepartment;
     }
 
     public String getSecondaryLocationDescription() {
@@ -227,6 +259,54 @@ public class ApplicationReportListRowDTO {
 
     public void setSecondaryLocationDescription(String secondaryLocationDescription) {
         this.secondaryLocationDescription = secondaryLocationDescription;
+    }
+
+    public String getUserSupervisorInitialFirstName() {
+        return userSupervisorInitialFirstName;
+    }
+
+    public void setUserSupervisorInitialFirstName(String userSupervisorInitialFirstName) {
+        this.userSupervisorInitialFirstName = userSupervisorInitialFirstName;
+    }
+
+    public String getUserSupervisorInitialLastName() {
+        return userSupervisorInitialLastName;
+    }
+
+    public void setUserSupervisorInitialLastName(String userSupervisorInitialLastName) {
+        this.userSupervisorInitialLastName = userSupervisorInitialLastName;
+    }
+
+    public String getUserSupervisorInitialEmail() {
+        return userSupervisorInitialEmail;
+    }
+
+    public void setUserSupervisorInitialEmail(String userSupervisorInitialEmail) {
+        this.userSupervisorInitialEmail = userSupervisorInitialEmail;
+    }
+
+    public String getUserSupervisorFinalFirstName() {
+        return userSupervisorFinalFirstName;
+    }
+
+    public void setUserSupervisorFinalFirstName(String userSupervisorFinalFirstName) {
+        this.userSupervisorFinalFirstName = userSupervisorFinalFirstName;
+    }
+
+    public String getUserSupervisorFinalLastName() {
+        return userSupervisorFinalLastName;
+    }
+
+    public void setUserSupervisorFinalLastName(String userSupervisorFinalLastName) {
+        this.userSupervisorFinalLastName = userSupervisorFinalLastName;
+    }
+
+    public String getUserSupervisorFinalEmail() {
+        return userSupervisorFinalEmail;
+    }
+
+    public void setUserSupervisorFinalEmail(String userSupervisorFinalEmail) {
+        this.userSupervisorFinalEmail = userSupervisorFinalEmail;
     }
 
     public String getApplicationYear() {
@@ -385,20 +465,52 @@ public class ApplicationReportListRowDTO {
         return secondaryTheme == null ? EMPTY : secondaryTheme;
     }
     
-    public String getPrimaryLocationDisplay() {
-        return primaryLocation == null ? EMPTY : primaryLocation;
+    public String getPrimaryLocationInstitutionDisplay() {
+        return primaryLocationInstitution == null ? EMPTY : primaryLocationInstitution;
     }
-    
+
+    public String getPrimaryLocationDepartmentDisplay() {
+        return primaryLocationDepartment == null ? EMPTY : primaryLocationDepartment;
+    }
+
     public String getPrimaryLocationDescriptionDisplay() {
         return primaryLocationDescription == null ? EMPTY : primaryLocationDescription;
     }
     
-    public String getSecondaryLocationDisplay() {
-        return secondaryLocation == null ? EMPTY : secondaryLocation;
+    public String getSecondaryLocationInstitutionDisplay() {
+        return secondaryLocationInstitution == null ? EMPTY : secondaryLocationInstitution;
     }
-    
+
+    public String getSecondaryLocationDepartmentDisplay() {
+        return secondaryLocationDepartment == null ? EMPTY : secondaryLocationDepartment;
+    }
+
     public String getSecondaryLocationDescriptionDisplay() {
         return secondaryLocationDescription == null ? EMPTY : secondaryLocationDescription;
+    }
+
+    public String getUserSupervisorInitialFirstNameDisplay() {
+        return userSupervisorInitialFirstName == null ? EMPTY : userSupervisorInitialFirstName;
+    }
+
+    public String getUserSupervisorInitialLastNameDisplay() {
+        return userSupervisorInitialLastName == null ? EMPTY : userSupervisorInitialLastName;
+    }
+
+    public String getUserSupervisorInitialEmailDisplay() {
+        return userSupervisorInitialEmail == null ? EMPTY : userSupervisorInitialEmail;
+    }
+
+    public String getUserSupervisorFinalFirstNameDisplay() {
+        return userSupervisorFinalFirstName == null ? EMPTY : userSupervisorFinalFirstName;
+    }
+
+    public String getUserSupervisorFinalLastNameDisplay() {
+        return userSupervisorFinalLastName == null ? EMPTY : userSupervisorFinalLastName;
+    }
+
+    public String getUserSupervisorFinalEmailDisplay() {
+        return userSupervisorFinalEmail == null ? EMPTY : userSupervisorFinalEmail;
     }
 
     public String getApplicationYearDisplay() {

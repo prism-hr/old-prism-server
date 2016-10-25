@@ -75,9 +75,4 @@ public class ActionOutcomeRepresentation {
         return this;
     }
 
-    public ActionOutcomeRepresentation withReplicable(final ActionOutcomeReplicableRepresentation replicable) {
-        this.replicable = replicable;
-        return this;
-    }
-
 }

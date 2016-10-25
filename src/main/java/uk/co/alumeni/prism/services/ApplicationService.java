@@ -146,18 +146,6 @@ public class ApplicationService {
         return entityService.getById(Application.class, id);
     }
 
-    public ApplicationTheme getApplicationThemeById(Integer id) {
-        return entityService.getById(ApplicationTheme.class, id);
-    }
-
-    public ApplicationLocation getApplicationLocationById(Integer id) {
-        return entityService.getById(ApplicationLocation.class, id);
-    }
-
-    public Application getByCode(String code) {
-        return entityService.getByProperty(Application.class, "code", code);
-    }
-
     public List<User> getApplicationRefereesNotResponded(Application application) {
         return applicationDAO.getApplicationRefereesNotResponded(application);
     }

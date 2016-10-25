@@ -68,7 +68,7 @@ public enum PrismApplicationReportColumn {
     SUPERVISOR_INITIAL_EMAIL(PrismDisplayPropertyDefinition.APPLICATION_SUPERVISOR_INITIAL_EMAIL, "userSupervisorInitial.email", null, false, "userSupervisorInitialEmail", STRING), //
     SUPERVISOR_FINAL_FIRSTNAME(PrismDisplayPropertyDefinition.APPLICATION_SUPERVISOR_FINAL_FIRSTNAME, "userSupervisorFinal.firstName", null, false, "userSupervisorFinalFirstName", STRING), //
     SUPERVISOR_FINAL_LASTNAME(PrismDisplayPropertyDefinition.APPLICATION_SUPERVISOR_FINAL_LASTNAME, "userSupervisorFinal.lastName", null, false, "userSupervisorFinalLastName", STRING), //
-    SUPERVISOR_FINAL_EMAIL(PrismDisplayPropertyDefinition.APPLICATION_SUPERVISOR_FINAL_EMAIL, "userSupervisorFinal.email", null, false, "userSupervisorInitialEmail", STRING), //
+    SUPERVISOR_FINAL_EMAIL(PrismDisplayPropertyDefinition.APPLICATION_SUPERVISOR_FINAL_EMAIL, "userSupervisorFinal.email", null, false, "userSupervisorFinalEmail", STRING), //
     APPLICATION_YEAR(SYSTEM_ACADEMIC_YEAR, "application.applicationYear", null, false, "applicationYear", STRING), //
     CREATED_DATE(SYSTEM_CREATED_DATE, "application.createdTimestamp", null, false, "createdDate", DATE), //
     CLOSING_DATE(SYSTEM_CLOSING_DATE, "application.closingDate", null, false, "closingDate", DATE), //

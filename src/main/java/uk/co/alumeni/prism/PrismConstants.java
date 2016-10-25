@@ -28,7 +28,7 @@ public class PrismConstants {
 
     public static final Integer DEFAULT_RATING = 3;
 
-    public static final Integer RESOURCE_LIST_PAGE_ROW_COUNT = 50;
+    public static final Integer RESOURCE_LIST_PAGE_ROW_COUNT = 200;
 
     public static final String NULL = "null";
 

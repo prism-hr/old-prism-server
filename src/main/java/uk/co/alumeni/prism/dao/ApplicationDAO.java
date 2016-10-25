@@ -115,6 +115,10 @@ public class ApplicationDAO {
                         + "left join secondaryLocation.tag as secondaryLocationTag " //
                         + "left join secondaryLocationTag.institution as secondaryLocationInstitution " //
                         + "left join secondaryLocationTag.department as secondaryLocationDepartment " //
+                        + "left join application.referees as referee " //
+                        + "left join referee.user as userSupervisorInitial "
+                        + "left join application.hiringManagers as hiringManager " //
+                        + "left join hiringManager.user as userSupervisorFinal "
                         + "left join application.state as state " //
                         + "left join application.referees as referee " //
                         + "left join application.comments as provideReferenceComment " //

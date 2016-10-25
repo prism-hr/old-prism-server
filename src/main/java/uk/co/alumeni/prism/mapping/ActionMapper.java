@@ -131,9 +131,6 @@ public class ActionMapper {
     }
 
     public ActionOutcomeRepresentation getActionOutcomeRepresentation(ActionOutcomeDTO actionOutcomeDTO) {
-        StopWatch watch = new StopWatch();
-        watch.start();
-
         ActionOutcomeRepresentation representation = new ActionOutcomeRepresentation()
                 .withResource(resourceMapper.getResourceRepresentationSimple(actionOutcomeDTO.getResource()))
                 .withTransitionResource(resourceMapper.getResourceRepresentationSimple(actionOutcomeDTO.getTransitionResource()))
@@ -146,9 +143,8 @@ public class ActionMapper {
             representation.setReplicable(new ActionOutcomeReplicableRepresentation().withFilter( //
                     resourceListFilterService.getReplicableActionFilter(resource, actionOutcomeDTO.getStateTransition(),
                             replicableSequenceComments.stream().map(comment -> comment.getAction().getId()).collect(toList()), true))
-                    .withSequenceComments(
-                            replicableSequenceComments.stream().map(comment -> commentMapper.getCommentRepresentationExtended(comment, creatableRoles))
-                                    .collect(toList())));
+                    .withSequenceComments(replicableSequenceComments.stream()
+                            .map(comment -> commentMapper.getCommentRepresentationExtended(comment, creatableRoles)).collect(toList())));
         }
 
         return representation;

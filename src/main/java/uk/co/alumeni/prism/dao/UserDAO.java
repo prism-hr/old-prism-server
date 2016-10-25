@@ -283,6 +283,7 @@ public class UserDAO {
                 .createAlias("comments", "comment", JoinType.INNER_JOIN) //
                 .createAlias("comment.competences", "competence", JoinType.INNER_JOIN) //
                 .add(Restrictions.eq("user", user)) //
+                .add(Restrictions.isNotNull("competence.rating")) //
                 .setResultTransformer(Transformers.aliasToBean(UserCompetenceDTO.class)) //
                 .list();
     }

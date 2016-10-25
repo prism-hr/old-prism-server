@@ -767,7 +767,9 @@ public class ResourceDAO {
     public List<String> getPossibleLocations() {
         return (List<String>) sessionFactory.getCurrentSession().createCriteria(AdvertLocation.class)
                 .setProjection(Projections.groupProperty("locationAdvert.name"))
+                .createAlias("advert", "advert", JoinType.INNER_JOIN)
                 .createAlias("locationAdvert", "locationAdvert", JoinType.INNER_JOIN)
+                .add(Restrictions.isNotEmpty("advert.applications"))
                 .list();
     }
 

@@ -62,7 +62,7 @@ public class UserActivityCacheServiceDelegate {
     public UserActivityRepresentation updateUserActivityCache(Integer userId, DateTime baseline) {
         UserActivityRepresentation representation = userMapper.getUserActivityRepresentationFresh(userId);
         userService.setUserActivityCache(userId, representation, baseline);
-        DeferredResult<UserActivityRepresentation> result = requests.get(userId);
+        DeferredResult<UserActivityRepresentation> result = requests.remove(userId);
         if (result != null) {
             result.setResult(representation);
         }
@@ -70,7 +70,11 @@ public class UserActivityCacheServiceDelegate {
     }
 
     public void addPollingUser(Integer userId, DeferredResult<UserActivityRepresentation> result) {
-        requests.put(userId, result);
+        if (requests.containsKey(userId)) {
+            result.setErrorResult(new UserController.UserActivityNotModifiedException());
+        } else {
+            requests.put(userId, result);
+        }
     }
 
     public void removePollingUser(Integer userId, DeferredResult<UserActivityRepresentation> result) {

@@ -6,11 +6,8 @@ import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
 import static org.apache.commons.lang.BooleanUtils.isTrue;
 
 import java.math.BigDecimal;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.Map.Entry;
-import java.util.Set;
 
 import uk.co.alumeni.prism.domain.definitions.PrismOpportunityCategory;
 import uk.co.alumeni.prism.domain.definitions.PrismOpportunityType;
@@ -73,9 +70,8 @@ public class PrismListUtils {
         return representations;
     }
 
-    public static <T extends EntityOpportunityCategoryDTO> Map<Integer, BigDecimal> getRowsToReturn(Collection<T> entities,
-            PrismOpportunityCategory filterOpportunityCategory, Collection<PrismOpportunityType> filterOpportunityTypes, String lastSequenceIdentifier,
-            Integer maxEntities) {
+    public static <T extends EntityOpportunityCategoryDTO> Map<Integer, BigDecimal> getRowsToReturn(Collection<T> entities, PrismOpportunityCategory filterOpportunityCategory,
+            Collection<PrismOpportunityType> filterOpportunityTypes, String lastSequenceIdentifier, Integer maxEntities) {
         Integer returned = 0;
         boolean returning = lastSequenceIdentifier == null;
 
@@ -100,7 +96,7 @@ public class PrismListUtils {
                     returned++;
                 }
 
-                if (returned.equals(maxEntities)) {
+                if (Objects.equals(returned, maxEntities)) {
                     break;
                 }
             } else {

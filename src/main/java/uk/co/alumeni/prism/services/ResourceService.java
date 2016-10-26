@@ -1068,12 +1068,12 @@ public class ResourceService {
                 .map(replicableSequenceResource -> replicableSequenceResource.getId()).collect(Collectors.toList());
         replicableSequenceResources.removeAll(resourceDAO.getResourcesWithStateActionsPending(templateScope, actions));
 
-        templateComments.iterator().next().getCommentTransitionStates().forEach(transition -> { //
-                    Class<? extends PrismResourceByParentResourceSelector> replicableActionExclusionSelector = transition.getState().getId().getReplicableActionExclusionSelector();
-                    if (replicableActionExclusionSelector != null) {
-                        replicableSequenceResources.removeAll(applicationContext.getBean(replicableActionExclusionSelector).getPossible(templateResource.getParentResource()));
-                    }
-                });
+        templateComments.iterator().next().getCommentTransitionStates().forEach(transition -> {
+            Class<? extends PrismResourceByParentResourceSelector> replicableActionExclusionSelector = transition.getState().getId().getReplicableActionExclusionSelector();
+            if (replicableActionExclusionSelector != null) {
+                replicableSequenceResources.removeAll(applicationContext.getBean(replicableActionExclusionSelector).getPossible(templateResource.getParentResource()));
+            }
+        });
 
         return replicableSequenceResources;
     }
@@ -1302,6 +1302,8 @@ public class ResourceService {
                 resourceIds.addAll(applicationService.getApplicationsByApplicationLocation(filterLocations, secondaryFilterLocations));
                 filterApplied = true;
             }
+
+
         } else if (contains(advertScopes, scope)) {
             if (isNotEmpty(filterThemes) && isTrue(filter.getThemesApplied())) {
                 resourceIds.addAll(resourceDAO.getResourcesByAdvertTheme(scope, filterThemes));

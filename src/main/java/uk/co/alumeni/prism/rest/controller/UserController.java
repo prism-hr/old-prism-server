@@ -232,8 +232,6 @@ public class UserController {
         DeferredResult<UserActivityRepresentation> result = new DeferredResult<>(55000L);
         User currentUser = userService.getCurrentUser();
         UserActivityRepresentation representation = userMapper.getUserActivityRepresentation(currentUser);
-        logger.info("cacheIncrement=" + cacheIncrement);
-        logger.info("representationCacheIncrement=" + representation.getCacheIncrement());
         if (cacheIncrement == null || representation.getCacheIncrement() > cacheIncrement) {
             result.setResult(representation);
         } else {

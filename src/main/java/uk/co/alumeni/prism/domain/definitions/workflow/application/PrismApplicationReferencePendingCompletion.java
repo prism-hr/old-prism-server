@@ -30,8 +30,8 @@ public class PrismApplicationReferencePendingCompletion extends PrismWorkflowSta
                 .withStateTransitions(new PrismStateTransition() //
                         .withTransitionState(APPLICATION_REFERENCE_PENDING_COMPLETION) //
                         .withTransitionAction(APPLICATION_COMPLETE_REFERENCE_STAGE) //
-                        .withRoleTransitions(APPLICATION_PROVIDE_REFERENCE_GROUP)
-                        .withStateTransitionNotification(PrismRole.APPLICATION_REFEREE, PrismNotificationDefinition.APPLICATION_PROVIDE_REFERENCE_NOTIFICATION))); //
+                        .withStateTransitionNotification(PrismRole.APPLICATION_REFEREE, PrismNotificationDefinition.APPLICATION_PROVIDE_REFERENCE_NOTIFICATION)
+                        .withRoleTransitions(APPLICATION_PROVIDE_REFERENCE_GROUP))); //
 
         stateActions.add(applicationUploadReference(state));
         stateActions.add(applicationViewEditReference(state)); //

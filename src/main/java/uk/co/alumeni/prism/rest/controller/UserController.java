@@ -238,6 +238,7 @@ public class UserController {
             result.onTimeout(() -> {
                 userActivityCacheServiceDelegate.removePollingUser(currentUser.getId(), result);
             });
+
             userActivityCacheServiceDelegate.addPollingUser(currentUser.getId(), result);
         }
         return result;

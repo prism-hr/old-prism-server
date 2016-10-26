@@ -68,7 +68,7 @@ public class UserActivityCacheServiceDelegate {
         return representation;
     }
 
-    public void addPollingUser(Integer userId, DeferredResult<UserActivityRepresentation> result) {
+    public void eeaddPollingUser(Integer userId, DeferredResult<UserActivityRepresentation> result) {
         if (requests.containsKey(userId)) {
             result.setErrorResult(new UserController.UserActivityNotModifiedException());
         } else {

@@ -10,6 +10,9 @@ import java.util.Map;
 
 import javax.inject.Inject;
 
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.ArrayUtils;
+import org.hibernate.Criteria;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Disjunction;
 import org.hibernate.criterion.Junction;
@@ -43,13 +46,6 @@ public class InstitutionDAO {
 
     @Inject
     private PrismTemplateUtils prismTemplateUtils;
-
-    public Institution getInstitutionByImportedCode(String importedCode) {
-        return (Institution) sessionFactory.getCurrentSession().createCriteria(Institution.class) //
-                .add(Restrictions.like("importedCode", importedCode, MatchMode.ANYWHERE)) //
-                .setMaxResults(1) //
-                .uniqueResult();
-    }
 
     public List<String> getAvailableCurrencies() {
         return (List<String>) sessionFactory.getCurrentSession().createCriteria(Domicile.class) //
@@ -88,11 +84,14 @@ public class InstitutionDAO {
         if (query != null) {
             searchConstraint.add(getLikeConstraint("name", query));
         }
-        if (googleIds != null && googleIds.length > 0) {
+
+        boolean orderByGoogle = false;
+        if (ArrayUtils.isNotEmpty(googleIds)) {
             searchConstraint.add(Restrictions.in("googleId", googleIds));
+            orderByGoogle = true;
         }
 
-        List<ResourceLocationDTO> list = (List<ResourceLocationDTO>) sessionFactory.getCurrentSession().createCriteria(Institution.class) //
+        Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Institution.class) //
                 .setProjection(Projections.projectionList() //
                         .add(Projections.property("id").as("id")) //
                         .add(Projections.property("name").as("name")) //
@@ -115,11 +114,19 @@ public class InstitutionDAO {
                 .createAlias("advert.address", "address", JoinType.LEFT_OUTER_JOIN) //
                 .createAlias("advert.user", "user", JoinType.LEFT_OUTER_JOIN) //
                 .add(searchConstraint) //
-                .add(Restrictions.ne("state.id", INSTITUTION_DISABLED_COMPLETED)) //
-                .addOrder(Order.asc("name")) //
+                .add(Restrictions.ne("state.id", INSTITUTION_DISABLED_COMPLETED));
+
+        if (orderByGoogle) {
+            criteria.addOrder(Order.desc("googleId"));
+        }
+
+        List<ResourceLocationDTO> list = (List<ResourceLocationDTO>)
+                criteria.addOrder(Order.asc("name")) //
                 .addOrder(Order.asc("id")) //
+                .setMaxResults(20)
                 .setResultTransformer(Transformers.aliasToBean(ResourceLocationDTO.class)) //
                 .list();
+
         list.forEach(institution -> institution.setScope(PrismScope.INSTITUTION));
         return list;
     }

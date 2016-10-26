@@ -610,8 +610,7 @@ public class ResourceService {
             Collection<ResourceOpportunityCategoryDTO> resourceDTOs, ResourceListFilterDTO filter, String lastSequenceIdentifier, Integer maxRecords,
             Collection<Integer> onlyAsPartnerResources, boolean extended) {
         if (!resourceDTOs.isEmpty()) {
-            Map<Integer, BigDecimal> resources = getRowsToReturn(resourceDTOs, filter.getOpportunityCategory(), filter.getOpportunityTypes(),
-                    lastSequenceIdentifier, maxRecords);
+            Map<Integer, BigDecimal> resources = getRowsToReturn(resourceDTOs, filter.getOpportunityCategory(), filter.getOpportunityTypes(), lastSequenceIdentifier, maxRecords);
 
             Set<Integer> resourceIds = resources.keySet();
             if (isNotEmpty(resourceIds)) {

@@ -600,14 +600,16 @@ public class UserService {
         setUserActivityCache(getById(user), userActivityRepresentation, baseline);
     }
 
-    public void setUserActivityCache(User user, UserActivityRepresentation userActivityRepresentation, DateTime baseline) {
+    public void setUserActivityCache(User user, UserActivityRepresentation representation, DateTime baseline) {
         UserAccount userAccount = user.getUserAccount();
         if (userAccount != null) {
-            userAccount.setActivityCache(prismJsonMappingUtils.writeValue(userActivityRepresentation));
-            userAccount.setActivityCachedTimestamp(baseline);
-
             Integer activityCachedIncrement = userAccount.getActivityCachedIncrement();
-            userAccount.setActivityCachedIncrement(activityCachedIncrement == null ? 0 : activityCachedIncrement + 1);
+            activityCachedIncrement = activityCachedIncrement == null ? 0 : activityCachedIncrement + 1;
+            userAccount.setActivityCachedIncrement(activityCachedIncrement);
+            representation.setCacheIncrement(activityCachedIncrement);
+
+            userAccount.setActivityCache(prismJsonMappingUtils.writeValue(representation));
+            userAccount.setActivityCachedTimestamp(baseline);
         }
     }
 

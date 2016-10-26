@@ -131,9 +131,6 @@ public class ActionMapper {
     }
 
     public ActionOutcomeRepresentation getActionOutcomeRepresentation(ActionOutcomeDTO actionOutcomeDTO) {
-        StopWatch watch = new StopWatch();
-        watch.start();
-
         ActionOutcomeRepresentation representation = new ActionOutcomeRepresentation()
                 .withResource(resourceMapper.getResourceRepresentationSimple(actionOutcomeDTO.getResource()))
                 .withTransitionResource(resourceMapper.getResourceRepresentationSimple(actionOutcomeDTO.getTransitionResource()))

@@ -329,7 +329,7 @@ public class UserAccount
     }
     
     public Integer getActivityCachedIncrement() {
-        return activityCachedIncrement;
+        return this.activityCachedIncrement;
     }
 
     public void setActivityCachedIncrement(Integer activityCachedIncrement) {

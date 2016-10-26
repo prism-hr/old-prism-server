@@ -94,8 +94,7 @@ public class NotificationDAO {
                 .setResultTransformer(Transformers.aliasToBean(UserNotificationDefinitionDTO.class)).list();
     }
 
-    public List<UserNotificationDefinitionDTO> getIndividualUpdateDefinitions(PrismScope scope, PrismScope parentScope, Resource resource,
-            StateTransition stateTransition) {
+    public List<UserNotificationDefinitionDTO> getIndividualUpdateDefinitions(PrismScope scope, PrismScope parentScope, Resource resource, StateTransition stateTransition) {
         Criteria criteria = getWorkflowCriteriaListUpdate(scope) //
                 .createAlias("resource." + parentScope.getLowerCamelName(), "parentResource", JoinType.INNER_JOIN) //
                 .createAlias("parentResource.userRoles", "userRole", JoinType.INNER_JOIN);

@@ -37,16 +37,18 @@ public class PrismApplicationReference extends PrismWorkflowState {
                                 .withTransitionState(APPLICATION_REFERENCE) //
                                 .withTransitionAction(SYSTEM_VIEW_APPLICATION_LIST) //
                                 .withStateTransitionEvaluation(APPLICATION_PROVIDED_REFERENCE_OUTCOME) //
-                                .withRoleTransitions(APPLICATION_PROVIDE_REFERENCE_GROUP)
-                                .withStateTransitionNotification(PrismRole.APPLICATION_REFEREE, PrismNotificationDefinition.APPLICATION_PROVIDE_REFERENCE_NOTIFICATION),
+                                .withStateTransitionNotification(PrismRole.APPLICATION_REFEREE, PrismNotificationDefinition.APPLICATION_PROVIDE_REFERENCE_NOTIFICATION)
+                                .withRoleTransitions(APPLICATION_PROVIDE_REFERENCE_GROUP),
                         new PrismStateTransition() //
                                 .withTransitionState(APPLICATION_REFERENCE_PENDING_COMPLETION) //
                                 .withTransitionAction(APPLICATION_COMPLETE_REFERENCE_STAGE) //
                                 .withStateTransitionEvaluation(APPLICATION_PROVIDED_REFERENCE_OUTCOME) //
+                                .withStateTransitionNotification(PrismRole.APPLICATION_REFEREE, PrismNotificationDefinition.APPLICATION_PROVIDE_REFERENCE_NOTIFICATION)
                                 .withRoleTransitions(APPLICATION_PROVIDE_REFERENCE_GROUP),
                         new PrismStateTransition() //
                                 .withTransitionAction(SYSTEM_VIEW_APPLICATION_LIST) //
                                 .withStateTransitionEvaluation(APPLICATION_PROVIDED_REFERENCE_OUTCOME) //
+                                .withStateTransitionNotification(PrismRole.APPLICATION_REFEREE, PrismNotificationDefinition.APPLICATION_PROVIDE_REFERENCE_NOTIFICATION)
                                 .withRoleTransitions(APPLICATION_PROVIDE_REFERENCE_GROUP) //
                                 .withStateTerminations(new PrismStateTermination() //
                                         .withTerminationState(APPLICATION_REFERENCE) //

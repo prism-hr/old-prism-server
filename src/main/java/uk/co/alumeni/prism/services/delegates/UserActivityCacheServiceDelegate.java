@@ -60,13 +60,13 @@ public class UserActivityCacheServiceDelegate {
     }
 
     public UserActivityRepresentation updateUserActivityCache(Integer userId, DateTime baseline) {
-        UserActivityRepresentation userActivityRepresentation = userMapper.getUserActivityRepresentationFresh(userId);
-        userService.setUserActivityCache(userId, userActivityRepresentation, baseline);
+        UserActivityRepresentation representation = userMapper.getUserActivityRepresentationFresh(userId);
+        userService.setUserActivityCache(userId, representation, baseline);
         DeferredResult<UserActivityRepresentation> result = requests.get(userId);
         if (result != null) {
-            result.setResult(userActivityRepresentation);
+            result.setResult(representation);
         }
-        return userActivityRepresentation;
+        return representation;
     }
 
     public void addPollingUser(Integer userId, DeferredResult<UserActivityRepresentation> result) {

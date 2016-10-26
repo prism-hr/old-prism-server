@@ -191,13 +191,18 @@ public class UserMapper {
     public UserActivityRepresentation getUserActivityRepresentation(User user) {
         UserAccount userAccount = user.getUserAccount();
         if (userAccount != null) {
+            UserActivityRepresentation representation;
             String userActivityCache = userAccount.getActivityCache();
             if (userActivityCache == null) {
-                return getUserActivityRepresentationFresh(user);
+                representation = getUserActivityRepresentationFresh(user);
             } else {
-                return prismJsonMappingUtils.readValue(userActivityCache, UserActivityRepresentation.class);
+                representation = prismJsonMappingUtils.readValue(userActivityCache, UserActivityRepresentation.class);
             }
+
+            representation.setCacheIncrement(userAccount.getActivityCachedIncrement());
+            return representation;
         }
+
         return null;
     }
 

@@ -131,26 +131,28 @@ public class ResourceListFilterService {
         if (includeTags) {
             PrismScope resourceScope = resource.getResourceScope();
             if (resourceScope.equals(APPLICATION)) {
-                Application application = (Application) resource;
-                application.getThemes().forEach(applicationTheme -> {
-                    Theme tag = applicationTheme.getTag();
-                    ResourceListFilterTagDTO themeDTO = new ResourceListFilterTagDTO(tag.getId(), tag.getName());
-                    if (isTrue(applicationTheme.getPreference())) {
-                        themeDTOs.add(themeDTO);
-                    } else {
-                        secondaryThemeDTOs.add(themeDTO);
-                    }
-                });
+                if (actions.stream().anyMatch(action -> action.isReplicableUserAssignmentAction())) {
+                    Application application = (Application) resource;
+                    application.getThemes().forEach(applicationTheme -> {
+                        Theme tag = applicationTheme.getTag();
+                        ResourceListFilterTagDTO themeDTO = new ResourceListFilterTagDTO(tag.getId(), tag.getName());
+                        if (isTrue(applicationTheme.getPreference())) {
+                            themeDTOs.add(themeDTO);
+                        } else {
+                            secondaryThemeDTOs.add(themeDTO);
+                        }
+                    });
 
-                application.getLocations().forEach(applicationLocation -> {
-                    Advert tag = applicationLocation.getTag();
-                    ResourceListFilterTagDTO locationDTO = new ResourceListFilterTagDTO(tag.getId(), tag.toString());
-                    if (isTrue(applicationLocation.getPreference())) {
-                        locationDTOs.add(locationDTO);
-                    } else {
-                        secondaryLocationDTOs.add(locationDTO);
-                    }
-                });
+                    application.getLocations().forEach(applicationLocation -> {
+                        Advert tag = applicationLocation.getTag();
+                        ResourceListFilterTagDTO locationDTO = new ResourceListFilterTagDTO(tag.getId(), tag.toString());
+                        if (isTrue(applicationLocation.getPreference())) {
+                            locationDTOs.add(locationDTO);
+                        } else {
+                            secondaryLocationDTOs.add(locationDTO);
+                        }
+                    });
+                }
             } else if (contains(advertScopes, resourceScope)) {
                 AdvertCategories categories = resource.getAdvert().getCategories();
                 if (categories != null) {

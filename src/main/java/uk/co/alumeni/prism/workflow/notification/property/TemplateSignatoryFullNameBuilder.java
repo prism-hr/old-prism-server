@@ -9,7 +9,7 @@ public class TemplateSignatoryFullNameBuilder implements NotificationPropertyBui
 
     @Override
     public String build(NotificationPropertyLoader propertyLoader) {
-        return propertyLoader.getNotificationDefinitionDTO().getSignatory().getFullName();
+        return "The London Arts and Humanities Partnership";
     }
 
 }

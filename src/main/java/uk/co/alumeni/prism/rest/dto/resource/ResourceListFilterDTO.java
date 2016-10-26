@@ -55,6 +55,8 @@ public class ResourceListFilterDTO extends ListFilterDTO {
 
     private Boolean updateOnly;
 
+    private Boolean loadAll;
+
     private List<ResourceListFilterConstraintDTO> constraints;
 
     public List<PrismAction> getActionIds() {
@@ -199,6 +201,14 @@ public class ResourceListFilterDTO extends ListFilterDTO {
 
     public void setUpdateOnly(Boolean updateOnly) {
         this.updateOnly = updateOnly;
+    }
+
+    public Boolean getLoadAll() {
+        return loadAll;
+    }
+
+    public void setLoadAll(Boolean loadAll) {
+        this.loadAll = loadAll;
     }
 
     public final List<ResourceListFilterConstraintDTO> getConstraints() {

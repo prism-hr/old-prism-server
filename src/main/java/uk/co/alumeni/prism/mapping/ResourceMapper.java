@@ -1,5 +1,51 @@
 package uk.co.alumeni.prism.mapping;
 
+import com.google.common.base.Objects;
+import com.google.common.base.Splitter;
+import com.google.common.collect.*;
+import org.apache.commons.lang.BooleanUtils;
+import org.joda.time.DateTime;
+import org.joda.time.LocalDate;
+import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.ApplicationContext;
+import org.springframework.stereotype.Service;
+import uk.co.alumeni.prism.domain.address.Address;
+import uk.co.alumeni.prism.domain.advert.Advert;
+import uk.co.alumeni.prism.domain.application.Application;
+import uk.co.alumeni.prism.domain.definitions.*;
+import uk.co.alumeni.prism.domain.definitions.workflow.*;
+import uk.co.alumeni.prism.domain.document.Document;
+import uk.co.alumeni.prism.domain.resource.*;
+import uk.co.alumeni.prism.domain.resource.System;
+import uk.co.alumeni.prism.domain.user.User;
+import uk.co.alumeni.prism.dto.*;
+import uk.co.alumeni.prism.rest.dto.resource.ResourceListFilterDTO;
+import uk.co.alumeni.prism.rest.dto.resource.ResourceReportFilterDTO;
+import uk.co.alumeni.prism.rest.dto.resource.ResourceReportFilterDTO.ResourceReportFilterPropertyDTO;
+import uk.co.alumeni.prism.rest.representation.action.ActionRepresentationExtended;
+import uk.co.alumeni.prism.rest.representation.action.ActionRepresentationSimple;
+import uk.co.alumeni.prism.rest.representation.address.AddressCoordinatesRepresentation;
+import uk.co.alumeni.prism.rest.representation.address.AddressRepresentation;
+import uk.co.alumeni.prism.rest.representation.advert.AdvertRepresentationSimple;
+import uk.co.alumeni.prism.rest.representation.resource.*;
+import uk.co.alumeni.prism.rest.representation.resource.ResourceListFilterRepresentation.FilterExpressionRepresentation;
+import uk.co.alumeni.prism.rest.representation.resource.ResourceSummaryPlotDataRepresentation.ApplicationProcessingSummaryRepresentationMonth;
+import uk.co.alumeni.prism.rest.representation.resource.ResourceSummaryPlotDataRepresentation.ApplicationProcessingSummaryRepresentationWeek;
+import uk.co.alumeni.prism.rest.representation.resource.ResourceSummaryPlotDataRepresentation.ApplicationProcessingSummaryRepresentationYear;
+import uk.co.alumeni.prism.rest.representation.user.UserRepresentation;
+import uk.co.alumeni.prism.services.*;
+import uk.co.alumeni.prism.services.helpers.PropertyLoader;
+
+import javax.inject.Inject;
+import javax.transaction.Transactional;
+import java.math.BigDecimal;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.TreeMap;
+import java.util.stream.Collectors;
+
 import static com.google.common.collect.Lists.newArrayList;
 import static com.google.common.collect.Lists.newLinkedList;
 import static com.google.common.collect.Maps.newHashMap;
@@ -12,134 +58,15 @@ import static java.util.stream.Collectors.toSet;
 import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
 import static org.apache.commons.lang.BooleanUtils.isTrue;
 import static org.joda.time.Days.daysBetween;
-import static uk.co.alumeni.prism.PrismConstants.ANGULAR_HASH;
-import static uk.co.alumeni.prism.PrismConstants.ORDERING_PRECISION;
-import static uk.co.alumeni.prism.PrismConstants.RESOURCE_LIST_PAGE_ROW_COUNT;
+import static uk.co.alumeni.prism.PrismConstants.*;
 import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_EXTERNAL_HOMEPAGE;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.APPLICATION;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.DEPARTMENT;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.INSTITUTION;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.PROGRAM;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.PROJECT;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.SYSTEM;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.getResourceContexts;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.*;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScopeCategory.OPPORTUNITY;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScopeCategory.ORGANIZATION;
 import static uk.co.alumeni.prism.utils.PrismListUtils.getSummaryRepresentations;
 import static uk.co.alumeni.prism.utils.PrismListUtils.processRowDescriptors;
 import static uk.co.alumeni.prism.utils.PrismReflectionUtils.getProperty;
 import static uk.co.alumeni.prism.utils.PrismReflectionUtils.setProperty;
-
-import java.math.BigDecimal;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.TreeMap;
-import java.util.stream.Collectors;
-
-import javax.inject.Inject;
-import javax.transaction.Transactional;
-
-import org.apache.commons.lang.BooleanUtils;
-import org.joda.time.DateTime;
-import org.joda.time.LocalDate;
-import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.ApplicationContext;
-import org.springframework.stereotype.Service;
-
-import uk.co.alumeni.prism.domain.address.Address;
-import uk.co.alumeni.prism.domain.advert.Advert;
-import uk.co.alumeni.prism.domain.application.Application;
-import uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition;
-import uk.co.alumeni.prism.domain.definitions.PrismFilterEntity;
-import uk.co.alumeni.prism.domain.definitions.PrismOpportunityCategory;
-import uk.co.alumeni.prism.domain.definitions.PrismResourceContext;
-import uk.co.alumeni.prism.domain.definitions.PrismResourceListConstraint;
-import uk.co.alumeni.prism.domain.definitions.workflow.PrismAction;
-import uk.co.alumeni.prism.domain.definitions.workflow.PrismRole;
-import uk.co.alumeni.prism.domain.definitions.workflow.PrismScope;
-import uk.co.alumeni.prism.domain.definitions.workflow.PrismScopeCategory;
-import uk.co.alumeni.prism.domain.definitions.workflow.PrismScopeSectionDefinition;
-import uk.co.alumeni.prism.domain.document.Document;
-import uk.co.alumeni.prism.domain.resource.Department;
-import uk.co.alumeni.prism.domain.resource.Institution;
-import uk.co.alumeni.prism.domain.resource.Program;
-import uk.co.alumeni.prism.domain.resource.Resource;
-import uk.co.alumeni.prism.domain.resource.ResourceOpportunity;
-import uk.co.alumeni.prism.domain.resource.ResourceParent;
-import uk.co.alumeni.prism.domain.resource.System;
-import uk.co.alumeni.prism.domain.user.User;
-import uk.co.alumeni.prism.dto.AdvertOpportunityCategoryDTO;
-import uk.co.alumeni.prism.dto.ApplicationProcessingSummaryDTO;
-import uk.co.alumeni.prism.dto.ResourceChildCreationDTO;
-import uk.co.alumeni.prism.dto.ResourceConnectionDTO;
-import uk.co.alumeni.prism.dto.ResourceFlatToNestedDTO;
-import uk.co.alumeni.prism.dto.ResourceIdentityDTO;
-import uk.co.alumeni.prism.dto.ResourceListRowDTO;
-import uk.co.alumeni.prism.dto.ResourceLocationDTO;
-import uk.co.alumeni.prism.dto.ResourceOpportunityCategoryDTO;
-import uk.co.alumeni.prism.dto.ResourceSimpleDTO;
-import uk.co.alumeni.prism.rest.dto.resource.ResourceListFilterDTO;
-import uk.co.alumeni.prism.rest.dto.resource.ResourceReportFilterDTO;
-import uk.co.alumeni.prism.rest.dto.resource.ResourceReportFilterDTO.ResourceReportFilterPropertyDTO;
-import uk.co.alumeni.prism.rest.representation.action.ActionRepresentationExtended;
-import uk.co.alumeni.prism.rest.representation.action.ActionRepresentationSimple;
-import uk.co.alumeni.prism.rest.representation.address.AddressCoordinatesRepresentation;
-import uk.co.alumeni.prism.rest.representation.address.AddressRepresentation;
-import uk.co.alumeni.prism.rest.representation.advert.AdvertRepresentationSimple;
-import uk.co.alumeni.prism.rest.representation.resource.ProgramRepresentationClient;
-import uk.co.alumeni.prism.rest.representation.resource.ProjectRepresentationClient;
-import uk.co.alumeni.prism.rest.representation.resource.ResourceConditionRepresentation;
-import uk.co.alumeni.prism.rest.representation.resource.ResourceCountRepresentation;
-import uk.co.alumeni.prism.rest.representation.resource.ResourceListFilterRepresentation;
-import uk.co.alumeni.prism.rest.representation.resource.ResourceListFilterRepresentation.FilterExpressionRepresentation;
-import uk.co.alumeni.prism.rest.representation.resource.ResourceListRepresentation;
-import uk.co.alumeni.prism.rest.representation.resource.ResourceListRowRepresentation;
-import uk.co.alumeni.prism.rest.representation.resource.ResourceOpportunityRepresentation;
-import uk.co.alumeni.prism.rest.representation.resource.ResourceOpportunityRepresentationClient;
-import uk.co.alumeni.prism.rest.representation.resource.ResourceOpportunityRepresentationRelation;
-import uk.co.alumeni.prism.rest.representation.resource.ResourceOpportunityRepresentationSimple;
-import uk.co.alumeni.prism.rest.representation.resource.ResourceParentRepresentation;
-import uk.co.alumeni.prism.rest.representation.resource.ResourceParentRepresentationClient;
-import uk.co.alumeni.prism.rest.representation.resource.ResourceParentRepresentationSummary;
-import uk.co.alumeni.prism.rest.representation.resource.ResourceRepresentationChildCreation;
-import uk.co.alumeni.prism.rest.representation.resource.ResourceRepresentationConnection;
-import uk.co.alumeni.prism.rest.representation.resource.ResourceRepresentationExtended;
-import uk.co.alumeni.prism.rest.representation.resource.ResourceRepresentationIdentity;
-import uk.co.alumeni.prism.rest.representation.resource.ResourceRepresentationLocation;
-import uk.co.alumeni.prism.rest.representation.resource.ResourceRepresentationLocationRelation;
-import uk.co.alumeni.prism.rest.representation.resource.ResourceRepresentationOccurrence;
-import uk.co.alumeni.prism.rest.representation.resource.ResourceRepresentationRelation;
-import uk.co.alumeni.prism.rest.representation.resource.ResourceRepresentationRobot;
-import uk.co.alumeni.prism.rest.representation.resource.ResourceRepresentationRobotMetadata;
-import uk.co.alumeni.prism.rest.representation.resource.ResourceRepresentationSimple;
-import uk.co.alumeni.prism.rest.representation.resource.ResourceRepresentationStandard;
-import uk.co.alumeni.prism.rest.representation.resource.ResourceRepresentationSummary;
-import uk.co.alumeni.prism.rest.representation.resource.ResourceSummaryPlotConstraintRepresentation;
-import uk.co.alumeni.prism.rest.representation.resource.ResourceSummaryPlotDataRepresentation;
-import uk.co.alumeni.prism.rest.representation.resource.ResourceSummaryPlotDataRepresentation.ApplicationProcessingSummaryRepresentationMonth;
-import uk.co.alumeni.prism.rest.representation.resource.ResourceSummaryPlotDataRepresentation.ApplicationProcessingSummaryRepresentationWeek;
-import uk.co.alumeni.prism.rest.representation.resource.ResourceSummaryPlotDataRepresentation.ApplicationProcessingSummaryRepresentationYear;
-import uk.co.alumeni.prism.rest.representation.resource.ResourceSummaryPlotRepresentation;
-import uk.co.alumeni.prism.rest.representation.user.UserRepresentation;
-import uk.co.alumeni.prism.services.ActionService;
-import uk.co.alumeni.prism.services.AdvertService;
-import uk.co.alumeni.prism.services.ApplicationService;
-import uk.co.alumeni.prism.services.ResourceService;
-import uk.co.alumeni.prism.services.RoleService;
-import uk.co.alumeni.prism.services.ScopeService;
-import uk.co.alumeni.prism.services.StateService;
-import uk.co.alumeni.prism.services.UserService;
-import uk.co.alumeni.prism.services.helpers.PropertyLoader;
-
-import com.google.common.base.Objects;
-import com.google.common.base.Splitter;
-import com.google.common.collect.HashMultimap;
-import com.google.common.collect.LinkedHashMultimap;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
 
 @Service
 @Transactional
@@ -240,86 +167,87 @@ public class ResourceMapper {
 
         TreeMap<String, ResourceListRowRepresentation> rowIndex = newTreeMap();
         processRowDescriptors(orderedResources, onlyAsPartnerResourceIds, summaries);
-        resourceService.getResourceList(user, scope, parentScopes, targeterEntities, orderedResources, filter, lastSequenceIdentifier,
-                RESOURCE_LIST_PAGE_ROW_COUNT, onlyAsPartnerResourceIds, true).forEach(row -> {
-            ResourceListRowRepresentation representation = new ResourceListRowRepresentation();
-            representation.setScope(scope);
-            Integer resourceId = row.getResourceId();
-            representation.setId(resourceId);
+        Integer maxRecords = BooleanUtils.isTrue(filter.getLoadAll()) ? null : RESOURCE_LIST_PAGE_ROW_COUNT;
+        resourceService.getResourceList(user, scope, parentScopes, targeterEntities, orderedResources, filter, lastSequenceIdentifier, maxRecords, onlyAsPartnerResourceIds, true)
+                .forEach(row -> {
+                    ResourceListRowRepresentation representation = new ResourceListRowRepresentation();
+                    representation.setScope(scope);
+                    Integer resourceId = row.getResourceId();
+                    representation.setId(resourceId);
 
-            Integer institutionId = row.getInstitutionId();
-            Integer departmentId = row.getDepartmentId();
-            Integer programId = row.getProgramId();
-            Integer projectId = row.getProjectId();
+                    Integer institutionId = row.getInstitutionId();
+                    Integer departmentId = row.getDepartmentId();
+                    Integer programId = row.getProgramId();
+                    Integer projectId = row.getProjectId();
 
-            if (scope.equals(INSTITUTION)) {
-                representation.setName(row.getInstitutionName());
-                setInstitutionLogoImage(row, representation);
-            } else {
-                representation.setInstitution(new ResourceRepresentationSimple().withScope(INSTITUTION)
-                        .withId(institutionId).withName(row.getInstitutionName()));
+                    if (scope.equals(INSTITUTION)) {
+                        representation.setName(row.getInstitutionName());
+                        setInstitutionLogoImage(row, representation);
+                    } else {
+                        representation.setInstitution(new ResourceRepresentationSimple().withScope(INSTITUTION)
+                                .withId(institutionId).withName(row.getInstitutionName()));
 
-                Integer logoImageId = row.getLogoImageId();
-                if (logoImageId != null) {
-                    representation.setLogoImage(documentMapper.getDocumentRepresentation(institutionId));
-                }
-            }
+                        Integer logoImageId = row.getLogoImageId();
+                        if (logoImageId != null) {
+                            representation.setLogoImage(documentMapper.getDocumentRepresentation(institutionId));
+                        }
+                    }
 
-            if (scope.equals(DEPARTMENT)) {
-                representation.setName(row.getDepartmentName());
-            } else if (departmentId != null) {
-                representation.setDepartment(new ResourceRepresentationSimple().withScope(DEPARTMENT)
-                        .withId(departmentId).withName(row.getDepartmentName()));
-            }
+                    if (scope.equals(DEPARTMENT)) {
+                        representation.setName(row.getDepartmentName());
+                    } else if (departmentId != null) {
+                        representation.setDepartment(new ResourceRepresentationSimple().withScope(DEPARTMENT)
+                                .withId(departmentId).withName(row.getDepartmentName()));
+                    }
 
-            if (scope.equals(PROGRAM)) {
-                representation.setName(row.getProgramName());
-            } else if (programId != null) {
-                representation.setProgram(new ResourceRepresentationSimple().withScope(PROGRAM)
-                        .withId(programId).withName(row.getProgramName()));
-            }
+                    if (scope.equals(PROGRAM)) {
+                        representation.setName(row.getProgramName());
+                    } else if (programId != null) {
+                        representation.setProgram(new ResourceRepresentationSimple().withScope(PROGRAM)
+                                .withId(programId).withName(row.getProgramName()));
+                    }
 
-            if (scope.equals(PROJECT)) {
-                representation.setName(row.getProjectName());
-            } else if (projectId != null) {
-                representation.setProject(new ResourceRepresentationSimple().withScope(PROJECT)
-                        .withId(projectId).withName(row.getProjectName()));
-            }
+                    if (scope.equals(PROJECT)) {
+                        representation.setName(row.getProjectName());
+                    } else if (projectId != null) {
+                        representation.setProject(new ResourceRepresentationSimple().withScope(PROJECT)
+                                .withId(projectId).withName(row.getProjectName()));
+                    }
 
-            representation.setCode(row.getCode());
-            representation.setUser(userMapper.getUserRepresentationSimple(row, user));
-            representation.setApplicationRatingAverage(row.getApplicationRatingAverage());
+                    representation.setCode(row.getCode());
+                    representation.setUser(userMapper.getUserRepresentationSimple(row, user));
+                    representation.setApplicationRatingAverage(row.getApplicationRatingAverage());
 
-            representation.setState(stateMapper.getStateRepresentationSimple(row.getStateId()));
-            representation.setSecondaryStates(stateMapper.getStateRepresentations(row.getSecondaryStateIds()));
+                    representation.setState(stateMapper.getStateRepresentationSimple(row.getStateId()));
+                    representation.setSecondaryStates(stateMapper.getStateRepresentations(row.getSecondaryStateIds()));
 
-            List<ActionRepresentationSimple> actions = actionMapper.getActionRepresentations(row);
-            DateTime updatedTimestamp = row.getUpdatedTimestamp();
+                    List<ActionRepresentationSimple> actions = actionMapper.getActionRepresentations(row);
+                    DateTime updatedTimestamp = row.getUpdatedTimestamp();
 
-            representation.setCreatedTimestamp(row.getCreatedTimestamp());
-            representation.setUpdatedTimestamp(updatedTimestamp);
+                    representation.setCreatedTimestamp(row.getCreatedTimestamp());
+                    representation.setUpdatedTimestamp(updatedTimestamp);
 
-            setRaisesUrgentFlag(representation, actions);
+                    setRaisesUrgentFlag(representation, actions);
 
-            ResourceOpportunityCategoryDTO indexResource = indexedResources.get(resourceId);
+                    ResourceOpportunityCategoryDTO indexResource = indexedResources.get(resourceId);
 
-            Integer readMessageCount = indexResource.getReadMessageCount();
-            Integer unreadMessageCount = indexResource.getUnreadMessageCount();
+                    Integer readMessageCount = indexResource.getReadMessageCount();
+                    Integer unreadMessageCount = indexResource.getUnreadMessageCount();
 
-            representation.setReadMessageCount(readMessageCount == null ? 0 : readMessageCount);
-            representation.setUnreadMessageCount(unreadMessageCount == null ? 0 : unreadMessageCount);
+                    representation.setReadMessageCount(readMessageCount == null ? 0 : readMessageCount);
+                    representation.setUnreadMessageCount(unreadMessageCount == null ? 0 : unreadMessageCount);
 
-            representation.setRaisesUpdateFlag(isTrue(row.getRecentUpdate()));
+                    representation.setRaisesUpdateFlag(isTrue(row.getRecentUpdate()));
 
-            String sequenceIdentifier = indexResource.toString();
-            representation.setSequenceIdentifier(sequenceIdentifier);
+                    String sequenceIdentifier = indexResource.toString();
+                    representation.setSequenceIdentifier(sequenceIdentifier);
 
-            representation.setAdvertIncompleteSections(getResourceAdvertIncompleteSectionRepresentation(row.getAdvertIncompleteSection()));
-            representation.setStateActionPendingCount(row.getStateActionPendingCount().intValue());
+                    representation.setAdvertIncompleteSections(getResourceAdvertIncompleteSectionRepresentation(row.getAdvertIncompleteSection()));
+                    representation.setStateActionPendingCount(row.getStateActionPendingCount().intValue());
 
-            representation.setActions(actions);
-            rowIndex.put(sequenceIdentifier, representation);
-        });
+                    representation.setActions(actions);
+                    rowIndex.put(sequenceIdentifier, representation);
+                });
 
         Map<String, Integer> urgentSummaries = Maps.newHashMap();
         Set<ResourceOpportunityCategoryDTO> urgentResources = resources.stream().filter(resource -> isTrue(resource.getRaisesUrgentFlag())).collect(toSet());

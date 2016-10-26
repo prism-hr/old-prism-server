@@ -61,7 +61,6 @@ public class UserActivityCacheServiceDelegate {
 
     public UserActivityRepresentation updateUserActivityCache(Integer userId, DateTime baseline) {
         UserActivityRepresentation representation = userMapper.getUserActivityRepresentationFresh(userId);
-        userService.setUserActivityCache(userId, representation, baseline);
         DeferredResult<UserActivityRepresentation> result = requests.remove(userId);
         if (result != null) {
             result.setResult(representation);

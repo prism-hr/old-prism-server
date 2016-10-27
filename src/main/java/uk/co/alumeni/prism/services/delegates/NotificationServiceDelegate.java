@@ -5,6 +5,7 @@ import java.util.Set;
 import javax.inject.Inject;
 
 import org.springframework.context.ApplicationContext;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.event.TransactionalEventListener;
 
@@ -21,6 +22,7 @@ public class NotificationServiceDelegate {
     @Inject
     private ApplicationContext applicationContext;
 
+    @Async
     @TransactionalEventListener
     public void sendNotification(NotificationEvent notificationEvent) {
         if (!notificationEvents.contains(notificationEvent)) {

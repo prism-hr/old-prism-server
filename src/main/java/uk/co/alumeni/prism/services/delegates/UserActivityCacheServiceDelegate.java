@@ -6,10 +6,14 @@ import static org.apache.commons.collections.CollectionUtils.isEmpty;
 import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
 
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 import javax.inject.Inject;
 
+import com.google.common.collect.ConcurrentHashMultiset;
+import com.google.common.collect.HashMultimap;
+import com.google.common.collect.Multimaps;
 import org.apache.http.util.EntityUtils;
 import org.joda.time.DateTime;
 import org.springframework.stereotype.Service;
@@ -27,7 +31,7 @@ import uk.co.alumeni.prism.services.UserService;
 @Service
 public class UserActivityCacheServiceDelegate {
 
-    private final ConcurrentHashMap<Integer, DeferredResult<UserActivityRepresentation>> requests = new ConcurrentHashMap<>(8, 0.9f, 1);
+    private final HashMultimap<Integer, DeferredResult<UserActivityRepresentation>> requests = HashMultimap.create();
 
     @Inject
     private UserActivityCacheService userActivityCacheService;
@@ -61,22 +65,20 @@ public class UserActivityCacheServiceDelegate {
 
     public UserActivityRepresentation updateUserActivityCache(Integer userId, DateTime baseline) {
         UserActivityRepresentation representation = userMapper.getUserActivityRepresentationFresh(userId);
-        DeferredResult<UserActivityRepresentation> result = requests.remove(userId);
-        if (result != null) {
-            result.setResult(representation);
+        synchronized (this) {
+            requests.removeAll(userId).forEach(result -> {
+                result.setResult(representation);
+            });
         }
+
         return representation;
     }
 
-    public void eeaddPollingUser(Integer userId, DeferredResult<UserActivityRepresentation> result) {
-        if (requests.containsKey(userId)) {
-            result.setErrorResult(new UserController.UserActivityNotModifiedException());
-        } else {
-            requests.put(userId, result);
-        }
+    public synchronized void addRequest(Integer userId, DeferredResult<UserActivityRepresentation> result) {
+        requests.put(userId, result);
     }
 
-    public void removePollingUser(Integer userId, DeferredResult<UserActivityRepresentation> result) {
+    public synchronized void processRequestTimeout(Integer userId, DeferredResult<UserActivityRepresentation> result) {
         requests.remove(userId, result);
         result.setErrorResult(new UserController.UserActivityNotModifiedException());
     }

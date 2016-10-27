@@ -1,6 +1,7 @@
 package uk.co.alumeni.prism.rest.controller;
 
 import static java.util.stream.Collectors.toList;
+import static org.slf4j.LoggerFactory.getLogger;
 
 import java.util.List;
 import java.util.Map;
@@ -13,6 +14,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
+import org.slf4j.Logger;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -76,6 +78,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.visualization.datasource.DataSourceHelper;
 import com.google.visualization.datasource.DataSourceRequest;
 import com.google.visualization.datasource.datatable.DataTable;
+import uk.co.alumeni.prism.workflow.executors.action.ApplicationExecutor;
 
 @RestController
 @RequestMapping("api/{resourceScope:applications|projects|programs|departments|institutions|systems}")

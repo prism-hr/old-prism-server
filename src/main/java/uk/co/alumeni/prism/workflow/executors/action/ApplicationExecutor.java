@@ -1,10 +1,12 @@
 package uk.co.alumeni.prism.workflow.executors.action;
 
 import static org.apache.commons.lang.BooleanUtils.isTrue;
+import static org.slf4j.LoggerFactory.getLogger;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismAction.APPLICATION_COMPLETE;
 
 import javax.inject.Inject;
 
+import org.slf4j.Logger;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.BeanPropertyBindingResult;
 
@@ -16,10 +18,7 @@ import uk.co.alumeni.prism.domain.workflow.Action;
 import uk.co.alumeni.prism.dto.ActionOutcomeDTO;
 import uk.co.alumeni.prism.exceptions.PrismValidationException;
 import uk.co.alumeni.prism.rest.dto.comment.CommentDTO;
-import uk.co.alumeni.prism.services.ActionService;
-import uk.co.alumeni.prism.services.ApplicationService;
-import uk.co.alumeni.prism.services.CommentService;
-import uk.co.alumeni.prism.services.UserService;
+import uk.co.alumeni.prism.services.*;
 
 @Component
 public class ApplicationExecutor implements ActionExecutor {

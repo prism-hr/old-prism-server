@@ -16,6 +16,7 @@ import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimaps;
 import org.apache.http.util.EntityUtils;
 import org.joda.time.DateTime;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.event.TransactionalEventListener;
 import org.springframework.web.context.request.async.DeferredResult;
@@ -42,6 +43,7 @@ public class UserActivityCacheServiceDelegate {
     @Inject
     private UserService userService;
 
+    @Async
     @TransactionalEventListener
     public void updateUserActivityCaches(UserActivityUpdateEvent userActivityUpdateEvent) {
         List<Integer> users = userActivityUpdateEvent.getUsers();

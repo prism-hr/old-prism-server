@@ -379,7 +379,7 @@ public class ActionService {
             LinkedList<Comment> replicableSequenceComments = null;
             if (stateTransition != null && isTrue(stateTransition.getReplicableSequenceClose())) {
                 replicableSequenceComments = newLinkedList();
-                for (Comment transitionComment : commentService.getTransitionCommentHistory(transitionResource)) {
+                for (Comment transitionComment : commentService.getTransitionCommentHistory(resource)) {
                     replicableSequenceComments.push(transitionComment);
                     StateAction stateAction = stateService.getStateAction(transitionComment.getState(), transitionComment.getAction());
                     if (isTrue(stateAction.getReplicableSequenceStart())) {
@@ -389,7 +389,7 @@ public class ActionService {
             }
 
             if (isNotEmpty(replicableSequenceComments)) {
-                if (isNotEmpty(resourceService.getResourcesForStateActionPendingAssignment(user, transitionResource, stateTransition, replicableSequenceComments))) {
+                if (isNotEmpty(resourceService.getResourcesForStateActionPendingAssignment(user, resource, stateTransition, replicableSequenceComments))) {
                     actionOutcome.setReplicableSequenceComments(replicableSequenceComments);
                 }
             }

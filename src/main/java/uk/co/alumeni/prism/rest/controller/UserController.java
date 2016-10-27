@@ -236,10 +236,10 @@ public class UserController {
             result.setResult(representation);
         } else {
             result.onTimeout(() -> {
-                userActivityCacheServiceDelegate.removePollingUser(currentUser.getId(), result);
+                userActivityCacheServiceDelegate.processRequestTimeout(currentUser.getId(), result);
             });
 
-            userActivityCacheServiceDelegate.addPollingUser(currentUser.getId(), result);
+            userActivityCacheServiceDelegate.addRequest(currentUser.getId(), result);
         }
         return result;
     }

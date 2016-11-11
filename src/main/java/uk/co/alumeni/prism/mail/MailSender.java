@@ -1,32 +1,11 @@
 package uk.co.alumeni.prism.mail;
 
-import static com.amazonaws.regions.Regions.EU_WEST_1;
-import static com.google.common.collect.Lists.newLinkedList;
-import static com.google.common.collect.Maps.newHashMap;
-import static javax.mail.Session.getInstance;
-import static org.apache.commons.lang.BooleanUtils.isTrue;
-import static org.joda.time.DateTime.now;
-import static org.slf4j.LoggerFactory.getLogger;
-import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_EMAIL_LINK_MESSAGE;
-import static uk.co.alumeni.prism.utils.PrismConversionUtils.htmlToPlainText;
-import static uk.co.alumeni.prism.utils.PrismEmailUtils.getMessageData;
-import static uk.co.alumeni.prism.utils.PrismEmailUtils.getMessagePart;
-
-import java.io.UnsupportedEncodingException;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
-import java.util.Set;
-
-import javax.inject.Inject;
-import javax.mail.Message;
-import javax.mail.Session;
-import javax.mail.internet.InternetAddress;
-import javax.mail.internet.MimeBodyPart;
-import javax.mail.internet.MimeMessage;
-import javax.mail.internet.MimeMultipart;
-
-import com.amazonaws.http.IdleConnectionReaper;
+import com.amazonaws.auth.AWSCredentials;
+import com.amazonaws.regions.Region;
+import com.amazonaws.services.simpleemail.AmazonSimpleEmailServiceClient;
+import com.amazonaws.services.simpleemail.model.RawMessage;
+import com.amazonaws.services.simpleemail.model.SendRawEmailRequest;
+import com.google.common.base.MoreObjects;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
@@ -34,14 +13,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import com.amazonaws.auth.AWSCredentials;
-import com.amazonaws.regions.Region;
-import com.amazonaws.services.simpleemail.AmazonSimpleEmailServiceClient;
-import com.amazonaws.services.simpleemail.model.RawMessage;
-import com.amazonaws.services.simpleemail.model.SendRawEmailRequest;
-import com.google.common.base.MoreObjects;
-
 import uk.co.alumeni.prism.domain.comment.Comment;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismNotificationDefinition;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismNotificationDefinitionProperty;
@@ -55,18 +26,36 @@ import uk.co.alumeni.prism.domain.workflow.NotificationDefinition;
 import uk.co.alumeni.prism.dto.NotificationDefinitionDTO;
 import uk.co.alumeni.prism.event.NotificationEvent;
 import uk.co.alumeni.prism.rest.dto.resource.ResourceDTO;
-import uk.co.alumeni.prism.services.AdvertService;
-import uk.co.alumeni.prism.services.CommentService;
-import uk.co.alumeni.prism.services.DocumentService;
-import uk.co.alumeni.prism.services.MessageService;
-import uk.co.alumeni.prism.services.NotificationService;
-import uk.co.alumeni.prism.services.ResourceService;
-import uk.co.alumeni.prism.services.SystemService;
-import uk.co.alumeni.prism.services.UserService;
+import uk.co.alumeni.prism.services.*;
 import uk.co.alumeni.prism.services.delegates.UserActivityCacheServiceDelegate;
 import uk.co.alumeni.prism.services.helpers.NotificationPropertyLoader;
 import uk.co.alumeni.prism.services.helpers.PropertyLoader;
 import uk.co.alumeni.prism.utils.PrismTemplateUtils;
+
+import javax.inject.Inject;
+import javax.mail.Message;
+import javax.mail.Session;
+import javax.mail.internet.InternetAddress;
+import javax.mail.internet.MimeBodyPart;
+import javax.mail.internet.MimeMessage;
+import javax.mail.internet.MimeMultipart;
+import java.io.UnsupportedEncodingException;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
+import java.util.Set;
+
+import static com.amazonaws.regions.Regions.EU_WEST_1;
+import static com.google.common.collect.Lists.newLinkedList;
+import static com.google.common.collect.Maps.newHashMap;
+import static javax.mail.Session.getInstance;
+import static org.apache.commons.lang.BooleanUtils.isTrue;
+import static org.joda.time.DateTime.now;
+import static org.slf4j.LoggerFactory.getLogger;
+import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_EMAIL_LINK_MESSAGE;
+import static uk.co.alumeni.prism.utils.PrismConversionUtils.htmlToPlainText;
+import static uk.co.alumeni.prism.utils.PrismEmailUtils.getMessageData;
+import static uk.co.alumeni.prism.utils.PrismEmailUtils.getMessagePart;
 
 @Service
 @Transactional
@@ -176,7 +165,6 @@ public class MailSender {
                 message.setContent(messageParts);
                 amazonClient.sendRawEmail(new SendRawEmailRequest(new RawMessage(getMessageData(message))));
                 amazonClient.shutdown();
-                IdleConnectionReaper.shutdown();
             } else if (emailStrategy.equals("log")) {
                 logger.info("Sending Development Email: " + getMessageString(prismNotificationDefinition, notificationDefinitionDTO) + "\n" + subject
                         + "\nContent:\n" + htmlContent);

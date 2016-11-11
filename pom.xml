@@ -353,7 +353,7 @@
         <dependency>
             <groupId>com.amazonaws</groupId>
             <artifactId>aws-java-sdk</artifactId>
-            <version>1.11.4</version>
+            <version>1.11.52</version>
         </dependency>
 
         <!-- Wildfly provided dependencies -->

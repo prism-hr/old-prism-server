@@ -26,6 +26,7 @@ import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
 
+import com.amazonaws.http.IdleConnectionReaper;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
@@ -144,7 +145,6 @@ public class MailSender {
 
             if (emailStrategy.equals("send")) {
                 logger.info("Sending Production Email: " + getMessageString(prismNotificationDefinition, notificationDefinitionDTO));
-
                 AWSCredentials credentials = systemService.getAmazonCredentials();
                 AmazonSimpleEmailServiceClient amazonClient = new AmazonSimpleEmailServiceClient(credentials);
                 amazonClient.setRegion(Region.getRegion(EU_WEST_1));
@@ -175,6 +175,8 @@ public class MailSender {
 
                 message.setContent(messageParts);
                 amazonClient.sendRawEmail(new SendRawEmailRequest(new RawMessage(getMessageData(message))));
+                amazonClient.shutdown();
+                IdleConnectionReaper.shutdown();
             } else if (emailStrategy.equals("log")) {
                 logger.info("Sending Development Email: " + getMessageString(prismNotificationDefinition, notificationDefinitionDTO) + "\n" + subject
                         + "\nContent:\n" + htmlContent);

@@ -64,10 +64,6 @@ public class PropertyLoader {
         return evaluation ? loadLazy(trueProperty) : loadLazy(falseProperty);
     }
 
-    public String loadEager(PrismDisplayPropertyDefinition trueProperty, PrismDisplayPropertyDefinition falseProperty, boolean evaluation) {
-        return evaluation ? loadEager(trueProperty) : loadEager(falseProperty);
-    }
-
     public PropertyLoader localizeLazy(Resource resource) {
         if (resource.getResourceScope().equals(SYSTEM)) {
             PropertyLoader loader = localizeDefault();

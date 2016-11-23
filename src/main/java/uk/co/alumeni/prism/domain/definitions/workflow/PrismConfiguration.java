@@ -1,30 +1,24 @@
 package uk.co.alumeni.prism.domain.definitions.workflow;
 
-import java.util.Map;
-
+import com.google.common.collect.Maps;
 import uk.co.alumeni.prism.domain.display.DisplayPropertyConfiguration;
 import uk.co.alumeni.prism.domain.display.DisplayPropertyDefinition;
-import uk.co.alumeni.prism.domain.workflow.NotificationConfiguration;
-import uk.co.alumeni.prism.domain.workflow.NotificationDefinition;
-import uk.co.alumeni.prism.domain.workflow.StateDurationConfiguration;
-import uk.co.alumeni.prism.domain.workflow.StateDurationDefinition;
-import uk.co.alumeni.prism.domain.workflow.WorkflowConfiguration;
-import uk.co.alumeni.prism.domain.workflow.WorkflowDefinition;
+import uk.co.alumeni.prism.domain.workflow.*;
 import uk.co.alumeni.prism.rest.representation.configuration.DisplayPropertyConfigurationRepresentation;
 import uk.co.alumeni.prism.rest.representation.configuration.NotificationConfigurationRepresentation;
 import uk.co.alumeni.prism.rest.representation.configuration.StateDurationConfigurationRepresentation;
 import uk.co.alumeni.prism.rest.representation.configuration.WorkflowConfigurationRepresentation;
 
-import com.google.common.collect.Maps;
+import java.util.Map;
 
 public enum PrismConfiguration {
 
     DISPLAY_PROPERTY(DisplayPropertyConfiguration.class, DisplayPropertyDefinition.class, DisplayPropertyConfigurationRepresentation.class,
-            true, false, null, null, "_COMMENT_UPDATED_DISPLAY_PROPERTY", true, new String[] { "category", "id" }), //
+            true, false, null, null, "_COMMENT_UPDATED_DISPLAY_PROPERTY", true, new String[]{"category", "id"}), //
     NOTIFICATION(NotificationConfiguration.class, NotificationDefinition.class, NotificationConfigurationRepresentation.class,
-            false, false, null, null, "_COMMENT_UPDATED_NOTIFICATION", true, new String[] { "id" }), //
+            false, false, null, null, "_COMMENT_UPDATED_NOTIFICATION", true, new String[]{"id"}), //
     STATE_DURATION(StateDurationConfiguration.class, StateDurationDefinition.class, StateDurationConfigurationRepresentation.class,
-            true, false, 1, 364, "_COMMENT_UPDATED_STATE_DURATION", true, new String[] { "id" }); //
+            true, false, 1, 364, "_COMMENT_UPDATED_STATE_DURATION", true, new String[]{"id"}); //
 
     private Class<? extends WorkflowConfiguration<?>> configurationClass;
 

@@ -1,11 +1,10 @@
 package uk.co.alumeni.prism.dto;
 
-import java.util.Set;
-
-import uk.co.alumeni.prism.domain.definitions.workflow.PrismScope;
-
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Sets;
+import uk.co.alumeni.prism.domain.definitions.workflow.PrismScope;
+
+import java.util.Set;
 
 public class UserResourceDTO {
 

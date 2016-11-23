@@ -1,10 +1,10 @@
 package uk.co.alumeni.prism.rest.dto.comment;
 
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
-
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismRole;
 import uk.co.alumeni.prism.rest.dto.user.UserDTO;
+
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 
 public class CommentAssignedUserDTO {
 

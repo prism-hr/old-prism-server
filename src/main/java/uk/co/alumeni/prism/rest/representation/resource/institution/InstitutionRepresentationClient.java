@@ -1,10 +1,10 @@
 package uk.co.alumeni.prism.rest.representation.resource.institution;
 
-import java.util.List;
-
 import uk.co.alumeni.prism.rest.representation.resource.ResourceCountRepresentation;
 import uk.co.alumeni.prism.rest.representation.resource.ResourceParentRepresentationClient;
 import uk.co.alumeni.prism.rest.representation.resource.ResourceSummaryPlotRepresentation;
+
+import java.util.List;
 
 public class InstitutionRepresentationClient extends InstitutionRepresentation implements ResourceParentRepresentationClient {
 

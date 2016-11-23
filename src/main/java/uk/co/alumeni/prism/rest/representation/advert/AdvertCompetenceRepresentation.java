@@ -2,8 +2,6 @@ package uk.co.alumeni.prism.rest.representation.advert;
 
 import uk.co.alumeni.prism.domain.definitions.PrismCompetenceMode;
 
-import javax.validation.constraints.NotNull;
-
 public class AdvertCompetenceRepresentation {
 
     private Integer competenceId;

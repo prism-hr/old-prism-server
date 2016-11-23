@@ -1,21 +1,14 @@
 package uk.co.alumeni.prism.domain.address;
 
-import static com.google.common.base.Objects.equal;
-
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
-import javax.persistence.UniqueConstraint;
-
+import com.google.common.base.Objects;
 import uk.co.alumeni.prism.domain.UniqueEntity;
 
-import com.google.common.base.Objects;
+import javax.persistence.*;
+
+import static com.google.common.base.Objects.equal;
 
 @Entity
-@Table(name = "address_location", uniqueConstraints = { @UniqueConstraint(columnNames = { "address_id", "address_location_part_id" }) })
+@Table(name = "address_location", uniqueConstraints = {@UniqueConstraint(columnNames = {"address_id", "address_location_part_id"})})
 public class AddressLocation implements UniqueEntity {
 
     @Id

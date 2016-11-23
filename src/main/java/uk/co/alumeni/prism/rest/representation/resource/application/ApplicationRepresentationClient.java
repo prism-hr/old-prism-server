@@ -1,12 +1,12 @@
 package uk.co.alumeni.prism.rest.representation.resource.application;
 
-import java.util.List;
-
 import uk.co.alumeni.prism.domain.definitions.PrismStudyOption;
 import uk.co.alumeni.prism.rest.representation.advert.AdvertCompetenceRepresentation;
 import uk.co.alumeni.prism.rest.representation.advert.AdvertThemeRepresentation;
 import uk.co.alumeni.prism.rest.representation.resource.ResourceRepresentationLocationRelation;
 import uk.co.alumeni.prism.rest.representation.user.UserRepresentationSimple;
+
+import java.util.List;
 
 public class ApplicationRepresentationClient extends ApplicationRepresentationExtended {
 

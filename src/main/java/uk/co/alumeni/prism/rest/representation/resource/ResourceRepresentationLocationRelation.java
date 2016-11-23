@@ -1,7 +1,8 @@
 package uk.co.alumeni.prism.rest.representation.resource;
 
-import static org.apache.commons.lang3.ObjectUtils.compare;
 import uk.co.alumeni.prism.rest.representation.address.AddressRepresentation;
+
+import static org.apache.commons.lang3.ObjectUtils.compare;
 
 public class ResourceRepresentationLocationRelation extends ResourceRepresentationRelation {
 

@@ -1,17 +1,8 @@
 package uk.co.alumeni.prism.services.helpers;
 
-import static org.springframework.beans.factory.config.BeanDefinition.SCOPE_PROTOTYPE;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismConfiguration.DISPLAY_PROPERTY;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.SYSTEM;
-
-import java.util.HashMap;
-import java.util.List;
-
-import javax.inject.Inject;
-
+import com.google.common.collect.Maps;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
-
 import uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyCategory;
 import uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition;
 import uk.co.alumeni.prism.domain.definitions.PrismOpportunityType;
@@ -23,7 +14,13 @@ import uk.co.alumeni.prism.rest.representation.configuration.WorkflowConfigurati
 import uk.co.alumeni.prism.services.CustomizationService;
 import uk.co.alumeni.prism.services.SystemService;
 
-import com.google.common.collect.Maps;
+import javax.inject.Inject;
+import java.util.HashMap;
+import java.util.List;
+
+import static org.springframework.beans.factory.config.BeanDefinition.SCOPE_PROTOTYPE;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismConfiguration.DISPLAY_PROPERTY;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.SYSTEM;
 
 @Component
 @Scope(SCOPE_PROTOTYPE)

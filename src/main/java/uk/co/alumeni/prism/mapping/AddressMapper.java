@@ -1,16 +1,15 @@
 package uk.co.alumeni.prism.mapping;
 
-import javax.transaction.Transactional;
-
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
-
 import uk.co.alumeni.prism.domain.Domicile;
 import uk.co.alumeni.prism.domain.address.Address;
 import uk.co.alumeni.prism.domain.address.AddressCoordinates;
 import uk.co.alumeni.prism.domain.address.AddressDefinition;
 import uk.co.alumeni.prism.rest.representation.address.AddressCoordinatesRepresentation;
 import uk.co.alumeni.prism.rest.representation.address.AddressRepresentation;
+
+import javax.transaction.Transactional;
 
 @Service
 @Transactional
@@ -25,8 +24,8 @@ public class AddressMapper {
         target.setAddressCode(source.getAddressCode());
         return target;
     }
-    
-    public AddressRepresentation getAddressRepresentation(Address address)  {
+
+    public AddressRepresentation getAddressRepresentation(Address address) {
         AddressRepresentation representation = transform(address, AddressRepresentation.class);
 
         Domicile domicile = address.getDomicile();

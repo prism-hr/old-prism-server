@@ -1,8 +1,7 @@
 package uk.co.alumeni.prism.dto;
 
-import uk.co.alumeni.prism.domain.definitions.workflow.PrismState;
-
 import com.google.common.base.Objects;
+import uk.co.alumeni.prism.domain.definitions.workflow.PrismState;
 
 public class StateSelectableDTO {
 

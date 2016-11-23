@@ -1,16 +1,16 @@
 package uk.co.alumeni.prism.utils;
 
+import com.google.common.base.Joiner;
+
+import java.math.BigDecimal;
+import java.util.List;
+
 import static com.google.common.collect.Lists.newLinkedList;
 import static java.util.Arrays.stream;
 import static org.apache.commons.lang.ArrayUtils.isEmpty;
 import static org.apache.commons.lang3.StringUtils.isEmpty;
 import static uk.co.alumeni.prism.PrismConstants.ASTERISK;
 import static uk.co.alumeni.prism.PrismConstants.AT;
-
-import java.math.BigDecimal;
-import java.util.List;
-
-import com.google.common.base.Joiner;
 
 public class PrismStringUtils {
 

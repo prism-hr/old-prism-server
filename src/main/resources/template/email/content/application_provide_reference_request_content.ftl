@@ -3,12 +3,12 @@
 </h1>
 
 <p><b>
-	${APPLICATION_CREATOR_FULL_NAME} application for ${APPLICATION_OPPORTUNITY_TYPE} in the position of:
-	${TEMPLATE_PARENT_RESOURCE_NAME}.
+${APPLICATION_CREATOR_FULL_NAME} application for ${APPLICATION_OPPORTUNITY_TYPE} in the position of:
+${TEMPLATE_PARENT_RESOURCE_NAME}.
 </b></p>
 
 <p>
-    ${APPLICATION_CREATOR_FULL_NAME} has nominated you as one of their referees and we would very much
+${APPLICATION_CREATOR_FULL_NAME} has nominated you as one of their referees and we would very much
     appreciate your feedback on their suitability.
 </p>
 
@@ -26,8 +26,8 @@
 <br/>
 <ul>
     <li>
-    	Follow the alternative, <i>Decline</i>, link to notify us of the situation. (Please be aware that by
-    	declining you may reduce the chance of the applicant securing a position).
+        Follow the alternative, <i>Decline</i>, link to notify us of the situation. (Please be aware that by
+        declining you may reduce the chance of the applicant securing a position).
     </li>
 </ul>
 <br/>
@@ -50,7 +50,7 @@ ${ACTION_COMPLETE}
 </p>
 
 [#if TEMPLATE_BUFFERED?has_content]
-    <p>${TEMPLATE_BUFFERED}</p>
+<p>${TEMPLATE_BUFFERED}</p>
 [/#if]
 
 <p>

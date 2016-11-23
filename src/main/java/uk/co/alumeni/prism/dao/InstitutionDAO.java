@@ -1,29 +1,13 @@
 package uk.co.alumeni.prism.dao;
 
-import static java.util.Arrays.stream;
-import static uk.co.alumeni.prism.dao.WorkflowDAO.getLikeConstraint;
-import static uk.co.alumeni.prism.dao.WorkflowDAO.getMatchingFlattenedPropertyConstraint;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismState.INSTITUTION_DISABLED_COMPLETED;
-
-import java.util.List;
-import java.util.Map;
-
-import javax.inject.Inject;
-
-import org.apache.commons.collections.CollectionUtils;
+import com.google.common.collect.Maps;
 import org.apache.commons.lang3.ArrayUtils;
 import org.hibernate.Criteria;
 import org.hibernate.SessionFactory;
-import org.hibernate.criterion.Disjunction;
-import org.hibernate.criterion.Junction;
-import org.hibernate.criterion.MatchMode;
-import org.hibernate.criterion.Order;
-import org.hibernate.criterion.Projections;
-import org.hibernate.criterion.Restrictions;
+import org.hibernate.criterion.*;
 import org.hibernate.sql.JoinType;
 import org.hibernate.transform.Transformers;
 import org.springframework.stereotype.Repository;
-
 import uk.co.alumeni.prism.domain.Domicile;
 import uk.co.alumeni.prism.domain.definitions.PrismResourceContext;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismScope;
@@ -35,7 +19,14 @@ import uk.co.alumeni.prism.dto.ResourceChildCreationDTO;
 import uk.co.alumeni.prism.dto.ResourceLocationDTO;
 import uk.co.alumeni.prism.utils.PrismTemplateUtils;
 
-import com.google.common.collect.Maps;
+import javax.inject.Inject;
+import java.util.List;
+import java.util.Map;
+
+import static java.util.Arrays.stream;
+import static uk.co.alumeni.prism.dao.WorkflowDAO.getLikeConstraint;
+import static uk.co.alumeni.prism.dao.WorkflowDAO.getMatchingFlattenedPropertyConstraint;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismState.INSTITUTION_DISABLED_COMPLETED;
 
 @Repository
 @SuppressWarnings("unchecked")
@@ -122,10 +113,10 @@ public class InstitutionDAO {
 
         List<ResourceLocationDTO> list = (List<ResourceLocationDTO>)
                 criteria.addOrder(Order.asc("name")) //
-                .addOrder(Order.asc("id")) //
-                .setMaxResults(20)
-                .setResultTransformer(Transformers.aliasToBean(ResourceLocationDTO.class)) //
-                .list();
+                        .addOrder(Order.asc("id")) //
+                        .setMaxResults(20)
+                        .setResultTransformer(Transformers.aliasToBean(ResourceLocationDTO.class)) //
+                        .list();
 
         list.forEach(institution -> institution.setScope(PrismScope.INSTITUTION));
         return list;

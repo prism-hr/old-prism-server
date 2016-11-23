@@ -1,12 +1,11 @@
 package uk.co.alumeni.prism.rest.dto.resource;
 
-import java.util.List;
+import uk.co.alumeni.prism.domain.definitions.PrismResourceRelationContext;
+import uk.co.alumeni.prism.rest.dto.user.UserDTO;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
-
-import uk.co.alumeni.prism.domain.definitions.PrismResourceRelationContext;
-import uk.co.alumeni.prism.rest.dto.user.UserDTO;
+import java.util.List;
 
 public class ResourceRelationCreationDTO {
 

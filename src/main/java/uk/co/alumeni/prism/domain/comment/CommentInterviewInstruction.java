@@ -7,11 +7,11 @@ import javax.persistence.Lob;
 @Embeddable
 public class CommentInterviewInstruction {
 
-	@Lob
+    @Lob
     @Column(name = "application_interviewee_instructions")
     private String intervieweeInstructions;
 
-	@Lob
+    @Lob
     @Column(name = "application_interviewer_instructions")
     private String interviewerInstructions;
 

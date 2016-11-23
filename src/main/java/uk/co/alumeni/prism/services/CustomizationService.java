@@ -1,18 +1,8 @@
 package uk.co.alumeni.prism.services;
 
-import static uk.co.alumeni.prism.domain.definitions.PrismOpportunityType.getSystemOpportunityType;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.PROJECT;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.SYSTEM;
-
-import java.util.Collections;
-import java.util.List;
-import java.util.stream.Collectors;
-
-import javax.inject.Inject;
-
+import com.google.common.base.Objects;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
 import uk.co.alumeni.prism.dao.CustomizationDAO;
 import uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition;
 import uk.co.alumeni.prism.domain.definitions.PrismOpportunityType;
@@ -29,7 +19,14 @@ import uk.co.alumeni.prism.mapping.CustomizationMapper;
 import uk.co.alumeni.prism.rest.dto.WorkflowConfigurationDTO;
 import uk.co.alumeni.prism.rest.representation.configuration.WorkflowConfigurationRepresentation;
 
-import com.google.common.base.Objects;
+import javax.inject.Inject;
+import java.util.Collections;
+import java.util.List;
+import java.util.stream.Collectors;
+
+import static uk.co.alumeni.prism.domain.definitions.PrismOpportunityType.getSystemOpportunityType;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.PROJECT;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.SYSTEM;
 
 @Service
 @Transactional

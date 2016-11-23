@@ -1,12 +1,11 @@
 package uk.co.alumeni.prism.rest.representation.resource;
 
-import java.util.List;
-
 import org.joda.time.LocalDate;
-
 import uk.co.alumeni.prism.domain.definitions.PrismOpportunityCategory;
 import uk.co.alumeni.prism.domain.definitions.PrismOpportunityType;
 import uk.co.alumeni.prism.domain.definitions.PrismStudyOption;
+
+import java.util.List;
 
 public class ResourceOpportunityRepresentation extends ResourceParentRepresentation {
 

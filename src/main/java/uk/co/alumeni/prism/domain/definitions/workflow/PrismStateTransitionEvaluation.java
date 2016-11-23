@@ -1,24 +1,7 @@
 package uk.co.alumeni.prism.domain.definitions.workflow;
 
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.APPLICATION;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.DEPARTMENT;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.INSTITUTION;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.PROGRAM;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.PROJECT;
 import uk.co.alumeni.prism.workflow.resolvers.state.transition.StateTransitionResolver;
-import uk.co.alumeni.prism.workflow.resolvers.state.transition.application.ApplicationAssignedInterviewerResolver;
-import uk.co.alumeni.prism.workflow.resolvers.state.transition.application.ApplicationCompletedReferenceStateResolver;
-import uk.co.alumeni.prism.workflow.resolvers.state.transition.application.ApplicationCompletedStateResolver;
-import uk.co.alumeni.prism.workflow.resolvers.state.transition.application.ApplicationConfirmedInterviewResolver;
-import uk.co.alumeni.prism.workflow.resolvers.state.transition.application.ApplicationConfirmedManagementResolver;
-import uk.co.alumeni.prism.workflow.resolvers.state.transition.application.ApplicationConfirmedOfferAcceptanceResolver;
-import uk.co.alumeni.prism.workflow.resolvers.state.transition.application.ApplicationConfirmedOfferResolver;
-import uk.co.alumeni.prism.workflow.resolvers.state.transition.application.ApplicationProvidedInterviewAvailabilityResolver;
-import uk.co.alumeni.prism.workflow.resolvers.state.transition.application.ApplicationProvidedInterviewFeedbackResolver;
-import uk.co.alumeni.prism.workflow.resolvers.state.transition.application.ApplicationProvidedPartnerApprovalResolver;
-import uk.co.alumeni.prism.workflow.resolvers.state.transition.application.ApplicationProvidedReferenceResolver;
-import uk.co.alumeni.prism.workflow.resolvers.state.transition.application.ApplicationProvidedReviewResolver;
-import uk.co.alumeni.prism.workflow.resolvers.state.transition.application.ApplicationUpdateInterviewAvailabilityResolver;
+import uk.co.alumeni.prism.workflow.resolvers.state.transition.application.*;
 import uk.co.alumeni.prism.workflow.resolvers.state.transition.department.DepartmentApprovedResolver;
 import uk.co.alumeni.prism.workflow.resolvers.state.transition.department.DepartmentCompletedResolver;
 import uk.co.alumeni.prism.workflow.resolvers.state.transition.department.DepartmentCreatedResolver;
@@ -35,6 +18,8 @@ import uk.co.alumeni.prism.workflow.resolvers.state.transition.project.ProjectAp
 import uk.co.alumeni.prism.workflow.resolvers.state.transition.project.ProjectCompletedResolver;
 import uk.co.alumeni.prism.workflow.resolvers.state.transition.project.ProjectCreatedResolver;
 import uk.co.alumeni.prism.workflow.resolvers.state.transition.project.ProjectUpdatedResolver;
+
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.*;
 
 public enum PrismStateTransitionEvaluation {
 

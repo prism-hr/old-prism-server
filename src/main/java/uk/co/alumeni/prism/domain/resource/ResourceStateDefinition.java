@@ -1,11 +1,9 @@
 package uk.co.alumeni.prism.domain.resource;
 
+import com.google.common.base.Objects;
 import org.joda.time.LocalDate;
-
 import uk.co.alumeni.prism.domain.workflow.State;
 import uk.co.alumeni.prism.domain.workflow.WorkflowResourceExecution;
-
-import com.google.common.base.Objects;
 
 public abstract class ResourceStateDefinition extends WorkflowResourceExecution {
 

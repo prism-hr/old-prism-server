@@ -1,21 +1,7 @@
 package uk.co.alumeni.prism.rest.controller;
 
-import static java.util.Arrays.asList;
-import static org.springframework.web.bind.annotation.RequestMethod.GET;
-import static org.springframework.web.bind.annotation.RequestMethod.POST;
-
-import java.util.List;
-import java.util.Map;
-
-import javax.inject.Inject;
-
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
-
+import org.springframework.web.bind.annotation.*;
 import uk.co.alumeni.prism.mapping.TagMapper;
 import uk.co.alumeni.prism.rest.dto.resource.ResourceConnectionInvitationDTO;
 import uk.co.alumeni.prism.rest.dto.resource.ResourceConnectionInvitationsDTO;
@@ -23,6 +9,14 @@ import uk.co.alumeni.prism.rest.dto.resource.ResourceCreationDTO;
 import uk.co.alumeni.prism.rest.representation.CompetenceRepresentation;
 import uk.co.alumeni.prism.rest.representation.TagRepresentation;
 import uk.co.alumeni.prism.services.AdvertService;
+
+import javax.inject.Inject;
+import java.util.List;
+import java.util.Map;
+
+import static java.util.Arrays.asList;
+import static org.springframework.web.bind.annotation.RequestMethod.GET;
+import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
 @RestController
 @RequestMapping("/api/targeting")

@@ -1,13 +1,6 @@
 package uk.co.alumeni.prism.workflow.resolvers.state.transition.application;
 
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRole.APPLICATION_REFEREE;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismState.APPLICATION_REFERENCE;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismState.APPLICATION_REFERENCE_PENDING_COMPLETION;
-
-import javax.inject.Inject;
-
 import org.springframework.stereotype.Component;
-
 import uk.co.alumeni.prism.domain.application.Application;
 import uk.co.alumeni.prism.domain.comment.Comment;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismStateGroup;
@@ -15,6 +8,12 @@ import uk.co.alumeni.prism.domain.workflow.StateTransition;
 import uk.co.alumeni.prism.services.StateService;
 import uk.co.alumeni.prism.services.UserService;
 import uk.co.alumeni.prism.workflow.resolvers.state.transition.StateTransitionResolver;
+
+import javax.inject.Inject;
+
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRole.APPLICATION_REFEREE;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismState.APPLICATION_REFERENCE;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismState.APPLICATION_REFERENCE_PENDING_COMPLETION;
 
 @Component
 public class ApplicationProvidedReferenceResolver implements StateTransitionResolver<Application> {

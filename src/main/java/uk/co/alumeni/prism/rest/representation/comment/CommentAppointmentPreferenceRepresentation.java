@@ -1,8 +1,8 @@
 package uk.co.alumeni.prism.rest.representation.comment;
 
-import java.util.List;
-
 import uk.co.alumeni.prism.rest.representation.user.UserRepresentationSimple;
+
+import java.util.List;
 
 public class CommentAppointmentPreferenceRepresentation {
 

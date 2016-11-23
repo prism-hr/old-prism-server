@@ -1,8 +1,8 @@
 package uk.co.alumeni.prism.rest.dto;
 
-import javax.validation.constraints.NotNull;
-
 import org.hibernate.validator.constraints.NotEmpty;
+
+import javax.validation.constraints.NotNull;
 
 public class DocumentDTO {
 

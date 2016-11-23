@@ -1,11 +1,10 @@
 package uk.co.alumeni.prism.event;
 
-import java.util.List;
-
 import org.joda.time.DateTime;
 import org.springframework.context.ApplicationEvent;
-
 import uk.co.alumeni.prism.rest.dto.resource.ResourceDTO;
+
+import java.util.List;
 
 public class UserActivityUpdateEvent extends ApplicationEvent {
 

@@ -1,15 +1,8 @@
 package uk.co.alumeni.prism.mapping;
 
-import java.util.List;
-import java.util.stream.Collectors;
-
-import javax.inject.Inject;
-import javax.transaction.Transactional;
-
 import org.apache.commons.lang3.BooleanUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
-
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismAction;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismState;
 import uk.co.alumeni.prism.domain.resource.Resource;
@@ -17,6 +10,11 @@ import uk.co.alumeni.prism.domain.workflow.State;
 import uk.co.alumeni.prism.rest.representation.state.StateRepresentationExtended;
 import uk.co.alumeni.prism.rest.representation.state.StateRepresentationSimple;
 import uk.co.alumeni.prism.services.StateService;
+
+import javax.inject.Inject;
+import javax.transaction.Transactional;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional

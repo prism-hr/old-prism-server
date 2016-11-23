@@ -1,13 +1,13 @@
 package uk.co.alumeni.prism.domain.definitions.workflow;
 
+import com.google.common.base.Objects;
+
+import java.util.Set;
+
 import static com.google.common.base.Objects.equal;
 import static com.google.common.collect.Lists.newArrayList;
 import static com.google.common.collect.Sets.newLinkedHashSet;
 import static java.util.Arrays.asList;
-
-import java.util.Set;
-
-import com.google.common.base.Objects;
 
 public class PrismStateTransition {
 

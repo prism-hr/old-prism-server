@@ -1,18 +1,12 @@
 package uk.co.alumeni.prism.domain.advert;
 
-import java.math.BigDecimal;
-
-import javax.persistence.Column;
-import javax.persistence.Embeddable;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.Lob;
-
 import org.hibernate.annotations.Type;
 import org.joda.time.LocalDate;
-
 import uk.co.alumeni.prism.domain.definitions.PrismDurationUnit;
 import uk.co.alumeni.prism.domain.definitions.PrismPaymentOption;
+
+import javax.persistence.*;
+import java.math.BigDecimal;
 
 @Embeddable
 public class AdvertFinancialDetail {
@@ -20,7 +14,7 @@ public class AdvertFinancialDetail {
     @Column(name = "pay_option")
     @Enumerated(EnumType.STRING)
     private PrismPaymentOption option;
-    
+
     @Column(name = "pay_interval")
     @Enumerated(EnumType.STRING)
     private PrismDurationUnit interval;
@@ -51,7 +45,7 @@ public class AdvertFinancialDetail {
 
     @Column(name = "pay_maximum_normalized_hour")
     private BigDecimal maximumNormalizedHour;
-    
+
     @Lob
     @Column(name = "pay_benefit")
     private String benefit;
@@ -59,7 +53,7 @@ public class AdvertFinancialDetail {
     @Lob
     @Column(name = "pay_benefit_description")
     private String benefitDescription;
-    
+
     @Column(name = "pay_last_conversion_date")
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentLocalDate")
     private LocalDate lastConversionDate;
@@ -71,7 +65,7 @@ public class AdvertFinancialDetail {
     public void setOption(PrismPaymentOption option) {
         this.option = option;
     }
-    
+
     public PrismDurationUnit getInterval() {
         return interval;
     }
@@ -151,7 +145,7 @@ public class AdvertFinancialDetail {
     public void setMaximumNormalizedHour(BigDecimal maximumNormalizedHour) {
         this.maximumNormalizedHour = maximumNormalizedHour;
     }
-    
+
     public String getBenefit() {
         return benefit;
     }

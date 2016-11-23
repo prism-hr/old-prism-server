@@ -1,9 +1,8 @@
 package uk.co.alumeni.prism.rest.dto.resource;
 
-import java.util.List;
-
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
+import java.util.List;
 
 public class ResourceConnectionInvitationsDTO {
 

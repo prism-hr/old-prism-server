@@ -1,11 +1,10 @@
 package uk.co.alumeni.prism.workflow.transition.populators;
 
-import javax.inject.Inject;
-
 import org.springframework.stereotype.Component;
-
 import uk.co.alumeni.prism.domain.application.Application;
 import uk.co.alumeni.prism.services.ApplicationService;
+
+import javax.inject.Inject;
 
 @Component
 public class ApplicationPopulator implements ResourcePopulator<Application> {

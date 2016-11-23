@@ -1,9 +1,9 @@
 package uk.co.alumeni.prism.rest.representation.user;
 
-import java.util.List;
-
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismRole;
 import uk.co.alumeni.prism.rest.representation.resource.ResourceRepresentationIdentity;
+
+import java.util.List;
 
 public class UserRolesRepresentation {
 

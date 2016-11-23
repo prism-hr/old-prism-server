@@ -3,13 +3,12 @@ package uk.co.alumeni.prism.security;
 import org.apache.commons.lang.StringUtils;
 import org.joda.time.DateTime;
 import org.springframework.stereotype.Service;
-
 import uk.co.alumeni.prism.domain.user.User;
 import uk.co.alumeni.prism.utils.PrismEncryptionUtils;
 
 @Service
 public class
-        UserAuthenticationService {
+UserAuthenticationService {
 
     public boolean validateCredentials(User user, String password) {
         return password != null && user != null && user.isEnabled() && checkPassword(user, password);

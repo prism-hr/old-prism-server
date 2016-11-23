@@ -1,15 +1,8 @@
 package uk.co.alumeni.prism.domain.workflow;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
-
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismStateDurationDefinition;
+
+import javax.persistence.*;
 
 @Entity
 @Table(name = "state_duration_definition")

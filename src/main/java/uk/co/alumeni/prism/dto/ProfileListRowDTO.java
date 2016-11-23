@@ -1,8 +1,7 @@
 package uk.co.alumeni.prism.dto;
 
-import org.joda.time.DateTime;
-
 import com.google.common.base.Objects;
+import org.joda.time.DateTime;
 
 public class ProfileListRowDTO implements ProfileEntityDTO {
 
@@ -21,7 +20,7 @@ public class ProfileListRowDTO implements ProfileEntityDTO {
     private String userAccountImageUrl;
 
     private String linkedInProfileUrl;
-    
+
     private Integer completeScore;
 
     private Long applicationCount;

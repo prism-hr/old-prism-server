@@ -1,18 +1,17 @@
 package uk.co.alumeni.prism.services;
 
-import java.io.Serializable;
-import java.util.List;
-import java.util.Map;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
 import uk.co.alumeni.prism.dao.EntityDAO;
 import uk.co.alumeni.prism.domain.UniqueEntity;
 import uk.co.alumeni.prism.domain.UniqueEntity.EntitySignature;
 import uk.co.alumeni.prism.exceptions.DeduplicationException;
 import uk.co.alumeni.prism.utils.PrismReflectionUtils;
+
+import java.io.Serializable;
+import java.util.List;
+import java.util.Map;
 
 @Service
 @Transactional
@@ -62,7 +61,7 @@ public class EntityService {
         } else {
             persistentEntity = replace(persistentEntity, transientEntity);
         }
-        
+
         return persistentEntity;
     }
 

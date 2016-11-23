@@ -4,10 +4,10 @@ import javax.validation.constraints.NotNull;
 
 public class UserFeedbackContentDTO {
 
-	@NotNull
-	private Integer rating;
+    @NotNull
+    private Integer rating;
 
-	private String content;
+    private String content;
 
     private String featureRequest;
 

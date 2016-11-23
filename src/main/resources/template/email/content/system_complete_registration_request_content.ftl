@@ -7,17 +7,17 @@
 </p>
 
 <p>
-	Please follow the link below to confirm your identity. You will be asked to login using your account credentials.
+    Please follow the link below to confirm your identity. You will be asked to login using your account credentials.
 </p>
 
 ${SYSTEM_USER_ACCOUNT_ACTIVATION}
 
 <p>
-	Welcome to ${TEMPLATE_SYSTEM_NAME}.
+    Welcome to ${TEMPLATE_SYSTEM_NAME}.
 </p>
 
 [#if TEMPLATE_BUFFERED?has_content]
-    <p>${TEMPLATE_BUFFERED}</p>
+<p>${TEMPLATE_BUFFERED}</p>
 [/#if]
 
 <p>

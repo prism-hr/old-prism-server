@@ -1,8 +1,8 @@
 package uk.co.alumeni.prism.rest.representation.resource.application;
 
-import java.util.List;
-
 import uk.co.alumeni.prism.rest.representation.user.UserRepresentationSimple;
+
+import java.util.List;
 
 public class ApplicationRepresentationExtended extends ApplicationRepresentationSimple {
 

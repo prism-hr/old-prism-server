@@ -1,12 +1,11 @@
 package uk.co.alumeni.prism.domain.comment;
 
-import java.util.TimeZone;
+import org.hibernate.annotations.Type;
+import org.joda.time.LocalDateTime;
 
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
-
-import org.hibernate.annotations.Type;
-import org.joda.time.LocalDateTime;
+import java.util.TimeZone;
 
 @Embeddable
 public class CommentInterviewAppointment {

@@ -1,21 +1,6 @@
 package uk.co.alumeni.prism.workflow.resolvers.state.transition.application;
 
-import static com.google.common.collect.Lists.newArrayList;
-import static org.apache.commons.collections.CollectionUtils.containsAny;
-import static org.apache.commons.lang3.BooleanUtils.isTrue;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRole.DEPARTMENT_ADMINISTRATOR;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRole.DEPARTMENT_APPROVER;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRole.DEPARTMENT_STUDENT;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRole.DEPARTMENT_STUDENT_UNVERIFIED;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismState.APPLICATION_APPROVED_PENDING_OFFER_ACCEPTANCE;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismState.APPLICATION_APPROVED_PENDING_PARTNER_APPROVAL;
-
-import java.util.List;
-
-import javax.inject.Inject;
-
 import org.springframework.stereotype.Component;
-
 import uk.co.alumeni.prism.domain.application.Application;
 import uk.co.alumeni.prism.domain.comment.Comment;
 import uk.co.alumeni.prism.domain.user.User;
@@ -24,6 +9,16 @@ import uk.co.alumeni.prism.services.ApplicationService;
 import uk.co.alumeni.prism.services.ResourceService;
 import uk.co.alumeni.prism.services.StateService;
 import uk.co.alumeni.prism.workflow.resolvers.state.transition.StateTransitionResolver;
+
+import javax.inject.Inject;
+import java.util.List;
+
+import static com.google.common.collect.Lists.newArrayList;
+import static org.apache.commons.collections.CollectionUtils.containsAny;
+import static org.apache.commons.lang3.BooleanUtils.isTrue;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRole.*;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismState.APPLICATION_APPROVED_PENDING_OFFER_ACCEPTANCE;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismState.APPLICATION_APPROVED_PENDING_PARTNER_APPROVAL;
 
 @Component
 public class ApplicationConfirmedOfferResolver implements StateTransitionResolver<Application> {

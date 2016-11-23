@@ -1,22 +1,15 @@
 package uk.co.alumeni.prism.domain.application;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
-import javax.persistence.UniqueConstraint;
-
+import com.google.common.base.Objects;
 import uk.co.alumeni.prism.domain.UniqueEntity;
 import uk.co.alumeni.prism.domain.user.User;
 import uk.co.alumeni.prism.domain.user.UserAssignment;
 import uk.co.alumeni.prism.workflow.user.ApplicationAssignedUserReassignmentProcessor;
 
-import com.google.common.base.Objects;
+import javax.persistence.*;
 
 @Entity
-@Table(name = "application_hiring_manager", uniqueConstraints = { @UniqueConstraint(columnNames = { "application_id", "user_id" }) })
+@Table(name = "application_hiring_manager", uniqueConstraints = {@UniqueConstraint(columnNames = {"application_id", "user_id"})})
 public class ApplicationHiringManager implements UniqueEntity, UserAssignment<ApplicationAssignedUserReassignmentProcessor> {
 
     @Id

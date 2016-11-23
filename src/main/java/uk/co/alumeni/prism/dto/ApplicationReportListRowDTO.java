@@ -1,17 +1,16 @@
 package uk.co.alumeni.prism.dto;
 
-import static org.jboss.util.Strings.EMPTY;
-
-import java.math.BigDecimal;
-
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
-
 import uk.co.alumeni.prism.domain.definitions.PrismAgeRange;
 import uk.co.alumeni.prism.domain.definitions.PrismDomicile;
 import uk.co.alumeni.prism.domain.definitions.PrismEthnicity;
 import uk.co.alumeni.prism.domain.definitions.PrismGender;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismStateGroup;
+
+import java.math.BigDecimal;
+
+import static org.jboss.util.Strings.EMPTY;
 
 public class ApplicationReportListRowDTO {
 
@@ -53,8 +52,7 @@ public class ApplicationReportListRowDTO {
 
     private String secondaryLocationInstitution;
 
-    private String secondaryLocationDepartment;
-    
+	private String secondaryLocationDepartment;
     private String secondaryLocationDescription;
 
     private String userSupervisorInitialFirstName;
@@ -464,7 +462,7 @@ public class ApplicationReportListRowDTO {
     public String getSecondaryThemeDisplay() {
         return secondaryTheme == null ? EMPTY : secondaryTheme;
     }
-    
+
     public String getPrimaryLocationInstitutionDisplay() {
         return primaryLocationInstitution == null ? EMPTY : primaryLocationInstitution;
     }
@@ -476,7 +474,7 @@ public class ApplicationReportListRowDTO {
     public String getPrimaryLocationDescriptionDisplay() {
         return primaryLocationDescription == null ? EMPTY : primaryLocationDescription;
     }
-    
+
     public String getSecondaryLocationInstitutionDisplay() {
         return secondaryLocationInstitution == null ? EMPTY : secondaryLocationInstitution;
     }

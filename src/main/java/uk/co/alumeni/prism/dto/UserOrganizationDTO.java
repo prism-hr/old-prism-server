@@ -1,11 +1,10 @@
 package uk.co.alumeni.prism.dto;
 
-import static com.google.common.base.Objects.equal;
-import static org.apache.commons.lang3.ObjectUtils.compare;
-
+import com.google.common.base.Objects;
 import org.joda.time.DateTime;
 
-import com.google.common.base.Objects;
+import static com.google.common.base.Objects.equal;
+import static org.apache.commons.lang3.ObjectUtils.compare;
 
 public class UserOrganizationDTO implements Comparable<UserOrganizationDTO> {
 

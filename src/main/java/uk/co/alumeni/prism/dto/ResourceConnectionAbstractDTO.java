@@ -1,8 +1,7 @@
 package uk.co.alumeni.prism.dto;
 
-import org.apache.commons.lang3.ObjectUtils;
-
 import com.google.common.base.Objects;
+import org.apache.commons.lang3.ObjectUtils;
 
 public abstract class ResourceConnectionAbstractDTO implements Comparable<ResourceConnectionAbstractDTO> {
 

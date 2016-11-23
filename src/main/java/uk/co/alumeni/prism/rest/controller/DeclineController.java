@@ -1,15 +1,6 @@
 package uk.co.alumeni.prism.rest.controller;
 
-import java.util.Map;
-
-import javax.inject.Inject;
-
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
-
+import org.springframework.web.bind.annotation.*;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismAction;
 import uk.co.alumeni.prism.domain.resource.Resource;
 import uk.co.alumeni.prism.domain.user.User;
@@ -20,8 +11,11 @@ import uk.co.alumeni.prism.rest.representation.resource.ResourceRepresentationSt
 import uk.co.alumeni.prism.services.ResourceService;
 import uk.co.alumeni.prism.services.UserService;
 
+import javax.inject.Inject;
+import java.util.Map;
+
 @RestController
-@RequestMapping(value = { "api/decline" })
+@RequestMapping(value = {"api/decline"})
 public class DeclineController {
 
     @Inject

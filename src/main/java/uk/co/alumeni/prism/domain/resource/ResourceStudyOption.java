@@ -1,25 +1,15 @@
 package uk.co.alumeni.prism.domain.resource;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
-import javax.persistence.UniqueConstraint;
-
+import com.google.common.base.Objects;
 import uk.co.alumeni.prism.api.model.resource.ResourceInstanceGroupDefinition;
 import uk.co.alumeni.prism.domain.UniqueEntity;
 import uk.co.alumeni.prism.domain.definitions.PrismStudyOption;
 
-import com.google.common.base.Objects;
+import javax.persistence.*;
 
 @Entity
-@Table(name = "resource_study_option", uniqueConstraints = { @UniqueConstraint(columnNames = { "program_id", "study_option" }),
-        @UniqueConstraint(columnNames = { "project_id", "study_option" }) })
+@Table(name = "resource_study_option", uniqueConstraints = {@UniqueConstraint(columnNames = {"program_id", "study_option"}),
+        @UniqueConstraint(columnNames = {"project_id", "study_option"})})
 public class ResourceStudyOption extends ResourceOpportunityAttribute implements ResourceInstanceGroupDefinition<PrismStudyOption> {
 
     @Id

@@ -1,10 +1,5 @@
 package uk.co.alumeni.prism.rest.representation.advert;
 
-import static org.apache.commons.lang3.ObjectUtils.firstNonNull;
-
-import java.math.BigDecimal;
-import java.util.List;
-
 import uk.co.alumeni.prism.domain.definitions.PrismConnectionState;
 import uk.co.alumeni.prism.domain.definitions.PrismOpportunityCategory;
 import uk.co.alumeni.prism.domain.definitions.PrismOpportunityType;
@@ -14,6 +9,11 @@ import uk.co.alumeni.prism.rest.representation.advert.AdvertTargetRepresentation
 import uk.co.alumeni.prism.rest.representation.resource.ResourceOpportunityRepresentationSimple;
 import uk.co.alumeni.prism.rest.representation.resource.ResourceRepresentationSimple;
 import uk.co.alumeni.prism.rest.representation.user.UserRepresentationSimple;
+
+import java.math.BigDecimal;
+import java.util.List;
+
+import static org.apache.commons.lang3.ObjectUtils.firstNonNull;
 
 public class AdvertRepresentationExtended extends AdvertRepresentationSimple {
 

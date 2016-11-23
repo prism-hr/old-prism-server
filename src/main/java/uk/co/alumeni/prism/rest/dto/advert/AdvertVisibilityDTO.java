@@ -1,10 +1,9 @@
 package uk.co.alumeni.prism.rest.dto.advert;
 
-import java.util.List;
+import org.joda.time.LocalDate;
 
 import javax.validation.constraints.NotNull;
-
-import org.joda.time.LocalDate;
+import java.util.List;
 
 public class AdvertVisibilityDTO {
 

@@ -1,9 +1,9 @@
 package uk.co.alumeni.prism.rest.representation.configuration;
 
-import java.util.List;
-
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismNotificationDefinition;
 import uk.co.alumeni.prism.rest.representation.DocumentRepresentation;
+
+import java.util.List;
 
 public class NotificationConfigurationRepresentation extends WorkflowConfigurationRepresentation {
 

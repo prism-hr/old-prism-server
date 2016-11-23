@@ -1,18 +1,14 @@
 package uk.co.alumeni.prism.domain.definitions;
 
-import static uk.co.alumeni.prism.domain.definitions.PrismOpportunityCategory.EXPERIENCE;
-import static uk.co.alumeni.prism.domain.definitions.PrismOpportunityCategory.PERSONAL_DEVELOPMENT;
-import static uk.co.alumeni.prism.domain.definitions.PrismOpportunityCategory.STUDY;
-import static uk.co.alumeni.prism.domain.definitions.PrismOpportunityCategory.WORK;
+import com.google.common.collect.LinkedListMultimap;
+import uk.co.alumeni.prism.api.model.advert.EnumDefinition;
 
 import java.util.List;
 
-import uk.co.alumeni.prism.api.model.advert.EnumDefinition;
-
-import com.google.common.collect.LinkedListMultimap;
+import static uk.co.alumeni.prism.domain.definitions.PrismOpportunityCategory.*;
 
 public enum PrismOpportunityType implements EnumDefinition<uk.co.alumeni.prism.enums.PrismOpportunityType>,
-    PrismLocalizableDefinition {
+        PrismLocalizableDefinition {
 
     STUDY_UNDERGRADUATE(STUDY, false, null), //
     STUDY_POSTGRADUATE_TAUGHT(STUDY, false, null), //

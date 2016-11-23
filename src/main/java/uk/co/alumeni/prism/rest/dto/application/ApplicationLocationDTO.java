@@ -1,7 +1,6 @@
 package uk.co.alumeni.prism.rest.dto.application;
 
 import org.joda.time.LocalDate;
-
 import uk.co.alumeni.prism.rest.dto.resource.ResourceRelationDTO;
 
 public class ApplicationLocationDTO {

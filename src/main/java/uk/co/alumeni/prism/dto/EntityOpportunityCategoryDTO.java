@@ -1,17 +1,14 @@
 package uk.co.alumeni.prism.dto;
 
-import static com.google.common.base.Objects.equal;
-import static org.apache.commons.lang.StringUtils.rightPad;
-import static org.apache.commons.lang3.ObjectUtils.compare;
-import static uk.co.alumeni.prism.PrismConstants.FULL_STOP;
-import static uk.co.alumeni.prism.PrismConstants.ORDERING_PRECISION;
-import static uk.co.alumeni.prism.PrismConstants.ZERO;
+import com.google.common.base.Objects;
+import uk.co.alumeni.prism.domain.definitions.PrismOpportunityType;
 
 import java.math.BigDecimal;
 
-import uk.co.alumeni.prism.domain.definitions.PrismOpportunityType;
-
-import com.google.common.base.Objects;
+import static com.google.common.base.Objects.equal;
+import static org.apache.commons.lang.StringUtils.rightPad;
+import static org.apache.commons.lang3.ObjectUtils.compare;
+import static uk.co.alumeni.prism.PrismConstants.*;
 
 public class EntityOpportunityCategoryDTO implements Comparable<EntityOpportunityCategoryDTO> {
 

@@ -1,28 +1,17 @@
 package uk.co.alumeni.prism.domain.resource;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
-import javax.persistence.UniqueConstraint;
-
+import com.google.common.base.Objects;
 import uk.co.alumeni.prism.domain.application.Application;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismActionCondition;
 import uk.co.alumeni.prism.domain.workflow.WorkflowResourceExecution;
 
-import com.google.common.base.Objects;
+import javax.persistence.*;
 
 @Entity
-@Table(name = "resource_condition", uniqueConstraints = { @UniqueConstraint(columnNames = { "system_id", "action_condition" }),
-        @UniqueConstraint(columnNames = { "institution_id", "action_condition" }), @UniqueConstraint(columnNames = { "department_id", "action_condition" }),
-        @UniqueConstraint(columnNames = { "program_id", "action_condition" }), @UniqueConstraint(columnNames = { "project_id", "action_condition" }),
-        @UniqueConstraint(columnNames = { "application_id", "action_condition" }) })
+@Table(name = "resource_condition", uniqueConstraints = {@UniqueConstraint(columnNames = {"system_id", "action_condition"}),
+        @UniqueConstraint(columnNames = {"institution_id", "action_condition"}), @UniqueConstraint(columnNames = {"department_id", "action_condition"}),
+        @UniqueConstraint(columnNames = {"program_id", "action_condition"}), @UniqueConstraint(columnNames = {"project_id", "action_condition"}),
+        @UniqueConstraint(columnNames = {"application_id", "action_condition"})})
 public class ResourceCondition extends WorkflowResourceExecution {
 
     @Id

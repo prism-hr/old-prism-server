@@ -1,17 +1,16 @@
 package uk.co.alumeni.prism.rest.validation;
 
-import javax.inject.Inject;
-
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
 import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
-
 import uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition;
 import uk.co.alumeni.prism.domain.user.User;
 import uk.co.alumeni.prism.exceptions.PrismForbiddenException;
 import uk.co.alumeni.prism.rest.dto.user.UserRegistrationDTO;
 import uk.co.alumeni.prism.services.UserService;
+
+import javax.inject.Inject;
 
 @Component
 public class UserRegistrationValidator extends LocalValidatorFactoryBean implements Validator {

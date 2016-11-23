@@ -1,9 +1,9 @@
 package uk.co.alumeni.prism.rest.representation.user;
 
-import java.util.List;
-
 import uk.co.alumeni.prism.domain.definitions.PrismRoleContext;
 import uk.co.alumeni.prism.rest.representation.DocumentRepresentation;
+
+import java.util.List;
 
 public class UserRepresentationUnverified extends UserRepresentationSimple {
 

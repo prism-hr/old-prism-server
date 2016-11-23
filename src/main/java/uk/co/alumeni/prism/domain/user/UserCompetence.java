@@ -1,22 +1,14 @@
 package uk.co.alumeni.prism.domain.user;
 
-import java.math.BigDecimal;
-
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
-import javax.persistence.UniqueConstraint;
-
 import uk.co.alumeni.prism.domain.Competence;
 import uk.co.alumeni.prism.domain.UniqueEntity;
 import uk.co.alumeni.prism.workflow.user.UserCompetenceReassignmentProcessor;
 
+import javax.persistence.*;
+import java.math.BigDecimal;
+
 @Entity
-@Table(name = "user_competence", uniqueConstraints = { @UniqueConstraint(columnNames = { "user_id", "competence_id" }) })
+@Table(name = "user_competence", uniqueConstraints = {@UniqueConstraint(columnNames = {"user_id", "competence_id"})})
 public class UserCompetence implements UniqueEntity, UserAssignment<UserCompetenceReassignmentProcessor> {
 
     @Id

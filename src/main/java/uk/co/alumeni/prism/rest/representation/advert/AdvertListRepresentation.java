@@ -1,14 +1,14 @@
 package uk.co.alumeni.prism.rest.representation.advert;
 
-import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
+import uk.co.alumeni.prism.rest.representation.ListRepresentation;
+import uk.co.alumeni.prism.rest.representation.ListSummaryRepresentation;
+import uk.co.alumeni.prism.rest.representation.resource.ResourceRepresentationOccurrence;
 
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import uk.co.alumeni.prism.rest.representation.ListRepresentation;
-import uk.co.alumeni.prism.rest.representation.ListSummaryRepresentation;
-import uk.co.alumeni.prism.rest.representation.resource.ResourceRepresentationOccurrence;
+import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
 
 public class AdvertListRepresentation extends ListRepresentation<AdvertRepresentationExtended> {
 

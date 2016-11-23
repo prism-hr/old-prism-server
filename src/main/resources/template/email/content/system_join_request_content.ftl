@@ -3,11 +3,11 @@
 </h1>
 
 <p>
-    ${TEMPLATE_INITIATOR_FULL_NAME} has requested membership of ${TEMPLATE_RESOURCE_NAME}.
+${TEMPLATE_INITIATOR_FULL_NAME} has requested membership of ${TEMPLATE_RESOURCE_NAME}.
 </p>
 
 <p>
-	Login to accept or reject this request.
+    Login to accept or reject this request.
 </p>
 
 ${ACTION_COMPLETE}
@@ -17,7 +17,7 @@ ${ACTION_COMPLETE}
 </p>
 
 [#if TEMPLATE_BUFFERED?has_content]
-    <p>${TEMPLATE_BUFFERED}</p>
+<p>${TEMPLATE_BUFFERED}</p>
 [/#if]
 
 <p>

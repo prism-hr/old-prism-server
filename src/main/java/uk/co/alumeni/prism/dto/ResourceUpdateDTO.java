@@ -3,11 +3,11 @@ package uk.co.alumeni.prism.dto;
 import org.joda.time.DateTime;
 
 public class ResourceUpdateDTO {
-    
+
     private Integer id;
-    
+
     private Boolean recentUpdate;
-    
+
     private DateTime updatedTimestamp;
 
     public Integer getId() {
@@ -33,5 +33,5 @@ public class ResourceUpdateDTO {
     public void setUpdatedTimestamp(DateTime updatedTimestamp) {
         this.updatedTimestamp = updatedTimestamp;
     }
-    
+
 }

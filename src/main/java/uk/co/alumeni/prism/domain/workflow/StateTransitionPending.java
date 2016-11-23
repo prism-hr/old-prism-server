@@ -1,26 +1,15 @@
 package uk.co.alumeni.prism.domain.workflow;
 
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
-import javax.persistence.UniqueConstraint;
-
 import uk.co.alumeni.prism.domain.application.Application;
-import uk.co.alumeni.prism.domain.resource.Department;
-import uk.co.alumeni.prism.domain.resource.Institution;
-import uk.co.alumeni.prism.domain.resource.Program;
-import uk.co.alumeni.prism.domain.resource.Project;
-import uk.co.alumeni.prism.domain.resource.Resource;
+import uk.co.alumeni.prism.domain.resource.*;
 import uk.co.alumeni.prism.domain.resource.System;
 
+import javax.persistence.*;
+
 @Entity
-@Table(name = "state_transition_pending", uniqueConstraints = { @UniqueConstraint(columnNames = { "institution_id", "action_id" }),
-        @UniqueConstraint(columnNames = { "institution_id", "action_id" }), @UniqueConstraint(columnNames = { "program_id", "action_id" }),
-        @UniqueConstraint(columnNames = { "project_id", "action_id" }), @UniqueConstraint(columnNames = { "application_id", "action_id" }) })
+@Table(name = "state_transition_pending", uniqueConstraints = {@UniqueConstraint(columnNames = {"institution_id", "action_id"}),
+        @UniqueConstraint(columnNames = {"institution_id", "action_id"}), @UniqueConstraint(columnNames = {"program_id", "action_id"}),
+        @UniqueConstraint(columnNames = {"project_id", "action_id"}), @UniqueConstraint(columnNames = {"application_id", "action_id"})})
 public class StateTransitionPending extends WorkflowResourceExecution {
 
     @Id

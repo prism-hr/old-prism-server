@@ -1,18 +1,11 @@
 package uk.co.alumeni.prism.domain.workflow;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
-import javax.persistence.UniqueConstraint;
-
 import uk.co.alumeni.prism.domain.UniqueEntity;
 
+import javax.persistence.*;
+
 @Entity
-@Table(name = "state_action_recipient", uniqueConstraints = { @UniqueConstraint(columnNames = { "state_action_assignment_id", "role_id", "external_mode" }) })
+@Table(name = "state_action_recipient", uniqueConstraints = {@UniqueConstraint(columnNames = {"state_action_assignment_id", "role_id", "external_mode"})})
 public class StateActionRecipient implements UniqueEntity {
 
     @Id

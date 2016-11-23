@@ -1,16 +1,15 @@
 package uk.co.alumeni.prism.rest.representation.message;
 
-import java.util.List;
-
 import org.joda.time.DateTime;
-
 import uk.co.alumeni.prism.rest.representation.DocumentRepresentation;
 import uk.co.alumeni.prism.rest.representation.user.UserRepresentationSimple;
+
+import java.util.List;
 
 public class MessageRepresentation {
 
     private Integer id;
-    
+
     private UserRepresentationSimple user;
 
     private String content;
@@ -18,7 +17,7 @@ public class MessageRepresentation {
     private List<DocumentRepresentation> documents;
 
     private DateTime createdTimestamp;
-    
+
     public Integer getId() {
         return id;
     }
@@ -63,7 +62,7 @@ public class MessageRepresentation {
         this.id = id;
         return this;
     }
-    
+
     public MessageRepresentation withUser(UserRepresentationSimple user) {
         this.user = user;
         return this;

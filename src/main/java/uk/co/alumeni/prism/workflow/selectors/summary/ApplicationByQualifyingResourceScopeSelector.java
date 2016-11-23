@@ -1,18 +1,16 @@
 package uk.co.alumeni.prism.workflow.selectors.summary;
 
-import static java.util.stream.Collectors.toList;
-
-import java.util.Collection;
-import java.util.List;
-
-import javax.inject.Inject;
-
 import org.springframework.stereotype.Component;
-
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismScope;
 import uk.co.alumeni.prism.domain.resource.Resource;
 import uk.co.alumeni.prism.domain.resource.ResourceParent;
 import uk.co.alumeni.prism.services.ApplicationService;
+
+import javax.inject.Inject;
+import java.util.Collection;
+import java.util.List;
+
+import static java.util.stream.Collectors.toList;
 
 @Component
 public class ApplicationByQualifyingResourceScopeSelector implements PrismResourceSummarySelector {

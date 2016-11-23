@@ -1,8 +1,8 @@
 package uk.co.alumeni.prism.rest.representation.comment;
 
-import java.util.TimeZone;
-
 import org.joda.time.LocalDateTime;
+
+import java.util.TimeZone;
 
 public class CommentInterviewAppointmentRepresentation {
 

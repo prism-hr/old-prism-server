@@ -1,9 +1,9 @@
 package uk.co.alumeni.prism.rest.representation.message;
 
-import java.util.List;
-
 import uk.co.alumeni.prism.rest.representation.resource.ResourceRepresentationSimple;
 import uk.co.alumeni.prism.rest.representation.user.UserRepresentationSimple;
+
+import java.util.List;
 
 public class MessageThreadRepresentation {
 
@@ -76,7 +76,7 @@ public class MessageThreadRepresentation {
     public void setLastViewedMessage(MessageRepresentation lastViewedMessage) {
         this.lastViewedMessage = lastViewedMessage;
     }
-    
+
     public Object getActivity() {
         return resource == null ? user : resource;
     }

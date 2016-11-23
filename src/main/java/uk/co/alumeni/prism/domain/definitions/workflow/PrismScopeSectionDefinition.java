@@ -1,31 +1,16 @@
 package uk.co.alumeni.prism.domain.definitions.workflow;
 
-import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_RESOURCE_ADVERT_CATEGORIES_HEADER;
-import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_RESOURCE_CATEGORIES_INCOMPLETE;
-import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_RESOURCE_COMPETENCES_HEADER;
-import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_RESOURCE_COMPETENCES_INCOMPLETE;
-import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_RESOURCE_DETAILS_INCOMPLETE;
-import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_RESOURCE_IMAGES_HEADER;
-import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_RESOURCE_IMAGES_INCOMPLETE;
-import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_RESOURCE_SUMMARY_HEADER;
-import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_RESOURCE_TARGETS_HEADER;
-import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_RESOURCE_TARGETS_INCOMPLETE;
+import com.google.common.collect.HashMultimap;
+import com.google.common.collect.Lists;
+import com.google.common.collect.SetMultimap;
+import uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition;
+import uk.co.alumeni.prism.workflow.evaluators.*;
 
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition;
-import uk.co.alumeni.prism.workflow.evaluators.ResourceCategoriesEvaluator;
-import uk.co.alumeni.prism.workflow.evaluators.ResourceCompetencesEvaluator;
-import uk.co.alumeni.prism.workflow.evaluators.ResourceCompletenessEvaluator;
-import uk.co.alumeni.prism.workflow.evaluators.ResourceDetailsEvaluator;
-import uk.co.alumeni.prism.workflow.evaluators.ResourceImagesEvaluator;
-import uk.co.alumeni.prism.workflow.evaluators.ResourceTargetsEvaluator;
-
-import com.google.common.collect.HashMultimap;
-import com.google.common.collect.Lists;
-import com.google.common.collect.SetMultimap;
+import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition.*;
 
 public enum PrismScopeSectionDefinition {
 
@@ -60,7 +45,8 @@ public enum PrismScopeSectionDefinition {
 
     private final PrismDisplayPropertyDefinition incompleteExplanation;
 
-    PrismScopeSectionDefinition(Class<? extends ResourceCompletenessEvaluator<?>> completenessEvaluator, PrismDisplayPropertyDefinition name, PrismDisplayPropertyDefinition incompleteExplanation) {
+    PrismScopeSectionDefinition(Class<? extends ResourceCompletenessEvaluator<?>> completenessEvaluator, PrismDisplayPropertyDefinition name,
+            PrismDisplayPropertyDefinition incompleteExplanation) {
         this.completenessEvaluator = completenessEvaluator;
         this.name = name;
         this.incompleteExplanation = incompleteExplanation;

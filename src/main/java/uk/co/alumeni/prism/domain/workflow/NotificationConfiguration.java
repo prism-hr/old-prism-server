@@ -1,34 +1,19 @@
 package uk.co.alumeni.prism.domain.workflow;
 
-import java.util.Set;
-
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.Lob;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
-import javax.persistence.UniqueConstraint;
-
-import uk.co.alumeni.prism.domain.resource.Department;
-import uk.co.alumeni.prism.domain.resource.Institution;
-import uk.co.alumeni.prism.domain.resource.Program;
-import uk.co.alumeni.prism.domain.resource.Project;
-import uk.co.alumeni.prism.domain.resource.Resource;
+import com.google.common.collect.Sets;
+import uk.co.alumeni.prism.domain.resource.*;
 import uk.co.alumeni.prism.domain.resource.System;
 
-import com.google.common.collect.Sets;
+import javax.persistence.*;
+import java.util.Set;
 
 @Entity
 @Table(name = "notification_configuration", uniqueConstraints = {
-        @UniqueConstraint(columnNames = { "system_id", "opportunity_type_id", "notification_definition_id" }),
-        @UniqueConstraint(columnNames = { "institution_id", "opportunity_type_id", "notification_definition_id" }),
-        @UniqueConstraint(columnNames = { "department_id", "opportunity_type_id", "notification_definition_id" }),
-        @UniqueConstraint(columnNames = { "program_id", "notification_definition_id" }),
-        @UniqueConstraint(columnNames = { "project_id", "notification_definition_id" }) })
+        @UniqueConstraint(columnNames = {"system_id", "opportunity_type_id", "notification_definition_id"}),
+        @UniqueConstraint(columnNames = {"institution_id", "opportunity_type_id", "notification_definition_id"}),
+        @UniqueConstraint(columnNames = {"department_id", "opportunity_type_id", "notification_definition_id"}),
+        @UniqueConstraint(columnNames = {"program_id", "notification_definition_id"}),
+        @UniqueConstraint(columnNames = {"project_id", "notification_definition_id"})})
 public class NotificationConfiguration extends WorkflowConfiguration<NotificationDefinition> {
 
     @Id

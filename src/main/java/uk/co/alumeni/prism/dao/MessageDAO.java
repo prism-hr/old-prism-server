@@ -1,37 +1,27 @@
 package uk.co.alumeni.prism.dao;
 
+import org.hibernate.Criteria;
+import org.hibernate.SessionFactory;
+import org.hibernate.criterion.*;
+import org.hibernate.sql.JoinType;
+import org.springframework.stereotype.Repository;
+import uk.co.alumeni.prism.domain.activity.ActivityEditable;
+import uk.co.alumeni.prism.domain.message.*;
+import uk.co.alumeni.prism.domain.resource.Resource;
+import uk.co.alumeni.prism.domain.user.User;
+import uk.co.alumeni.prism.domain.user.UserAccount;
+import uk.co.alumeni.prism.dto.MessageThreadDTO;
+
+import javax.inject.Inject;
+import java.util.Collection;
+import java.util.List;
+
 import static java.util.stream.Collectors.toList;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static org.hibernate.sql.JoinType.INNER_JOIN;
 import static org.hibernate.transform.Transformers.aliasToBean;
 import static uk.co.alumeni.prism.dao.WorkflowDAO.getMatchingUserConstraint;
 import static uk.co.alumeni.prism.dao.WorkflowDAO.getVisibleMessageConstraint;
-
-import java.util.Collection;
-import java.util.List;
-
-import javax.inject.Inject;
-
-import org.hibernate.Criteria;
-import org.hibernate.SessionFactory;
-import org.hibernate.criterion.Junction;
-import org.hibernate.criterion.MatchMode;
-import org.hibernate.criterion.Order;
-import org.hibernate.criterion.Projections;
-import org.hibernate.criterion.Restrictions;
-import org.hibernate.sql.JoinType;
-import org.springframework.stereotype.Repository;
-
-import uk.co.alumeni.prism.domain.activity.ActivityEditable;
-import uk.co.alumeni.prism.domain.message.Message;
-import uk.co.alumeni.prism.domain.message.MessageDocument;
-import uk.co.alumeni.prism.domain.message.MessageNotification;
-import uk.co.alumeni.prism.domain.message.MessageThread;
-import uk.co.alumeni.prism.domain.message.MessageThreadParticipant;
-import uk.co.alumeni.prism.domain.resource.Resource;
-import uk.co.alumeni.prism.domain.user.User;
-import uk.co.alumeni.prism.domain.user.UserAccount;
-import uk.co.alumeni.prism.dto.MessageThreadDTO;
 
 @Repository
 @SuppressWarnings("unchecked")

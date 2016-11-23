@@ -3,18 +3,18 @@
 </h1>
 
 <p><b>
-	${APPLICATION_CREATOR_FULL_NAME} application for ${APPLICATION_OPPORTUNITY_TYPE} in the position of:
-	${TEMPLATE_PARENT_RESOURCE_NAME}.
+${APPLICATION_CREATOR_FULL_NAME} application for ${APPLICATION_OPPORTUNITY_TYPE} in the position of:
+${TEMPLATE_PARENT_RESOURCE_NAME}.
 </b></p>
 
 <p>
-	We intend to make ${TEMPLATE_INITIATOR_FULL_NAME} an offer for the aforementioned position. Before we 
-	can more forward with this, we require your feedback on the proposed terms of offer.
+    We intend to make ${TEMPLATE_INITIATOR_FULL_NAME} an offer for the aforementioned position. Before we
+    can more forward with this, we require your feedback on the proposed terms of offer.
 </p>
 
 <p>
-	Follow the proceed link below to provide your feedback. Be aware that we would appreciate a speedy 
-	response in order to propose terms to the applicant as quickly as possible.
+    Follow the proceed link below to provide your feedback. Be aware that we would appreciate a speedy
+    response in order to propose terms to the applicant as quickly as possible.
 </p>
 
 ${ACTION_COMPLETE}
@@ -24,7 +24,7 @@ ${ACTION_COMPLETE}
 </p>
 
 [#if TEMPLATE_BUFFERED?has_content]
-    <p>${TEMPLATE_BUFFERED}</p>
+<p>${TEMPLATE_BUFFERED}</p>
 [/#if]
 
 <p>

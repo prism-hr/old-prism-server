@@ -3,8 +3,8 @@
 </h1>
 
 <p><b>
-	${APPLICATION_CREATOR_FULL_NAME} has submitted a new application for ${APPLICATION_OPPORTUNITY_TYPE} 
-	in the position of: ${TEMPLATE_PARENT_RESOURCE_NAME}.
+${APPLICATION_CREATOR_FULL_NAME} has submitted a new application for ${APPLICATION_OPPORTUNITY_TYPE}
+    in the position of: ${TEMPLATE_PARENT_RESOURCE_NAME}.
 </b></p>
 
 <p>
@@ -18,7 +18,7 @@ ${ACTION_COMPLETE}
 </p>
 
 [#if TEMPLATE_BUFFERED?has_content]
-    <p>${TEMPLATE_BUFFERED}</p>
+<p>${TEMPLATE_BUFFERED}</p>
 [/#if]
 
 <p>

@@ -30,13 +30,13 @@ public interface ProfilePersonalDetail<T extends ProfileEntity<?, ?, ?, ?, ?, ?,
     String getSkype();
 
     void setSkype(String skype);
-    
+
     PrismEthnicity getEthnicity();
-    
+
     void setEthnicity(PrismEthnicity ethnicity);
-    
+
     PrismDisability getDisability();
-    
+
     void setDisability(PrismDisability disability);
 
 }

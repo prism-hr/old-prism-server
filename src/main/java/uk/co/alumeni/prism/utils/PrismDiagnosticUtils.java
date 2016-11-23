@@ -1,14 +1,12 @@
 package uk.co.alumeni.prism.utils;
 
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-
-import uk.co.alumeni.prism.domain.user.User;
-
 import com.google.common.base.Function;
 import com.google.common.base.Joiner;
 import com.google.common.collect.Maps;
+import uk.co.alumeni.prism.domain.user.User;
+
+import javax.servlet.http.HttpServletRequest;
+import java.util.Map;
 
 public final class PrismDiagnosticUtils {
 

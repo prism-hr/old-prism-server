@@ -1,31 +1,20 @@
 package uk.co.alumeni.prism.domain.resource;
 
-import java.math.BigDecimal;
-
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
-import javax.persistence.UniqueConstraint;
-
 import org.hibernate.annotations.Type;
 import org.joda.time.LocalDate;
-
 import uk.co.alumeni.prism.domain.definitions.PrismResourceListConstraint;
 import uk.co.alumeni.prism.domain.definitions.PrismResourceListFilterExpression;
 import uk.co.alumeni.prism.domain.workflow.StateGroup;
 
+import javax.persistence.*;
+import java.math.BigDecimal;
+
 @Entity
 @Table(name = "resource_list_filter_constraint", uniqueConstraints = {
-        @UniqueConstraint(columnNames = { "resource_list_filter_id", "filter_property", "filter_expression", "value_string" }),
-        @UniqueConstraint(columnNames = { "resource_list_filter_id", "filter_property", "filter_expression", "value_date_start", "value_date_close" }),
-        @UniqueConstraint(columnNames = { "resource_list_filter_id", "filter_property", "filter_expression", "value_state_group_id" }),
-        @UniqueConstraint(columnNames = { "resource_list_filter_id", "filter_property", "filter_expression", "value_decimal_start", "value_decimal_close" }) })
+        @UniqueConstraint(columnNames = {"resource_list_filter_id", "filter_property", "filter_expression", "value_string"}),
+        @UniqueConstraint(columnNames = {"resource_list_filter_id", "filter_property", "filter_expression", "value_date_start", "value_date_close"}),
+        @UniqueConstraint(columnNames = {"resource_list_filter_id", "filter_property", "filter_expression", "value_state_group_id"}),
+        @UniqueConstraint(columnNames = {"resource_list_filter_id", "filter_property", "filter_expression", "value_decimal_start", "value_decimal_close"})})
 public class ResourceListFilterConstraint {
 
     @Id

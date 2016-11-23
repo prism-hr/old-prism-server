@@ -1,18 +1,17 @@
 package uk.co.alumeni.prism.rest.representation.profile;
 
+import org.joda.time.DateTime;
+import uk.co.alumeni.prism.rest.representation.resource.ResourceRepresentationRelation;
+
 import java.math.BigDecimal;
 import java.util.List;
-
-import org.joda.time.DateTime;
-
-import uk.co.alumeni.prism.rest.representation.resource.ResourceRepresentationRelation;
 
 public class ProfileRepresentationUser extends ProfileRepresentationMessage {
 
     private BigDecimal completeScore;
 
     private Integer applicationCount;
-    
+
     private BigDecimal applicationRatingAverage;
 
     private List<ResourceRepresentationRelation> organizations;
@@ -163,7 +162,7 @@ public class ProfileRepresentationUser extends ProfileRepresentationMessage {
         this.applicationRatingAverage = applicationRatingAverage;
         return this;
     }
-    
+
     public ProfileRepresentationUser withOrganizations(List<ResourceRepresentationRelation> organizations) {
         this.organizations = organizations;
         return this;

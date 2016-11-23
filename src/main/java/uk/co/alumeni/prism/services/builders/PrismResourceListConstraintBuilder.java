@@ -1,12 +1,6 @@
 package uk.co.alumeni.prism.services.builders;
 
-import static uk.co.alumeni.prism.domain.definitions.PrismResourceListFilterExpression.NOT_SPECIFIED;
-
-import java.math.BigDecimal;
-import java.util.List;
-
-import javax.inject.Inject;
-
+import com.google.common.collect.Lists;
 import org.apache.commons.lang.BooleanUtils;
 import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.Junction;
@@ -16,14 +10,17 @@ import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
-
 import uk.co.alumeni.prism.domain.definitions.PrismResourceListConstraint;
 import uk.co.alumeni.prism.domain.definitions.PrismResourceListFilterExpression;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismScope;
 import uk.co.alumeni.prism.rest.dto.resource.ResourceListFilterConstraintDTO;
 import uk.co.alumeni.prism.workflow.selectors.filter.PrismResourceListFilterSelector;
 
-import com.google.common.collect.Lists;
+import javax.inject.Inject;
+import java.math.BigDecimal;
+import java.util.List;
+
+import static uk.co.alumeni.prism.domain.definitions.PrismResourceListFilterExpression.NOT_SPECIFIED;
 
 @Component
 public class PrismResourceListConstraintBuilder {
@@ -47,22 +44,22 @@ public class PrismResourceListConstraintBuilder {
             Class<? extends PrismResourceListFilterSelector<?>> filterValueSelector = filterProperty.getPropertyValueSelector();
             if (filterValueSelector == null) {
                 switch (filterProperty.getPropertyType()) {
-                case DATE:
-                    appendDateFilter(conditions, filterPropertyName, filterExpression, negated, constraint.getValueDateStart(), constraint.getValueDateClose());
-                    break;
-                case DATE_TIME:
-                    appendDateTimeFilter(conditions, filterPropertyName, filterExpression, negated, constraint.computeValueDateTimeStart(),
-                            constraint.computeValueDateTimeClose());
-                    break;
-                case DECIMAL:
-                    appendDecimalFilter(conditions, filterPropertyName, filterExpression, negated, constraint.getValueDecimalStart(),
-                            constraint.getValueDecimalClose());
-                    break;
-                case STRING:
-                    appendStringFilter(conditions, filterPropertyName, negated, constraint.getValueString());
-                    break;
-                default:
-                    throw new UnsupportedOperationException();
+                    case DATE:
+                        appendDateFilter(conditions, filterPropertyName, filterExpression, negated, constraint.getValueDateStart(), constraint.getValueDateClose());
+                        break;
+                    case DATE_TIME:
+                        appendDateTimeFilter(conditions, filterPropertyName, filterExpression, negated, constraint.computeValueDateTimeStart(),
+                                constraint.computeValueDateTimeClose());
+                        break;
+                    case DECIMAL:
+                        appendDecimalFilter(conditions, filterPropertyName, filterExpression, negated, constraint.getValueDecimalStart(),
+                                constraint.getValueDecimalClose());
+                        break;
+                    case STRING:
+                        appendStringFilter(conditions, filterPropertyName, negated, constraint.getValueString());
+                        break;
+                    default:
+                        throw new UnsupportedOperationException();
                 }
             } else {
                 appendInCollectionFilter(conditions, filterPropertyName, constraint.getFilterExpression(), negated, //
@@ -108,16 +105,16 @@ public class PrismResourceListConstraintBuilder {
     private static <T extends Comparable<? super T>> Criterion getRangeFilterCriterion(String property, PrismResourceListFilterExpression constraint,
             T valueStart, T valueClose) {
         switch (constraint) {
-        case BETWEEN:
-            return getRangeFilterCriterionBetween(property, valueStart, valueClose);
-        case EQUAL:
-            return getRangeFilterRestrictionEqual(property, valueStart);
-        case GREATER:
-            return Restrictions.ge(property, valueStart == null ? valueClose : valueStart);
-        case LESSER:
-            return Restrictions.le(property, valueStart == null ? valueClose : valueStart);
-        default:
-            throw new Error("Invalid filter expression: " + constraint.name() + " for property: " + property);
+            case BETWEEN:
+                return getRangeFilterCriterionBetween(property, valueStart, valueClose);
+            case EQUAL:
+                return getRangeFilterRestrictionEqual(property, valueStart);
+            case GREATER:
+                return Restrictions.ge(property, valueStart == null ? valueClose : valueStart);
+            case LESSER:
+                return Restrictions.le(property, valueStart == null ? valueClose : valueStart);
+            default:
+                throw new Error("Invalid filter expression: " + constraint.name() + " for property: " + property);
         }
     }
 

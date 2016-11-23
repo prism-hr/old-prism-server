@@ -1,16 +1,14 @@
 package uk.co.alumeni.prism.rest.dto.resource;
 
-import java.util.List;
-
-import javax.validation.Valid;
-import javax.validation.constraints.Size;
-
 import org.hibernate.validator.constraints.NotEmpty;
 import org.hibernate.validator.constraints.URL;
-
 import uk.co.alumeni.prism.api.model.resource.ResourceParentDefinition;
 import uk.co.alumeni.prism.domain.definitions.PrismOpportunityCategory;
 import uk.co.alumeni.prism.utils.validation.PhoneNumber;
+
+import javax.validation.Valid;
+import javax.validation.constraints.Size;
+import java.util.List;
 
 public class ResourceParentDTO extends ResourceCreationDTO implements ResourceParentDefinition {
 

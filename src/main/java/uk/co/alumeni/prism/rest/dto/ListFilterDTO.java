@@ -8,9 +8,9 @@ public class ListFilterDTO {
     private PrismFilterMatchMode matchMode;
 
     private PrismFilterSortOrder sortOrder;
-    
+
     private String valueString;
-    
+
     private Boolean withNewMessages;
 
     public PrismFilterMatchMode getMatchMode() {

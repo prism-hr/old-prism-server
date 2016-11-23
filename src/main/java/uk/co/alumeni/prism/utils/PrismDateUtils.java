@@ -1,8 +1,8 @@
 package uk.co.alumeni.prism.utils;
 
-import static org.joda.time.DateTimeConstants.MONDAY;
-
 import org.joda.time.LocalDate;
+
+import static org.joda.time.DateTimeConstants.MONDAY;
 
 public class PrismDateUtils {
 

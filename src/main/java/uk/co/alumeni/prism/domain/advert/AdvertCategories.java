@@ -1,13 +1,12 @@
 package uk.co.alumeni.prism.domain.advert;
 
-import static com.google.common.collect.Sets.newHashSet;
-
-import java.util.Set;
+import org.hibernate.annotations.OrderBy;
 
 import javax.persistence.Embeddable;
 import javax.persistence.OneToMany;
+import java.util.Set;
 
-import org.hibernate.annotations.OrderBy;
+import static com.google.common.collect.Sets.newHashSet;
 
 @Embeddable
 public class AdvertCategories {

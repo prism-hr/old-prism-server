@@ -1,20 +1,18 @@
 package uk.co.alumeni.prism.services;
 
-import java.util.List;
-
-import javax.inject.Inject;
-
 import org.joda.time.DateTime;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
 import uk.co.alumeni.prism.dao.TagDAO;
 import uk.co.alumeni.prism.domain.Competence;
 import uk.co.alumeni.prism.domain.Tag;
 import uk.co.alumeni.prism.domain.Theme;
 import uk.co.alumeni.prism.rest.dto.TagDTO;
 import uk.co.alumeni.prism.rest.dto.advert.AdvertCompetenceDTO;
+
+import javax.inject.Inject;
+import java.util.List;
 
 @Service
 @Transactional

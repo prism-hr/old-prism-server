@@ -1,29 +1,9 @@
 package uk.co.alumeni.prism.workflow.transition.processors.postprocessors;
 
-import static java.math.RoundingMode.HALF_UP;
-import static uk.co.alumeni.prism.PrismConstants.CONFIDENCE_MEDIUM;
-import static uk.co.alumeni.prism.PrismConstants.DEFAULT_RATING;
-import static uk.co.alumeni.prism.PrismConstants.RATING_PRECISION;
-import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition.PROFILE_APPLY_UPDATE;
-import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition.PROFILE_RATING_UPDATE;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismAction.APPLICATION_PROVIDE_INTERVIEW_AVAILABILITY;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRole.APPLICATION_INTERVIEWEE;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRole.APPLICATION_INTERVIEWER;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.APPLICATION;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.INSTITUTION;
-
-import java.math.BigDecimal;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
-
-import javax.inject.Inject;
-
+import com.google.common.collect.Lists;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDateTime;
 import org.springframework.stereotype.Component;
-
 import uk.co.alumeni.prism.domain.application.Application;
 import uk.co.alumeni.prism.domain.application.ApplicationReferee;
 import uk.co.alumeni.prism.domain.comment.Comment;
@@ -36,17 +16,24 @@ import uk.co.alumeni.prism.domain.resource.ResourceParent;
 import uk.co.alumeni.prism.domain.user.User;
 import uk.co.alumeni.prism.domain.workflow.Action;
 import uk.co.alumeni.prism.dto.ResourceRatingSummaryDTO;
-import uk.co.alumeni.prism.services.ActionService;
-import uk.co.alumeni.prism.services.AdvertService;
-import uk.co.alumeni.prism.services.ApplicationService;
-import uk.co.alumeni.prism.services.CommentService;
-import uk.co.alumeni.prism.services.EntityService;
-import uk.co.alumeni.prism.services.ScopeService;
-import uk.co.alumeni.prism.services.UserAccountService;
-import uk.co.alumeni.prism.services.UserService;
+import uk.co.alumeni.prism.services.*;
 import uk.co.alumeni.prism.workflow.transition.processors.ResourceProcessor;
 
-import com.google.common.collect.Lists;
+import javax.inject.Inject;
+import java.math.BigDecimal;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import static java.math.RoundingMode.HALF_UP;
+import static uk.co.alumeni.prism.PrismConstants.*;
+import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition.PROFILE_APPLY_UPDATE;
+import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition.PROFILE_RATING_UPDATE;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismAction.APPLICATION_PROVIDE_INTERVIEW_AVAILABILITY;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRole.APPLICATION_INTERVIEWEE;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRole.APPLICATION_INTERVIEWER;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.APPLICATION;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.INSTITUTION;
 
 @Component
 public class ApplicationPostprocessor implements ResourceProcessor<Application> {

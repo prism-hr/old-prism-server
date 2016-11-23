@@ -1,12 +1,10 @@
 package uk.co.alumeni.prism.rest.dto;
 
-import java.util.List;
+import org.hibernate.validator.constraints.NotEmpty;
+import uk.co.alumeni.prism.rest.dto.user.UserDTO;
 
 import javax.validation.constraints.Size;
-
-import org.hibernate.validator.constraints.NotEmpty;
-
-import uk.co.alumeni.prism.rest.dto.user.UserDTO;
+import java.util.List;
 
 public class MessageDTO {
 

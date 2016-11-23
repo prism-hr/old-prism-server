@@ -1,9 +1,6 @@
 package uk.co.alumeni.prism.domain.definitions;
 
-import static uk.co.alumeni.prism.PrismConstants.WORK_DAYS_IN_WEEK;
-import static uk.co.alumeni.prism.PrismConstants.WORK_HOURS_IN_DAY;
-import static uk.co.alumeni.prism.PrismConstants.WORK_MONTHS_IN_YEAR;
-import static uk.co.alumeni.prism.PrismConstants.WORK_WEEKS_IN_MONTH;
+import static uk.co.alumeni.prism.PrismConstants.*;
 
 public enum PrismDurationUnit {
 

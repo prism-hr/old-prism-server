@@ -1,28 +1,19 @@
 package uk.co.alumeni.prism.domain.resource;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
-import javax.persistence.UniqueConstraint;
-
 import org.hibernate.annotations.Type;
 import org.joda.time.DateTime;
-
 import uk.co.alumeni.prism.domain.workflow.StateGroup;
 import uk.co.alumeni.prism.domain.workflow.WorkflowResource;
 
+import javax.persistence.*;
+
 @Entity
 @Table(name = "resource_state_transition_summary", uniqueConstraints = {
-        @UniqueConstraint(columnNames = { "system_id", "state_group_id", "transition_state_selection" }),
-        @UniqueConstraint(columnNames = { "institution_id", "state_group_id", "transition_state_selection" }),
-        @UniqueConstraint(columnNames = { "department_id", "state_group_id", "transition_state_selection" }),
-        @UniqueConstraint(columnNames = { "program_id", "state_group_id", "transition_state_selection" }),
-        @UniqueConstraint(columnNames = { "project_id", "state_group_id", "transition_state_selection" }) })
+        @UniqueConstraint(columnNames = {"system_id", "state_group_id", "transition_state_selection"}),
+        @UniqueConstraint(columnNames = {"institution_id", "state_group_id", "transition_state_selection"}),
+        @UniqueConstraint(columnNames = {"department_id", "state_group_id", "transition_state_selection"}),
+        @UniqueConstraint(columnNames = {"program_id", "state_group_id", "transition_state_selection"}),
+        @UniqueConstraint(columnNames = {"project_id", "state_group_id", "transition_state_selection"})})
 public class ResourceStateTransitionSummary extends WorkflowResource {
 
     @Id

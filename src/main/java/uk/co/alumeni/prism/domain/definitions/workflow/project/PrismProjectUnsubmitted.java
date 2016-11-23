@@ -1,10 +1,11 @@
 package uk.co.alumeni.prism.domain.definitions.workflow.project;
 
+import uk.co.alumeni.prism.domain.definitions.workflow.PrismStateAction;
+import uk.co.alumeni.prism.domain.definitions.workflow.PrismWorkflowState;
+
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismAction.PROJECT_COMPLETE;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRoleTransitionGroup.PROJECT_CREATE_ADMINISTRATOR_GROUP;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismStateTransitionGroup.PROJECT_COMPLETE_TRANSITION;
-import uk.co.alumeni.prism.domain.definitions.workflow.PrismStateAction;
-import uk.co.alumeni.prism.domain.definitions.workflow.PrismWorkflowState;
 
 public class PrismProjectUnsubmitted extends PrismWorkflowState {
 

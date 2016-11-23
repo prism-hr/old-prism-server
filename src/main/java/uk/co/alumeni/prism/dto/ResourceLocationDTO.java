@@ -1,8 +1,8 @@
 package uk.co.alumeni.prism.dto;
 
-import java.math.BigDecimal;
-
 import uk.co.alumeni.prism.domain.definitions.PrismDomicile;
+
+import java.math.BigDecimal;
 
 public class ResourceLocationDTO extends ResourceSimpleDTO {
 

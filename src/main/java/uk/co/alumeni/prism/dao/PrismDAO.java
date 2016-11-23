@@ -1,11 +1,5 @@
 package uk.co.alumeni.prism.dao;
 
-import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_DOMICILE;
-
-import java.util.List;
-
-import javax.inject.Inject;
-
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Order;
@@ -13,11 +7,15 @@ import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.sql.JoinType;
 import org.springframework.stereotype.Repository;
-
 import uk.co.alumeni.prism.domain.AgeRange;
 import uk.co.alumeni.prism.domain.Definition;
 import uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition;
 import uk.co.alumeni.prism.domain.display.DisplayPropertyConfiguration;
+
+import javax.inject.Inject;
+import java.util.List;
+
+import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_DOMICILE;
 
 @Repository
 public class PrismDAO {

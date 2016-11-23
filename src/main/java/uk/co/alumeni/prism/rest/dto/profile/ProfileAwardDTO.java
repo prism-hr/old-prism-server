@@ -1,10 +1,9 @@
 package uk.co.alumeni.prism.rest.dto.profile;
 
-import javax.validation.constraints.NotNull;
-
 import org.joda.time.LocalDate;
-
 import uk.co.alumeni.prism.utils.validation.DateNotFuture;
+
+import javax.validation.constraints.NotNull;
 
 public class ProfileAwardDTO {
 

@@ -3,7 +3,7 @@
 </h1>
 
 <p><b>
-	${INSTITUTION_CREATOR_FULL_NAME} has submitted a new Organization for approval.
+${INSTITUTION_CREATOR_FULL_NAME} has submitted a new Organization for approval.
 </b></p>
 
 <p>

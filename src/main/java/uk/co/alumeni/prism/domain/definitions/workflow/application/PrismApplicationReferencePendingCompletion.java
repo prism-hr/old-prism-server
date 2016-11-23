@@ -17,7 +17,7 @@ public class PrismApplicationReferencePendingCompletion extends PrismWorkflowSta
 
     @Override
     protected void setStateActions() {
-        stateActions.add(applicationCommentViewerRecruiter()); //
+        stateActions.add(applicationCommentViewerRefereeViewerRecruiter()); //
 
         stateActions.add(applicationCompleteReference(state) //
                 .withRaisesUrgentFlag() //

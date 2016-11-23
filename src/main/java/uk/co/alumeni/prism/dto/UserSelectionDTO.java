@@ -1,17 +1,16 @@
 package uk.co.alumeni.prism.dto;
 
 import org.joda.time.DateTime;
-
 import uk.co.alumeni.prism.rest.UserDescriptor;
 
 public class UserSelectionDTO extends UserDescriptor {
 
     private Integer id;
-    
+
     private String firstName;
-    
+
     private String lastName;
-    
+
     private String email;
 
     private DateTime eventTimestamp;
@@ -60,12 +59,12 @@ public class UserSelectionDTO extends UserDescriptor {
         this.id = id;
         return this;
     }
-    
+
     public UserSelectionDTO withFirstName(String firstName) {
         this.firstName = firstName;
         return this;
     }
-    
+
     public UserSelectionDTO withLastName(String lastName) {
         this.lastName = lastName;
         return this;
@@ -75,7 +74,7 @@ public class UserSelectionDTO extends UserDescriptor {
         this.email = email;
         return this;
     }
-    
+
     public UserSelectionDTO withEventTimestamp(DateTime eventTimestamp) {
         this.eventTimestamp = eventTimestamp;
         return this;

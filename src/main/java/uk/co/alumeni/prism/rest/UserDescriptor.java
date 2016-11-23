@@ -1,9 +1,9 @@
 package uk.co.alumeni.prism.rest;
 
+import com.google.common.base.Objects;
+
 import static com.google.common.base.Objects.equal;
 import static org.apache.commons.lang3.ObjectUtils.compare;
-
-import com.google.common.base.Objects;
 
 public abstract class UserDescriptor implements Comparable<UserDescriptor> {
 

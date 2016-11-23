@@ -6,6 +6,6 @@ import uk.co.alumeni.prism.exceptions.DeduplicationException;
 
 public interface RoleTransitionResolver {
 
-	void resolve(UserRole userRole, UserRole transitionUserRole, Comment comment) throws DeduplicationException;
+    void resolve(UserRole userRole, UserRole transitionUserRole, Comment comment) throws DeduplicationException;
 
 }

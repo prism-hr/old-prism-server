@@ -1,7 +1,6 @@
 package uk.co.alumeni.prism.domain.resource;
 
 import org.apache.commons.lang3.ObjectUtils;
-
 import uk.co.alumeni.prism.domain.UniqueEntity;
 import uk.co.alumeni.prism.utils.PrismReflectionUtils;
 

@@ -1,44 +1,8 @@
 package uk.co.alumeni.prism.domain.definitions.workflow;
 
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRole.APPLICATION_APPOINTEE;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRole.APPLICATION_CREATOR;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRole.APPLICATION_HIRING_MANAGER;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRole.APPLICATION_INTERVIEWEE;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRole.APPLICATION_INTERVIEWER;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRole.APPLICATION_POTENTIAL_INTERVIEWEE;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRole.APPLICATION_POTENTIAL_INTERVIEWER;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRole.APPLICATION_REFEREE;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRole.APPLICATION_REVIEWER;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRole.APPLICATION_SCHEDULED_INTERVIEWEE;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRole.APPLICATION_SCHEDULED_INTERVIEWER;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRole.APPLICATION_VIEWER_RECRUITER;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRole.APPLICATION_VIEWER_REFEREE;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRole.DEPARTMENT_ADMINISTRATOR;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRole.DEPARTMENT_APPROVER;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRole.DEPARTMENT_STUDENT;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRole.DEPARTMENT_VIEWER;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRole.INSTITUTION_ADMINISTRATOR;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRole.INSTITUTION_APPROVER;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRole.INSTITUTION_STUDENT;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRole.INSTITUTION_VIEWER;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRole.PROGRAM_ADMINISTRATOR;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRole.PROGRAM_APPROVER;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRole.PROGRAM_VIEWER;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRole.PROJECT_ADMINISTRATOR;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRole.PROJECT_APPROVER;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRole.PROJECT_VIEWER;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRole.SYSTEM_ADMINISTRATOR;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRoleTransitionType.BRANCH;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRoleTransitionType.CREATE;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRoleTransitionType.DELETE;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRoleTransitionType.EXHUME;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRoleTransitionType.RETIRE;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRoleTransitionType.REVIVE;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRoleTransitionType.UPDATE;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismWorkflowConstraint.APPLICATION_HIRING_MANAGER_ASSIGNMENT;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismWorkflowConstraint.APPLICATION_INTERVIEWER_ASSIGNMENT;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismWorkflowConstraint.APPLICATION_REFEREE_ASSIGNMENT;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismWorkflowConstraint.APPLICATION_REVIEWER_ASSIGNMENT;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRole.*;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRoleTransitionType.*;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismWorkflowConstraint.*;
 
 public enum PrismRoleTransitionGroup {
 

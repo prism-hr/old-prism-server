@@ -1,18 +1,8 @@
 package uk.co.alumeni.prism.workflow.notification.property;
 
-import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
-import static org.jboss.util.Strings.EMPTY;
-import static uk.co.alumeni.prism.PrismConstants.SPACE;
-import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_NOTIFICATION_ACTIONS;
-import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_NOTIFICATION_APPOINTMENTS;
-import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_NOTIFICATION_CONNECTS;
-import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_NOTIFICATION_JOINS;
-import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_NOTIFICATION_UPDATES;
-
-import java.util.List;
-
+import com.google.common.base.Joiner;
+import com.google.common.collect.Lists;
 import org.springframework.stereotype.Component;
-
 import uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition;
 import uk.co.alumeni.prism.dto.NotificationDefinitionDTO;
 import uk.co.alumeni.prism.rest.representation.advert.AdvertTargetRepresentation;
@@ -24,8 +14,12 @@ import uk.co.alumeni.prism.rest.representation.user.UserActivityRepresentation.R
 import uk.co.alumeni.prism.services.helpers.NotificationPropertyLoader;
 import uk.co.alumeni.prism.services.helpers.PropertyLoader;
 
-import com.google.common.base.Joiner;
-import com.google.common.collect.Lists;
+import java.util.List;
+
+import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
+import static org.jboss.util.Strings.EMPTY;
+import static uk.co.alumeni.prism.PrismConstants.SPACE;
+import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition.*;
 
 @Component
 public class SystemActivitySummaryBuilder implements NotificationPropertyBuilder {
@@ -68,7 +62,7 @@ public class SystemActivitySummaryBuilder implements NotificationPropertyBuilder
             if (updateCount > 0) {
                 bullets.add(updateCount.toString() + SPACE + displayPropertyLoader.loadLazy(SYSTEM_NOTIFICATION_UPDATES));
             }
-            
+
             if (messageCount > 0) {
                 bullets.add(messageCount.toString() + SPACE + displayPropertyLoader.loadLazy(PrismDisplayPropertyDefinition.SYSTEM_NOTIFICATION_MESSAGES));
             }

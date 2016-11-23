@@ -3,7 +3,7 @@
 </h1>
 
 <p><b>
-	Your application for ${APPLICATION_OPPORTUNITY_TYPE} in the position of: ${TEMPLATE_PARENT_RESOURCE_NAME}.
+    Your application for ${APPLICATION_OPPORTUNITY_TYPE} in the position of: ${TEMPLATE_PARENT_RESOURCE_NAME}.
 </b></p>
 
 <p>
@@ -17,26 +17,26 @@
 </p>
 
 <p>
-	Our terms of offer are as follows:
+    Our terms of offer are as follows:
 </p>
 
 <p>
-	<ul>
-		<li><b>Project:</b> ${APPLICATION_POSITION_NAME}</li>
-		<li><b>Supervisor:</b> ${APPLICATION_MANAGER}</li>
-		<li><b>Start date:</b> ${APPLICATION_START_DATE}</li>
-		<li><b>Terms and Conditions:</b> ${APPLICATION_OFFER_CONDITION}</li>
-	</ul>
+<ul>
+    <li><b>Project:</b> ${APPLICATION_POSITION_NAME}</li>
+    <li><b>Supervisor:</b> ${APPLICATION_MANAGER}</li>
+    <li><b>Start date:</b> ${APPLICATION_START_DATE}</li>
+    <li><b>Terms and Conditions:</b> ${APPLICATION_OFFER_CONDITION}</li>
+</ul>
 </p>
 
 ${ACTION_COMPLETE}
 
 <p>
-	We hope that you will accept and we look forward to welcoming you.
+    We hope that you will accept and we look forward to welcoming you.
 </p>
 
 [#if TEMPLATE_BUFFERED?has_content]
-    <p>${TEMPLATE_BUFFERED}</p>
+<p>${TEMPLATE_BUFFERED}</p>
 [/#if]
 <p>
     Yours sincerely,

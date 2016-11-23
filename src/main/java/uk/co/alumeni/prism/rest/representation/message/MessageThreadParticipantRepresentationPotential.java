@@ -1,12 +1,12 @@
 package uk.co.alumeni.prism.rest.representation.message;
 
-import static com.google.common.collect.Sets.newLinkedHashSet;
+import uk.co.alumeni.prism.domain.definitions.workflow.PrismRole;
+import uk.co.alumeni.prism.rest.representation.user.UserRepresentationSimple;
 
 import java.util.Collection;
 import java.util.Set;
 
-import uk.co.alumeni.prism.domain.definitions.workflow.PrismRole;
-import uk.co.alumeni.prism.rest.representation.user.UserRepresentationSimple;
+import static com.google.common.collect.Sets.newLinkedHashSet;
 
 public class MessageThreadParticipantRepresentationPotential {
 

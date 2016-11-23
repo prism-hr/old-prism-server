@@ -1,23 +1,13 @@
 package uk.co.alumeni.prism.domain.address;
 
-import static com.google.common.base.Objects.equal;
-
-import java.util.Set;
-
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.Lob;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
-
+import com.google.common.base.Objects;
 import jersey.repackaged.com.google.common.collect.Sets;
 import uk.co.alumeni.prism.domain.UniqueEntity;
 
-import com.google.common.base.Objects;
+import javax.persistence.*;
+import java.util.Set;
+
+import static com.google.common.base.Objects.equal;
 
 @Entity
 @Table(name = "address_location_part")

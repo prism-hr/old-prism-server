@@ -1,10 +1,10 @@
 package uk.co.alumeni.prism.rest.representation;
 
-import java.util.List;
-
 import uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition;
 import uk.co.alumeni.prism.domain.definitions.PrismOpportunityCategory;
 import uk.co.alumeni.prism.domain.definitions.PrismOpportunityType;
+
+import java.util.List;
 
 public class OpportunityCategoryRepresentation {
 

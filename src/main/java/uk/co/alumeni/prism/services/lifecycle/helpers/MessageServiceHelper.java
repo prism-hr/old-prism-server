@@ -1,14 +1,12 @@
 package uk.co.alumeni.prism.services.lifecycle.helpers;
 
-import static org.joda.time.DateTime.now;
-
-import java.util.concurrent.atomic.AtomicBoolean;
+import org.springframework.stereotype.Service;
+import uk.co.alumeni.prism.services.MessageService;
 
 import javax.inject.Inject;
+import java.util.concurrent.atomic.AtomicBoolean;
 
-import org.springframework.stereotype.Service;
-
-import uk.co.alumeni.prism.services.MessageService;
+import static org.joda.time.DateTime.now;
 
 @Service
 public class MessageServiceHelper extends PrismServiceHelperAbstract {

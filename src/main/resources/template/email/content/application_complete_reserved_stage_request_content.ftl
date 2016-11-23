@@ -3,13 +3,13 @@
 </h1>
 
 <p><b>
-    ${APPLICATION_CREATOR_FULL_NAME} application for ${APPLICATION_OPPORTUNITY_TYPE} in the position of:
-    ${TEMPLATE_PARENT_RESOURCE_NAME}.
+${APPLICATION_CREATOR_FULL_NAME} application for ${APPLICATION_OPPORTUNITY_TYPE} in the position of:
+${TEMPLATE_PARENT_RESOURCE_NAME}.
 </b></p>
 
 <p>
-    The reserved stage is now due for completion. Follow the link below to advance the application to a 
-    different stage of consideration. You have a limited time to do this before the application will be 
+    The reserved stage is now due for completion. Follow the link below to advance the application to a
+    different stage of consideration. You have a limited time to do this before the application will be
     rejected automatically.
 </p>
 
@@ -20,7 +20,7 @@ ${ACTION_COMPLETE}
 </p>
 
 [#if TEMPLATE_BUFFERED?has_content]
-    <p>${TEMPLATE_BUFFERED}</p>
+<p>${TEMPLATE_BUFFERED}</p>
 [/#if]
 
 <p>

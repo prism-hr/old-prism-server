@@ -1,9 +1,10 @@
 package uk.co.alumeni.prism.dto;
 
-import static org.apache.commons.lang3.ObjectUtils.compare;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismRole;
 import uk.co.alumeni.prism.rest.UserDescriptor;
 import uk.co.alumeni.prism.rest.UserDescriptorExtended;
+
+import static org.apache.commons.lang3.ObjectUtils.compare;
 
 public class UserRoleDTO extends UserDescriptorExtended<Integer, Integer> {
 

@@ -1,11 +1,11 @@
 package uk.co.alumeni.prism.rest.representation.resource.application;
 
-import java.util.List;
-
 import uk.co.alumeni.prism.rest.representation.comment.CommentAppointmentPreferenceRepresentation;
 import uk.co.alumeni.prism.rest.representation.comment.CommentAppointmentTimeslotRepresentation;
 import uk.co.alumeni.prism.rest.representation.comment.CommentInterviewAppointmentRepresentation;
 import uk.co.alumeni.prism.rest.representation.comment.CommentInterviewInstructionRepresentation;
+
+import java.util.List;
 
 public class ApplicationInterviewRepresentation {
 

@@ -1,19 +1,11 @@
 package uk.co.alumeni.prism.rest.representation.resource.application;
 
-import java.util.List;
-
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
-
-import uk.co.alumeni.prism.rest.representation.profile.ProfileAdditionalInformationRepresentation;
-import uk.co.alumeni.prism.rest.representation.profile.ProfileAddressRepresentation;
-import uk.co.alumeni.prism.rest.representation.profile.ProfileAwardRepresentation;
-import uk.co.alumeni.prism.rest.representation.profile.ProfileDocumentRepresentation;
-import uk.co.alumeni.prism.rest.representation.profile.ProfileEmploymentPositionRepresentation;
-import uk.co.alumeni.prism.rest.representation.profile.ProfilePersonalDetailRepresentation;
-import uk.co.alumeni.prism.rest.representation.profile.ProfileQualificationRepresentation;
-import uk.co.alumeni.prism.rest.representation.profile.ProfileRefereeRepresentation;
+import uk.co.alumeni.prism.rest.representation.profile.*;
 import uk.co.alumeni.prism.rest.representation.resource.ResourceRepresentationExtended;
+
+import java.util.List;
 
 public class ApplicationRepresentationSimple extends ResourceRepresentationExtended {
 

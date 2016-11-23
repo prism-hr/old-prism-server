@@ -1,54 +1,16 @@
 package uk.co.alumeni.prism.mapping;
 
-import static com.google.common.collect.Iterables.getFirst;
-import static com.google.common.collect.Lists.newArrayList;
-import static com.google.common.collect.Lists.newLinkedList;
-import static java.util.Arrays.asList;
-import static java.util.stream.Collectors.toList;
-import static org.apache.commons.lang3.BooleanUtils.isTrue;
-import static uk.co.alumeni.prism.PrismConstants.START_DATE_EARLIEST_BUFFER;
-import static uk.co.alumeni.prism.PrismConstants.START_DATE_LATEST_BUFFER;
-import static uk.co.alumeni.prism.PrismConstants.START_DATE_RECOMMENDED_BUFFER;
-import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_PREFERRED;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismAction.APPLICATION_ASSIGN_HIRING_MANAGERS;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismAction.APPLICATION_ASSIGN_INTERVIEWERS;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismAction.APPLICATION_CONFIRM_OFFER;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismAction.APPLICATION_PROVIDE_HIRING_MANAGER_APPROVAL;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismAction.APPLICATION_REVISE_OFFER;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRole.APPLICATION_HIRING_MANAGER;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.APPLICATION;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScopeCategory.ORGANIZATION;
-import static uk.co.alumeni.prism.utils.PrismConversionUtils.doubleToBigDecimal;
-import static uk.co.alumeni.prism.utils.PrismConversionUtils.longToInteger;
-import static uk.co.alumeni.prism.utils.PrismDateUtils.getNextMonday;
-
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.stream.Collectors;
-
-import javax.inject.Inject;
-import javax.transaction.Transactional;
-
-import org.apache.commons.lang3.BooleanUtils;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 import org.joda.time.LocalDate;
 import org.joda.time.LocalDateTime;
 import org.springframework.beans.BeanUtils;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
-
 import uk.co.alumeni.prism.domain.advert.Advert;
-import uk.co.alumeni.prism.domain.application.Application;
-import uk.co.alumeni.prism.domain.application.ApplicationDocument;
-import uk.co.alumeni.prism.domain.application.ApplicationEmploymentPosition;
-import uk.co.alumeni.prism.domain.application.ApplicationProgramDetail;
-import uk.co.alumeni.prism.domain.application.ApplicationQualification;
-import uk.co.alumeni.prism.domain.application.ApplicationReferee;
-import uk.co.alumeni.prism.domain.comment.Comment;
-import uk.co.alumeni.prism.domain.comment.CommentAppointmentTimeslot;
-import uk.co.alumeni.prism.domain.comment.CommentAssignedUser;
-import uk.co.alumeni.prism.domain.comment.CommentOfferDetail;
-import uk.co.alumeni.prism.domain.comment.CommentPositionDetail;
+import uk.co.alumeni.prism.domain.application.*;
+import uk.co.alumeni.prism.domain.comment.*;
 import uk.co.alumeni.prism.domain.definitions.PrismStudyOption;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismRole;
 import uk.co.alumeni.prism.domain.resource.Resource;
@@ -64,30 +26,33 @@ import uk.co.alumeni.prism.rest.representation.comment.CommentRepresentation;
 import uk.co.alumeni.prism.rest.representation.profile.ProfileRefereeRepresentation;
 import uk.co.alumeni.prism.rest.representation.resource.ResourceRepresentationRelation;
 import uk.co.alumeni.prism.rest.representation.resource.ResourceSummaryPlotDataRepresentation.ApplicationProcessingSummaryRepresentation;
-import uk.co.alumeni.prism.rest.representation.resource.application.ApplicationAssignedHiringManagerRepresentation;
-import uk.co.alumeni.prism.rest.representation.resource.application.ApplicationInterviewRepresentation;
-import uk.co.alumeni.prism.rest.representation.resource.application.ApplicationLocationRepresentation;
-import uk.co.alumeni.prism.rest.representation.resource.application.ApplicationOfferRepresentation;
-import uk.co.alumeni.prism.rest.representation.resource.application.ApplicationProgramDetailRepresentation;
-import uk.co.alumeni.prism.rest.representation.resource.application.ApplicationRepresentationClient;
-import uk.co.alumeni.prism.rest.representation.resource.application.ApplicationRepresentationExtended;
-import uk.co.alumeni.prism.rest.representation.resource.application.ApplicationRepresentationSimple;
-import uk.co.alumeni.prism.rest.representation.resource.application.ApplicationRepresentationSummary;
-import uk.co.alumeni.prism.rest.representation.resource.application.ApplicationStartDateRepresentation;
-import uk.co.alumeni.prism.rest.representation.resource.application.ApplicationThemeRepresentation;
+import uk.co.alumeni.prism.rest.representation.resource.application.*;
 import uk.co.alumeni.prism.rest.representation.user.UserActivityRepresentation.AppointmentActivityRepresentation;
-import uk.co.alumeni.prism.services.ApplicationService;
-import uk.co.alumeni.prism.services.CommentService;
-import uk.co.alumeni.prism.services.ProfileService;
-import uk.co.alumeni.prism.services.ResourceService;
-import uk.co.alumeni.prism.services.RoleService;
-import uk.co.alumeni.prism.services.SystemService;
-import uk.co.alumeni.prism.services.UserService;
+import uk.co.alumeni.prism.services.*;
 import uk.co.alumeni.prism.services.helpers.PropertyLoader;
 
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
+import javax.inject.Inject;
+import javax.transaction.Transactional;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
+
+import static com.google.common.collect.Iterables.getFirst;
+import static com.google.common.collect.Lists.newArrayList;
+import static com.google.common.collect.Lists.newLinkedList;
+import static java.util.Arrays.asList;
+import static java.util.stream.Collectors.toList;
+import static org.apache.commons.lang.BooleanUtils.isTrue;
+import static uk.co.alumeni.prism.PrismConstants.*;
+import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_PREFERRED;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismAction.*;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRole.APPLICATION_HIRING_MANAGER;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.APPLICATION;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScopeCategory.ORGANIZATION;
+import static uk.co.alumeni.prism.utils.PrismConversionUtils.doubleToBigDecimal;
+import static uk.co.alumeni.prism.utils.PrismConversionUtils.longToInteger;
+import static uk.co.alumeni.prism.utils.PrismDateUtils.getNextMonday;
 
 @Service
 @Transactional
@@ -317,17 +282,17 @@ public class ApplicationMapper {
     private List<ApplicationLocationRepresentation> getApplicationLocationRepresentations(Application application, User currentUser) {
         List<ApplicationLocationRepresentation> representations = Lists.newLinkedList();
         application.getLocations().forEach(applicationLocation -> { //
-                    Resource resource = applicationLocation.getTag().getResource();
-                    Integer descriptionYear = applicationLocation.getDescriptionYear();
-                    representations.add(new ApplicationLocationRepresentation()
-                            .withResource(
-                                    resource.getResourceScope().getScopeCategory().equals(ORGANIZATION) ? resourceMapper
-                                            .getResourceRepresentationRelation(resource, currentUser) : resourceMapper
-                                            .getResourceOpportunityRepresentationRelation(resource, currentUser))
-                            .withDescription(applicationLocation.getDescription())
-                            .withDescriptionDate(descriptionYear == null ? null : new LocalDate(descriptionYear, applicationLocation.getDescriptionMonth(), 1))
-                            .withPreference(applicationLocation.getPreference()).withLastUpdateTimestamp(applicationLocation.getLastUpdatedTimestamp()));
-                });
+            Resource resource = applicationLocation.getTag().getResource();
+            Integer descriptionYear = applicationLocation.getDescriptionYear();
+            representations.add(new ApplicationLocationRepresentation()
+                    .withResource(
+                            resource.getResourceScope().getScopeCategory().equals(ORGANIZATION) ? resourceMapper
+                                    .getResourceRepresentationRelation(resource, currentUser) : resourceMapper
+                                    .getResourceOpportunityRepresentationRelation(resource, currentUser))
+                    .withDescription(applicationLocation.getDescription())
+                    .withDescriptionDate(descriptionYear == null ? null : new LocalDate(descriptionYear, applicationLocation.getDescriptionMonth(), 1))
+                    .withPreference(applicationLocation.getPreference()).withLastUpdateTimestamp(applicationLocation.getLastUpdatedTimestamp()));
+        });
         return representations;
     }
 

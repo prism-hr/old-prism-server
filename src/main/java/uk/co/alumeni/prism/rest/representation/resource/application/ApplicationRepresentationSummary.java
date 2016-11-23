@@ -2,7 +2,6 @@ package uk.co.alumeni.prism.rest.representation.resource.application;
 
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
-
 import uk.co.alumeni.prism.domain.definitions.PrismStudyOption;
 import uk.co.alumeni.prism.rest.representation.DocumentRepresentation;
 import uk.co.alumeni.prism.rest.representation.profile.ProfileRepresentationSummary;

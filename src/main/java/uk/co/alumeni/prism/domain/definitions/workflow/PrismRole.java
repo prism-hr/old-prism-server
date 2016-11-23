@@ -1,25 +1,15 @@
 package uk.co.alumeni.prism.domain.definitions.workflow;
 
-import static com.google.common.collect.Sets.newLinkedHashSet;
-import static org.apache.commons.lang3.ObjectUtils.compare;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRole.PrismRoleCategory.ADMINISTRATOR;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRole.PrismRoleCategory.APPLICANT;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRole.PrismRoleCategory.RECRUITER;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRole.PrismRoleCategory.REFEREE;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRole.PrismRoleCategory.STUDENT;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.APPLICATION;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.DEPARTMENT;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.INSTITUTION;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.PROGRAM;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.PROJECT;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.SYSTEM;
-
-import java.util.Set;
-
+import com.google.common.collect.HashMultimap;
 import uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition;
 import uk.co.alumeni.prism.domain.definitions.PrismLocalizableDefinition;
 
-import com.google.common.collect.HashMultimap;
+import java.util.Set;
+
+import static com.google.common.collect.Sets.newLinkedHashSet;
+import static org.apache.commons.lang3.ObjectUtils.compare;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRole.PrismRoleCategory.*;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.*;
 
 public enum PrismRole implements PrismLocalizableDefinition {
 
@@ -108,7 +98,7 @@ public enum PrismRole implements PrismLocalizableDefinition {
         }
     }
 
-    private PrismRole(PrismRoleCategory roleCategory, boolean directlyAssignable, PrismScope scope) {
+    PrismRole(PrismRoleCategory roleCategory, boolean directlyAssignable, PrismScope scope) {
         this.roleCategory = roleCategory;
         this.directlyAssignable = directlyAssignable;
         this.scope = scope;
@@ -124,14 +114,6 @@ public enum PrismRole implements PrismLocalizableDefinition {
 
     public PrismScope getScope() {
         return scope;
-    }
-
-    public Set<PrismRole> getVerifiedRoles() {
-        return verifiedRoles;
-    }
-
-    public Set<PrismScope> getVisibleScopes() {
-        return visibleScopes.get(this);
     }
 
     @Override
@@ -150,7 +132,7 @@ public enum PrismRole implements PrismLocalizableDefinition {
         RECRUITER, //
         STUDENT, //
         APPLICANT, //
-        REFEREE;
+        REFEREE
 
     }
 

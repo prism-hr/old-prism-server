@@ -1,11 +1,6 @@
 package uk.co.alumeni.prism.domain.definitions.workflow;
 
-import uk.co.alumeni.prism.workflow.resolvers.role.transition.BranchResolver;
-import uk.co.alumeni.prism.workflow.resolvers.role.transition.CreateResolver;
-import uk.co.alumeni.prism.workflow.resolvers.role.transition.DeleteResolver;
-import uk.co.alumeni.prism.workflow.resolvers.role.transition.ReviveResolver;
-import uk.co.alumeni.prism.workflow.resolvers.role.transition.RoleTransitionResolver;
-import uk.co.alumeni.prism.workflow.resolvers.role.transition.UpdateResolver;
+import uk.co.alumeni.prism.workflow.resolvers.role.transition.*;
 
 public enum PrismRoleTransitionType {
 

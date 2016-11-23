@@ -1,15 +1,7 @@
 package uk.co.alumeni.prism.services.lifecycle.helpers;
 
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismNotificationDefinition.SYSTEM_CONNECTION_REQUEST;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismNotificationDefinition.SYSTEM_USER_INVITATION_NOTIFICATION;
-
-import java.util.Set;
-import java.util.concurrent.atomic.AtomicBoolean;
-
-import javax.inject.Inject;
-
+import com.google.common.collect.Sets;
 import org.springframework.stereotype.Component;
-
 import uk.co.alumeni.prism.domain.advert.AdvertTarget;
 import uk.co.alumeni.prism.domain.user.UserRole;
 import uk.co.alumeni.prism.dto.UserConnectionDTO;
@@ -17,7 +9,12 @@ import uk.co.alumeni.prism.dto.UserRoleCategoryDTO;
 import uk.co.alumeni.prism.services.InvitationService;
 import uk.co.alumeni.prism.services.NotificationService;
 
-import com.google.common.collect.Sets;
+import javax.inject.Inject;
+import java.util.Set;
+import java.util.concurrent.atomic.AtomicBoolean;
+
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismNotificationDefinition.SYSTEM_CONNECTION_REQUEST;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismNotificationDefinition.SYSTEM_USER_INVITATION_NOTIFICATION;
 
 @Component
 public class NotificationServiceHelperInvitation extends PrismServiceHelperAbstract {

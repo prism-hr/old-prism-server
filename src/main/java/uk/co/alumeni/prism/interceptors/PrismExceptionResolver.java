@@ -1,10 +1,5 @@
 package uk.co.alumeni.prism.interceptors;
 
-import static uk.co.alumeni.prism.utils.PrismDiagnosticUtils.getRequestErrorLogMessage;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,9 +7,13 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.handler.AbstractHandlerExceptionResolver;
 import org.springframework.web.servlet.view.json.MappingJackson2JsonView;
-
 import uk.co.alumeni.prism.domain.user.User;
 import uk.co.alumeni.prism.services.UserService;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import static uk.co.alumeni.prism.utils.PrismDiagnosticUtils.getRequestErrorLogMessage;
 
 public class PrismExceptionResolver extends AbstractHandlerExceptionResolver {
 

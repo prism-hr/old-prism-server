@@ -1,8 +1,8 @@
 package uk.co.alumeni.prism.domain.profile;
 
-import java.util.Set;
-
 import uk.co.alumeni.prism.domain.user.User;
+
+import java.util.Set;
 
 public interface ProfileEntity<T extends ProfilePersonalDetail<?>, U extends ProfileAddress<?>, V extends ProfileQualification<?>, W extends ProfileAward<?>, X extends ProfileEmploymentPosition<?>, Y extends ProfileReferee<?>, Z extends ProfileDocument<?>, A extends ProfileAdditionalInformation<?>> {
 

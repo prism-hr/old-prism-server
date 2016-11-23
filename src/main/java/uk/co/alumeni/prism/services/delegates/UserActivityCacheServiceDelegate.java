@@ -1,26 +1,11 @@
 package uk.co.alumeni.prism.services.delegates;
 
-import static com.google.common.collect.Lists.newArrayList;
-import static java.util.Collections.singletonList;
-import static org.apache.commons.collections.CollectionUtils.isEmpty;
-import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
-
-import java.util.List;
-import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
-
-import javax.inject.Inject;
-
-import com.google.common.collect.ConcurrentHashMultiset;
 import com.google.common.collect.HashMultimap;
-import com.google.common.collect.Multimaps;
-import org.apache.http.util.EntityUtils;
 import org.joda.time.DateTime;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.event.TransactionalEventListener;
 import org.springframework.web.context.request.async.DeferredResult;
-
 import uk.co.alumeni.prism.event.UserActivityUpdateEvent;
 import uk.co.alumeni.prism.mapping.UserMapper;
 import uk.co.alumeni.prism.rest.controller.UserController;
@@ -28,6 +13,14 @@ import uk.co.alumeni.prism.rest.dto.resource.ResourceDTO;
 import uk.co.alumeni.prism.rest.representation.user.UserActivityRepresentation;
 import uk.co.alumeni.prism.services.UserActivityCacheService;
 import uk.co.alumeni.prism.services.UserService;
+
+import javax.inject.Inject;
+import java.util.List;
+
+import static com.google.common.collect.Lists.newArrayList;
+import static java.util.Collections.singletonList;
+import static org.apache.commons.collections.CollectionUtils.isEmpty;
+import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
 
 @Service
 public class UserActivityCacheServiceDelegate {

@@ -1,9 +1,11 @@
 package uk.co.alumeni.prism.security;
 
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.net.URLDecoder;
-import java.util.Collections;
+import com.google.common.base.Charsets;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.web.filter.GenericFilterBean;
+import uk.co.alumeni.prism.services.UserService;
 
 import javax.inject.Inject;
 import javax.servlet.FilterChain;
@@ -13,15 +15,10 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.web.filter.GenericFilterBean;
-
-import uk.co.alumeni.prism.services.UserService;
-
-import com.google.common.base.Charsets;
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
+import java.util.Collections;
 
 public class AuthenticationTokenProcessingFilter extends GenericFilterBean {
 

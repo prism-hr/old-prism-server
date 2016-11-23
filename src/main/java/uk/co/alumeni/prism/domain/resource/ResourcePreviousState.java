@@ -1,26 +1,17 @@
 package uk.co.alumeni.prism.domain.resource;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
-import javax.persistence.UniqueConstraint;
-
 import org.hibernate.annotations.Type;
 import org.joda.time.LocalDate;
-
 import uk.co.alumeni.prism.domain.application.Application;
 import uk.co.alumeni.prism.domain.workflow.State;
 
+import javax.persistence.*;
+
 @Entity
-@Table(name = "resource_previous_state", uniqueConstraints = { @UniqueConstraint(columnNames = { "system_id", "state_id" }),
-        @UniqueConstraint(columnNames = { "institution_id", "state_id" }), @UniqueConstraint(columnNames = { "department_id", "state_id" }),
-        @UniqueConstraint(columnNames = { "program_id", "state_id" }), @UniqueConstraint(columnNames = { "project_id", "state_id" }),
-        @UniqueConstraint(columnNames = { "application_id", "state_id" }) })
+@Table(name = "resource_previous_state", uniqueConstraints = {@UniqueConstraint(columnNames = {"system_id", "state_id"}),
+        @UniqueConstraint(columnNames = {"institution_id", "state_id"}), @UniqueConstraint(columnNames = {"department_id", "state_id"}),
+        @UniqueConstraint(columnNames = {"program_id", "state_id"}), @UniqueConstraint(columnNames = {"project_id", "state_id"}),
+        @UniqueConstraint(columnNames = {"application_id", "state_id"})})
 public class ResourcePreviousState extends ResourceStateDefinition {
 
     @Id

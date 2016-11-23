@@ -1,27 +1,16 @@
 package uk.co.alumeni.prism.domain.message;
 
-import java.util.Set;
-
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.Lob;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
-
+import com.google.common.base.Objects;
+import com.google.common.collect.Sets;
 import org.hibernate.annotations.Type;
 import org.joda.time.DateTime;
-
 import uk.co.alumeni.prism.domain.UniqueEntity;
 import uk.co.alumeni.prism.domain.user.User;
 import uk.co.alumeni.prism.domain.user.UserAssignment;
 import uk.co.alumeni.prism.workflow.user.MessageReassignmentProcessor;
 
-import com.google.common.base.Objects;
-import com.google.common.collect.Sets;
+import javax.persistence.*;
+import java.util.Set;
 
 @Entity
 @Table(name = "message")
@@ -147,7 +136,7 @@ public class Message implements UserAssignment<MessageReassignmentProcessor>, Un
         Message other = (Message) object;
         return Objects.equal(id, other.getId());
     }
-    
+
     @Override
     public Class<MessageReassignmentProcessor> getUserReassignmentProcessor() {
         return MessageReassignmentProcessor.class;

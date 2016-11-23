@@ -1,12 +1,11 @@
 package uk.co.alumeni.prism.workflow.notification.property;
 
-import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition.APPLICATION_COMMENT_DIRECTIONS;
-import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition.APPLICATION_COMMENT_DIRECTIONS_NOT_PROVIDED;
-
 import org.springframework.stereotype.Component;
-
 import uk.co.alumeni.prism.domain.comment.CommentInterviewInstruction;
 import uk.co.alumeni.prism.services.helpers.NotificationPropertyLoader;
+
+import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition.APPLICATION_COMMENT_DIRECTIONS;
+import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition.APPLICATION_COMMENT_DIRECTIONS_NOT_PROVIDED;
 
 @Component
 public class ApplicationInterviewLocationBuilder implements NotificationPropertyBuilder {

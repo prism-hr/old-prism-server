@@ -1,18 +1,15 @@
 package uk.co.alumeni.prism.services.delegates;
 
-import java.util.Set;
-
-import javax.inject.Inject;
-
+import com.google.common.collect.Sets;
 import org.springframework.context.ApplicationContext;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.event.TransactionalEventListener;
-
-import com.google.common.collect.Sets;
-
 import uk.co.alumeni.prism.event.NotificationEvent;
 import uk.co.alumeni.prism.mail.MailSender;
+
+import javax.inject.Inject;
+import java.util.Set;
 
 @Service
 public class NotificationServiceDelegate {

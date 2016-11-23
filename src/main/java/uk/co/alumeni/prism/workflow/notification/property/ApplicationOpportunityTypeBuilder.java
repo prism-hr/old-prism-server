@@ -1,7 +1,6 @@
 package uk.co.alumeni.prism.workflow.notification.property;
 
 import org.springframework.stereotype.Component;
-
 import uk.co.alumeni.prism.domain.definitions.PrismOpportunityType;
 import uk.co.alumeni.prism.domain.resource.Resource;
 import uk.co.alumeni.prism.domain.resource.ResourceOpportunity;

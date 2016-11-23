@@ -1,14 +1,14 @@
 package uk.co.alumeni.prism.rest.representation.action;
 
-import static com.google.common.collect.Sets.newLinkedHashSet;
-
-import java.util.Collection;
-import java.util.Set;
-
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismActionEnhancement;
 import uk.co.alumeni.prism.rest.representation.comment.CommentRepresentation;
 import uk.co.alumeni.prism.rest.representation.state.StateRepresentationExtended;
 import uk.co.alumeni.prism.rest.representation.state.StateRepresentationSimple;
+
+import java.util.Collection;
+import java.util.Set;
+
+import static com.google.common.collect.Sets.newLinkedHashSet;
 
 public class ActionRepresentationExtended extends ActionRepresentationSimple {
 

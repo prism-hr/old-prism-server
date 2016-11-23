@@ -1,32 +1,8 @@
 package uk.co.alumeni.prism.mapping;
 
-import static com.google.common.collect.Lists.newLinkedList;
-import static com.google.common.collect.Sets.newHashSet;
-import static java.util.Arrays.asList;
-import static java.util.stream.Collectors.toList;
-import static jersey.repackaged.com.google.common.collect.Lists.newArrayList;
-import static jersey.repackaged.com.google.common.collect.Maps.newHashMap;
-import static jersey.repackaged.com.google.common.collect.Maps.newLinkedHashMap;
-import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
-import static org.apache.commons.lang.BooleanUtils.isTrue;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRole.PrismRoleCategory.ADMINISTRATOR;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRole.PrismRoleCategory.RECRUITER;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.DEPARTMENT;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.INSTITUTION;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.PROGRAM;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.PROJECT;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.SYSTEM;
-
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import javax.inject.Inject;
-
 import org.hibernate.criterion.Projections;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
 import uk.co.alumeni.prism.domain.definitions.PrismResourceRelationContext;
 import uk.co.alumeni.prism.domain.definitions.PrismResourceRelationContext.PrismResourceRelationGroup;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismAction;
@@ -42,6 +18,24 @@ import uk.co.alumeni.prism.rest.representation.user.UserActivityRepresentation.R
 import uk.co.alumeni.prism.services.AdvertService;
 import uk.co.alumeni.prism.services.ResourceService;
 import uk.co.alumeni.prism.services.SystemService;
+
+import javax.inject.Inject;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import static com.google.common.collect.Lists.newLinkedList;
+import static com.google.common.collect.Sets.newHashSet;
+import static java.util.Arrays.asList;
+import static java.util.stream.Collectors.toList;
+import static jersey.repackaged.com.google.common.collect.Lists.newArrayList;
+import static jersey.repackaged.com.google.common.collect.Maps.newHashMap;
+import static jersey.repackaged.com.google.common.collect.Maps.newLinkedHashMap;
+import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
+import static org.apache.commons.lang.BooleanUtils.isTrue;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRole.PrismRoleCategory.ADMINISTRATOR;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRole.PrismRoleCategory.RECRUITER;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.*;
 
 @Service
 @Transactional
@@ -97,7 +91,7 @@ public class ScopeMapper {
 
         List<PrismScope> scopesCreatorFor = newArrayList();
         List<PrismRoleCategory> creatorRoleCategories = asList(ADMINISTRATOR, RECRUITER);
-        for (PrismScope scope : new PrismScope[] { SYSTEM, INSTITUTION, DEPARTMENT, PROGRAM, PROJECT }) {
+        for (PrismScope scope : new PrismScope[]{SYSTEM, INSTITUTION, DEPARTMENT, PROGRAM, PROJECT}) {
             if (creatorRoleCategories.contains(defaultRoleCategories.get(scope))) {
                 scopesCreatorFor.add(scope);
             }
@@ -107,7 +101,7 @@ public class ScopeMapper {
         List<ResourceActivityRepresentation> representations = newLinkedList();
         for (PrismScope scope : scopes) {
             Set<ResourceActionOpportunityCategoryDTO> resourceActions = resourceService.getResources(user, scope, scopes.stream()
-                    .filter(filterScope -> filterScope.ordinal() < scope.ordinal()).collect(toList()), //
+                            .filter(filterScope -> filterScope.ordinal() < scope.ordinal()).collect(toList()), //
                     advertService.getAdvertTargeterEntities(user, scope), Projections.projectionList() //
                             .add(Projections.groupProperty("resource.id").as("id")) //
                             .add(Projections.groupProperty("stateAction.action.id").as("actionId")) //

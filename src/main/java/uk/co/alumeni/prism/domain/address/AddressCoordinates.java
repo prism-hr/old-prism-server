@@ -1,9 +1,8 @@
 package uk.co.alumeni.prism.domain.address;
 
-import java.math.BigDecimal;
-
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
+import java.math.BigDecimal;
 
 @Embeddable
 public class AddressCoordinates {

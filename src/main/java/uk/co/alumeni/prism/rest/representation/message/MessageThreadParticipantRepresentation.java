@@ -1,9 +1,9 @@
 package uk.co.alumeni.prism.rest.representation.message;
 
-import static com.google.common.base.Objects.equal;
+import com.google.common.base.Objects;
 import uk.co.alumeni.prism.rest.representation.user.UserRepresentationSimple;
 
-import com.google.common.base.Objects;
+import static com.google.common.base.Objects.equal;
 
 public class MessageThreadParticipantRepresentation {
 

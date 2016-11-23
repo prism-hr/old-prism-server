@@ -1,10 +1,9 @@
 package uk.co.alumeni.prism.rest.dto.comment;
 
-import java.util.TimeZone;
+import org.joda.time.LocalDateTime;
 
 import javax.validation.constraints.NotNull;
-
-import org.joda.time.LocalDateTime;
+import java.util.TimeZone;
 
 public class CommentInterviewAppointmentDTO {
 

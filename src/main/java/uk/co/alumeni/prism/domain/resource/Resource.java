@@ -1,20 +1,10 @@
 package uk.co.alumeni.prism.domain.resource;
 
-import static com.google.common.base.Objects.equal;
-import static com.google.common.collect.Maps.newLinkedHashMap;
-import static org.apache.commons.lang3.ObjectUtils.firstNonNull;
-import static uk.co.alumeni.prism.PrismConstants.HYPHEN;
-import static uk.co.alumeni.prism.PrismConstants.SPACE;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.SYSTEM;
-import static uk.co.alumeni.prism.utils.PrismReflectionUtils.getProperty;
-
-import java.util.Map;
-import java.util.Set;
-
+import com.google.common.base.Joiner;
+import com.google.common.base.Objects;
 import org.apache.commons.lang3.ObjectUtils;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
-
 import uk.co.alumeni.prism.domain.UniqueEntity;
 import uk.co.alumeni.prism.domain.activity.ActivityEditable;
 import uk.co.alumeni.prism.domain.advert.Advert;
@@ -26,8 +16,16 @@ import uk.co.alumeni.prism.domain.user.UserRole;
 import uk.co.alumeni.prism.domain.workflow.State;
 import uk.co.alumeni.prism.domain.workflow.StateActionPending;
 
-import com.google.common.base.Joiner;
-import com.google.common.base.Objects;
+import java.util.Map;
+import java.util.Set;
+
+import static com.google.common.base.Objects.equal;
+import static com.google.common.collect.Maps.newLinkedHashMap;
+import static org.apache.commons.lang3.ObjectUtils.firstNonNull;
+import static uk.co.alumeni.prism.PrismConstants.HYPHEN;
+import static uk.co.alumeni.prism.PrismConstants.SPACE;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.SYSTEM;
+import static uk.co.alumeni.prism.utils.PrismReflectionUtils.getProperty;
 
 public abstract class Resource implements ActivityEditable, UniqueEntity {
 
@@ -86,9 +84,9 @@ public abstract class Resource implements ActivityEditable, UniqueEntity {
     public abstract State getPreviousState();
 
     public abstract void setPreviousState(State previousState);
-    
+
     public abstract Boolean getRecentUpdate();
-    
+
     public abstract void setRecentUpdate(Boolean recentUpdate);
 
     public abstract LocalDate getDueDate();
@@ -144,20 +142,20 @@ public abstract class Resource implements ActivityEditable, UniqueEntity {
     @SuppressWarnings("unchecked")
     public <T extends Resource> T getParentResource() {
         switch (getResourceScope()) {
-        case SYSTEM:
-            return (T) this;
-        case INSTITUTION:
-            return (T) getSystem();
-        case DEPARTMENT:
-            return (T) getInstitution();
-        case PROGRAM:
-            return (T) ObjectUtils.firstNonNull(getDepartment(), getInstitution());
-        case PROJECT:
-            return (T) ObjectUtils.firstNonNull(getProgram(), getDepartment(), getInstitution());
-        case APPLICATION:
-            return (T) ObjectUtils.firstNonNull(getProject(), getProgram(), getDepartment(), getInstitution());
-        default:
-            throw new UnsupportedOperationException();
+            case SYSTEM:
+                return (T) this;
+            case INSTITUTION:
+                return (T) getSystem();
+            case DEPARTMENT:
+                return (T) getInstitution();
+            case PROGRAM:
+                return (T) ObjectUtils.firstNonNull(getDepartment(), getInstitution());
+            case PROJECT:
+                return (T) ObjectUtils.firstNonNull(getProgram(), getDepartment(), getInstitution());
+            case APPLICATION:
+                return (T) ObjectUtils.firstNonNull(getProject(), getProgram(), getDepartment(), getInstitution());
+            default:
+                throw new UnsupportedOperationException();
         }
     }
 

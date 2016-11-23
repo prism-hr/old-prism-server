@@ -1,39 +1,26 @@
 package uk.co.alumeni.prism.domain.user;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
-import javax.persistence.UniqueConstraint;
-
 import org.hibernate.annotations.Type;
 import org.joda.time.DateTime;
-
 import uk.co.alumeni.prism.domain.Invitation;
 import uk.co.alumeni.prism.domain.InvitationEntity;
 import uk.co.alumeni.prism.domain.activity.Activity;
 import uk.co.alumeni.prism.domain.advert.Advert;
 import uk.co.alumeni.prism.domain.application.Application;
-import uk.co.alumeni.prism.domain.resource.Department;
-import uk.co.alumeni.prism.domain.resource.Institution;
-import uk.co.alumeni.prism.domain.resource.Program;
-import uk.co.alumeni.prism.domain.resource.Project;
-import uk.co.alumeni.prism.domain.resource.Resource;
+import uk.co.alumeni.prism.domain.resource.*;
 import uk.co.alumeni.prism.domain.resource.System;
 import uk.co.alumeni.prism.domain.workflow.Role;
 import uk.co.alumeni.prism.domain.workflow.WorkflowResourceExecution;
 import uk.co.alumeni.prism.workflow.user.UserRoleReassignmentProcessor;
 
+import javax.persistence.*;
+
 @Entity
-@Table(name = "user_role", uniqueConstraints = { @UniqueConstraint(columnNames = { "system_id", "user_id", "role_id" }),
-        @UniqueConstraint(columnNames = { "institution_id", "user_id", "role_id" }),
-        @UniqueConstraint(columnNames = { "department_id", "user_id", "role_id" }), //
-        @UniqueConstraint(columnNames = { "program_id", "user_id", "role_id" }), @UniqueConstraint(columnNames = { "project_id", "user_id", "role_id" }), //
-        @UniqueConstraint(columnNames = { "application_id", "user_id", "role_id" }) })
+@Table(name = "user_role", uniqueConstraints = {@UniqueConstraint(columnNames = {"system_id", "user_id", "role_id"}),
+        @UniqueConstraint(columnNames = {"institution_id", "user_id", "role_id"}),
+        @UniqueConstraint(columnNames = {"department_id", "user_id", "role_id"}), //
+        @UniqueConstraint(columnNames = {"program_id", "user_id", "role_id"}), @UniqueConstraint(columnNames = {"project_id", "user_id", "role_id"}), //
+        @UniqueConstraint(columnNames = {"application_id", "user_id", "role_id"})})
 public class UserRole extends WorkflowResourceExecution implements Activity, UserAssignment<UserRoleReassignmentProcessor>, InvitationEntity {
 
     @Id

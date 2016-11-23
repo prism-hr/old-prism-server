@@ -1,12 +1,12 @@
 package uk.co.alumeni.prism.dto;
 
-import java.util.List;
-
 import uk.co.alumeni.prism.domain.comment.Comment;
 import uk.co.alumeni.prism.domain.resource.Resource;
 import uk.co.alumeni.prism.domain.user.User;
 import uk.co.alumeni.prism.domain.workflow.Action;
 import uk.co.alumeni.prism.domain.workflow.StateTransition;
+
+import java.util.List;
 
 public class ActionOutcomeDTO {
 
@@ -21,7 +21,7 @@ public class ActionOutcomeDTO {
     private Action transitionAction;
 
     private StateTransition stateTransition;
-    
+
     private Comment comment;
 
     private List<Comment> replicableSequenceComments;
@@ -119,7 +119,7 @@ public class ActionOutcomeDTO {
         this.stateTransition = stateTransition;
         return this;
     }
-    
+
     public ActionOutcomeDTO withComment(Comment comment) {
         this.comment = comment;
         return this;

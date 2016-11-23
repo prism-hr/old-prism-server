@@ -1,12 +1,11 @@
 package uk.co.alumeni.prism.rest.representation.profile;
 
-import java.math.BigDecimal;
-import java.util.List;
-
 import org.joda.time.DateTime;
-
 import uk.co.alumeni.prism.rest.representation.resource.ResourceRepresentationRelation;
 import uk.co.alumeni.prism.rest.representation.user.UserRepresentationSimple;
+
+import java.math.BigDecimal;
+import java.util.List;
 
 public class ProfileListRowRepresentation extends ProfileRepresentationMessage {
 

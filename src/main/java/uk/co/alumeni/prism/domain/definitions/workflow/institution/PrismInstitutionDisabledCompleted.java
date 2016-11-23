@@ -1,5 +1,9 @@
 package uk.co.alumeni.prism.domain.definitions.workflow.institution;
 
+import uk.co.alumeni.prism.domain.definitions.workflow.PrismStateAction;
+import uk.co.alumeni.prism.domain.definitions.workflow.PrismStateTransition;
+import uk.co.alumeni.prism.domain.definitions.workflow.PrismWorkflowState;
+
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismAction.INSTITUTION_RESTORE;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismAction.INSTITUTION_VIEW_EDIT;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismActionEnhancement.INSTITUTION_VIEW_AS_USER;
@@ -9,9 +13,6 @@ import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRoleGroup.INS
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismState.INSTITUTION_APPROVED;
 import static uk.co.alumeni.prism.domain.definitions.workflow.institution.PrismInstitutionWorkflow.institutionSendMessageApproved;
 import static uk.co.alumeni.prism.domain.definitions.workflow.institution.PrismInstitutionWorkflow.institutionViewEditAbstract;
-import uk.co.alumeni.prism.domain.definitions.workflow.PrismStateAction;
-import uk.co.alumeni.prism.domain.definitions.workflow.PrismStateTransition;
-import uk.co.alumeni.prism.domain.definitions.workflow.PrismWorkflowState;
 
 public class PrismInstitutionDisabledCompleted extends PrismWorkflowState {
 

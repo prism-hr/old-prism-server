@@ -1,8 +1,8 @@
 package uk.co.alumeni.prism.rest.dto.resource;
 
-import java.util.List;
-
 import uk.co.alumeni.prism.domain.definitions.PrismFilterEntity;
+
+import java.util.List;
 
 public class ResourceReportFilterDTO {
 

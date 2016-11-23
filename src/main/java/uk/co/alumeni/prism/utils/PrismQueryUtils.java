@@ -1,7 +1,8 @@
 package uk.co.alumeni.prism.utils;
 
-import static java.math.RoundingMode.HALF_UP;
-import static org.apache.commons.lang.StringEscapeUtils.escapeSql;
+import com.google.common.base.Joiner;
+import org.apache.commons.lang.BooleanUtils;
+import uk.co.alumeni.prism.PrismConstants;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -9,11 +10,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import org.apache.commons.lang.BooleanUtils;
-
-import uk.co.alumeni.prism.PrismConstants;
-
-import com.google.common.base.Joiner;
+import static java.math.RoundingMode.HALF_UP;
+import static org.apache.commons.lang.StringEscapeUtils.escapeSql;
 
 public class PrismQueryUtils {
 

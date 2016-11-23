@@ -1,15 +1,10 @@
 package uk.co.alumeni.prism.dto;
 
-import static uk.co.alumeni.prism.utils.PrismReflectionUtils.copyProperty;
-import static uk.co.alumeni.prism.utils.PrismReflectionUtils.getProperty;
-import static uk.co.alumeni.prism.utils.PrismReflectionUtils.hasProperty;
-import static uk.co.alumeni.prism.utils.PrismReflectionUtils.setProperty;
-
+import com.google.common.base.Objects;
 import org.springframework.beans.BeanUtils;
-
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismScope;
 
-import com.google.common.base.Objects;
+import static uk.co.alumeni.prism.utils.PrismReflectionUtils.*;
 
 public class ResourceFlatToNestedDTO implements Comparable<Object> {
 

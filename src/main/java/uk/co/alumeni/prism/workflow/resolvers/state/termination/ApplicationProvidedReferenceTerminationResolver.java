@@ -1,13 +1,12 @@
 package uk.co.alumeni.prism.workflow.resolvers.state.termination;
 
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRole.APPLICATION_REFEREE;
+import org.springframework.stereotype.Component;
+import uk.co.alumeni.prism.domain.application.Application;
+import uk.co.alumeni.prism.services.UserService;
 
 import javax.inject.Inject;
 
-import org.springframework.stereotype.Component;
-
-import uk.co.alumeni.prism.domain.application.Application;
-import uk.co.alumeni.prism.services.UserService;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRole.APPLICATION_REFEREE;
 
 @Component
 public class ApplicationProvidedReferenceTerminationResolver implements StateTerminationResolver<Application> {

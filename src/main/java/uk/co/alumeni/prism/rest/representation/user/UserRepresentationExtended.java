@@ -1,8 +1,8 @@
 package uk.co.alumeni.prism.rest.representation.user;
 
-import java.util.List;
-
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismRole.PrismRoleCategory;
+
+import java.util.List;
 
 public class UserRepresentationExtended extends UserRepresentationSimple {
 

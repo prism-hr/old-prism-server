@@ -1,18 +1,16 @@
 package uk.co.alumeni.prism.rest.dto.resource;
 
-import java.math.BigDecimal;
-import java.util.Collection;
-
+import com.google.common.base.Predicates;
+import com.google.common.collect.Collections2;
+import com.google.common.collect.Lists;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
-
 import uk.co.alumeni.prism.domain.definitions.PrismResourceListConstraint;
 import uk.co.alumeni.prism.domain.definitions.PrismResourceListFilterExpression;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismStateGroup;
 
-import com.google.common.base.Predicates;
-import com.google.common.collect.Collections2;
-import com.google.common.collect.Lists;
+import java.math.BigDecimal;
+import java.util.Collection;
 
 public class ResourceListFilterConstraintDTO {
 
@@ -175,7 +173,7 @@ public class ResourceListFilterConstraintDTO {
     }
 
     public Object[] getValues() {
-        Collection<Object> filterValues = Lists.<Object> newArrayList(valueString, valueDateStart, valueDateClose, valueStateGroup, valueDecimalStart, valueDecimalClose);
+        Collection<Object> filterValues = Lists.<Object>newArrayList(valueString, valueDateStart, valueDateClose, valueStateGroup, valueDecimalStart, valueDecimalClose);
         return (Object[]) Collections2.filter(filterValues, Predicates.notNull()).toArray();
     }
 

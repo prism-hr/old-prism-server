@@ -7,7 +7,7 @@ public class ResourceRatingSummaryDTO {
     private Resource resource;
 
     private Long resourceCount;
-    
+
     private Long ratingCount;
 
     private Double ratingAverage;
@@ -27,7 +27,7 @@ public class ResourceRatingSummaryDTO {
     public void setResourceCount(Long resourceCount) {
         this.resourceCount = resourceCount;
     }
-    
+
     public Long getRatingCount() {
         return ratingCount;
     }

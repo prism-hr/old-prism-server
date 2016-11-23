@@ -1,19 +1,18 @@
 package uk.co.alumeni.prism.dao;
 
-import static org.apache.commons.lang.WordUtils.uncapitalize;
-
-import javax.inject.Inject;
-
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.stereotype.Repository;
-
 import uk.co.alumeni.prism.domain.application.ApplicationSection;
 import uk.co.alumeni.prism.domain.profile.ProfileEmploymentPosition;
 import uk.co.alumeni.prism.domain.profile.ProfileEntity;
 import uk.co.alumeni.prism.domain.profile.ProfileQualification;
 import uk.co.alumeni.prism.domain.user.UserSection;
+
+import javax.inject.Inject;
+
+import static org.apache.commons.lang.WordUtils.uncapitalize;
 
 @Repository
 @SuppressWarnings("unchecked")

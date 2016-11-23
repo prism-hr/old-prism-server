@@ -1,24 +1,17 @@
 package uk.co.alumeni.prism.domain.message;
 
-import static com.google.common.base.Objects.equal;
-
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
-import javax.persistence.UniqueConstraint;
-
+import com.google.common.base.Objects;
 import uk.co.alumeni.prism.domain.UniqueEntity;
 import uk.co.alumeni.prism.domain.user.User;
 import uk.co.alumeni.prism.domain.user.UserAssignment;
 import uk.co.alumeni.prism.workflow.user.MessageNotificationReassignmentProcessor;
 
-import com.google.common.base.Objects;
+import javax.persistence.*;
+
+import static com.google.common.base.Objects.equal;
 
 @Entity
-@Table(name = "message_notification", uniqueConstraints = { @UniqueConstraint(columnNames = { "message_id", "user_id" }) })
+@Table(name = "message_notification", uniqueConstraints = {@UniqueConstraint(columnNames = {"message_id", "user_id"})})
 public class MessageNotification implements UserAssignment<MessageNotificationReassignmentProcessor>, UniqueEntity {
 
     @Id

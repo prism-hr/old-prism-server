@@ -1,13 +1,6 @@
 package uk.co.alumeni.prism.mapping;
 
-import java.util.List;
-import java.util.stream.Collectors;
-
-import javax.inject.Inject;
-import javax.transaction.Transactional;
-
 import org.springframework.stereotype.Service;
-
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismRole;
 import uk.co.alumeni.prism.domain.resource.Institution;
 import uk.co.alumeni.prism.domain.user.User;
@@ -16,6 +9,11 @@ import uk.co.alumeni.prism.rest.representation.resource.institution.InstitutionR
 import uk.co.alumeni.prism.rest.representation.resource.institution.InstitutionRepresentationClient;
 import uk.co.alumeni.prism.services.InstitutionService;
 import uk.co.alumeni.prism.services.UserService;
+
+import javax.inject.Inject;
+import javax.transaction.Transactional;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional

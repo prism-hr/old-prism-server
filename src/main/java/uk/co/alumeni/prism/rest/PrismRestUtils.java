@@ -1,20 +1,9 @@
 package uk.co.alumeni.prism.rest;
 
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.APPLICATION;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.DEPARTMENT;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.INSTITUTION;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.PROGRAM;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.PROJECT;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.SYSTEM;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import uk.co.alumeni.prism.domain.application.Application;
-import uk.co.alumeni.prism.domain.resource.Department;
-import uk.co.alumeni.prism.domain.resource.Institution;
-import uk.co.alumeni.prism.domain.resource.Program;
-import uk.co.alumeni.prism.domain.resource.Project;
+import uk.co.alumeni.prism.domain.resource.*;
 import uk.co.alumeni.prism.domain.resource.System;
 import uk.co.alumeni.prism.exceptions.ResourceNotFoundException;
 import uk.co.alumeni.prism.rest.representation.resource.DepartmentRepresentationClient;
@@ -22,6 +11,8 @@ import uk.co.alumeni.prism.rest.representation.resource.ResourceOpportunityRepre
 import uk.co.alumeni.prism.rest.representation.resource.ResourceRepresentationSimple;
 import uk.co.alumeni.prism.rest.representation.resource.application.ApplicationRepresentationClient;
 import uk.co.alumeni.prism.rest.representation.resource.institution.InstitutionRepresentationClient;
+
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.*;
 
 public class PrismRestUtils {
 

@@ -1,8 +1,8 @@
 package uk.co.alumeni.prism.rest.dto.comment;
 
-import javax.validation.constraints.NotNull;
-
 import org.joda.time.LocalDate;
+
+import javax.validation.constraints.NotNull;
 
 public class CommentOfferDetailDTO {
 

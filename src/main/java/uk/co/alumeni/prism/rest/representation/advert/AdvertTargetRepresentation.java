@@ -1,12 +1,12 @@
 package uk.co.alumeni.prism.rest.representation.advert;
 
-import static org.apache.commons.lang3.ObjectUtils.compare;
-
-import java.util.List;
-
 import uk.co.alumeni.prism.domain.definitions.PrismConnectionState;
 import uk.co.alumeni.prism.rest.representation.resource.ResourceRepresentationConnection;
 import uk.co.alumeni.prism.rest.representation.user.UserRepresentationSimple;
+
+import java.util.List;
+
+import static org.apache.commons.lang3.ObjectUtils.compare;
 
 public class AdvertTargetRepresentation implements Comparable<AdvertTargetRepresentation> {
 

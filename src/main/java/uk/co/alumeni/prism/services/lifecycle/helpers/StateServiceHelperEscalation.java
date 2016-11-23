@@ -1,18 +1,16 @@
 package uk.co.alumeni.prism.services.lifecycle.helpers;
 
-import java.util.List;
-import java.util.concurrent.atomic.AtomicBoolean;
-
-import javax.inject.Inject;
-
 import org.joda.time.LocalDate;
 import org.springframework.stereotype.Component;
-
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismAction;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismScope;
 import uk.co.alumeni.prism.services.ActionService;
 import uk.co.alumeni.prism.services.ResourceService;
 import uk.co.alumeni.prism.services.StateService;
+
+import javax.inject.Inject;
+import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 @Component
 public class StateServiceHelperEscalation extends PrismServiceHelperAbstract {

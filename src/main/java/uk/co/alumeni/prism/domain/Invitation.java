@@ -1,22 +1,13 @@
 package uk.co.alumeni.prism.domain;
 
-import java.util.Set;
-
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.Lob;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
-
 import uk.co.alumeni.prism.domain.advert.AdvertTarget;
 import uk.co.alumeni.prism.domain.user.User;
 import uk.co.alumeni.prism.domain.user.UserAssignment;
 import uk.co.alumeni.prism.domain.user.UserRole;
 import uk.co.alumeni.prism.workflow.user.InvitationReassignmentProcessor;
+
+import javax.persistence.*;
+import java.util.Set;
 
 @Entity
 @Table(name = "invitation")

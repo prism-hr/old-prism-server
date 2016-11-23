@@ -1,31 +1,12 @@
 package uk.co.alumeni.prism.dao;
 
-import static com.amazonaws.util.StringUtils.isNullOrEmpty;
-import static com.google.common.collect.Lists.newLinkedList;
-import static java.util.stream.Collectors.joining;
-import static java.util.stream.Collectors.toList;
-import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
-import static org.hibernate.sql.JoinType.LEFT_OUTER_JOIN;
-import static uk.co.alumeni.prism.dao.WorkflowDAO.getMatchMode;
-import static uk.co.alumeni.prism.domain.definitions.PrismPerformanceIndicator.getColumns;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismAction.APPLICATION_PROVIDE_REFERENCE;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRoleGroup.APPLICATION_CONFIRMED_INTERVIEW_GROUP;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismState.APPLICATION_INTERVIEW_PENDING_INTERVIEW;
-
-import java.util.Collection;
-import java.util.List;
-import java.util.Set;
-
-import javax.inject.Inject;
-
+import com.google.common.base.Joiner;
+import com.google.common.collect.HashMultimap;
+import com.google.common.collect.ImmutableMap;
 import org.apache.commons.collections.CollectionUtils;
 import org.hibernate.SQLQuery;
 import org.hibernate.SessionFactory;
-import org.hibernate.criterion.Junction;
-import org.hibernate.criterion.MatchMode;
-import org.hibernate.criterion.Order;
-import org.hibernate.criterion.Projections;
-import org.hibernate.criterion.Restrictions;
+import org.hibernate.criterion.*;
 import org.hibernate.sql.JoinType;
 import org.hibernate.transform.Transformers;
 import org.hibernate.type.DoubleType;
@@ -33,16 +14,9 @@ import org.hibernate.type.IntegerType;
 import org.hibernate.type.LongType;
 import org.hibernate.type.StringType;
 import org.springframework.stereotype.Repository;
-
 import uk.co.alumeni.prism.domain.UniqueEntity;
 import uk.co.alumeni.prism.domain.advert.Advert;
-import uk.co.alumeni.prism.domain.application.Application;
-import uk.co.alumeni.prism.domain.application.ApplicationEmploymentPosition;
-import uk.co.alumeni.prism.domain.application.ApplicationLocation;
-import uk.co.alumeni.prism.domain.application.ApplicationQualification;
-import uk.co.alumeni.prism.domain.application.ApplicationReferee;
-import uk.co.alumeni.prism.domain.application.ApplicationTagSection;
-import uk.co.alumeni.prism.domain.application.ApplicationTheme;
+import uk.co.alumeni.prism.domain.application.*;
 import uk.co.alumeni.prism.domain.comment.Comment;
 import uk.co.alumeni.prism.domain.definitions.PrismFilterEntity;
 import uk.co.alumeni.prism.domain.definitions.PrismRejectionReason;
@@ -58,9 +32,22 @@ import uk.co.alumeni.prism.dto.ApplicationReportListRowDTO;
 import uk.co.alumeni.prism.dto.ResourceRatingSummaryDTO;
 import uk.co.alumeni.prism.utils.PrismTemplateUtils;
 
-import com.google.common.base.Joiner;
-import com.google.common.collect.HashMultimap;
-import com.google.common.collect.ImmutableMap;
+import javax.inject.Inject;
+import java.util.Collection;
+import java.util.List;
+import java.util.Set;
+
+import static com.amazonaws.util.StringUtils.isNullOrEmpty;
+import static com.google.common.collect.Lists.newLinkedList;
+import static java.util.stream.Collectors.joining;
+import static java.util.stream.Collectors.toList;
+import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
+import static org.hibernate.sql.JoinType.LEFT_OUTER_JOIN;
+import static uk.co.alumeni.prism.dao.WorkflowDAO.getMatchMode;
+import static uk.co.alumeni.prism.domain.definitions.PrismPerformanceIndicator.getColumns;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismAction.APPLICATION_PROVIDE_REFERENCE;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRoleGroup.APPLICATION_CONFIRMED_INTERVIEW_GROUP;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismState.APPLICATION_INTERVIEW_PENDING_INTERVIEW;
 
 @Repository
 @SuppressWarnings("unchecked")

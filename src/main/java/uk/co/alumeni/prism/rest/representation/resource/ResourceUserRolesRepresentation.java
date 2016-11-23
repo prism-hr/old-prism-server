@@ -1,14 +1,13 @@
 package uk.co.alumeni.prism.rest.representation.resource;
 
-import static com.google.common.base.Objects.equal;
-import static org.apache.commons.lang3.ObjectUtils.compare;
-
-import java.util.Set;
-
+import com.google.common.base.Objects;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismRole;
 import uk.co.alumeni.prism.rest.representation.user.UserRepresentationSimple;
 
-import com.google.common.base.Objects;
+import java.util.Set;
+
+import static com.google.common.base.Objects.equal;
+import static org.apache.commons.lang3.ObjectUtils.compare;
 
 public class ResourceUserRolesRepresentation implements Comparable<ResourceUserRolesRepresentation> {
 

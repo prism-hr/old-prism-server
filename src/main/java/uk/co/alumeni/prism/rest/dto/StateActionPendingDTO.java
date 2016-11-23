@@ -1,11 +1,10 @@
 package uk.co.alumeni.prism.rest.dto;
 
-import java.util.List;
-
-import javax.validation.Valid;
-
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismRole;
 import uk.co.alumeni.prism.rest.dto.user.UserDTO;
+
+import javax.validation.Valid;
+import java.util.List;
 
 public class StateActionPendingDTO {
 

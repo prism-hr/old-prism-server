@@ -1,8 +1,7 @@
 package uk.co.alumeni.prism.domain.comment;
 
-import org.joda.time.LocalDateTime;
-
 import com.google.common.base.Objects;
+import org.joda.time.LocalDateTime;
 
 public abstract class CommentShedulingDefinition {
 

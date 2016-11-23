@@ -1,22 +1,14 @@
 package uk.co.alumeni.prism.domain.application;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
-import javax.persistence.UniqueConstraint;
-
 import org.hibernate.annotations.Type;
 import org.joda.time.DateTime;
-
 import uk.co.alumeni.prism.domain.UniqueEntity;
 import uk.co.alumeni.prism.domain.profile.ProfileAward;
 
+import javax.persistence.*;
+
 @Entity
-@Table(name = "application_award", uniqueConstraints = { @UniqueConstraint(columnNames = { "application_id", "name", "award_year", "award_month" }) })
+@Table(name = "application_award", uniqueConstraints = {@UniqueConstraint(columnNames = {"application_id", "name", "award_year", "award_month"})})
 public class ApplicationAward extends ApplicationSection implements ProfileAward<Application>, UniqueEntity {
 
     @Id

@@ -1,15 +1,13 @@
 package uk.co.alumeni.prism.services.lifecycle.helpers;
 
-import java.util.concurrent.atomic.AtomicBoolean;
-
-import javax.inject.Inject;
-
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
-
 import uk.co.alumeni.prism.services.DocumentService;
 import uk.co.alumeni.prism.services.SystemService;
+
+import javax.inject.Inject;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 @Component
 public class DocumentServiceHelperDelete extends PrismServiceHelperAbstract {

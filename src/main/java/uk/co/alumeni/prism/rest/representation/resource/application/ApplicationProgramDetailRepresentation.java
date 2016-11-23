@@ -1,20 +1,18 @@
 package uk.co.alumeni.prism.rest.representation.resource.application;
 
-import static uk.co.alumeni.prism.PrismConstants.COMMA;
-import static uk.co.alumeni.prism.PrismConstants.SPACE;
-
-import java.util.List;
-import java.util.Set;
-
+import com.google.common.base.Joiner;
+import com.google.common.collect.Sets;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.BooleanUtils;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
-
 import uk.co.alumeni.prism.domain.definitions.PrismStudyOption;
 
-import com.google.common.base.Joiner;
-import com.google.common.collect.Sets;
+import java.util.List;
+import java.util.Set;
+
+import static uk.co.alumeni.prism.PrismConstants.COMMA;
+import static uk.co.alumeni.prism.PrismConstants.SPACE;
 
 public class ApplicationProgramDetailRepresentation extends ApplicationSectionRepresentation {
 

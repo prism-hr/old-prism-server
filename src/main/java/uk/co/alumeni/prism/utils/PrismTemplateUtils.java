@@ -1,19 +1,16 @@
 package uk.co.alumeni.prism.utils;
 
-import static org.springframework.ui.freemarker.FreeMarkerTemplateUtils.processTemplateIntoString;
-
-import java.util.Map;
-
-import javax.inject.Inject;
-
+import com.google.common.base.Charsets;
+import freemarker.template.Template;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.view.freemarker.FreeMarkerConfig;
 
-import com.google.common.base.Charsets;
+import javax.inject.Inject;
+import java.util.Map;
 
-import freemarker.template.Template;
+import static org.springframework.ui.freemarker.FreeMarkerTemplateUtils.processTemplateIntoString;
 
 @Component
 public class PrismTemplateUtils {

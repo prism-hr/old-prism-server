@@ -1,15 +1,13 @@
 package uk.co.alumeni.prism.services.lifecycle.helpers;
 
-import static org.joda.time.DateTime.now;
-
-import java.util.concurrent.atomic.AtomicBoolean;
-
-import javax.inject.Inject;
-
 import org.joda.time.DateTime;
 import org.springframework.stereotype.Component;
-
 import uk.co.alumeni.prism.services.AdvertService;
+
+import javax.inject.Inject;
+import java.util.concurrent.atomic.AtomicBoolean;
+
+import static org.joda.time.DateTime.now;
 
 @Component
 public class AdvertServiceHelperAdvertTargetPending extends PrismServiceHelperAbstract {

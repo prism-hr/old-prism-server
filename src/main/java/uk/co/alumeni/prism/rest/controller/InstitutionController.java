@@ -1,22 +1,16 @@
 package uk.co.alumeni.prism.rest.controller;
 
-import java.util.List;
-
-import javax.inject.Inject;
-
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.RestController;
-
+import org.springframework.web.bind.annotation.*;
 import uk.co.alumeni.prism.domain.resource.Institution;
 import uk.co.alumeni.prism.mapping.InstitutionMapper;
 import uk.co.alumeni.prism.mapping.ResourceMapper;
 import uk.co.alumeni.prism.rest.representation.resource.ResourceRepresentationLocation;
 import uk.co.alumeni.prism.rest.representation.resource.ResourceRepresentationSimple;
 import uk.co.alumeni.prism.services.InstitutionService;
+
+import javax.inject.Inject;
+import java.util.List;
 
 @RestController
 @RequestMapping("api/institutions")

@@ -1,20 +1,18 @@
 package uk.co.alumeni.prism.workflow.selectors.filter;
 
-import static java.util.Arrays.asList;
-import static uk.co.alumeni.prism.domain.definitions.PrismResourceListConstraint.USER;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRole.APPLICATION_CREATOR;
-
-import java.util.List;
-
-import javax.inject.Inject;
-
 import org.springframework.stereotype.Component;
-
 import uk.co.alumeni.prism.domain.definitions.PrismResourceListConstraint;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismScope;
 import uk.co.alumeni.prism.rest.dto.resource.ResourceListFilterConstraintDTO;
 import uk.co.alumeni.prism.services.ResourceService;
 import uk.co.alumeni.prism.services.RoleService;
+
+import javax.inject.Inject;
+import java.util.List;
+
+import static java.util.Arrays.asList;
+import static uk.co.alumeni.prism.domain.definitions.PrismResourceListConstraint.USER;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRole.APPLICATION_CREATOR;
 
 @Component
 public class ResourceByUserAndRoleSelector implements PrismResourceListFilterSelector<Integer> {

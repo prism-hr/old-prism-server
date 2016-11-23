@@ -1,25 +1,15 @@
 package uk.co.alumeni.prism.domain.user;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
-import javax.validation.constraints.Size;
-
 import org.hibernate.annotations.Type;
 import org.joda.time.LocalDate;
-
 import uk.co.alumeni.prism.domain.Domicile;
 import uk.co.alumeni.prism.domain.definitions.PrismDisability;
 import uk.co.alumeni.prism.domain.definitions.PrismEthnicity;
 import uk.co.alumeni.prism.domain.definitions.PrismGender;
 import uk.co.alumeni.prism.domain.profile.ProfilePersonalDetail;
+
+import javax.persistence.*;
+import javax.validation.constraints.Size;
 
 @Entity
 @Table(name = "user_personal_detail")
@@ -54,15 +44,15 @@ public class UserPersonalDetail implements ProfilePersonalDetail<UserAccount> {
     @Column(name = "phone", nullable = false)
     @Size(max = 50)
     private String phone;
-    
+
     @Column(name = "skype")
     @Size(min = 6, max = 32)
     private String skype;
-    
+
     @Column(name = "ethnicity")
     @Enumerated(EnumType.STRING)
     private PrismEthnicity ethnicity;
-    
+
     @Column(name = "disability")
     @Enumerated(EnumType.STRING)
     private PrismDisability disability;
@@ -154,7 +144,7 @@ public class UserPersonalDetail implements ProfilePersonalDetail<UserAccount> {
     public void setSkype(String skype) {
         this.skype = skype;
     }
-    
+
     @Override
     public PrismEthnicity getEthnicity() {
         return ethnicity;

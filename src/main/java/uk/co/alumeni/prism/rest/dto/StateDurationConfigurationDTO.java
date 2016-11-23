@@ -1,9 +1,9 @@
 package uk.co.alumeni.prism.rest.dto;
 
-import java.util.ArrayList;
-
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismStateDurationDefinition;
 import uk.co.alumeni.prism.rest.dto.StateDurationConfigurationDTO.StateDurationConfigurationValueDTO;
+
+import java.util.ArrayList;
 
 public class StateDurationConfigurationDTO extends ArrayList<StateDurationConfigurationValueDTO> {
 

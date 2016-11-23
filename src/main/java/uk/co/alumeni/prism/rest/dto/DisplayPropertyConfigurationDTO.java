@@ -1,11 +1,10 @@
 package uk.co.alumeni.prism.rest.dto;
 
+import org.hibernate.validator.constraints.NotEmpty;
+import uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition;
+
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-
-import org.hibernate.validator.constraints.NotEmpty;
-
-import uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition;
 
 public class DisplayPropertyConfigurationDTO extends WorkflowConfigurationDTO {
 
@@ -25,11 +24,11 @@ public class DisplayPropertyConfigurationDTO extends WorkflowConfigurationDTO {
         this.definitionId = definitionId;
     }
 
-    public  String getValue() {
+    public String getValue() {
         return value;
     }
 
-    public  void setValue(String value) {
+    public void setValue(String value) {
         this.value = value;
     }
 

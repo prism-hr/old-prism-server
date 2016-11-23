@@ -1,12 +1,8 @@
 package uk.co.alumeni.prism.workflow.notification.property;
 
-import static uk.co.alumeni.prism.PrismConstants.SPACE;
-import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_FOR;
-
-import java.util.List;
-
+import com.google.common.base.Joiner;
+import com.google.common.collect.Lists;
 import org.springframework.stereotype.Component;
-
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismAction;
 import uk.co.alumeni.prism.dto.NotificationDefinitionDTO;
 import uk.co.alumeni.prism.rest.representation.user.UserActivityRepresentation;
@@ -15,8 +11,10 @@ import uk.co.alumeni.prism.rest.representation.user.UserActivityRepresentation.R
 import uk.co.alumeni.prism.services.helpers.NotificationPropertyLoader;
 import uk.co.alumeni.prism.services.helpers.PropertyLoader;
 
-import com.google.common.base.Joiner;
-import com.google.common.collect.Lists;
+import java.util.List;
+
+import static uk.co.alumeni.prism.PrismConstants.SPACE;
+import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_FOR;
 
 @Component
 public class SystemReminderSummaryBuilder implements NotificationPropertyBuilder {

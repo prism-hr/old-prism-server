@@ -1,9 +1,9 @@
 package uk.co.alumeni.prism.rest.dto;
 
-import javax.validation.constraints.NotNull;
-
 import uk.co.alumeni.prism.domain.address.AddressDefinition;
 import uk.co.alumeni.prism.domain.definitions.PrismDomicile;
+
+import javax.validation.constraints.NotNull;
 
 public class AddressDTO extends AddressDefinition<PrismDomicile> {
 

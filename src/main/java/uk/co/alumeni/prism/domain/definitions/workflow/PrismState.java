@@ -1,95 +1,24 @@
 package uk.co.alumeni.prism.domain.definitions.workflow;
 
-import static com.google.common.collect.Maps.newHashMap;
-import static com.google.common.collect.Sets.newLinkedHashSet;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismStateDurationDefinition.APPLICATION_CONFIRM_APPOINTMENT_DURATION;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismStateDurationDefinition.APPLICATION_ESCALATE_DURATION;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismStateDurationDefinition.APPLICATION_MESSAGE_DURATION;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismStateDurationDefinition.APPLICATION_PROVIDE_INTERVIEW_AVAILABILITY_DURATION;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismStateDurationDefinition.APPLICATION_PROVIDE_INTERVIEW_FEEDBACK_DURATION;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismStateDurationDefinition.APPLICATION_PROVIDE_REFERENCE_DURATION;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismStateDurationDefinition.APPLICATION_PROVIDE_REVIEW_DURATION;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismStateDurationDefinition.APPLICATION_RESERVE_DURATION;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismStateDurationDefinition.APPLICATION_RESERVE_ESCALATE_DURATION;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismStateDurationDefinition.DEPARTMENT_ESCALATE_DURATION;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismStateDurationDefinition.INSTITUTION_ESCALATE_DURATION;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismStateDurationDefinition.PROGRAM_ESCALATE_DURATION;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismStateDurationDefinition.PROJECT_ESCALATE_DURATION;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismStateDurationEvaluation.APPLICATION_INTERVIEW_DATE;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismStateDurationEvaluation.PROGRAM_CLOSING_DATE;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismStateDurationEvaluation.PROJECT_CLOSING_DATE;
-
-import java.util.HashMap;
-import java.util.Set;
-
 import org.springframework.beans.BeanUtils;
-
-import uk.co.alumeni.prism.domain.definitions.workflow.application.PrismApplicationAccepted;
-import uk.co.alumeni.prism.domain.definitions.workflow.application.PrismApplicationApproval;
-import uk.co.alumeni.prism.domain.definitions.workflow.application.PrismApplicationApprovalPendingCompletion;
-import uk.co.alumeni.prism.domain.definitions.workflow.application.PrismApplicationApprovalPendingFeedback;
-import uk.co.alumeni.prism.domain.definitions.workflow.application.PrismApplicationApproved;
-import uk.co.alumeni.prism.domain.definitions.workflow.application.PrismApplicationApprovedPendingOfferAcceptance;
-import uk.co.alumeni.prism.domain.definitions.workflow.application.PrismApplicationApprovedPendingOfferRevision;
-import uk.co.alumeni.prism.domain.definitions.workflow.application.PrismApplicationApprovedPendingOfferRevisionAcceptance;
-import uk.co.alumeni.prism.domain.definitions.workflow.application.PrismApplicationApprovedPendingPartnerAcceptance;
-import uk.co.alumeni.prism.domain.definitions.workflow.application.PrismApplicationInterview;
-import uk.co.alumeni.prism.domain.definitions.workflow.application.PrismApplicationInterviewPendingAvailability;
-import uk.co.alumeni.prism.domain.definitions.workflow.application.PrismApplicationInterviewPendingCompletion;
-import uk.co.alumeni.prism.domain.definitions.workflow.application.PrismApplicationInterviewPendingFeedback;
-import uk.co.alumeni.prism.domain.definitions.workflow.application.PrismApplicationInterviewPendingInterview;
-import uk.co.alumeni.prism.domain.definitions.workflow.application.PrismApplicationInterviewPendingScheduling;
-import uk.co.alumeni.prism.domain.definitions.workflow.application.PrismApplicationMessaging;
-import uk.co.alumeni.prism.domain.definitions.workflow.application.PrismApplicationMessagingPendingCompletion;
-import uk.co.alumeni.prism.domain.definitions.workflow.application.PrismApplicationReference;
-import uk.co.alumeni.prism.domain.definitions.workflow.application.PrismApplicationReferencePendingCompletion;
-import uk.co.alumeni.prism.domain.definitions.workflow.application.PrismApplicationRejected;
-import uk.co.alumeni.prism.domain.definitions.workflow.application.PrismApplicationRejectedCompleted;
-import uk.co.alumeni.prism.domain.definitions.workflow.application.PrismApplicationReserved;
-import uk.co.alumeni.prism.domain.definitions.workflow.application.PrismApplicationReservedPendingCompletion;
-import uk.co.alumeni.prism.domain.definitions.workflow.application.PrismApplicationReview;
-import uk.co.alumeni.prism.domain.definitions.workflow.application.PrismApplicationReviewPendingCompletion;
-import uk.co.alumeni.prism.domain.definitions.workflow.application.PrismApplicationReviewPendingFeedback;
-import uk.co.alumeni.prism.domain.definitions.workflow.application.PrismApplicationUnsubmitted;
-import uk.co.alumeni.prism.domain.definitions.workflow.application.PrismApplicationValidation;
-import uk.co.alumeni.prism.domain.definitions.workflow.application.PrismApplicationWithdrawnCompleted;
-import uk.co.alumeni.prism.domain.definitions.workflow.application.PrismApplicationWithdrawnCompletedUnsubmitted;
-import uk.co.alumeni.prism.domain.definitions.workflow.department.PrismDepartmentApproval;
-import uk.co.alumeni.prism.domain.definitions.workflow.department.PrismDepartmentApprovalPendingCorrection;
-import uk.co.alumeni.prism.domain.definitions.workflow.department.PrismDepartmentApproved;
-import uk.co.alumeni.prism.domain.definitions.workflow.department.PrismDepartmentDisabledCompleted;
-import uk.co.alumeni.prism.domain.definitions.workflow.department.PrismDepartmentParentApproval;
-import uk.co.alumeni.prism.domain.definitions.workflow.department.PrismDepartmentRejected;
-import uk.co.alumeni.prism.domain.definitions.workflow.department.PrismDepartmentUnsubmitted;
-import uk.co.alumeni.prism.domain.definitions.workflow.department.PrismDepartmentWithdrawn;
-import uk.co.alumeni.prism.domain.definitions.workflow.institution.PrismInstitutionApproval;
-import uk.co.alumeni.prism.domain.definitions.workflow.institution.PrismInstitutionApprovalPendingCorrection;
-import uk.co.alumeni.prism.domain.definitions.workflow.institution.PrismInstitutionApproved;
-import uk.co.alumeni.prism.domain.definitions.workflow.institution.PrismInstitutionDisabledCompleted;
-import uk.co.alumeni.prism.domain.definitions.workflow.institution.PrismInstitutionRejected;
-import uk.co.alumeni.prism.domain.definitions.workflow.institution.PrismInstitutionUnsubmitted;
-import uk.co.alumeni.prism.domain.definitions.workflow.institution.PrismInstitutionWithdrawn;
-import uk.co.alumeni.prism.domain.definitions.workflow.program.PrismProgramApproval;
-import uk.co.alumeni.prism.domain.definitions.workflow.program.PrismProgramApprovalPendingCorrection;
-import uk.co.alumeni.prism.domain.definitions.workflow.program.PrismProgramApproved;
-import uk.co.alumeni.prism.domain.definitions.workflow.program.PrismProgramDisabledCompleted;
-import uk.co.alumeni.prism.domain.definitions.workflow.program.PrismProgramParentApproval;
-import uk.co.alumeni.prism.domain.definitions.workflow.program.PrismProgramRejected;
-import uk.co.alumeni.prism.domain.definitions.workflow.program.PrismProgramUnsubmitted;
-import uk.co.alumeni.prism.domain.definitions.workflow.program.PrismProgramWithdrawn;
-import uk.co.alumeni.prism.domain.definitions.workflow.project.PrismProjectApproval;
-import uk.co.alumeni.prism.domain.definitions.workflow.project.PrismProjectApprovalPendingCorrection;
-import uk.co.alumeni.prism.domain.definitions.workflow.project.PrismProjectApproved;
-import uk.co.alumeni.prism.domain.definitions.workflow.project.PrismProjectDisabledCompleted;
-import uk.co.alumeni.prism.domain.definitions.workflow.project.PrismProjectParentApproval;
-import uk.co.alumeni.prism.domain.definitions.workflow.project.PrismProjectRejected;
-import uk.co.alumeni.prism.domain.definitions.workflow.project.PrismProjectUnsubmitted;
-import uk.co.alumeni.prism.domain.definitions.workflow.project.PrismProjectWithdrawn;
+import uk.co.alumeni.prism.domain.definitions.workflow.application.*;
+import uk.co.alumeni.prism.domain.definitions.workflow.department.*;
+import uk.co.alumeni.prism.domain.definitions.workflow.institution.*;
+import uk.co.alumeni.prism.domain.definitions.workflow.program.*;
+import uk.co.alumeni.prism.domain.definitions.workflow.project.*;
 import uk.co.alumeni.prism.domain.definitions.workflow.system.PrismSystemRunning;
 import uk.co.alumeni.prism.workflow.resolvers.state.transition.selection.ApplicationReferenceSelectionResolver;
 import uk.co.alumeni.prism.workflow.resolvers.state.transition.selection.StateTransitionSelectionResolver;
 import uk.co.alumeni.prism.workflow.selectors.action.ApplicationByReferencesProvidedSelector;
 import uk.co.alumeni.prism.workflow.selectors.action.PrismResourceByParentResourceSelector;
+
+import java.util.HashMap;
+import java.util.Set;
+
+import static com.google.common.collect.Maps.newHashMap;
+import static com.google.common.collect.Sets.newLinkedHashSet;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismStateDurationDefinition.*;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismStateDurationEvaluation.*;
 
 public enum PrismState {
 

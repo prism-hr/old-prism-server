@@ -1,11 +1,11 @@
 package uk.co.alumeni.prism.rest.representation.comment;
 
-import static uk.co.alumeni.prism.PrismConstants.RATING_PRECISION;
+import uk.co.alumeni.prism.domain.definitions.workflow.PrismAction;
+import uk.co.alumeni.prism.rest.representation.action.ActionRepresentation;
 
 import java.math.BigDecimal;
 
-import uk.co.alumeni.prism.domain.definitions.workflow.PrismAction;
-import uk.co.alumeni.prism.rest.representation.action.ActionRepresentation;
+import static uk.co.alumeni.prism.PrismConstants.RATING_PRECISION;
 
 public class CommentRepresentationRatingSummary extends ActionRepresentation {
 

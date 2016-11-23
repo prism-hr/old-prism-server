@@ -1,14 +1,12 @@
 package uk.co.alumeni.prism.utils;
 
-import java.util.Collection;
-
-import javax.inject.Inject;
-
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import javax.inject.Inject;
+import java.util.Collection;
 
 @Component
 public class PrismJsonMappingUtils {

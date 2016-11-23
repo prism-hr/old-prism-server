@@ -1,37 +1,24 @@
 package uk.co.alumeni.prism.mapping;
 
-import static java.util.Arrays.asList;
-import static java.util.stream.Collectors.toList;
-import static uk.co.alumeni.prism.domain.definitions.PrismOpportunityType.getOpportunityTypes;
-
-import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
-import javax.inject.Inject;
-
+import com.google.common.collect.ImmutableMap;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import uk.co.alumeni.prism.domain.definitions.PrismAdvertBenefit;
-import uk.co.alumeni.prism.domain.definitions.PrismAdvertFunction;
-import uk.co.alumeni.prism.domain.definitions.PrismAdvertIndustry;
-import uk.co.alumeni.prism.domain.definitions.PrismDisability;
-import uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition;
-import uk.co.alumeni.prism.domain.definitions.PrismEthnicity;
-import uk.co.alumeni.prism.domain.definitions.PrismOpportunityCategory;
-import uk.co.alumeni.prism.rest.representation.AgeRangeRepresentation;
-import uk.co.alumeni.prism.rest.representation.DisabilityRepresentation;
-import uk.co.alumeni.prism.rest.representation.DomicileRepresentation;
-import uk.co.alumeni.prism.rest.representation.EthnicityRepresentation;
-import uk.co.alumeni.prism.rest.representation.OpportunityCategoryRepresentation;
+import uk.co.alumeni.prism.domain.definitions.*;
+import uk.co.alumeni.prism.rest.representation.*;
 import uk.co.alumeni.prism.rest.representation.OpportunityCategoryRepresentation.OpportunityTypeRepresentation;
 import uk.co.alumeni.prism.services.PrismService;
 import uk.co.alumeni.prism.services.SystemService;
 import uk.co.alumeni.prism.services.helpers.PropertyLoader;
 
-import com.google.common.collect.ImmutableMap;
+import javax.inject.Inject;
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
+import static java.util.Arrays.asList;
+import static java.util.stream.Collectors.toList;
+import static uk.co.alumeni.prism.domain.definitions.PrismOpportunityType.getOpportunityTypes;
 
 @Service
 @Transactional

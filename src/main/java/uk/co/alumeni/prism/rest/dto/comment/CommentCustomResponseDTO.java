@@ -9,11 +9,11 @@ public class CommentCustomResponseDTO {
 
     private String propertyValue;
 
-    public  Integer getId() {
+    public Integer getId() {
         return id;
     }
 
-    public  void setId(Integer id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 

@@ -1,15 +1,9 @@
 package uk.co.alumeni.prism.domain.user;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
-
 import uk.co.alumeni.prism.domain.address.Address;
 import uk.co.alumeni.prism.domain.profile.ProfileAddress;
+
+import javax.persistence.*;
 
 @Entity
 @Table(name = "user_address")

@@ -1,18 +1,16 @@
 package uk.co.alumeni.prism.dao;
 
-import java.util.List;
-
-import javax.inject.Inject;
-
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.sql.JoinType;
 import org.springframework.stereotype.Repository;
-
 import uk.co.alumeni.prism.domain.address.Address;
 import uk.co.alumeni.prism.domain.address.AddressLocationPart;
+
+import javax.inject.Inject;
+import java.util.List;
 
 @Repository
 @SuppressWarnings("unchecked")

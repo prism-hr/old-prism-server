@@ -1,16 +1,14 @@
 package uk.co.alumeni.prism.event;
 
-import static com.google.common.base.Objects.equal;
-
-import org.springframework.context.ApplicationEvent;
-
 import com.google.common.base.Objects;
-
+import org.springframework.context.ApplicationEvent;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismAction;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismNotificationDefinition;
 import uk.co.alumeni.prism.rest.dto.resource.ResourceDTO;
 import uk.co.alumeni.prism.rest.representation.advert.AdvertListRepresentation;
 import uk.co.alumeni.prism.rest.representation.user.UserActivityRepresentation;
+
+import static com.google.common.base.Objects.equal;
 
 public class NotificationEvent extends ApplicationEvent {
 

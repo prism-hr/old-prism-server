@@ -1,8 +1,8 @@
 package uk.co.alumeni.prism.utils;
 
-import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
-
 import java.util.Collection;
+
+import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
 
 public class PrismIterableUtils {
 

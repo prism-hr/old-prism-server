@@ -1,8 +1,8 @@
 package uk.co.alumeni.prism.domain.definitions;
 
-import java.util.Map;
-
 import com.google.common.collect.Maps;
+
+import java.util.Map;
 
 public enum PrismOauthProvider {
 

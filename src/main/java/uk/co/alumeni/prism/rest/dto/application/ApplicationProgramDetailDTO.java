@@ -1,14 +1,12 @@
 package uk.co.alumeni.prism.rest.dto.application;
 
-import java.util.List;
-
-import javax.validation.constraints.NotNull;
-
 import org.joda.time.LocalDate;
-
 import uk.co.alumeni.prism.domain.definitions.PrismOpportunityCategory;
 import uk.co.alumeni.prism.domain.definitions.PrismOpportunityType;
 import uk.co.alumeni.prism.domain.definitions.PrismStudyOption;
+
+import javax.validation.constraints.NotNull;
+import java.util.List;
 
 public class ApplicationProgramDetailDTO {
 

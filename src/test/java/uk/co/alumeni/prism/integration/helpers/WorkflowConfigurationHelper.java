@@ -1,25 +1,8 @@
 package uk.co.alumeni.prism.integration.helpers;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotSame;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismActionCategory.CREATE_RESOURCE;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismActionCategory.ESCALATE_RESOURCE;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismActionCategory.INITIALISE_RESOURCE;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismActionCategory.VIEW_EDIT_RESOURCE;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRoleTransitionType.BRANCH;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRoleTransitionType.CREATE;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.SYSTEM;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismState.SYSTEM_RUNNING;
-
-import java.util.AbstractMap;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
-import java.util.Set;
-
+import com.google.common.base.Objects;
+import com.google.common.collect.HashMultimap;
+import com.google.common.collect.Sets;
 import org.apache.commons.lang.BooleanUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,33 +11,21 @@ import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import uk.co.alumeni.prism.domain.definitions.workflow.PrismActionCategory;
-import uk.co.alumeni.prism.domain.definitions.workflow.PrismActionEnhancement;
-import uk.co.alumeni.prism.domain.definitions.workflow.PrismRole;
-import uk.co.alumeni.prism.domain.definitions.workflow.PrismRoleTransitionType;
-import uk.co.alumeni.prism.domain.definitions.workflow.PrismScope;
-import uk.co.alumeni.prism.domain.definitions.workflow.PrismState;
-import uk.co.alumeni.prism.domain.definitions.workflow.PrismStateTransitionEvaluation;
+import uk.co.alumeni.prism.domain.definitions.workflow.*;
 import uk.co.alumeni.prism.domain.resource.System;
-import uk.co.alumeni.prism.domain.workflow.Action;
-import uk.co.alumeni.prism.domain.workflow.NotificationDefinition;
-import uk.co.alumeni.prism.domain.workflow.Role;
-import uk.co.alumeni.prism.domain.workflow.RoleTransition;
-import uk.co.alumeni.prism.domain.workflow.State;
-import uk.co.alumeni.prism.domain.workflow.StateAction;
-import uk.co.alumeni.prism.domain.workflow.StateActionAssignment;
-import uk.co.alumeni.prism.domain.workflow.StateDurationDefinition;
-import uk.co.alumeni.prism.domain.workflow.StateTransition;
-import uk.co.alumeni.prism.domain.workflow.StateTransitionEvaluation;
-import uk.co.alumeni.prism.domain.workflow.StateTransitionNotification;
+import uk.co.alumeni.prism.domain.workflow.*;
 import uk.co.alumeni.prism.services.ActionService;
 import uk.co.alumeni.prism.services.StateService;
 import uk.co.alumeni.prism.services.SystemService;
 
-import com.google.common.base.Objects;
-import com.google.common.collect.HashMultimap;
-import com.google.common.collect.Sets;
+import java.util.*;
+
+import static org.junit.Assert.*;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismActionCategory.*;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRoleTransitionType.BRANCH;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRoleTransitionType.CREATE;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.SYSTEM;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismState.SYSTEM_RUNNING;
 
 @Service
 @Transactional

@@ -1,22 +1,13 @@
 package uk.co.alumeni.prism.domain.user;
 
-import static com.google.common.base.Objects.equal;
-
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.Lob;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
-
+import com.google.common.base.Objects;
 import org.hibernate.annotations.Type;
 import org.joda.time.DateTime;
-
 import uk.co.alumeni.prism.domain.activity.Activity;
 
-import com.google.common.base.Objects;
+import javax.persistence.*;
+
+import static com.google.common.base.Objects.equal;
 
 @Entity
 @Table(name = "user_account_update")
@@ -99,7 +90,7 @@ public class UserAccountUpdate implements Activity {
         this.createdTimestamp = createdTimestamp;
         return this;
     }
-    
+
     @Override
     public int hashCode() {
         return Objects.hashCode(id);

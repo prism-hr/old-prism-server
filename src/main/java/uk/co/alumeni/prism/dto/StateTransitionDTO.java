@@ -5,34 +5,34 @@ import uk.co.alumeni.prism.domain.workflow.State;
 
 public class StateTransitionDTO {
 
-	private State state;
+    private State state;
 
-	private Action action;
+    private Action action;
 
-	private State transitionState;
+    private State transitionState;
 
-	public State getState() {
-		return state;
-	}
+    public State getState() {
+        return state;
+    }
 
-	public void setState(State state) {
-		this.state = state;
-	}
+    public void setState(State state) {
+        this.state = state;
+    }
 
-	public Action getAction() {
-		return action;
-	}
+    public Action getAction() {
+        return action;
+    }
 
-	public void setAction(Action action) {
-		this.action = action;
-	}
+    public void setAction(Action action) {
+        this.action = action;
+    }
 
-	public State getTransitionState() {
-		return transitionState;
-	}
+    public State getTransitionState() {
+        return transitionState;
+    }
 
-	public void setTransitionState(State transitionState) {
-		this.transitionState = transitionState;
-	}
+    public void setTransitionState(State transitionState) {
+        this.transitionState = transitionState;
+    }
 
 }

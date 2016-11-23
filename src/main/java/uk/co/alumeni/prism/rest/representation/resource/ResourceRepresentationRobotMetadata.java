@@ -1,8 +1,7 @@
 package uk.co.alumeni.prism.rest.representation.resource;
 
-import org.apache.commons.lang.StringEscapeUtils;
-
 import com.google.common.base.Joiner;
+import org.apache.commons.lang.StringEscapeUtils;
 
 public class ResourceRepresentationRobotMetadata extends ResourceRepresentationIdentity {
 

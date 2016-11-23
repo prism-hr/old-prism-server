@@ -1,14 +1,6 @@
 package uk.co.alumeni.prism.workflow.resolvers.state.transition.department;
 
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRole.DEPARTMENT_ADMINISTRATOR;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismState.DEPARTMENT_APPROVAL;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismState.DEPARTMENT_APPROVAL_PARENT_APPROVAL;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismState.DEPARTMENT_APPROVED;
-
-import javax.inject.Inject;
-
 import org.springframework.stereotype.Component;
-
 import uk.co.alumeni.prism.domain.comment.Comment;
 import uk.co.alumeni.prism.domain.resource.Department;
 import uk.co.alumeni.prism.domain.user.User;
@@ -18,6 +10,11 @@ import uk.co.alumeni.prism.services.ResourceService;
 import uk.co.alumeni.prism.services.RoleService;
 import uk.co.alumeni.prism.services.StateService;
 import uk.co.alumeni.prism.workflow.resolvers.state.transition.StateTransitionResolver;
+
+import javax.inject.Inject;
+
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRole.DEPARTMENT_ADMINISTRATOR;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismState.*;
 
 @Component
 public class DepartmentCompletedResolver implements StateTransitionResolver<Department> {

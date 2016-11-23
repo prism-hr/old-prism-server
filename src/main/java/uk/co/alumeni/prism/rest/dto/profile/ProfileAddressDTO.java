@@ -1,9 +1,9 @@
 package uk.co.alumeni.prism.rest.dto.profile;
 
+import uk.co.alumeni.prism.rest.dto.AddressDTO;
+
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
-
-import uk.co.alumeni.prism.rest.dto.AddressDTO;
 
 public class ProfileAddressDTO {
 

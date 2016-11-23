@@ -1,19 +1,11 @@
 package uk.co.alumeni.prism.domain.application;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
-
 import org.hibernate.annotations.Type;
 import org.joda.time.DateTime;
-
 import uk.co.alumeni.prism.domain.address.Address;
 import uk.co.alumeni.prism.domain.profile.ProfileAddress;
+
+import javax.persistence.*;
 
 @Entity
 @Table(name = "application_address")

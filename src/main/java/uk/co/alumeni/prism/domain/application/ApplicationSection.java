@@ -1,7 +1,6 @@
 package uk.co.alumeni.prism.domain.application;
 
 import org.joda.time.DateTime;
-
 import uk.co.alumeni.prism.domain.UniqueEntity;
 
 public abstract class ApplicationSection implements UniqueEntity {

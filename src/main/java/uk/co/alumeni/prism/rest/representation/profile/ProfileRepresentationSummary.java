@@ -1,11 +1,11 @@
 package uk.co.alumeni.prism.rest.representation.profile;
 
-import java.math.BigDecimal;
-import java.util.List;
-
 import uk.co.alumeni.prism.rest.representation.DocumentRepresentation;
 import uk.co.alumeni.prism.rest.representation.comment.CommentRepresentationRatingSummary;
 import uk.co.alumeni.prism.rest.representation.resource.ResourceRepresentationSummary;
+
+import java.math.BigDecimal;
+import java.util.List;
 
 public class ProfileRepresentationSummary extends ResourceRepresentationSummary {
 

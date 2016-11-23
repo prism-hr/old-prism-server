@@ -1,21 +1,14 @@
 package uk.co.alumeni.prism.domain.user;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
-import javax.persistence.UniqueConstraint;
-
 import uk.co.alumeni.prism.domain.advert.Advert;
 import uk.co.alumeni.prism.domain.application.ApplicationReferee;
 import uk.co.alumeni.prism.domain.profile.ProfileReferee;
 import uk.co.alumeni.prism.workflow.user.UserRefereeReassignmentProcessor;
 
+import javax.persistence.*;
+
 @Entity
-@Table(name = "user_referee", uniqueConstraints = { @UniqueConstraint(columnNames = { "user_account_id", "user_id" }) })
+@Table(name = "user_referee", uniqueConstraints = {@UniqueConstraint(columnNames = {"user_account_id", "user_id"})})
 public class UserReferee extends UserAdvertRelationSection implements ProfileReferee<UserAccount>, UserAssignment<UserRefereeReassignmentProcessor> {
 
     @Id

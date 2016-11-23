@@ -1,7 +1,5 @@
 package uk.co.alumeni.prism.security;
 
-import java.security.NoSuchAlgorithmException;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,8 +12,9 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.transaction.annotation.Transactional;
-
 import uk.co.alumeni.prism.domain.user.User;
+
+import java.security.NoSuchAlgorithmException;
 
 public class PrismAuthenticationProvider implements AuthenticationProvider {
 
@@ -51,7 +50,7 @@ public class PrismAuthenticationProvider implements AuthenticationProvider {
         try {
             user = (User) userDetailsService.loadUserByUsername(username);
             validCredentials = userAuthenticationService.validateCredentials(user, password);
-        } catch (UsernameNotFoundException e){
+        } catch (UsernameNotFoundException e) {
             validCredentials = false;
         }
 

@@ -1,19 +1,7 @@
 package uk.co.alumeni.prism.domain.message;
 
-import static com.google.common.base.Objects.equal;
-
-import java.util.Set;
-
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
-
+import com.google.common.base.Objects;
+import com.google.common.collect.Sets;
 import uk.co.alumeni.prism.domain.UniqueEntity;
 import uk.co.alumeni.prism.domain.activity.ActivityEditable;
 import uk.co.alumeni.prism.domain.advert.Advert;
@@ -23,8 +11,10 @@ import uk.co.alumeni.prism.domain.user.UserAccount;
 import uk.co.alumeni.prism.domain.user.UserAssignment;
 import uk.co.alumeni.prism.workflow.user.MessageThreadReassignmentProcessor;
 
-import com.google.common.base.Objects;
-import com.google.common.collect.Sets;
+import javax.persistence.*;
+import java.util.Set;
+
+import static com.google.common.base.Objects.equal;
 
 @Entity
 @Table(name = "message_thread")
@@ -191,7 +181,7 @@ public class MessageThread implements UserAssignment<MessageThreadReassignmentPr
         MessageThread other = (MessageThread) object;
         return equal(id, other.getId());
     }
-    
+
     @Override
     public EntitySignature getEntitySignature() {
         return new EntitySignature().addProperty("id", id);

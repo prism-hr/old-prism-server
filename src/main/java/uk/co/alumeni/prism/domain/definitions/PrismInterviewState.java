@@ -1,9 +1,8 @@
 package uk.co.alumeni.prism.domain.definitions;
 
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRole.APPLICATION_INTERVIEWER;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRole.APPLICATION_POTENTIAL_INTERVIEWER;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRole.APPLICATION_SCHEDULED_INTERVIEWER;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismRole;
+
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRole.*;
 
 public enum PrismInterviewState {
 

@@ -1,17 +1,11 @@
 package uk.co.alumeni.prism.domain.workflow;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
-import javax.persistence.UniqueConstraint;
-
 import uk.co.alumeni.prism.domain.UniqueEntity;
 
+import javax.persistence.*;
+
 @Entity
-@Table(name = "state_transition_notification", uniqueConstraints = { @UniqueConstraint(columnNames = { "state_transition_id", "role_id" }) })
+@Table(name = "state_transition_notification", uniqueConstraints = {@UniqueConstraint(columnNames = {"state_transition_id", "role_id"})})
 public class StateTransitionNotification implements UniqueEntity {
 
     @Id

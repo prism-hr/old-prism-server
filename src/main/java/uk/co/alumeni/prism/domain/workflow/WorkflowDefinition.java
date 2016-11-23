@@ -1,8 +1,7 @@
 package uk.co.alumeni.prism.domain.workflow;
 
-import uk.co.alumeni.prism.domain.UniqueEntity;
-
 import com.google.common.base.Objects;
+import uk.co.alumeni.prism.domain.UniqueEntity;
 
 public abstract class WorkflowDefinition implements UniqueEntity {
 

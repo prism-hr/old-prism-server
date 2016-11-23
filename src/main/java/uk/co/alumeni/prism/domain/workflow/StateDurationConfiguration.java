@@ -1,28 +1,17 @@
 package uk.co.alumeni.prism.domain.workflow;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
-import javax.persistence.UniqueConstraint;
-
-import uk.co.alumeni.prism.domain.resource.Department;
-import uk.co.alumeni.prism.domain.resource.Institution;
-import uk.co.alumeni.prism.domain.resource.Program;
-import uk.co.alumeni.prism.domain.resource.Project;
-import uk.co.alumeni.prism.domain.resource.Resource;
+import uk.co.alumeni.prism.domain.resource.*;
 import uk.co.alumeni.prism.domain.resource.System;
+
+import javax.persistence.*;
 
 @Entity
 @Table(name = "state_duration_configuration", uniqueConstraints = {
-        @UniqueConstraint(columnNames = { "system_id", "opportunity_type_id", "state_duration_definition_id" }),
-        @UniqueConstraint(columnNames = { "institution_id", "opportunity_type_id", "state_duration_definition_id" }),
-        @UniqueConstraint(columnNames = { "department_id", "opportunity_type_id", "state_duration_definition_id" }),
-        @UniqueConstraint(columnNames = { "program_id", "state_duration_definition_id" }),
-        @UniqueConstraint(columnNames = { "project_id", "state_duration_definition_id" }) })
+        @UniqueConstraint(columnNames = {"system_id", "opportunity_type_id", "state_duration_definition_id"}),
+        @UniqueConstraint(columnNames = {"institution_id", "opportunity_type_id", "state_duration_definition_id"}),
+        @UniqueConstraint(columnNames = {"department_id", "opportunity_type_id", "state_duration_definition_id"}),
+        @UniqueConstraint(columnNames = {"program_id", "state_duration_definition_id"}),
+        @UniqueConstraint(columnNames = {"project_id", "state_duration_definition_id"})})
 public class StateDurationConfiguration extends WorkflowConfiguration<StateDurationDefinition> {
 
     @Id

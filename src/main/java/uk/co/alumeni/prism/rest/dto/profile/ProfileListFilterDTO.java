@@ -1,8 +1,8 @@
 package uk.co.alumeni.prism.rest.dto.profile;
 
-import java.util.List;
-
 import uk.co.alumeni.prism.rest.dto.ListFilterDTO;
+
+import java.util.List;
 
 public class ProfileListFilterDTO extends ListFilterDTO {
 

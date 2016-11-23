@@ -1,11 +1,10 @@
 package uk.co.alumeni.prism.rest.dto.profile;
 
+import org.hibernate.validator.constraints.NotEmpty;
+import uk.co.alumeni.prism.rest.dto.DocumentDTO;
+
 import javax.validation.Valid;
 import javax.validation.constraints.Size;
-
-import org.hibernate.validator.constraints.NotEmpty;
-
-import uk.co.alumeni.prism.rest.dto.DocumentDTO;
 
 public class ProfileDocumentDTO {
 

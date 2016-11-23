@@ -1,12 +1,11 @@
 package uk.co.alumeni.prism.rest.dto.resource;
 
-import java.util.List;
+import org.hibernate.validator.constraints.NotEmpty;
 
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.Size;
-
-import org.hibernate.validator.constraints.NotEmpty;
+import java.util.List;
 
 public class InstitutionImportDTO {
 

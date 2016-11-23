@@ -1,8 +1,9 @@
 package uk.co.alumeni.prism.domain.workflow;
 
-import static org.apache.commons.lang3.ObjectUtils.firstNonNull;
 import uk.co.alumeni.prism.domain.application.Application;
 import uk.co.alumeni.prism.domain.resource.Resource;
+
+import static org.apache.commons.lang3.ObjectUtils.firstNonNull;
 
 public abstract class WorkflowResourceExecution extends WorkflowResource {
 

@@ -1,7 +1,6 @@
 package uk.co.alumeni.prism.rest.dto;
 
 import org.joda.time.DateTime;
-
 import uk.co.alumeni.prism.rest.dto.user.UserDTO;
 
 public class ActivityDTO {

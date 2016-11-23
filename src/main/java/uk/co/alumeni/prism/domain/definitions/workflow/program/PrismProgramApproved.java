@@ -1,9 +1,11 @@
 package uk.co.alumeni.prism.domain.definitions.workflow.program;
 
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismAction.PROGRAM_DEACTIVATE;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismAction.PROGRAM_REENDORSE;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismAction.PROGRAM_SEND_MESSAGE;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismAction.PROGRAM_UNENDORSE;
+import uk.co.alumeni.prism.domain.definitions.workflow.PrismRoleTransition;
+import uk.co.alumeni.prism.domain.definitions.workflow.PrismStateAction;
+import uk.co.alumeni.prism.domain.definitions.workflow.PrismStateTransition;
+import uk.co.alumeni.prism.domain.definitions.workflow.PrismWorkflowState;
+
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismAction.*;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRole.PROGRAM_ADMINISTRATOR;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRole.PROGRAM_ENQUIRER;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRoleGroup.PARTNERSHIP_ADMINISTRATOR_GROUP;
@@ -11,15 +13,7 @@ import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRoleGroup.PRO
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRoleTransitionType.CREATE;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismState.PROGRAM_DISABLED_COMPLETED;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismStateTransitionGroup.PROGRAM_ENDORSE_TRANSITION;
-import static uk.co.alumeni.prism.domain.definitions.workflow.program.PrismProgramWorkflow.programCreateProject;
-import static uk.co.alumeni.prism.domain.definitions.workflow.program.PrismProgramWorkflow.programEscalateApproved;
-import static uk.co.alumeni.prism.domain.definitions.workflow.program.PrismProgramWorkflow.programSendMessageApproved;
-import static uk.co.alumeni.prism.domain.definitions.workflow.program.PrismProgramWorkflow.programTerminateApproved;
-import static uk.co.alumeni.prism.domain.definitions.workflow.program.PrismProgramWorkflow.programViewEditApproved;
-import uk.co.alumeni.prism.domain.definitions.workflow.PrismRoleTransition;
-import uk.co.alumeni.prism.domain.definitions.workflow.PrismStateAction;
-import uk.co.alumeni.prism.domain.definitions.workflow.PrismStateTransition;
-import uk.co.alumeni.prism.domain.definitions.workflow.PrismWorkflowState;
+import static uk.co.alumeni.prism.domain.definitions.workflow.program.PrismProgramWorkflow.*;
 
 public class PrismProgramApproved extends PrismWorkflowState {
 

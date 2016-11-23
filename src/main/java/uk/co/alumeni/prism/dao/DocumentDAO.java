@@ -1,7 +1,5 @@
 package uk.co.alumeni.prism.dao;
 
-import java.util.List;
-
 import org.hibernate.Criteria;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Projections;
@@ -10,9 +8,10 @@ import org.hibernate.sql.JoinType;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
-
 import uk.co.alumeni.prism.domain.document.Document;
 import uk.co.alumeni.prism.domain.resource.Resource;
+
+import java.util.List;
 
 @Repository
 @SuppressWarnings("unchecked")

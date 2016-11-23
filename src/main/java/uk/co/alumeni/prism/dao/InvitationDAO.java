@@ -1,16 +1,14 @@
 package uk.co.alumeni.prism.dao;
 
-import java.util.List;
-
-import javax.inject.Inject;
-
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.stereotype.Repository;
-
 import uk.co.alumeni.prism.domain.InvitationEntity;
+
+import javax.inject.Inject;
+import java.util.List;
 
 @Repository
 public class InvitationDAO {

@@ -1,14 +1,6 @@
 package uk.co.alumeni.prism.workflow.transition.processors;
 
-import static uk.co.alumeni.prism.domain.definitions.PrismRejectionReason.POSITION;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRole.APPLICATION_HIRING_MANAGER;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRole.APPLICATION_REFEREE;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRoleTransitionType.CREATE;
-
-import javax.inject.Inject;
-
 import org.springframework.stereotype.Component;
-
 import uk.co.alumeni.prism.domain.application.Application;
 import uk.co.alumeni.prism.domain.application.ApplicationHiringManager;
 import uk.co.alumeni.prism.domain.comment.Comment;
@@ -19,6 +11,13 @@ import uk.co.alumeni.prism.domain.workflow.Role;
 import uk.co.alumeni.prism.services.ApplicationService;
 import uk.co.alumeni.prism.services.EntityService;
 import uk.co.alumeni.prism.services.RoleService;
+
+import javax.inject.Inject;
+
+import static uk.co.alumeni.prism.domain.definitions.PrismRejectionReason.POSITION;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRole.APPLICATION_HIRING_MANAGER;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRole.APPLICATION_REFEREE;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRoleTransitionType.CREATE;
 
 @Component
 public class ApplicationProcessor implements ResourceProcessor<Application> {

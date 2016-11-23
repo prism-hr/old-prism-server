@@ -1,32 +1,24 @@
 package uk.co.alumeni.prism.dao;
 
-import static uk.co.alumeni.prism.domain.definitions.PrismOpportunityType.getSystemOpportunityType;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.DEPARTMENT;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.INSTITUTION;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.PROGRAM;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.SYSTEM;
-
-import java.util.Arrays;
-import java.util.List;
-
 import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.SessionFactory;
-import org.hibernate.criterion.Criterion;
-import org.hibernate.criterion.Junction;
-import org.hibernate.criterion.Order;
-import org.hibernate.criterion.Projections;
-import org.hibernate.criterion.Restrictions;
+import org.hibernate.criterion.*;
 import org.hibernate.sql.JoinType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
-
 import uk.co.alumeni.prism.domain.definitions.PrismOpportunityType;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismConfiguration;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismScope;
 import uk.co.alumeni.prism.domain.resource.Resource;
 import uk.co.alumeni.prism.domain.workflow.WorkflowConfiguration;
 import uk.co.alumeni.prism.domain.workflow.WorkflowDefinition;
+
+import java.util.Arrays;
+import java.util.List;
+
+import static uk.co.alumeni.prism.domain.definitions.PrismOpportunityType.getSystemOpportunityType;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.*;
 
 @Repository
 @SuppressWarnings("unchecked")
@@ -281,7 +273,7 @@ public class CustomizationDAO {
         }
         return query;
     }
-    
+
     private static String getSystemInheritanceCriterion(String opportunityTypeCriterion) {
         return "and (institution in (" //
                 + "from Institution " //

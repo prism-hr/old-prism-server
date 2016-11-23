@@ -5,7 +5,7 @@ import java.util.List;
 public class ReplicableActionSequenceDTO {
 
     private List<Integer> resources;
-    
+
     private List<Integer> excludedResources;
 
     private List<Integer> templateComments;

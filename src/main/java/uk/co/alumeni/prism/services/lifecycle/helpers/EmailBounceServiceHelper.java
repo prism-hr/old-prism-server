@@ -1,12 +1,10 @@
 package uk.co.alumeni.prism.services.lifecycle.helpers;
 
-import java.util.concurrent.atomic.AtomicBoolean;
+import org.springframework.stereotype.Service;
+import uk.co.alumeni.prism.services.EmailBounceService;
 
 import javax.inject.Inject;
-
-import org.springframework.stereotype.Service;
-
-import uk.co.alumeni.prism.services.EmailBounceService;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 @Service
 public class EmailBounceServiceHelper extends PrismServiceHelperAbstract {

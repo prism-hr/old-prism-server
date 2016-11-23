@@ -1,22 +1,21 @@
 package uk.co.alumeni.prism.utils;
 
-import static com.google.common.collect.Maps.newLinkedHashMap;
-import static java.util.Arrays.stream;
-import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
-import static org.apache.commons.lang.BooleanUtils.isTrue;
-
-import java.math.BigDecimal;
-import java.util.*;
-import java.util.Map.Entry;
-
+import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 import uk.co.alumeni.prism.domain.definitions.PrismOpportunityCategory;
 import uk.co.alumeni.prism.domain.definitions.PrismOpportunityType;
 import uk.co.alumeni.prism.dto.EntityOpportunityCategoryDTO;
 import uk.co.alumeni.prism.dto.ResourceOpportunityCategoryDTO;
 import uk.co.alumeni.prism.rest.representation.ListSummaryRepresentation;
 
-import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
+import java.math.BigDecimal;
+import java.util.*;
+import java.util.Map.Entry;
+
+import static com.google.common.collect.Maps.newLinkedHashMap;
+import static java.util.Arrays.stream;
+import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
+import static org.apache.commons.lang.BooleanUtils.isTrue;
 
 public class PrismListUtils {
 

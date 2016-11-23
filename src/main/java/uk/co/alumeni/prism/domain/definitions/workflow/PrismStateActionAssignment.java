@@ -1,11 +1,11 @@
 package uk.co.alumeni.prism.domain.definitions.workflow;
 
-import static com.google.common.base.Objects.equal;
-import static com.google.common.collect.Sets.newHashSet;
+import com.google.common.base.Objects;
 
 import java.util.Set;
 
-import com.google.common.base.Objects;
+import static com.google.common.base.Objects.equal;
+import static com.google.common.collect.Sets.newHashSet;
 
 public class PrismStateActionAssignment {
 

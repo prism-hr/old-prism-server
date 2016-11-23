@@ -1,10 +1,9 @@
 package uk.co.alumeni.prism.workflow.notification.property;
 
-import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_VIEW_EDIT;
-
 import org.springframework.stereotype.Component;
-
 import uk.co.alumeni.prism.services.helpers.NotificationPropertyLoader;
+
+import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_VIEW_EDIT;
 
 @Component
 public class ActionViewEditBuilder implements NotificationPropertyBuilder {

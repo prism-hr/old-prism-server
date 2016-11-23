@@ -1,29 +1,6 @@
 package uk.co.alumeni.prism.domain.definitions.workflow;
 
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRole.APPLICATION_HIRING_MANAGER;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRole.APPLICATION_INTERVIEWEE;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRole.APPLICATION_INTERVIEWER;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRole.APPLICATION_POTENTIAL_INTERVIEWEE;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRole.APPLICATION_POTENTIAL_INTERVIEWER;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRole.APPLICATION_REVIEWER;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRole.APPLICATION_SCHEDULED_INTERVIEWEE;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRole.APPLICATION_SCHEDULED_INTERVIEWER;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRole.APPLICATION_VIEWER_RECRUITER;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRole.DEPARTMENT_ADMINISTRATOR;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRole.DEPARTMENT_APPROVER;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRole.DEPARTMENT_STUDENT;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRole.DEPARTMENT_VIEWER;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRole.INSTITUTION_ADMINISTRATOR;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRole.INSTITUTION_APPROVER;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRole.INSTITUTION_STUDENT;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRole.INSTITUTION_VIEWER;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRole.PROGRAM_ADMINISTRATOR;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRole.PROGRAM_APPROVER;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRole.PROGRAM_VIEWER;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRole.PROJECT_ADMINISTRATOR;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRole.PROJECT_APPROVER;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRole.PROJECT_VIEWER;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRole.SYSTEM_ADMINISTRATOR;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRole.*;
 
 public enum PrismRoleGroup {
 

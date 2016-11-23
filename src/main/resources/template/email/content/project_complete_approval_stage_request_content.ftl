@@ -3,7 +3,7 @@
 </h1>
 
 <p><b>
-	${PROJECT_CREATOR_FULL_NAME} has submitted a new Position for approval.
+${PROJECT_CREATOR_FULL_NAME} has submitted a new Position for approval.
 </b></p>
 
 <p>

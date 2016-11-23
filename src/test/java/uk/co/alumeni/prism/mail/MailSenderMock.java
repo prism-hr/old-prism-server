@@ -1,13 +1,9 @@
 package uk.co.alumeni.prism.mail;
 
-import static org.springframework.beans.factory.config.BeanDefinition.SCOPE_PROTOTYPE;
-
-import java.util.List;
-
+import com.google.common.collect.Lists;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismNotificationDefinition;
 import uk.co.alumeni.prism.domain.resource.Resource;
 import uk.co.alumeni.prism.domain.user.User;
@@ -16,7 +12,9 @@ import uk.co.alumeni.prism.domain.workflow.NotificationDefinition;
 import uk.co.alumeni.prism.event.NotificationEvent;
 import uk.co.alumeni.prism.services.NotificationService;
 
-import com.google.common.collect.Lists;
+import java.util.List;
+
+import static org.springframework.beans.factory.config.BeanDefinition.SCOPE_PROTOTYPE;
 
 @Service
 @Transactional

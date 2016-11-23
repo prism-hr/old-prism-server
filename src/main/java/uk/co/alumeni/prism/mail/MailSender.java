@@ -164,7 +164,6 @@ public class MailSender {
 
                 message.setContent(messageParts);
                 amazonClient.sendRawEmail(new SendRawEmailRequest(new RawMessage(getMessageData(message))));
-                amazonClient.shutdown();
             } else if (emailStrategy.equals("log")) {
                 logger.info("Sending Development Email: " + getMessageString(prismNotificationDefinition, notificationDefinitionDTO) + "\n" + subject
                         + "\nContent:\n" + htmlContent);

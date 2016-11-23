@@ -1,22 +1,11 @@
 package uk.co.alumeni.prism.rest.controller;
 
-import java.util.List;
-import java.util.Map;
-
-import javax.inject.Inject;
-import javax.validation.Valid;
-
+import com.google.common.base.CaseFormat;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import org.apache.commons.lang3.BooleanUtils;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
-
+import org.springframework.web.bind.annotation.*;
 import uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyCategory;
 import uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition;
 import uk.co.alumeni.prism.domain.definitions.PrismOpportunityType;
@@ -38,9 +27,10 @@ import uk.co.alumeni.prism.services.EntityService;
 import uk.co.alumeni.prism.services.NotificationService;
 import uk.co.alumeni.prism.utils.PrismWordUtils;
 
-import com.google.common.base.CaseFormat;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
+import javax.inject.Inject;
+import javax.validation.Valid;
+import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("api/{resourceScope:projects|programs|departments|institutions|systems}/{resourceId}/configuration")

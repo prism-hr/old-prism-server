@@ -1,46 +1,24 @@
 package uk.co.alumeni.prism.domain.definitions.workflow;
 
+import com.google.common.collect.Sets;
+import uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition;
+import uk.co.alumeni.prism.domain.definitions.PrismLocalizableDefinition;
+
+import java.util.Map;
+import java.util.Set;
+
 import static com.google.common.collect.Maps.newHashMap;
 import static com.google.common.collect.Sets.newHashSet;
 import static com.google.common.collect.Sets.newLinkedHashSet;
 import static java.util.Arrays.asList;
 import static org.apache.commons.lang3.StringUtils.leftPad;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismActionCategory.CREATE_RESOURCE;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismActionCategory.ESCALATE_RESOURCE;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismActionCategory.INITIALISE_RESOURCE;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismActionCategory.MANAGE_ACCOUNT;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismActionCategory.MESSAGE_CANDIDATE;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismActionCategory.MESSAGE_RESOURCE;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismActionCategory.PROCESS_RESOURCE;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismActionCategory.PROPAGATE_RESOURCE;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismActionCategory.VIEW_ACTIVITY_LIST;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismActionCategory.VIEW_CANDIDATE;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismActionCategory.VIEW_EDIT_RESOURCE;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismActionCategory.VIEW_RESOURCE_LIST;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismActionCategory.WITHDRAW_RESOURCE;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismActionCategory.*;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismActionRedactionType.ALL_ASSESSMENT_CONTENT;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismActionRedactionType.ALL_CONTENT;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismPartnershipState.ENDORSEMENT_PROVIDED;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismPartnershipState.ENDORSEMENT_REVOKED;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRole.APPLICATION_CREATOR;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRole.APPLICATION_INTERVIEWEE;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRole.APPLICATION_POTENTIAL_INTERVIEWEE;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRole.APPLICATION_REFEREE;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRole.APPLICATION_VIEWER_REFEREE;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.APPLICATION;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.DEPARTMENT;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.INSTITUTION;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.PROGRAM;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.PROJECT;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.SYSTEM;
-
-import java.util.Map;
-import java.util.Set;
-
-import uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition;
-import uk.co.alumeni.prism.domain.definitions.PrismLocalizableDefinition;
-
-import com.google.common.collect.Sets;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRole.*;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.*;
 
 public enum PrismAction implements PrismLocalizableDefinition {
 
@@ -221,7 +199,7 @@ public enum PrismAction implements PrismLocalizableDefinition {
     public String getZeroPaddedOrdinal() {
         return leftPad(String.valueOf(this.ordinal()), (String.valueOf(values().length).length() - 1), "0");
     }
-    
+
     public static Set<PrismAction> getTransientActions() {
         return transientActions;
     }

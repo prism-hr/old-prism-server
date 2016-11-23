@@ -1,13 +1,11 @@
 package uk.co.alumeni.prism.rest.dto;
 
-import java.util.List;
+import org.hibernate.validator.constraints.NotEmpty;
+import uk.co.alumeni.prism.domain.definitions.workflow.PrismNotificationDefinition;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
-
-import org.hibernate.validator.constraints.NotEmpty;
-
-import uk.co.alumeni.prism.domain.definitions.workflow.PrismNotificationDefinition;
+import java.util.List;
 
 public class NotificationConfigurationDTO extends WorkflowConfigurationDTO {
 

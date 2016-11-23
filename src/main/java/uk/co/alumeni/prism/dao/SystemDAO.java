@@ -1,12 +1,11 @@
 package uk.co.alumeni.prism.dao;
 
-import java.util.List;
-
-import javax.inject.Inject;
-
 import org.hibernate.SessionFactory;
 import org.hibernate.type.StringType;
 import org.springframework.stereotype.Repository;
+
+import javax.inject.Inject;
+import java.util.List;
 
 @Repository
 public class SystemDAO {

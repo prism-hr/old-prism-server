@@ -1,9 +1,5 @@
 package uk.co.alumeni.prism.utils;
 
-import static java.math.RoundingMode.HALF_UP;
-
-import java.math.BigDecimal;
-
 import org.apache.commons.lang.StringUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.helper.StringUtil;
@@ -13,6 +9,10 @@ import org.jsoup.nodes.Node;
 import org.jsoup.nodes.TextNode;
 import org.jsoup.select.NodeTraversor;
 import org.jsoup.select.NodeVisitor;
+
+import java.math.BigDecimal;
+
+import static java.math.RoundingMode.HALF_UP;
 
 public class PrismConversionUtils {
 

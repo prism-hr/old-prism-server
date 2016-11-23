@@ -1,19 +1,7 @@
 package uk.co.alumeni.prism.domain.application;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
-import javax.persistence.UniqueConstraint;
-
 import org.hibernate.annotations.Type;
 import org.joda.time.DateTime;
-
 import uk.co.alumeni.prism.domain.UniqueEntity;
 import uk.co.alumeni.prism.domain.advert.Advert;
 import uk.co.alumeni.prism.domain.document.Document;
@@ -22,8 +10,10 @@ import uk.co.alumeni.prism.domain.user.User;
 import uk.co.alumeni.prism.domain.user.UserAssignment;
 import uk.co.alumeni.prism.workflow.user.ApplicationQualificationReassignmentProcessor;
 
+import javax.persistence.*;
+
 @Entity
-@Table(name = "application_qualification", uniqueConstraints = { @UniqueConstraint(columnNames = { "application_id", "advert_id", "start_year" }) })
+@Table(name = "application_qualification", uniqueConstraints = {@UniqueConstraint(columnNames = {"application_id", "advert_id", "start_year"})})
 public class ApplicationQualification extends ApplicationAdvertRelationSection
         implements ProfileQualification<Application>, UserAssignment<ApplicationQualificationReassignmentProcessor> {
 

@@ -1,12 +1,11 @@
 package uk.co.alumeni.prism.rest.dto.advert;
 
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
-
 import org.hibernate.validator.constraints.Range;
-
 import uk.co.alumeni.prism.domain.definitions.PrismCompetenceMode;
 import uk.co.alumeni.prism.rest.dto.TagDTO;
+
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 public class AdvertCompetenceDTO extends TagDTO {
 

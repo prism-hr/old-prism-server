@@ -1,17 +1,16 @@
 package uk.co.alumeni.prism.rest.dto.profile;
 
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
-
 import org.hibernate.validator.constraints.NotEmpty;
 import org.joda.time.LocalDate;
-
 import uk.co.alumeni.prism.rest.dto.DocumentDTO;
 import uk.co.alumeni.prism.rest.dto.application.ApplicationAdvertRelationSectionDTO;
 import uk.co.alumeni.prism.rest.dto.resource.ResourceRelationCreationDTO;
 import uk.co.alumeni.prism.utils.validation.DateNotAfterDate;
 import uk.co.alumeni.prism.utils.validation.DateNotFuture;
+
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 @DateNotAfterDate(startDate = "startDate", endDate = "awardDate")
 public class ProfileQualificationDTO extends ApplicationAdvertRelationSectionDTO {

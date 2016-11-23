@@ -1,7 +1,6 @@
 package uk.co.alumeni.prism.rest.dto.resource;
 
 import org.joda.time.LocalDate;
-
 import uk.co.alumeni.prism.api.model.resource.ResourceInstanceDefinition;
 
 public class ResourceStudyOptionInstanceDTO implements ResourceInstanceDefinition {

@@ -1,38 +1,24 @@
 package uk.co.alumeni.prism.dao;
 
+import com.google.common.base.Joiner;
+import org.apache.commons.collections.CollectionUtils;
+import org.hibernate.Criteria;
+import org.hibernate.SessionFactory;
+import org.hibernate.criterion.*;
+import org.hibernate.sql.JoinType;
+import org.springframework.stereotype.Component;
+import uk.co.alumeni.prism.domain.definitions.PrismResourceListFilterExpression;
+import uk.co.alumeni.prism.domain.definitions.workflow.PrismScope;
+import uk.co.alumeni.prism.domain.resource.ResourceState;
+
+import javax.inject.Inject;
+import java.util.Collection;
+
 import static org.apache.commons.lang3.StringUtils.isEmpty;
 import static uk.co.alumeni.prism.PrismConstants.FULL_STOP;
 import static uk.co.alumeni.prism.domain.definitions.PrismResourceListFilterExpression.EQUAL;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismPartnershipState.ENDORSEMENT_REVOKED;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.APPLICATION;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.DEPARTMENT;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.INSTITUTION;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.PROGRAM;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.PROJECT;
-
-import java.util.Arrays;
-import java.util.Collection;
-
-import javax.inject.Inject;
-
-import org.apache.commons.collections.CollectionUtils;
-import org.hibernate.Criteria;
-import org.hibernate.SessionFactory;
-import org.hibernate.criterion.Criterion;
-import org.hibernate.criterion.Junction;
-import org.hibernate.criterion.MatchMode;
-import org.hibernate.criterion.Projection;
-import org.hibernate.criterion.Restrictions;
-import org.hibernate.sql.JoinType;
-import org.joda.time.DateTime;
-import org.springframework.stereotype.Component;
-
-import uk.co.alumeni.prism.domain.definitions.PrismResourceListFilterExpression;
-import uk.co.alumeni.prism.domain.definitions.workflow.PrismScope;
-import uk.co.alumeni.prism.domain.resource.Resource;
-import uk.co.alumeni.prism.domain.resource.ResourceState;
-
-import com.google.common.base.Joiner;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.*;
 
 @Component
 public class WorkflowDAO {
@@ -40,11 +26,11 @@ public class WorkflowDAO {
     @Inject
     private SessionFactory sessionFactory;
 
-    public static PrismScope[] opportunityScopes = new PrismScope[] { PROJECT, PROGRAM };
+    public static PrismScope[] opportunityScopes = new PrismScope[]{PROJECT, PROGRAM};
 
-    public static PrismScope[] organizationScopes = new PrismScope[] { DEPARTMENT, INSTITUTION };
+    public static PrismScope[] organizationScopes = new PrismScope[]{DEPARTMENT, INSTITUTION};
 
-    public static PrismScope[] advertScopes = new PrismScope[] { PROJECT, PROGRAM, DEPARTMENT, INSTITUTION };
+    public static PrismScope[] advertScopes = new PrismScope[]{PROJECT, PROGRAM, DEPARTMENT, INSTITUTION};
 
     public Criteria getWorkflowCriteriaList(PrismScope scope, Projection projection) {
         return getWorkflowCriteriaListResource(scope, projection)
@@ -52,6 +38,8 @@ public class WorkflowDAO {
                 .createAlias("userRole.user", "user", JoinType.INNER_JOIN) //
                 .createAlias("user.userAccount", "userAccount", JoinType.LEFT_OUTER_JOIN) //
                 .createAlias("userRole.role", "role", JoinType.INNER_JOIN) //
+                .createAlias("role.actionRedactions", "actionRedaction", JoinType.LEFT_OUTER_JOIN,
+                        Restrictions.eq("role.scope.id", scope))
                 .createAlias("role.stateActionAssignments", "stateActionAssignment", JoinType.INNER_JOIN,
                         Restrictions.eq("stateActionAssignment.externalMode", false)) //
                 .createAlias("stateActionAssignment.stateAction", "stateAction", JoinType.INNER_JOIN) //
@@ -71,6 +59,8 @@ public class WorkflowDAO {
                 .createAlias("userRole.user", "user", JoinType.INNER_JOIN) //
                 .createAlias("user.userAccount", "userAccount", JoinType.LEFT_OUTER_JOIN) //
                 .createAlias("userRole.role", "role", JoinType.INNER_JOIN) //
+                .createAlias("role.actionRedactions", "actionRedaction", JoinType.LEFT_OUTER_JOIN,
+                        Restrictions.eq("role.scope.id", scope))
                 .createAlias("role.stateActionAssignments", "stateActionAssignment", JoinType.INNER_JOIN,
                         Restrictions.eq("stateActionAssignment.externalMode", false)) //
                 .createAlias("stateActionAssignment.stateAction", "stateAction", JoinType.INNER_JOIN) //
@@ -101,6 +91,8 @@ public class WorkflowDAO {
                 .createAlias("userRole.user", "user", JoinType.INNER_JOIN) //
                 .createAlias("user.userAccount", "userAccount", JoinType.LEFT_OUTER_JOIN) //
                 .createAlias("userRole.role", "role", JoinType.INNER_JOIN) //
+                .createAlias("role.actionRedactions", "actionRedaction", JoinType.LEFT_OUTER_JOIN,
+                        Restrictions.eq("role.scope.id", scope))
                 .createAlias("role.stateActionAssignments", "stateActionAssignment", JoinType.INNER_JOIN,
                         Restrictions.eq("stateActionAssignment.externalMode", true)) //
                 .createAlias("stateActionAssignment.stateAction", "stateAction", JoinType.INNER_JOIN) //
@@ -146,29 +138,12 @@ public class WorkflowDAO {
                 .add(Restrictions.like(alias + "email", searchTerm, MatchMode.START));
     }
 
-    public static Junction getResourceRecentlyActiveConstraint(DateTime baseline) {
-        return Restrictions.disjunction() //
-                .add(Restrictions.eq("stateAction.raisesUrgentFlag", true)) //
-                .add(Restrictions.gt("resource.updatedTimestamp", baseline));
-    }
-
     public static Criterion getLikeConstraint(String property, String query) {
         return Restrictions.like(property, query, MatchMode.ANYWHERE);
     }
 
     public static MatchMode getMatchMode(PrismResourceListFilterExpression expression) {
         return expression.equals(EQUAL) ? MatchMode.EXACT : MatchMode.ANYWHERE;
-    }
-
-    public static Junction getUserRoleResourceConstraint(Resource resource, String userRoleAlias) {
-        Junction constraint = Restrictions.disjunction();
-        Arrays.stream(PrismScope.values()).forEach(prismScope -> {
-            Resource enclosingResource = resource.getEnclosingResource(prismScope);
-            if (enclosingResource != null) {
-                constraint.add(Restrictions.eq(Joiner.on(FULL_STOP).skipNulls().join(userRoleAlias, prismScope.getLowerCamelName()), enclosingResource));
-            }
-        });
-        return constraint;
     }
 
     public static Junction getReadMessageConstraint() {

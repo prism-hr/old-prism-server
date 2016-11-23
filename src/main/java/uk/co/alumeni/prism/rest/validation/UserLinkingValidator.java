@@ -1,23 +1,18 @@
 package uk.co.alumeni.prism.rest.validation;
 
-import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_VALIDATION_ACCOUNT_NOT_ACTIVATED;
-import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_VALIDATION_BAD_CREDENTIALS;
-import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_VALIDATION_INVALID_PASSWORD;
-import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_VALIDATION_USER_ALREADY_LINKED;
-
-import java.util.Set;
-
-import javax.inject.Inject;
-
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
 import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
-
 import uk.co.alumeni.prism.domain.user.User;
 import uk.co.alumeni.prism.rest.dto.user.UserLinkingDTO;
 import uk.co.alumeni.prism.security.UserAuthenticationService;
 import uk.co.alumeni.prism.services.UserService;
+
+import javax.inject.Inject;
+import java.util.Set;
+
+import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition.*;
 
 @Component
 public class UserLinkingValidator extends LocalValidatorFactoryBean implements Validator {

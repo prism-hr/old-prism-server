@@ -1,7 +1,6 @@
 package uk.co.alumeni.prism.rest.representation.user;
 
 import org.joda.time.DateTime;
-
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismRole.PrismRoleCategory;
 import uk.co.alumeni.prism.rest.representation.resource.ResourceRepresentationSimple;
 

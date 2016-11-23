@@ -1,13 +1,10 @@
 package uk.co.alumeni.prism.domain.definitions;
 
-import static uk.co.alumeni.prism.domain.definitions.PrismOpportunityCategory.EXPERIENCE;
-import static uk.co.alumeni.prism.domain.definitions.PrismOpportunityCategory.PERSONAL_DEVELOPMENT;
-import static uk.co.alumeni.prism.domain.definitions.PrismOpportunityCategory.STUDY;
-import static uk.co.alumeni.prism.domain.definitions.PrismOpportunityCategory.WORK;
+import uk.co.alumeni.prism.domain.definitions.workflow.PrismScope;
 
 import java.util.LinkedList;
 
-import uk.co.alumeni.prism.domain.definitions.workflow.PrismScope;
+import static uk.co.alumeni.prism.domain.definitions.PrismOpportunityCategory.*;
 
 public enum PrismResourceRelationContext {
 

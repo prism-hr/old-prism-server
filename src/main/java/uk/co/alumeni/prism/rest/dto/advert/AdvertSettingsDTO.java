@@ -1,13 +1,11 @@
 package uk.co.alumeni.prism.rest.dto.advert;
 
-import java.util.List;
+import org.hibernate.validator.constraints.URL;
+import uk.co.alumeni.prism.rest.dto.resource.ResourceConditionDTO;
 
 import javax.validation.Valid;
 import javax.validation.constraints.Size;
-
-import org.hibernate.validator.constraints.URL;
-
-import uk.co.alumeni.prism.rest.dto.resource.ResourceConditionDTO;
+import java.util.List;
 
 public class AdvertSettingsDTO {
 

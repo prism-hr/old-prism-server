@@ -1,20 +1,13 @@
 package uk.co.alumeni.prism.rest.dto;
 
-import java.math.BigDecimal;
-import java.util.List;
+import uk.co.alumeni.prism.domain.definitions.*;
+import uk.co.alumeni.prism.domain.definitions.workflow.PrismScope;
 
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
-
-import uk.co.alumeni.prism.domain.definitions.PrismAdvertFunction;
-import uk.co.alumeni.prism.domain.definitions.PrismAdvertIndustry;
-import uk.co.alumeni.prism.domain.definitions.PrismDurationUnit;
-import uk.co.alumeni.prism.domain.definitions.PrismOpportunityCategory;
-import uk.co.alumeni.prism.domain.definitions.PrismOpportunityType;
-import uk.co.alumeni.prism.domain.definitions.PrismResourceContext;
-import uk.co.alumeni.prism.domain.definitions.PrismStudyOption;
-import uk.co.alumeni.prism.domain.definitions.workflow.PrismScope;
+import java.math.BigDecimal;
+import java.util.List;
 
 public class OpportunityQueryDTO {
 

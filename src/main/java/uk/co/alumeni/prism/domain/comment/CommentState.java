@@ -1,18 +1,11 @@
 package uk.co.alumeni.prism.domain.comment;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
-import javax.persistence.UniqueConstraint;
-
 import uk.co.alumeni.prism.domain.workflow.State;
 
+import javax.persistence.*;
+
 @Entity
-@Table(name = "comment_state", uniqueConstraints = { @UniqueConstraint(columnNames = { "comment_id", "state_id" }) })
+@Table(name = "comment_state", uniqueConstraints = {@UniqueConstraint(columnNames = {"comment_id", "state_id"})})
 public class CommentState extends CommentStateDefinition {
 
     @Id

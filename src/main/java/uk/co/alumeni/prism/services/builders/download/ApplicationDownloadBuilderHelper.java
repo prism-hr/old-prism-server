@@ -1,35 +1,25 @@
 package uk.co.alumeni.prism.services.builders.download;
 
-import static org.apache.commons.lang.StringUtils.isBlank;
-import static org.apache.commons.lang3.text.WordUtils.capitalizeFully;
-import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_VALUE_NOT_PROVIDED;
-import static uk.co.alumeni.prism.utils.PrismReflectionUtils.invokeMethod;
-
-import java.io.IOException;
-import java.io.OutputStream;
-
+import com.google.common.io.Resources;
+import com.itextpdf.text.*;
+import com.itextpdf.text.pdf.PdfPCell;
+import com.itextpdf.text.pdf.PdfPTable;
+import com.itextpdf.text.pdf.PdfWriter;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.text.WordUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
-
 import uk.co.alumeni.prism.services.builders.download.ApplicationDownloadBuilderConfiguration.ApplicationDownloadBuilderColor;
 import uk.co.alumeni.prism.services.builders.download.ApplicationDownloadBuilderConfiguration.ApplicationDownloadBuilderFontSize;
 import uk.co.alumeni.prism.services.helpers.PropertyLoader;
 
-import com.google.common.io.Resources;
-import com.itextpdf.text.Anchor;
-import com.itextpdf.text.BadElementException;
-import com.itextpdf.text.Document;
-import com.itextpdf.text.DocumentException;
-import com.itextpdf.text.Element;
-import com.itextpdf.text.Image;
-import com.itextpdf.text.PageSize;
-import com.itextpdf.text.Paragraph;
-import com.itextpdf.text.Phrase;
-import com.itextpdf.text.pdf.PdfPCell;
-import com.itextpdf.text.pdf.PdfPTable;
-import com.itextpdf.text.pdf.PdfWriter;
+import java.io.IOException;
+import java.io.OutputStream;
+
+import static org.apache.commons.lang.StringUtils.isBlank;
+import static org.apache.commons.lang3.text.WordUtils.capitalizeFully;
+import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_VALUE_NOT_PROVIDED;
+import static uk.co.alumeni.prism.utils.PrismReflectionUtils.invokeMethod;
 
 @Component
 public class ApplicationDownloadBuilderHelper {

@@ -1,5 +1,28 @@
 package uk.co.alumeni.prism.domain.advert;
 
+import com.google.common.base.Objects;
+import org.apache.commons.lang3.ObjectUtils;
+import org.hibernate.annotations.OrderBy;
+import org.hibernate.annotations.Type;
+import org.joda.time.LocalDate;
+import uk.co.alumeni.prism.domain.UniqueEntity;
+import uk.co.alumeni.prism.domain.address.Address;
+import uk.co.alumeni.prism.domain.application.Application;
+import uk.co.alumeni.prism.domain.definitions.workflow.PrismScope;
+import uk.co.alumeni.prism.domain.document.Document;
+import uk.co.alumeni.prism.domain.resource.*;
+import uk.co.alumeni.prism.domain.resource.System;
+import uk.co.alumeni.prism.domain.user.User;
+import uk.co.alumeni.prism.domain.user.UserAssignment;
+import uk.co.alumeni.prism.domain.workflow.OpportunityType;
+import uk.co.alumeni.prism.domain.workflow.Scope;
+import uk.co.alumeni.prism.workflow.user.AdvertReassignmentProcessor;
+
+import javax.persistence.*;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
 import static com.google.common.base.Objects.equal;
 import static com.google.common.collect.Lists.newArrayList;
 import static com.google.common.collect.Sets.newHashSet;
@@ -12,51 +35,8 @@ import static uk.co.alumeni.prism.dao.WorkflowDAO.advertScopes;
 import static uk.co.alumeni.prism.utils.PrismReflectionUtils.getProperty;
 import static uk.co.alumeni.prism.utils.PrismReflectionUtils.setProperty;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import javax.persistence.Column;
-import javax.persistence.Embedded;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.Lob;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
-import javax.persistence.UniqueConstraint;
-
-import org.apache.commons.lang3.ObjectUtils;
-import org.hibernate.annotations.OrderBy;
-import org.hibernate.annotations.Type;
-import org.joda.time.LocalDate;
-
-import uk.co.alumeni.prism.domain.UniqueEntity;
-import uk.co.alumeni.prism.domain.address.Address;
-import uk.co.alumeni.prism.domain.application.Application;
-import uk.co.alumeni.prism.domain.definitions.workflow.PrismScope;
-import uk.co.alumeni.prism.domain.document.Document;
-import uk.co.alumeni.prism.domain.resource.Department;
-import uk.co.alumeni.prism.domain.resource.Institution;
-import uk.co.alumeni.prism.domain.resource.Program;
-import uk.co.alumeni.prism.domain.resource.Project;
-import uk.co.alumeni.prism.domain.resource.Resource;
-import uk.co.alumeni.prism.domain.resource.ResourceOpportunity;
-import uk.co.alumeni.prism.domain.resource.ResourceParent;
-import uk.co.alumeni.prism.domain.resource.System;
-import uk.co.alumeni.prism.domain.user.User;
-import uk.co.alumeni.prism.domain.user.UserAssignment;
-import uk.co.alumeni.prism.domain.workflow.OpportunityType;
-import uk.co.alumeni.prism.domain.workflow.Scope;
-import uk.co.alumeni.prism.workflow.user.AdvertReassignmentProcessor;
-
-import com.google.common.base.Objects;
-
 @Entity
-@Table(name = "advert", uniqueConstraints = { @UniqueConstraint(columnNames = { "institution_id", "department_id", "program_id", "project_id" }) })
+@Table(name = "advert", uniqueConstraints = {@UniqueConstraint(columnNames = {"institution_id", "department_id", "program_id", "project_id"})})
 public class Advert implements UniqueEntity, UserAssignment<AdvertReassignmentProcessor>, Comparable<Advert> {
 
     @Id
@@ -557,7 +537,7 @@ public class Advert implements UniqueEntity, UserAssignment<AdvertReassignmentPr
 
     @Override
     public String toString() {
-        return stream(new ResourceParent[] { institution, department, program, project }).filter(resource -> resource != null)
+        return stream(new ResourceParent[]{institution, department, program, project}).filter(resource -> resource != null)
                 .map(resource -> resource.getAdvert().getName()).collect(joining(SPACE + HYPHEN + SPACE));
     }
 

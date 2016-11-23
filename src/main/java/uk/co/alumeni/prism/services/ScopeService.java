@@ -1,18 +1,15 @@
 package uk.co.alumeni.prism.services;
 
-import java.util.List;
-
-import javax.inject.Inject;
-
+import com.google.common.collect.HashMultimap;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
 import uk.co.alumeni.prism.dao.ScopeDAO;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismScope;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismState;
 import uk.co.alumeni.prism.domain.workflow.Scope;
 
-import com.google.common.collect.HashMultimap;
+import javax.inject.Inject;
+import java.util.List;
 
 @Service
 @Transactional

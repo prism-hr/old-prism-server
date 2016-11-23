@@ -3,7 +3,7 @@
 </h1>
 
 <p><b>
-	${PROGRAM_CREATOR_FULL_NAME} has submitted a new Program for approval.
+${PROGRAM_CREATOR_FULL_NAME} has submitted a new Program for approval.
 </b></p>
 
 <p>

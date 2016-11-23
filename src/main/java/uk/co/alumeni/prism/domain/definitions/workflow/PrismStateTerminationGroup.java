@@ -1,8 +1,6 @@
 package uk.co.alumeni.prism.domain.definitions.workflow;
 
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismState.APPLICATION_MESSAGING;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismState.APPLICATION_MESSAGING_PENDING_COMPLETION;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismState.APPLICATION_REFERENCE;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismState.*;
 
 public enum PrismStateTerminationGroup {
 

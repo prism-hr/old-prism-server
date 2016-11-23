@@ -1,14 +1,12 @@
 package uk.co.alumeni.prism.workflow.selectors.filter;
 
-import java.util.List;
-
-import javax.inject.Inject;
-
 import org.springframework.stereotype.Component;
-
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismScope;
 import uk.co.alumeni.prism.rest.dto.resource.ResourceListFilterConstraintDTO;
 import uk.co.alumeni.prism.services.ApplicationService;
+
+import javax.inject.Inject;
+import java.util.List;
 
 @Component
 public class ApplicationBySecondaryLocationSelector implements PrismResourceListFilterSelector<Integer> {

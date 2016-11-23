@@ -1,55 +1,7 @@
 package uk.co.alumeni.prism.domain.comment;
 
-import static java.util.Arrays.asList;
-import static org.apache.commons.lang.ArrayUtils.contains;
-import static org.apache.commons.lang.BooleanUtils.isTrue;
-import static uk.co.alumeni.prism.dao.WorkflowDAO.advertScopes;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismAction.APPLICATION_ASSIGN_INTERVIEWERS;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismAction.APPLICATION_ASSIGN_REVIEWERS;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismAction.APPLICATION_COMPLETE;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismAction.APPLICATION_CONFIRM_INTERVIEW_ARRANGEMENTS;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismAction.APPLICATION_CONFIRM_OFFER;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismAction.APPLICATION_CONFIRM_OFFER_ACCEPTANCE;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismAction.APPLICATION_CONFIRM_REJECTION;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismAction.APPLICATION_ESCALATE;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismAction.APPLICATION_PROVIDE_REFERENCE;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismAction.APPLICATION_REVISE_OFFER;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismAction.APPLICATION_UPLOAD_REFERENCE;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismAction.APPLICATION_VIEW_EDIT;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismAction.APPLICATION_WITHDRAW;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismAction.DEPARTMENT_CREATE_APPLICATION;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismAction.INSTITUTION_CREATE_APPLICATION;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismAction.PROJECT_CREATE_APPLICATION;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismActionCategory.CREATE_RESOURCE;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismActionCategory.VIEW_EDIT_RESOURCE;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismState.APPLICATION_INTERVIEW_PENDING_FEEDBACK;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismState.APPLICATION_INTERVIEW_PENDING_INTERVIEW;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismState.APPLICATION_REFERENCE;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismState.APPLICATION_REJECTED_COMPLETED;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismState.APPLICATION_WITHDRAWN_COMPLETED;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismState.APPLICATION_WITHDRAWN_COMPLETED_UNSUBMITTED;
-
-import java.math.BigDecimal;
-import java.util.Set;
-import java.util.TimeZone;
-
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Embedded;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.Lob;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
-import javax.persistence.Transient;
-
+import com.google.common.base.Objects;
+import com.google.common.collect.Sets;
 import org.apache.commons.lang.BooleanUtils;
 import org.hibernate.annotations.OrderBy;
 import org.hibernate.annotations.Type;
@@ -57,7 +9,6 @@ import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 import org.joda.time.LocalDate;
 import org.joda.time.LocalDateTime;
-
 import uk.co.alumeni.prism.domain.Competence;
 import uk.co.alumeni.prism.domain.activity.Activity;
 import uk.co.alumeni.prism.domain.application.Application;
@@ -69,23 +20,26 @@ import uk.co.alumeni.prism.domain.definitions.workflow.PrismRoleTransitionType;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismScope;
 import uk.co.alumeni.prism.domain.document.Document;
 import uk.co.alumeni.prism.domain.message.MessageThread;
-import uk.co.alumeni.prism.domain.resource.Department;
-import uk.co.alumeni.prism.domain.resource.Institution;
-import uk.co.alumeni.prism.domain.resource.Program;
-import uk.co.alumeni.prism.domain.resource.Project;
-import uk.co.alumeni.prism.domain.resource.Resource;
+import uk.co.alumeni.prism.domain.resource.*;
 import uk.co.alumeni.prism.domain.resource.System;
 import uk.co.alumeni.prism.domain.user.User;
 import uk.co.alumeni.prism.domain.user.UserAssignment;
-import uk.co.alumeni.prism.domain.workflow.Action;
-import uk.co.alumeni.prism.domain.workflow.Role;
-import uk.co.alumeni.prism.domain.workflow.State;
-import uk.co.alumeni.prism.domain.workflow.StateGroup;
-import uk.co.alumeni.prism.domain.workflow.WorkflowResourceExecution;
+import uk.co.alumeni.prism.domain.workflow.*;
 import uk.co.alumeni.prism.workflow.user.CommentReassignmentProcessor;
 
-import com.google.common.base.Objects;
-import com.google.common.collect.Sets;
+import javax.persistence.*;
+import java.math.BigDecimal;
+import java.util.Set;
+import java.util.TimeZone;
+
+import static java.util.Arrays.asList;
+import static org.apache.commons.lang.ArrayUtils.contains;
+import static org.apache.commons.lang.BooleanUtils.isTrue;
+import static uk.co.alumeni.prism.dao.WorkflowDAO.advertScopes;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismAction.*;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismActionCategory.CREATE_RESOURCE;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismActionCategory.VIEW_EDIT_RESOURCE;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismState.*;
 
 @Entity
 @Table(name = "comment")
@@ -743,7 +697,7 @@ public class Comment extends WorkflowResourceExecution implements Activity, User
     public boolean isApplicationUpdateRefereesComment() {
         return isApplicationViewEditComment()
                 && (transitionState.getId().equals(APPLICATION_REFERENCE) || secondaryTransitionStates.contains(new State()
-                        .withId(APPLICATION_REFERENCE)));
+                .withId(APPLICATION_REFERENCE)));
     }
 
     public boolean isInterviewScheduledExpeditedComment() {
@@ -804,14 +758,14 @@ public class Comment extends WorkflowResourceExecution implements Activity, User
         LocalDateTime interviewDateTime = interviewAppointment == null ? null : interviewAppointment.getInterviewDateTime();
         return interviewDateTime == null ? false
                 : interviewAppointment.getInterviewDateTime().toDateTime(DateTimeZone.forTimeZone(interviewAppointment.getInterviewTimeZone()))
-                        .isAfter(baseline);
+                .isAfter(baseline);
     }
 
     public boolean isApplicationInterviewRecordedComment(DateTime baseline) {
         LocalDateTime interviewDateTime = interviewAppointment == null ? null : interviewAppointment.getInterviewDateTime();
         return interviewDateTime == null ? false
                 : interviewAppointment.getInterviewDateTime().toDateTime(DateTimeZone.forTimeZone(interviewAppointment.getInterviewTimeZone()))
-                        .isBefore(baseline);
+                .isBefore(baseline);
     }
 
     public boolean isRatingComment(PrismScope scope) {
@@ -831,10 +785,10 @@ public class Comment extends WorkflowResourceExecution implements Activity, User
         PrismAction prismAction = action.getId();
         return contains(advertScopes, prismAction.getScope()) && transitionState.getId().name().endsWith("_APPROVED");
     }
-    
+
     public boolean isAdvertDisableComment() {
         PrismAction prismAction = action.getId();
-        return contains(advertScopes, prismAction.getScope()) && transitionState.getId().name().endsWith("_DISABLED_COMPLETED"); 
+        return contains(advertScopes, prismAction.getScope()) && transitionState.getId().name().endsWith("_DISABLED_COMPLETED");
     }
 
     public boolean isRestoreComment() {

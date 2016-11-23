@@ -1,16 +1,16 @@
 package uk.co.alumeni.prism.rest.representation.action;
 
-import java.util.List;
-
 import uk.co.alumeni.prism.rest.dto.resource.ResourceListFilterDTO;
 import uk.co.alumeni.prism.rest.representation.comment.CommentRepresentation;
+
+import java.util.List;
 
 public class ActionOutcomeReplicableRepresentation {
 
     private ResourceListFilterDTO filter;
 
     private List<CommentRepresentation> sequenceComments;
-    
+
     public ResourceListFilterDTO getFilter() {
         return filter;
     }

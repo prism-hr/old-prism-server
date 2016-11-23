@@ -1,8 +1,9 @@
 package uk.co.alumeni.prism.rest.representation.resource;
 
-import static org.apache.commons.lang3.ObjectUtils.compare;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismScope;
 import uk.co.alumeni.prism.rest.representation.DocumentRepresentation;
+
+import static org.apache.commons.lang3.ObjectUtils.compare;
 
 public class ResourceRepresentationOccurrence extends ResourceRepresentationIdentity {
 

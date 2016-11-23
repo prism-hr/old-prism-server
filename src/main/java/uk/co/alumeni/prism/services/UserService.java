@@ -2,6 +2,7 @@ package uk.co.alumeni.prism.services;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.*;
+import org.apache.commons.lang.BooleanUtils;
 import org.hibernate.SessionFactory;
 import org.hibernate.metadata.ClassMetadata;
 import org.joda.time.DateTime;
@@ -338,7 +339,7 @@ public class UserService {
         for (ApplicationReferee applicationReferee : application.getReferees()) {
             User referee = applicationReferee.getUser();
             Comment referenceComment = applicationReferee.getComment();
-            if ((referenceComment == null || isFalse(referenceComment.getDeclinedResponse())) && !userNotInterestedEvents.containsKey(referee)) {
+            if ((referenceComment == null || BooleanUtils.isFalse(referenceComment.getDeclinedResponse())) && !userNotInterestedEvents.containsKey(referee)) {
                 orderedUsers.add(new UserSelectionDTO().withId(referee.getId()).withFirstName(referee.getFirstName()).withLastName(referee.getLastName())
                         .withEmail(referee.getEmail()).withEventTimestamp(baseline));
             }

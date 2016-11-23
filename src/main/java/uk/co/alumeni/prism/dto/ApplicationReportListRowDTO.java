@@ -52,7 +52,7 @@ public class ApplicationReportListRowDTO {
 
     private String secondaryLocationInstitution;
 
-	private String secondaryLocationDepartment;
+    private String secondaryLocationDepartment;
     private String secondaryLocationDescription;
 
     private String userSupervisorInitialFirstName;

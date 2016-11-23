@@ -124,10 +124,12 @@ public class DocumentService {
     public void validateDownload(Document document) {
         User user = userService.getCurrentUser();
         Resource resource = document.getResource();
-        if (!user.getId().equals(document.getUser().getId())) {
-            Action viewEditAction = actionService.getViewEditAction(resource);
-            if (viewEditAction == null || !actionService.checkActionAvailable(resource, viewEditAction, user, false)) {
-                throw new WorkflowPermissionException(resource, viewEditAction);
+        if (resource != null) {
+            if (!user.getId().equals(document.getUser().getId())) {
+                Action viewEditAction = actionService.getViewEditAction(resource);
+                if (viewEditAction == null || !actionService.checkActionAvailable(resource, viewEditAction, user, false)) {
+                    throw new WorkflowPermissionException(resource, viewEditAction);
+                }
             }
         }
     }

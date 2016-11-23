@@ -3,6 +3,7 @@ package uk.co.alumeni.prism.mapping;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
+import org.apache.commons.lang.BooleanUtils;
 import org.joda.time.LocalDate;
 import org.joda.time.LocalDateTime;
 import org.springframework.beans.BeanUtils;

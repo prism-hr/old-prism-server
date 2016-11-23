@@ -26,16 +26,23 @@ public enum PrismApplicationReportColumn {
     PRIMARY_THEME(APPLICATION_PRIMARY_THEME, "primaryThemeTag.name", null, false, "primaryTheme", STRING), //
     SECONDARY_THEME(APPLICATION_SECONDARY_THEME, "secondaryThemeTag.name", null, false, "secondaryTheme", STRING), //
     PRIMARY_LOCATION_INSTITUTION(APPLICATION_PRIMARY_LOCATION_INSTITUTION, "primaryLocationInstitution.name", null, false, "primaryLocationInstitution", STRING), //
-    PRIMARY_LOCATION_DEPARTMENT(PrismDisplayPropertyDefinition.APPLICATION_PRIMARY_LOCATION_DEPARTMENT, "primaryLocationDepartment.name", null, false, "primaryLocationDepartment", STRING), //
-    PRIMARY_LOCATION_DESCRIPTION(APPLICATION_PRIMARY_LOCATION_DESCRIPTION, "primaryLocation.description", null, false, "primaryLocationDescription", STRING), //
-    SECONDARY_LOCATION(APPLICATION_SECONDARY_LOCATION, "concat(secondaryLocationInstitution.name, ' ', secondaryLocationDepartment.name)", null, false, "secondaryLocation",
+    PRIMARY_LOCATION_DEPARTMENT(PrismDisplayPropertyDefinition.APPLICATION_PRIMARY_LOCATION_DEPARTMENT, "primaryLocationDepartment.name", null, false, "primaryLocationDepartment",
             STRING), //
+    PRIMARY_LOCATION_DESCRIPTION(APPLICATION_PRIMARY_LOCATION_DESCRIPTION, "primaryLocation.description", null, false, "primaryLocationDescription", STRING), //
+    SECONDARY_LOCATION_INSTITUTION(APPLICATION_SECONDARY_LOCATION_INSTITUTION, "secondaryLocationInstitution.name", null, false, "secondaryLocationInstitution", STRING), //
+    SECONDARY_LOCATION_DEPARTMENT(PrismDisplayPropertyDefinition.APPLICATION_SECONDARY_LOCATION_DEPARTMENT, "secondaryLocationDepartment.name", null, false,
+            "secondaryLocationDepartment", STRING), //
     SECONDARY_LOCATION_DESCRIPTION(APPLICATION_SECONDARY_LOCATION_DESCRIPTION, "secondaryLocation.description", null, false, "secondaryLocationDescription", STRING), //
-    SUPERVISOR_INITIAL_FIRSTNAME(PrismDisplayPropertyDefinition.APPLICATION_SUPERVISOR_INITIAL_FIRSTNAME, "userSupervisorInitial.firstName", null, false, "userSupervisorInitialFirstName", STRING), //
-    SUPERVISOR_INITIAL_LASTNAME(PrismDisplayPropertyDefinition.APPLICATION_SUPERVISOR_INITIAL_LASTNAME, "userSupervisorInitial.lastName", null, false, "userSupervisorInitialLastName", STRING), //
-    SUPERVISOR_INITIAL_EMAIL(PrismDisplayPropertyDefinition.APPLICATION_SUPERVISOR_INITIAL_EMAIL, "userSupervisorInitial.email", null, false, "userSupervisorInitialEmail", STRING), //
-    SUPERVISOR_FINAL_FIRSTNAME(PrismDisplayPropertyDefinition.APPLICATION_SUPERVISOR_FINAL_FIRSTNAME, "userSupervisorFinal.firstName", null, false, "userSupervisorFinalFirstName", STRING), //
-    SUPERVISOR_FINAL_LASTNAME(PrismDisplayPropertyDefinition.APPLICATION_SUPERVISOR_FINAL_LASTNAME, "userSupervisorFinal.lastName", null, false, "userSupervisorFinalLastName", STRING), //
+    SUPERVISOR_INITIAL_FIRSTNAME(PrismDisplayPropertyDefinition.APPLICATION_SUPERVISOR_INITIAL_FIRSTNAME, "userSupervisorInitial.firstName", null, false,
+            "userSupervisorInitialFirstName", STRING), //
+    SUPERVISOR_INITIAL_LASTNAME(PrismDisplayPropertyDefinition.APPLICATION_SUPERVISOR_INITIAL_LASTNAME, "userSupervisorInitial.lastName", null, false,
+            "userSupervisorInitialLastName", STRING), //
+    SUPERVISOR_INITIAL_EMAIL(PrismDisplayPropertyDefinition.APPLICATION_SUPERVISOR_INITIAL_EMAIL, "userSupervisorInitial.email", null, false, "userSupervisorInitialEmail", STRING),
+    //
+    SUPERVISOR_FINAL_FIRSTNAME(PrismDisplayPropertyDefinition.APPLICATION_SUPERVISOR_FINAL_FIRSTNAME, "userSupervisorFinal.firstName", null, false, "userSupervisorFinalFirstName",
+            STRING), //
+    SUPERVISOR_FINAL_LASTNAME(PrismDisplayPropertyDefinition.APPLICATION_SUPERVISOR_FINAL_LASTNAME, "userSupervisorFinal.lastName", null, false, "userSupervisorFinalLastName",
+            STRING), //
     SUPERVISOR_FINAL_EMAIL(PrismDisplayPropertyDefinition.APPLICATION_SUPERVISOR_FINAL_EMAIL, "userSupervisorFinal.email", null, false, "userSupervisorFinalEmail", STRING), //
     APPLICATION_YEAR(SYSTEM_ACADEMIC_YEAR, "application.applicationYear", null, false, "applicationYear", STRING), //
     CREATED_DATE(SYSTEM_CREATED_DATE, "application.createdTimestamp", null, false, "createdDate", DATE), //

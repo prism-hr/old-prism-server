@@ -1,14 +1,13 @@
 package uk.co.alumeni.prism.rest.dto.profile;
 
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
-
 import org.hibernate.validator.constraints.NotEmpty;
-
 import uk.co.alumeni.prism.rest.dto.application.ApplicationAdvertRelationSectionDTO;
 import uk.co.alumeni.prism.rest.dto.resource.ResourceRelationCreationDTO;
 import uk.co.alumeni.prism.utils.validation.PhoneNumber;
+
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 public class ProfileRefereeDTO extends ApplicationAdvertRelationSectionDTO {
 

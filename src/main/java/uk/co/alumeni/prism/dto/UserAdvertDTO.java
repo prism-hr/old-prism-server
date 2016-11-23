@@ -1,14 +1,14 @@
 package uk.co.alumeni.prism.dto;
 
+import com.google.common.collect.Sets;
+
 import java.util.List;
 import java.util.Set;
-
-import com.google.common.collect.Sets;
 
 public class UserAdvertDTO {
 
     private boolean loggedIn;
-    
+
     private boolean allVisible;
 
     private List<Integer> visibleDirect;
@@ -16,7 +16,7 @@ public class UserAdvertDTO {
     private List<Integer> visibleIndirect;
 
     private List<Integer> invisible;
-    
+
     public boolean isLoggedIn() {
         return loggedIn;
     }
@@ -68,7 +68,7 @@ public class UserAdvertDTO {
         this.loggedIn = loggedIn;
         return this;
     }
-    
+
     public UserAdvertDTO withAllVisible(boolean allVisible) {
         this.allVisible = allVisible;
         return this;

@@ -1,10 +1,10 @@
 package uk.co.alumeni.prism.rest.representation.advert;
 
-import java.util.List;
-
 import uk.co.alumeni.prism.domain.definitions.PrismAdvertFunction;
 import uk.co.alumeni.prism.domain.definitions.PrismAdvertIndustry;
 import uk.co.alumeni.prism.rest.representation.resource.ResourceRepresentationLocationRelation;
+
+import java.util.List;
 
 public class AdvertCategoriesRepresentation {
 

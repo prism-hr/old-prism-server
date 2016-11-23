@@ -1,10 +1,10 @@
 package uk.co.alumeni.prism.dto;
 
-import static com.google.common.base.Objects.equal;
-import static org.apache.commons.lang3.ObjectUtils.compare;
+import com.google.common.base.Objects;
 import uk.co.alumeni.prism.domain.definitions.PrismAdvertFunction;
 
-import com.google.common.base.Objects;
+import static com.google.common.base.Objects.equal;
+import static org.apache.commons.lang3.ObjectUtils.compare;
 
 public class AdvertFunctionSummaryDTO extends AdvertCategorySummaryDTO implements Comparable<AdvertFunctionSummaryDTO> {
 

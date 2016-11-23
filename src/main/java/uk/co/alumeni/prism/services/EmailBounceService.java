@@ -1,32 +1,25 @@
 package uk.co.alumeni.prism.services;
 
-import static com.google.common.base.Strings.isNullOrEmpty;
-
-import java.util.List;
-
-import javax.inject.Inject;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import uk.co.alumeni.prism.domain.user.User;
-import uk.co.alumeni.prism.exceptions.IntegrationException;
-
 import com.amazonaws.services.simpleemail.model.NotificationType;
 import com.amazonaws.services.sqs.AmazonSQSClient;
-import com.amazonaws.services.sqs.model.DeleteMessageBatchRequest;
-import com.amazonaws.services.sqs.model.DeleteMessageBatchRequestEntry;
-import com.amazonaws.services.sqs.model.Message;
-import com.amazonaws.services.sqs.model.ReceiveMessageRequest;
-import com.amazonaws.services.sqs.model.ReceiveMessageResult;
+import com.amazonaws.services.sqs.model.*;
 import com.google.common.collect.Lists;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import uk.co.alumeni.prism.domain.user.User;
+import uk.co.alumeni.prism.exceptions.IntegrationException;
+
+import javax.inject.Inject;
+import java.util.List;
+
+import static com.google.common.base.Strings.isNullOrEmpty;
 
 @Service
 @Transactional

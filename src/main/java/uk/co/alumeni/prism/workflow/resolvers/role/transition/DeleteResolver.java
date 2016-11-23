@@ -1,17 +1,16 @@
 package uk.co.alumeni.prism.workflow.resolvers.role.transition;
 
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRoleTransitionType.DELETE;
-
-import javax.inject.Inject;
-
 import org.springframework.stereotype.Component;
-
 import uk.co.alumeni.prism.domain.comment.Comment;
 import uk.co.alumeni.prism.domain.user.UserRole;
 import uk.co.alumeni.prism.exceptions.DeduplicationException;
 import uk.co.alumeni.prism.services.EntityService;
 import uk.co.alumeni.prism.services.NotificationService;
 import uk.co.alumeni.prism.services.RoleService;
+
+import javax.inject.Inject;
+
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRoleTransitionType.DELETE;
 
 @Component
 public class DeleteResolver implements RoleTransitionResolver {

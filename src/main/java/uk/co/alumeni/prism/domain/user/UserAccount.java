@@ -1,24 +1,10 @@
 package uk.co.alumeni.prism.domain.user;
 
-import java.util.Map;
-import java.util.Set;
-
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.Lob;
-import javax.persistence.MapKeyJoinColumn;
-import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
-
+import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 import org.hibernate.annotations.OrderBy;
 import org.hibernate.annotations.Type;
 import org.joda.time.DateTime;
-
 import uk.co.alumeni.prism.domain.activity.ActivityEditable;
 import uk.co.alumeni.prism.domain.document.Document;
 import uk.co.alumeni.prism.domain.message.MessageThread;
@@ -26,8 +12,9 @@ import uk.co.alumeni.prism.domain.profile.ProfileEntity;
 import uk.co.alumeni.prism.domain.resource.ResourceListFilter;
 import uk.co.alumeni.prism.domain.workflow.Scope;
 
-import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
+import javax.persistence.*;
+import java.util.Map;
+import java.util.Set;
 
 @Entity
 @Table(name = "user_account")
@@ -113,7 +100,7 @@ public class UserAccount
 
     @Column(name = "complete_score", nullable = false)
     private Integer completeScore;
-    
+
     @Lob
     @Column(name = "activity_cache")
     private String activityCache;
@@ -124,7 +111,7 @@ public class UserAccount
 
     @Column(name = "activity_cached_increment")
     private Integer activityCachedIncrement;
-    
+
     @Column(name = "updated_timestamp", nullable = false)
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
     private DateTime updatedTimestamp;
@@ -327,7 +314,7 @@ public class UserAccount
     public void setActivityCachedTimestamp(DateTime activityCachedTimestamp) {
         this.activityCachedTimestamp = activityCachedTimestamp;
     }
-    
+
     public Integer getActivityCachedIncrement() {
         return this.activityCachedIncrement;
     }
@@ -392,7 +379,7 @@ public class UserAccount
         this.completeScore = completeScore;
         return this;
     }
-    
+
     public UserAccount withUpdatedTimestamp(DateTime updatedTimestamp) {
         this.updatedTimestamp = updatedTimestamp;
         return this;

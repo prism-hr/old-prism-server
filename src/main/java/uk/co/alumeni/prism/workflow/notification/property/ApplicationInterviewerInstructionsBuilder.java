@@ -1,15 +1,13 @@
 package uk.co.alumeni.prism.workflow.notification.property;
 
-import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_VALUE_NOT_PROVIDED;
-
+import com.google.common.base.Objects;
 import org.springframework.stereotype.Component;
-
 import uk.co.alumeni.prism.domain.comment.Comment;
 import uk.co.alumeni.prism.domain.comment.CommentInterviewInstruction;
 import uk.co.alumeni.prism.dto.NotificationDefinitionDTO;
 import uk.co.alumeni.prism.services.helpers.NotificationPropertyLoader;
 
-import com.google.common.base.Objects;
+import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_VALUE_NOT_PROVIDED;
 
 @Component
 public class ApplicationInterviewerInstructionsBuilder implements NotificationPropertyBuilder {

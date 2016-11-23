@@ -1,14 +1,11 @@
 package uk.co.alumeni.prism.domain.workflow;
 
+import uk.co.alumeni.prism.domain.UniqueEntity;
+import uk.co.alumeni.prism.domain.resource.*;
+import uk.co.alumeni.prism.domain.resource.System;
+
 import static org.apache.commons.lang3.ObjectUtils.firstNonNull;
 import static uk.co.alumeni.prism.utils.PrismReflectionUtils.invokeMethod;
-import uk.co.alumeni.prism.domain.UniqueEntity;
-import uk.co.alumeni.prism.domain.resource.Department;
-import uk.co.alumeni.prism.domain.resource.Institution;
-import uk.co.alumeni.prism.domain.resource.Program;
-import uk.co.alumeni.prism.domain.resource.Project;
-import uk.co.alumeni.prism.domain.resource.Resource;
-import uk.co.alumeni.prism.domain.resource.System;
 
 public abstract class WorkflowResource implements UniqueEntity {
 

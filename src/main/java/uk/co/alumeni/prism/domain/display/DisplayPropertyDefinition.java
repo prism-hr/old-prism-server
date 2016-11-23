@@ -1,19 +1,11 @@
 package uk.co.alumeni.prism.domain.display;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.OrderColumn;
-import javax.persistence.Table;
-
 import uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyCategory;
 import uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition;
 import uk.co.alumeni.prism.domain.workflow.Scope;
 import uk.co.alumeni.prism.domain.workflow.WorkflowDefinition;
+
+import javax.persistence.*;
 
 @Entity
 @Table(name = "display_property_definition")

@@ -20,7 +20,7 @@ public class PrismApplicationReference extends PrismWorkflowState {
 
     @Override
     protected void setStateActions() {
-        stateActions.add(applicationCommentViewerRecruiter()); //
+        stateActions.add(applicationCommentViewerRefereeViewerRecruiter()); //
 
         stateActions.add(applicationCompleteReference(state) //
                 .withStateTransitions(new PrismStateTransition() //
@@ -73,13 +73,13 @@ public class PrismApplicationReference extends PrismWorkflowState {
     }
 
     public static PrismStateAction applicationSendMessageReference() {
-        return applicationSendMessageViewerRecruiter() //
+        return applicationSendMessageViewerRefereeViewerRecruiter() //
                 .withStateActionAssignment(APPLICATION_REFEREE, APPLICATION_PARENT_ADMINISTRATOR_GROUP) //
                 .withStateActionAssignments(APPLICATION_PARENT_ADMINISTRATOR_GROUP, APPLICATION_REFEREE); //
     }
 
     public static PrismStateAction applicationViewEditReference(PrismState state) {
-        return applicationViewEditWithViewerRecruiter(state) //
+        return applicationViewEditViewerRefereeViewerRecruiter(state) //
                 .withStateActionAssignments(APPLICATION_REFEREE, APPLICATION_VIEW_AS_REFEREE);
     }
 

@@ -1,10 +1,10 @@
 package uk.co.alumeni.prism.domain.definitions.workflow;
 
+import com.google.common.collect.Maps;
+
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
-
-import com.google.common.collect.Maps;
 
 public enum PrismCustomQuestionType {
 
@@ -27,7 +27,7 @@ public enum PrismCustomQuestionType {
     private static final HashMap<String, PrismCustomQuestionType> componentNameIndex = Maps.newHashMap();
 
     static {
-        for (PrismCustomQuestionType value: values()) {
+        for (PrismCustomQuestionType value : values()) {
             componentNameIndex.put(value.getComponentName(), value);
         }
     }

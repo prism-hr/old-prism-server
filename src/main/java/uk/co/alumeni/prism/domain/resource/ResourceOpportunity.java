@@ -1,10 +1,10 @@
 package uk.co.alumeni.prism.domain.resource;
 
-import java.util.Set;
-
 import uk.co.alumeni.prism.api.model.resource.ResourceOpportunityDefinition;
 import uk.co.alumeni.prism.domain.UniqueEntity;
 import uk.co.alumeni.prism.domain.workflow.OpportunityType;
+
+import java.util.Set;
 
 public abstract class ResourceOpportunity extends ResourceParent implements ResourceOpportunityDefinition<OpportunityType> {
 

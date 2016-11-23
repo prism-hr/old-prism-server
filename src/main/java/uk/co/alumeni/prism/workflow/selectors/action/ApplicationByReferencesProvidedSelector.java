@@ -1,13 +1,11 @@
 package uk.co.alumeni.prism.workflow.selectors.action;
 
-import java.util.List;
-
-import javax.inject.Inject;
-
 import org.springframework.stereotype.Component;
-
 import uk.co.alumeni.prism.domain.resource.Resource;
 import uk.co.alumeni.prism.services.ApplicationService;
+
+import javax.inject.Inject;
+import java.util.List;
 
 @Component
 public class ApplicationByReferencesProvidedSelector implements PrismResourceByParentResourceSelector {

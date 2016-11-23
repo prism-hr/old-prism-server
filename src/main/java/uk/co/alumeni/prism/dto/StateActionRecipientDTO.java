@@ -1,8 +1,9 @@
 package uk.co.alumeni.prism.dto;
 
+import uk.co.alumeni.prism.domain.definitions.workflow.PrismRole;
+
 import static org.apache.commons.lang3.ObjectUtils.compare;
 import static uk.co.alumeni.prism.utils.PrismComparisonUtils.compareRoles;
-import uk.co.alumeni.prism.domain.definitions.workflow.PrismRole;
 
 public class StateActionRecipientDTO implements Comparable<StateActionRecipientDTO> {
 

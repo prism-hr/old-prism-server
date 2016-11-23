@@ -1,10 +1,9 @@
 package uk.co.alumeni.prism.rest.representation.resource;
 
-import java.util.List;
-
+import com.google.common.collect.Lists;
 import org.apache.commons.lang3.ObjectUtils;
 
-import com.google.common.collect.Lists;
+import java.util.List;
 
 public class ResourceRepresentationRobot {
 
@@ -153,7 +152,7 @@ public class ResourceRepresentationRobot {
     public List<ResourceRepresentationRobotMetadata> getParentResources() {
         boolean isResource = true;
         List<ResourceRepresentationRobotMetadata> parentResources = Lists.newLinkedList();
-        for (ResourceRepresentationRobotMetadata parentResource : new ResourceRepresentationRobotMetadata[] { project, program, department, institution }) {
+        for (ResourceRepresentationRobotMetadata parentResource : new ResourceRepresentationRobotMetadata[]{project, program, department, institution}) {
             if (!isResource) {
                 parentResources.add(parentResource);
             }

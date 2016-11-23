@@ -1,8 +1,8 @@
 package uk.co.alumeni.prism.dto.json;
 
-import java.math.BigDecimal;
-
 import com.fasterxml.jackson.annotation.JsonProperty;
+
+import java.math.BigDecimal;
 
 public class ExchangeRateLookupResponseDTO {
 

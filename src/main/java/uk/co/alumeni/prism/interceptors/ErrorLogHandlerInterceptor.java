@@ -1,18 +1,17 @@
 package uk.co.alumeni.prism.interceptors;
 
-import javax.inject.Inject;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
-
 import uk.co.alumeni.prism.domain.user.User;
 import uk.co.alumeni.prism.services.UserService;
 import uk.co.alumeni.prism.utils.PrismDiagnosticUtils;
+
+import javax.inject.Inject;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 public class ErrorLogHandlerInterceptor extends HandlerInterceptorAdapter {
 

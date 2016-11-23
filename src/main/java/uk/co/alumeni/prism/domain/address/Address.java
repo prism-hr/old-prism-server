@@ -1,30 +1,18 @@
 package uk.co.alumeni.prism.domain.address;
 
-import static com.google.common.base.Objects.equal;
-import static com.google.common.collect.Lists.newLinkedList;
-
-import java.util.List;
-import java.util.Set;
-
-import javax.persistence.Column;
-import javax.persistence.Embedded;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
-
-import org.hibernate.validator.constraints.NotEmpty;
-
-import uk.co.alumeni.prism.domain.Domicile;
-import uk.co.alumeni.prism.domain.advert.Advert;
-
 import com.google.common.base.Joiner;
 import com.google.common.base.Objects;
 import com.google.common.collect.Sets;
+import org.hibernate.validator.constraints.NotEmpty;
+import uk.co.alumeni.prism.domain.Domicile;
+import uk.co.alumeni.prism.domain.advert.Advert;
+
+import javax.persistence.*;
+import java.util.List;
+import java.util.Set;
+
+import static com.google.common.base.Objects.equal;
+import static com.google.common.collect.Lists.newLinkedList;
 
 @Entity
 @Table(name = "address")

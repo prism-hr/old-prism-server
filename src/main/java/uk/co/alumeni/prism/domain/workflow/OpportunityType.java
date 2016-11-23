@@ -1,15 +1,10 @@
 package uk.co.alumeni.prism.domain.workflow;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.Id;
-import javax.persistence.Table;
-
 import uk.co.alumeni.prism.domain.Definition;
 import uk.co.alumeni.prism.domain.definitions.PrismOpportunityCategory;
 import uk.co.alumeni.prism.domain.definitions.PrismOpportunityType;
+
+import javax.persistence.*;
 
 @Entity
 @Table(name = "opportunity_type")

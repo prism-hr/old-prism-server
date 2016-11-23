@@ -1,21 +1,8 @@
 package uk.co.alumeni.prism.domain.advert;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
-import javax.persistence.UniqueConstraint;
-
 import jersey.repackaged.com.google.common.base.Objects;
-
 import org.hibernate.annotations.Type;
 import org.joda.time.DateTime;
-
 import uk.co.alumeni.prism.domain.Invitation;
 import uk.co.alumeni.prism.domain.InvitationEntity;
 import uk.co.alumeni.prism.domain.activity.Activity;
@@ -24,9 +11,11 @@ import uk.co.alumeni.prism.domain.user.User;
 import uk.co.alumeni.prism.domain.user.UserAssignment;
 import uk.co.alumeni.prism.workflow.user.AdvertConnectionReassignmentProcessor;
 
+import javax.persistence.*;
+
 @Entity
 @Table(name = "advert_target", uniqueConstraints = {
-        @UniqueConstraint(columnNames = { "advert_id", "advert_user_id", "target_advert_id", "target_advert_user_id", "accept_advert_id", "accept_advert_user_id" }) })
+        @UniqueConstraint(columnNames = {"advert_id", "advert_user_id", "target_advert_id", "target_advert_user_id", "accept_advert_id", "accept_advert_user_id"})})
 public class AdvertTarget extends AdvertAttribute implements Activity, UserAssignment<AdvertConnectionReassignmentProcessor>, InvitationEntity {
 
     @Id
@@ -74,7 +63,7 @@ public class AdvertTarget extends AdvertAttribute implements Activity, UserAssig
     @Column(name = "created_timestamp")
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
     private DateTime createdTimestamp;
-    
+
     @Column(name = "accepted_timestamp")
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
     private DateTime acceptedTimestamp;
@@ -246,12 +235,12 @@ public class AdvertTarget extends AdvertAttribute implements Activity, UserAssig
         this.invitation = invitation;
         return this;
     }
-    
+
     public AdvertTarget withPartnershipState(PrismPartnershipState partnershipState) {
         this.partnershipState = partnershipState;
         return this;
     }
-    
+
     public AdvertTarget withCreatedTimestamp(DateTime createdTimestamp) {
         this.createdTimestamp = createdTimestamp;
         return this;

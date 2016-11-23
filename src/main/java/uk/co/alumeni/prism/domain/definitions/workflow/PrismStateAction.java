@@ -1,16 +1,16 @@
 package uk.co.alumeni.prism.domain.definitions.workflow;
 
-import static com.google.common.base.Objects.equal;
-import static com.google.common.collect.Sets.newLinkedHashSet;
-import static org.apache.commons.lang.WordUtils.capitalize;
-import static uk.co.alumeni.prism.utils.PrismReflectionUtils.invokeMethod;
+import com.google.common.base.Objects;
+import com.google.common.collect.Lists;
 
 import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 
-import com.google.common.base.Objects;
-import com.google.common.collect.Lists;
+import static com.google.common.base.Objects.equal;
+import static com.google.common.collect.Sets.newLinkedHashSet;
+import static org.apache.commons.lang.WordUtils.capitalize;
+import static uk.co.alumeni.prism.utils.PrismReflectionUtils.invokeMethod;
 
 public class PrismStateAction {
 

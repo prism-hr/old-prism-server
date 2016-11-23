@@ -1,20 +1,11 @@
 package uk.co.alumeni.prism.rest.validation;
 
-import static org.apache.commons.lang.BooleanUtils.isTrue;
-import static uk.co.alumeni.prism.utils.PrismReflectionUtils.getProperty;
-
-import java.util.Collection;
-import java.util.List;
-
-import javax.inject.Inject;
-
 import org.joda.time.LocalDate;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 import org.springframework.validation.ValidationUtils;
 import org.springframework.validation.Validator;
 import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
-
 import uk.co.alumeni.prism.domain.application.Application;
 import uk.co.alumeni.prism.domain.application.ApplicationProgramDetail;
 import uk.co.alumeni.prism.domain.definitions.PrismStudyOption;
@@ -29,6 +20,13 @@ import uk.co.alumeni.prism.mapping.ApplicationMapper;
 import uk.co.alumeni.prism.rest.representation.resource.application.ApplicationStartDateRepresentation;
 import uk.co.alumeni.prism.services.ResourceService;
 import uk.co.alumeni.prism.utils.PrismReflectionUtils;
+
+import javax.inject.Inject;
+import java.util.Collection;
+import java.util.List;
+
+import static org.apache.commons.lang.BooleanUtils.isTrue;
+import static uk.co.alumeni.prism.utils.PrismReflectionUtils.getProperty;
 
 @Component
 public class ProfileValidator extends LocalValidatorFactoryBean implements Validator {
@@ -64,26 +62,26 @@ public class ProfileValidator extends LocalValidatorFactoryBean implements Valid
 
         for (PrismWorkflowConstraint constraint : PrismWorkflowConstraint.values()) {
             switch (constraint) {
-            case APPLICATION_REFEREE_ASSIGNMENT:
-                validateRangeConstraint(profile, "referees", constraint, errors);
-                break;
-            case APPLICATION_DOCUMENT_COVERING_LETTER:
-                validateDocumentConstraint(profile, "coveringLetter", constraint, errors);
-                break;
-            case APPLICATION_DOCUMENT_CV:
-                validateDocumentConstraint(profile, "cv", constraint, errors);
-                break;
-            case APPLICATION_EMPLOYMENT_POSITION:
-                validateRangeConstraint(profile, "employmentPositions", constraint, errors);
-                break;
-            case APPLICATION_QUALIFICATION:
-                validateRangeConstraint(profile, "qualifications", constraint, errors);
-                break;
-            case APPLICATION_AWARD:
-                validateRangeConstraint(profile, "awards", constraint, errors);
-                break;
-            default:
-                break;
+                case APPLICATION_REFEREE_ASSIGNMENT:
+                    validateRangeConstraint(profile, "referees", constraint, errors);
+                    break;
+                case APPLICATION_DOCUMENT_COVERING_LETTER:
+                    validateDocumentConstraint(profile, "coveringLetter", constraint, errors);
+                    break;
+                case APPLICATION_DOCUMENT_CV:
+                    validateDocumentConstraint(profile, "cv", constraint, errors);
+                    break;
+                case APPLICATION_EMPLOYMENT_POSITION:
+                    validateRangeConstraint(profile, "employmentPositions", constraint, errors);
+                    break;
+                case APPLICATION_QUALIFICATION:
+                    validateRangeConstraint(profile, "qualifications", constraint, errors);
+                    break;
+                case APPLICATION_AWARD:
+                    validateRangeConstraint(profile, "awards", constraint, errors);
+                    break;
+                default:
+                    break;
             }
         }
 
@@ -110,9 +108,9 @@ public class ProfileValidator extends LocalValidatorFactoryBean implements Valid
             LocalDate earliestStartDate = startDateConstraints.getEarliestDate();
             LocalDate latestStartDate = startDateConstraints.getLatestDate();
             if (startDate.isBefore(earliestStartDate)) {
-                errors.rejectValue("startDate", "notBefore", new Object[] { earliestStartDate }, null);
+                errors.rejectValue("startDate", "notBefore", new Object[]{earliestStartDate}, null);
             } else if (startDate.isAfter(latestStartDate)) {
-                errors.rejectValue("startDate", "notAfter", new Object[] { latestStartDate }, null);
+                errors.rejectValue("startDate", "notAfter", new Object[]{latestStartDate}, null);
             }
 
             errors.popNestedPath();

@@ -1,44 +1,17 @@
 package uk.co.alumeni.prism.domain.definitions.workflow;
 
-import static com.google.common.collect.Sets.newLinkedHashSet;
-import static java.util.Arrays.asList;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismNotificationDefinitionPropertyCategory.ACTION_GLOBAL;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismNotificationDefinitionPropertyCategory.APPLICATION_APPROVED;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismNotificationDefinitionPropertyCategory.APPLICATION_GLOBAL;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismNotificationDefinitionPropertyCategory.APPLICATION_INTERVIEW_SCHEDULED;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismNotificationDefinitionPropertyCategory.APPLICATION_REJECTED;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismNotificationDefinitionPropertyCategory.CANDIDATE_GLOBAL;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismNotificationDefinitionPropertyCategory.COMMENT_GLOBAL;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismNotificationDefinitionPropertyCategory.COMMENT_TRANSITION;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismNotificationDefinitionPropertyCategory.DEPARTMENT_GLOBAL;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismNotificationDefinitionPropertyCategory.INSTITUTION_GLOBAL;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismNotificationDefinitionPropertyCategory.INVITATION_GLOBAL;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismNotificationDefinitionPropertyCategory.MESSAGE_GLOBAL;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismNotificationDefinitionPropertyCategory.PROGRAM_GLOBAL;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismNotificationDefinitionPropertyCategory.PROJECT_GLOBAL;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismNotificationDefinitionPropertyCategory.SYSTEM_ACTIVITY;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismNotificationDefinitionPropertyCategory.SYSTEM_REMINDER;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismNotificationDefinitionPropertyCategory.SYSTEM_USER_ACCOUNT;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismNotificationDefinitionPropertyCategory.SYSTEM_USER_ACTIVATION;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismNotificationDefinitionPropertyCategory.SYSTEM_USER_PASSWORD;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismNotificationDefinitionPropertyCategory.TARGET_GLOBAL;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismNotificationDefinitionPropertyCategory.TEMPLATE_GLOBAL;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismNotificationPurpose.REQUEST;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismNotificationPurpose.REQUEST_EAGER;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismNotificationPurpose.UPDATE;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismNotificationType.INDIVIDUAL;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismNotificationType.SYNDICATED;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.APPLICATION;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.DEPARTMENT;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.INSTITUTION;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.PROGRAM;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.PROJECT;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.SYSTEM;
+import uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition;
+import uk.co.alumeni.prism.domain.definitions.PrismLocalizableDefinition;
 
 import java.util.Set;
 
-import uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition;
-import uk.co.alumeni.prism.domain.definitions.PrismLocalizableDefinition;
+import static com.google.common.collect.Sets.newLinkedHashSet;
+import static java.util.Arrays.asList;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismNotificationDefinitionPropertyCategory.*;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismNotificationPurpose.*;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismNotificationType.INDIVIDUAL;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismNotificationType.SYNDICATED;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.*;
 
 public enum PrismNotificationDefinition implements PrismLocalizableDefinition {
 

@@ -1,9 +1,9 @@
 package uk.co.alumeni.prism.utils;
 
-import java.util.concurrent.ExecutorService;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.concurrent.ExecutorService;
 
 public class PrismExecutorUtils {
 

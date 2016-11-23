@@ -1,9 +1,9 @@
 package uk.co.alumeni.prism.rest.representation.message;
 
-import static com.google.common.collect.Sets.newLinkedHashSet;
-
 import java.util.Collection;
 import java.util.Set;
+
+import static com.google.common.collect.Sets.newLinkedHashSet;
 
 public class MessageThreadParticipantsRepresentationPotential {
 

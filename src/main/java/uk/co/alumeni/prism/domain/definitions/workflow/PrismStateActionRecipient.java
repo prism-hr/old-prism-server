@@ -1,8 +1,8 @@
 package uk.co.alumeni.prism.domain.definitions.workflow;
 
-import static com.google.common.base.Objects.equal;
-
 import com.google.common.base.Objects;
+
+import static com.google.common.base.Objects.equal;
 
 public class PrismStateActionRecipient {
 

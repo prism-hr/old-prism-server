@@ -9,12 +9,12 @@ public enum PrismStateTerminationEvaluation {
 
     private Class<? extends StateTerminationResolver<?>> resolver;
 
-	private PrismStateTerminationEvaluation(Class<? extends StateTerminationResolver<?>> resolver) {
-	    this.resolver = resolver;
+    private PrismStateTerminationEvaluation(Class<? extends StateTerminationResolver<?>> resolver) {
+        this.resolver = resolver;
     }
 
-	public Class<? extends StateTerminationResolver<?>> getResolver() {
-		return resolver;
-	}
+    public Class<? extends StateTerminationResolver<?>> getResolver() {
+        return resolver;
+    }
 
 }

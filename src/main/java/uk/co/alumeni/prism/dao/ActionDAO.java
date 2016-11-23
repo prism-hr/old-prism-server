@@ -1,34 +1,12 @@
 package uk.co.alumeni.prism.dao;
 
-import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
-import static uk.co.alumeni.prism.dao.WorkflowDAO.getTargetActionConstraint;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismAction.SYSTEM_STARTUP;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismActionCategory.CREATE_RESOURCE;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismActionCategory.ESCALATE_RESOURCE;
-
-import java.util.Collection;
-import java.util.List;
-
-import javax.inject.Inject;
-
 import org.hibernate.SessionFactory;
-import org.hibernate.criterion.Criterion;
-import org.hibernate.criterion.Junction;
-import org.hibernate.criterion.Order;
-import org.hibernate.criterion.ProjectionList;
-import org.hibernate.criterion.Projections;
-import org.hibernate.criterion.Restrictions;
+import org.hibernate.criterion.*;
 import org.hibernate.sql.JoinType;
 import org.hibernate.transform.Transformers;
 import org.springframework.stereotype.Repository;
-
 import uk.co.alumeni.prism.domain.comment.Comment;
-import uk.co.alumeni.prism.domain.definitions.workflow.PrismAction;
-import uk.co.alumeni.prism.domain.definitions.workflow.PrismActionCategory;
-import uk.co.alumeni.prism.domain.definitions.workflow.PrismActionCondition;
-import uk.co.alumeni.prism.domain.definitions.workflow.PrismActionEnhancement;
-import uk.co.alumeni.prism.domain.definitions.workflow.PrismRole;
-import uk.co.alumeni.prism.domain.definitions.workflow.PrismScope;
+import uk.co.alumeni.prism.domain.definitions.workflow.*;
 import uk.co.alumeni.prism.domain.resource.Resource;
 import uk.co.alumeni.prism.domain.resource.ResourceParent;
 import uk.co.alumeni.prism.domain.resource.ResourceState;
@@ -38,6 +16,16 @@ import uk.co.alumeni.prism.domain.workflow.StateAction;
 import uk.co.alumeni.prism.dto.ActionCreationScopeDTO;
 import uk.co.alumeni.prism.dto.ActionDTO;
 import uk.co.alumeni.prism.dto.ActionRedactionDTO;
+
+import javax.inject.Inject;
+import java.util.Collection;
+import java.util.List;
+
+import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
+import static uk.co.alumeni.prism.dao.WorkflowDAO.getTargetActionConstraint;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismAction.SYSTEM_STARTUP;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismActionCategory.CREATE_RESOURCE;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismActionCategory.ESCALATE_RESOURCE;
 
 @Repository
 @SuppressWarnings("unchecked")

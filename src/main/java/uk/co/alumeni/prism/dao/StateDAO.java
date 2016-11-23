@@ -1,12 +1,5 @@
 package uk.co.alumeni.prism.dao;
 
-import static uk.co.alumeni.prism.dao.WorkflowDAO.getTargetActionConstraint;
-
-import java.util.Collection;
-import java.util.List;
-
-import javax.inject.Inject;
-
 import org.hibernate.Criteria;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Order;
@@ -15,7 +8,6 @@ import org.hibernate.criterion.Restrictions;
 import org.hibernate.sql.JoinType;
 import org.hibernate.transform.Transformers;
 import org.springframework.stereotype.Repository;
-
 import uk.co.alumeni.prism.domain.comment.Comment;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismAction;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismScope;
@@ -25,18 +17,14 @@ import uk.co.alumeni.prism.domain.resource.Resource;
 import uk.co.alumeni.prism.domain.resource.ResourceState;
 import uk.co.alumeni.prism.domain.resource.ResourceStateTransitionSummary;
 import uk.co.alumeni.prism.domain.user.User;
-import uk.co.alumeni.prism.domain.workflow.Action;
-import uk.co.alumeni.prism.domain.workflow.State;
-import uk.co.alumeni.prism.domain.workflow.StateAction;
-import uk.co.alumeni.prism.domain.workflow.StateActionPending;
-import uk.co.alumeni.prism.domain.workflow.StateActionRecipient;
-import uk.co.alumeni.prism.domain.workflow.StateTransition;
-import uk.co.alumeni.prism.domain.workflow.StateTransitionPending;
-import uk.co.alumeni.prism.dto.ResourceStateDTO;
-import uk.co.alumeni.prism.dto.StateActionRecipientDTO;
-import uk.co.alumeni.prism.dto.StateSelectableDTO;
-import uk.co.alumeni.prism.dto.StateTransitionDTO;
-import uk.co.alumeni.prism.dto.StateTransitionPendingDTO;
+import uk.co.alumeni.prism.domain.workflow.*;
+import uk.co.alumeni.prism.dto.*;
+
+import javax.inject.Inject;
+import java.util.Collection;
+import java.util.List;
+
+import static uk.co.alumeni.prism.dao.WorkflowDAO.getTargetActionConstraint;
 
 @Repository
 @SuppressWarnings("unchecked")

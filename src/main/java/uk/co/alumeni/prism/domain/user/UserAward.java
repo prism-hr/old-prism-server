@@ -1,21 +1,13 @@
 package uk.co.alumeni.prism.domain.user;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
-import javax.persistence.UniqueConstraint;
-
 import uk.co.alumeni.prism.domain.UniqueEntity;
 import uk.co.alumeni.prism.domain.application.ApplicationAward;
 import uk.co.alumeni.prism.domain.profile.ProfileAward;
 
+import javax.persistence.*;
+
 @Entity
-@Table(name = "user_award", uniqueConstraints = { @UniqueConstraint(columnNames = { "user_account_id", "name", "award_year", "award_month" }) })
+@Table(name = "user_award", uniqueConstraints = {@UniqueConstraint(columnNames = {"user_account_id", "name", "award_year", "award_month"})})
 public class UserAward extends UserSection implements ProfileAward<UserAccount> {
 
     @Id

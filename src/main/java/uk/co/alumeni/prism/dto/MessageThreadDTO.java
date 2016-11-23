@@ -1,7 +1,6 @@
 package uk.co.alumeni.prism.dto;
 
 import org.joda.time.DateTime;
-
 import uk.co.alumeni.prism.domain.message.MessageThread;
 
 public class MessageThreadDTO {

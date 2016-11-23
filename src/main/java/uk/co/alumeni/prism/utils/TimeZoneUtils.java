@@ -1,13 +1,8 @@
 package uk.co.alumeni.prism.utils;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashSet;
-import java.util.List;
-import java.util.TimeZone;
-
 import com.google.common.collect.Lists;
+
+import java.util.*;
 
 public class TimeZoneUtils {
 

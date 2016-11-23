@@ -1,10 +1,10 @@
 package uk.co.alumeni.prism.rest.representation.resource;
 
-import java.util.List;
-
 import uk.co.alumeni.prism.domain.definitions.PrismOpportunityCategory;
 import uk.co.alumeni.prism.domain.definitions.PrismResourceRelationContext;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismScope;
+
+import java.util.List;
 
 public class ResourceRelationRepresentation {
 

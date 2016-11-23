@@ -1,12 +1,11 @@
 package uk.co.alumeni.prism.dto;
 
-import java.math.BigDecimal;
-import java.util.List;
-
 import org.apache.commons.lang3.ObjectUtils;
 import org.joda.time.DateTime;
-
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismState;
+
+import java.math.BigDecimal;
+import java.util.List;
 
 public class ResourceListRowDTO extends ResourceSimpleDTO implements ProfileEntityDTO {
 
@@ -55,7 +54,7 @@ public class ResourceListRowDTO extends ResourceSimpleDTO implements ProfileEnti
     private DateTime updatedTimestamp;
 
     private Boolean recentUpdate;
-    
+
     private String sequenceIdentifier;
 
     private String advertIncompleteSection;

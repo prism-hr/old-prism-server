@@ -1,23 +1,20 @@
 package uk.co.alumeni.prism.mapping;
 
-import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_DESCRIPTION;
-import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_EXTERNAL_HOMEPAGE;
-import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_OPPORTUNITIES_RELATED_INSTITUTIONS;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.INSTITUTION;
-
-import javax.inject.Inject;
-import javax.transaction.Transactional;
-
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
-
 import uk.co.alumeni.prism.domain.resource.System;
 import uk.co.alumeni.prism.rest.representation.resource.ResourceRepresentationRobot;
 import uk.co.alumeni.prism.rest.representation.resource.ResourceRepresentationRobotMetadata;
 import uk.co.alumeni.prism.services.ResourceService;
 import uk.co.alumeni.prism.services.SystemService;
 import uk.co.alumeni.prism.services.helpers.PropertyLoader;
+
+import javax.inject.Inject;
+import javax.transaction.Transactional;
+
+import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition.*;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.INSTITUTION;
 
 @Service
 @Transactional

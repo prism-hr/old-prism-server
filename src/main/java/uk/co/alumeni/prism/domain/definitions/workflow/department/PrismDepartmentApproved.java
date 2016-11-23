@@ -1,8 +1,11 @@
 package uk.co.alumeni.prism.domain.definitions.workflow.department;
 
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismAction.DEPARTMENT_CREATE_APPLICATION;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismAction.DEPARTMENT_DEACTIVATE;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismAction.DEPARTMENT_SEND_MESSAGE;
+import uk.co.alumeni.prism.domain.definitions.workflow.PrismRoleTransition;
+import uk.co.alumeni.prism.domain.definitions.workflow.PrismStateAction;
+import uk.co.alumeni.prism.domain.definitions.workflow.PrismStateTransition;
+import uk.co.alumeni.prism.domain.definitions.workflow.PrismWorkflowState;
+
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismAction.*;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismActionCondition.ACCEPT_APPLICATION;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRole.DEPARTMENT_ADMINISTRATOR;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRole.DEPARTMENT_ENQUIRER;
@@ -11,15 +14,7 @@ import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRoleTransitio
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRoleTransitionType.CREATE;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismState.DEPARTMENT_DISABLED_COMPLETED;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismStateTransitionGroup.APPLICATION_CREATE_TRANSITION;
-import static uk.co.alumeni.prism.domain.definitions.workflow.department.PrismDepartmentWorkflow.departmentCreateProgram;
-import static uk.co.alumeni.prism.domain.definitions.workflow.department.PrismDepartmentWorkflow.departmentCreateProject;
-import static uk.co.alumeni.prism.domain.definitions.workflow.department.PrismDepartmentWorkflow.departmentSendMessageApproved;
-import static uk.co.alumeni.prism.domain.definitions.workflow.department.PrismDepartmentWorkflow.departmentTerminateApproved;
-import static uk.co.alumeni.prism.domain.definitions.workflow.department.PrismDepartmentWorkflow.departmentViewEditApproved;
-import uk.co.alumeni.prism.domain.definitions.workflow.PrismRoleTransition;
-import uk.co.alumeni.prism.domain.definitions.workflow.PrismStateAction;
-import uk.co.alumeni.prism.domain.definitions.workflow.PrismStateTransition;
-import uk.co.alumeni.prism.domain.definitions.workflow.PrismWorkflowState;
+import static uk.co.alumeni.prism.domain.definitions.workflow.department.PrismDepartmentWorkflow.*;
 
 public class PrismDepartmentApproved extends PrismWorkflowState {
 

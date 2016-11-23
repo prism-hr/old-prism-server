@@ -1,15 +1,6 @@
 package uk.co.alumeni.prism.workflow.transition.creators;
 
-import static java.util.Arrays.asList;
-import static java.util.stream.Collectors.toList;
-import static org.apache.commons.collections.CollectionUtils.isEmpty;
-
-import java.util.List;
-
-import javax.inject.Inject;
-
 import org.springframework.stereotype.Component;
-
 import uk.co.alumeni.prism.domain.advert.Advert;
 import uk.co.alumeni.prism.domain.definitions.PrismOpportunityCategory;
 import uk.co.alumeni.prism.domain.resource.Department;
@@ -19,6 +10,13 @@ import uk.co.alumeni.prism.domain.user.User;
 import uk.co.alumeni.prism.rest.dto.resource.ResourceParentDTO;
 import uk.co.alumeni.prism.services.AdvertService;
 import uk.co.alumeni.prism.services.ResourceService;
+
+import javax.inject.Inject;
+import java.util.List;
+
+import static java.util.Arrays.asList;
+import static java.util.stream.Collectors.toList;
+import static org.apache.commons.collections.CollectionUtils.isEmpty;
 
 @Component
 public class DepartmentCreator implements ResourceCreator<ResourceParentDTO> {

@@ -1,18 +1,6 @@
 package uk.co.alumeni.prism.domain.comment;
 
-import static com.google.common.base.Objects.equal;
-
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
-import javax.persistence.UniqueConstraint;
-
+import com.google.common.base.Objects;
 import uk.co.alumeni.prism.domain.UniqueEntity;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismRoleTransitionType;
 import uk.co.alumeni.prism.domain.user.User;
@@ -20,10 +8,12 @@ import uk.co.alumeni.prism.domain.user.UserAssignment;
 import uk.co.alumeni.prism.domain.workflow.Role;
 import uk.co.alumeni.prism.workflow.user.CommentAssignedUserReassignmentProcessor;
 
-import com.google.common.base.Objects;
+import javax.persistence.*;
+
+import static com.google.common.base.Objects.equal;
 
 @Entity
-@Table(name = "comment_assigned_user", uniqueConstraints = { @UniqueConstraint(columnNames = { "comment_id", "user_id", "role_id", "role_transition_type" }) })
+@Table(name = "comment_assigned_user", uniqueConstraints = {@UniqueConstraint(columnNames = {"comment_id", "user_id", "role_id", "role_transition_type"})})
 public class CommentAssignedUser implements UniqueEntity, UserAssignment<CommentAssignedUserReassignmentProcessor> {
 
     @Id

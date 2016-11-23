@@ -1,7 +1,6 @@
 package uk.co.alumeni.prism.rest.representation.profile;
 
 import org.joda.time.DateTime;
-
 import uk.co.alumeni.prism.rest.representation.resource.application.ApplicationSectionRepresentation;
 
 public class ProfileAdditionalInformationRepresentation extends ApplicationSectionRepresentation {

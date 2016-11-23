@@ -1,21 +1,13 @@
 package uk.co.alumeni.prism.domain.message;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
-import javax.persistence.UniqueConstraint;
-
+import com.google.common.base.Objects;
 import uk.co.alumeni.prism.domain.UniqueEntity;
 import uk.co.alumeni.prism.domain.document.Document;
 
-import com.google.common.base.Objects;
+import javax.persistence.*;
 
 @Entity
-@Table(name = "message_document", uniqueConstraints = { @UniqueConstraint(columnNames = { "message_id", "document_id" }) })
+@Table(name = "message_document", uniqueConstraints = {@UniqueConstraint(columnNames = {"message_id", "document_id"})})
 public class MessageDocument implements UniqueEntity {
 
     @Id

@@ -1,13 +1,12 @@
 package uk.co.alumeni.prism.domain.advert;
 
-import javax.persistence.*;
-
 import uk.co.alumeni.prism.domain.Competence;
 import uk.co.alumeni.prism.domain.definitions.PrismCompetenceMode;
-import uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyCategory;
+
+import javax.persistence.*;
 
 @Entity
-@Table(name = "advert_competence", uniqueConstraints = { @UniqueConstraint(columnNames = { "advert_id", "competence_id" }) })
+@Table(name = "advert_competence", uniqueConstraints = {@UniqueConstraint(columnNames = {"advert_id", "competence_id"})})
 public class AdvertCompetence extends AdvertAttribute {
 
     @Id

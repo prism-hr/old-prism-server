@@ -7,16 +7,16 @@
 </p>
 
 <p>
-	The reviewers comments were are as follows: ${COMMENT_CONTENT}.
+    The reviewers comments were are as follows: ${COMMENT_CONTENT}.
 </p>
 
 <p>
-	${COMMENT_TRANSITION_OUTCOME}.
+${COMMENT_TRANSITION_OUTCOME}.
 </p>
 
 <p>
-	In order to approve your organization we would need you to provide clarification on the above. Please follow
-	the link below to do so.
+    In order to approve your organization we would need you to provide clarification on the above. Please follow
+    the link below to do so.
 </p>
 
 ${ACTION_COMPLETE}
@@ -26,7 +26,7 @@ ${ACTION_COMPLETE}
 </p>
 
 [#if TEMPLATE_BUFFERED?has_content]
-    <p>${TEMPLATE_BUFFERED}</p>
+<p>${TEMPLATE_BUFFERED}</p>
 [/#if]
 <p>
     Yours sincerely,

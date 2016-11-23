@@ -1,23 +1,12 @@
 package uk.co.alumeni.prism.services;
 
-import static com.google.common.collect.Lists.newArrayList;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.APPLICATION;
-
-import java.io.OutputStream;
-import java.util.HashMap;
-import java.util.List;
-
-import javax.inject.Inject;
-
+import com.google.common.collect.Maps;
+import com.itextpdf.text.Document;
+import com.itextpdf.text.pdf.PdfWriter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
-
-import com.google.common.collect.Maps;
-import com.itextpdf.text.Document;
-import com.itextpdf.text.pdf.PdfWriter;
-
 import uk.co.alumeni.prism.domain.application.Application;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismRole;
 import uk.co.alumeni.prism.domain.resource.Program;
@@ -27,6 +16,14 @@ import uk.co.alumeni.prism.mapping.ApplicationMapper;
 import uk.co.alumeni.prism.services.builders.download.ApplicationDownloadBuilder;
 import uk.co.alumeni.prism.services.builders.download.ApplicationDownloadBuilderHelper;
 import uk.co.alumeni.prism.services.helpers.PropertyLoader;
+
+import javax.inject.Inject;
+import java.io.OutputStream;
+import java.util.HashMap;
+import java.util.List;
+
+import static com.google.common.collect.Lists.newArrayList;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.APPLICATION;
 
 @Component
 public class ApplicationDownloadService {

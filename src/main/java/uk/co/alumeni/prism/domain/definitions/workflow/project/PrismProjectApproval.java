@@ -1,5 +1,9 @@
 package uk.co.alumeni.prism.domain.definitions.workflow.project;
 
+import uk.co.alumeni.prism.domain.definitions.workflow.PrismStateAction;
+import uk.co.alumeni.prism.domain.definitions.workflow.PrismStateTransition;
+import uk.co.alumeni.prism.domain.definitions.workflow.PrismWorkflowState;
+
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismAction.PROJECT_COMPLETE_APPROVAL_STAGE;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismAction.SYSTEM_VIEW_PROJECT_LIST;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismNotificationDefinition.PROJECT_COMPLETE_APPROVAL_STAGE_REQUEST;
@@ -7,14 +11,7 @@ import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRoleGroup.PRO
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismState.PROJECT_APPROVAL_PENDING_CORRECTION;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismStateTransitionEvaluation.PROJECT_APPROVED_OUTCOME;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismStateTransitionGroup.PROJECT_APPROVE_TRANSITION;
-import static uk.co.alumeni.prism.domain.definitions.workflow.project.PrismProjectWorkflow.projectEscalateUnapproved;
-import static uk.co.alumeni.prism.domain.definitions.workflow.project.PrismProjectWorkflow.projectSendMessageUnnapproved;
-import static uk.co.alumeni.prism.domain.definitions.workflow.project.PrismProjectWorkflow.projectTerminateUnapproved;
-import static uk.co.alumeni.prism.domain.definitions.workflow.project.PrismProjectWorkflow.projectViewEditApproval;
-import static uk.co.alumeni.prism.domain.definitions.workflow.project.PrismProjectWorkflow.projectWithdraw;
-import uk.co.alumeni.prism.domain.definitions.workflow.PrismStateAction;
-import uk.co.alumeni.prism.domain.definitions.workflow.PrismStateTransition;
-import uk.co.alumeni.prism.domain.definitions.workflow.PrismWorkflowState;
+import static uk.co.alumeni.prism.domain.definitions.workflow.project.PrismProjectWorkflow.*;
 
 public class PrismProjectApproval extends PrismWorkflowState {
 

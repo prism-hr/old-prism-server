@@ -1,8 +1,8 @@
 package uk.co.alumeni.prism.domain.definitions;
 
-import java.util.List;
-
 import com.google.common.collect.Lists;
+
+import java.util.List;
 
 public enum PrismPerformanceIndicator {
 

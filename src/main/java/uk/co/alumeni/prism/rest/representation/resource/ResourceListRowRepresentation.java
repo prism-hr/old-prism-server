@@ -1,8 +1,8 @@
 package uk.co.alumeni.prism.rest.representation.resource;
 
-import java.util.List;
-
 import uk.co.alumeni.prism.rest.representation.action.ActionRepresentationSimple;
+
+import java.util.List;
 
 public class ResourceListRowRepresentation extends ResourceRepresentationStandard {
 

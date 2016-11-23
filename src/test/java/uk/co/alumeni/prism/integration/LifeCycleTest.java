@@ -1,10 +1,5 @@
 package uk.co.alumeni.prism.integration;
 
-import static org.junit.Assert.assertEquals;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismNotificationDefinition.SYSTEM_COMPLETE_REGISTRATION_REQUEST;
-
-import java.util.List;
-
 import org.apache.log4j.ConsoleAppender;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
@@ -16,13 +11,17 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-
 import uk.co.alumeni.prism.domain.workflow.NotificationConfiguration;
 import uk.co.alumeni.prism.integration.helpers.PropertyLoaderHelper;
 import uk.co.alumeni.prism.integration.helpers.SystemInitialisationHelper;
 import uk.co.alumeni.prism.integration.helpers.WorkflowConfigurationHelper;
 import uk.co.alumeni.prism.mail.MailSenderMock;
 import uk.co.alumeni.prism.services.SystemService;
+
+import java.util.List;
+
+import static org.junit.Assert.assertEquals;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismNotificationDefinition.SYSTEM_COMPLETE_REGISTRATION_REQUEST;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration("/testWorkflowContext.xml")
@@ -43,7 +42,7 @@ public class LifeCycleTest {
 
     @Autowired
     private ApplicationContext applicationContext;
-    
+
     static {
         Logger rootLogger = Logger.getRootLogger();
         rootLogger.setLevel(Level.INFO);

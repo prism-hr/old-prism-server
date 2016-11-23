@@ -1,10 +1,10 @@
 package uk.co.alumeni.prism.domain.definitions.workflow;
 
-import static com.google.common.collect.Maps.newHashMap;
-import static com.google.common.collect.Sets.newLinkedHashSet;
-
 import java.util.HashMap;
 import java.util.Set;
+
+import static com.google.common.collect.Maps.newHashMap;
+import static com.google.common.collect.Sets.newLinkedHashSet;
 
 public abstract class PrismWorkflowState {
 

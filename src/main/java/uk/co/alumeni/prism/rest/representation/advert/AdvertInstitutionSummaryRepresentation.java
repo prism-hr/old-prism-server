@@ -1,10 +1,10 @@
 package uk.co.alumeni.prism.rest.representation.advert;
 
-import static com.google.common.base.Objects.equal;
-import static org.apache.commons.lang3.ObjectUtils.compare;
+import com.google.common.base.Objects;
 import uk.co.alumeni.prism.rest.representation.resource.ResourceRepresentationIdentity;
 
-import com.google.common.base.Objects;
+import static com.google.common.base.Objects.equal;
+import static org.apache.commons.lang3.ObjectUtils.compare;
 
 public class AdvertInstitutionSummaryRepresentation extends AdvertCategorySummaryRepresentation implements Comparable<AdvertInstitutionSummaryRepresentation> {
 

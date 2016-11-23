@@ -7,11 +7,11 @@
 </p>
 
 <p>
-	The reviewers comments were are as follows: ${COMMENT_CONTENT}.
+    The reviewers comments were are as follows: ${COMMENT_CONTENT}.
 </p>
 
 <p>
-	${COMMENT_TRANSITION_OUTCOME}.
+${COMMENT_TRANSITION_OUTCOME}.
 </p>
 
 ${ACTION_VIEW_EDIT}

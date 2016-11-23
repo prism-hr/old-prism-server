@@ -1,10 +1,10 @@
 package uk.co.alumeni.prism.rest.representation.action;
 
-import static org.apache.commons.lang3.ObjectUtils.compare;
+import com.google.common.base.Objects;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismAction;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismActionCategory;
 
-import com.google.common.base.Objects;
+import static org.apache.commons.lang3.ObjectUtils.compare;
 
 public class ActionRepresentation implements Comparable<ActionRepresentation> {
 

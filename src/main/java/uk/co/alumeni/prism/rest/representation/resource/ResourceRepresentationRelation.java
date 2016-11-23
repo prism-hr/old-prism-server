@@ -1,5 +1,13 @@
 package uk.co.alumeni.prism.rest.representation.resource;
 
+import com.google.common.base.Joiner;
+import com.google.common.base.Objects;
+import uk.co.alumeni.prism.domain.definitions.workflow.PrismScope;
+import uk.co.alumeni.prism.rest.representation.DocumentRepresentation;
+import uk.co.alumeni.prism.rest.representation.user.UserRepresentationSimple;
+
+import java.util.Set;
+
 import static com.google.common.base.Objects.equal;
 import static com.google.common.base.Strings.emptyToNull;
 import static com.google.common.collect.Lists.newArrayList;
@@ -11,15 +19,6 @@ import static uk.co.alumeni.prism.PrismConstants.SPACE;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScopeCategory.OPPORTUNITY;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScopeCategory.ORGANIZATION;
 import static uk.co.alumeni.prism.utils.PrismReflectionUtils.setProperty;
-
-import java.util.Set;
-
-import uk.co.alumeni.prism.domain.definitions.workflow.PrismScope;
-import uk.co.alumeni.prism.rest.representation.DocumentRepresentation;
-import uk.co.alumeni.prism.rest.representation.user.UserRepresentationSimple;
-
-import com.google.common.base.Joiner;
-import com.google.common.base.Objects;
 
 public class ResourceRepresentationRelation extends ResourceRepresentationSimple {
 

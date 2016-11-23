@@ -1,10 +1,9 @@
 package uk.co.alumeni.prism.rest.dto.user;
 
-import javax.validation.constraints.NotNull;
-
 import org.hibernate.validator.constraints.NotEmpty;
-
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismAction;
+
+import javax.validation.constraints.NotNull;
 
 public class UserActivateDTO {
 

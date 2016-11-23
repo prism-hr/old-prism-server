@@ -1,15 +1,8 @@
 package uk.co.alumeni.prism.workflow.notification.property;
 
-import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
-import static org.jboss.util.Strings.EMPTY;
-import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_APPLY;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.APPLICATION;
-
-import java.util.List;
-import java.util.Map;
-
+import com.google.common.base.Joiner;
+import com.google.common.collect.Lists;
 import org.springframework.stereotype.Component;
-
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismAction;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismScope;
 import uk.co.alumeni.prism.dto.NotificationDefinitionDTO;
@@ -18,8 +11,13 @@ import uk.co.alumeni.prism.rest.representation.advert.AdvertRepresentationExtend
 import uk.co.alumeni.prism.rest.representation.resource.ResourceRepresentationSimple;
 import uk.co.alumeni.prism.services.helpers.NotificationPropertyLoader;
 
-import com.google.common.base.Joiner;
-import com.google.common.collect.Lists;
+import java.util.List;
+import java.util.Map;
+
+import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
+import static org.jboss.util.Strings.EMPTY;
+import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_APPLY;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.APPLICATION;
 
 @Component
 public class SystemAdvertRecommendationBuilder implements NotificationPropertyBuilder {
@@ -43,7 +41,8 @@ public class SystemAdvertRecommendationBuilder implements NotificationPropertyBu
                 String applyHomepage = advertRepresentation.getApplyHomepage();
                 applyHomepage = applyHomepage == null ? propertyLoader.getRedirectionUrl(resource.getId(),
                         createResourceActions.get(resource.getScope()), notificationDefinitionDTO.getRecipient()) : applyHomepage;
-                recommendations.add("<div class='position'>"+Joiner.on("<br/>").skipNulls().join(title, summary, propertyLoader.getRedirectionControl(applyHomepage, SYSTEM_APPLY))+"</div>");
+                recommendations.add("<div class='position'>" + Joiner.on("<br/>").skipNulls()
+                        .join(title, summary, propertyLoader.getRedirectionControl(applyHomepage, SYSTEM_APPLY)) + "</div>");
             }
 
             return "<p>" + Joiner.on(" ").join(recommendations) + "</p>";

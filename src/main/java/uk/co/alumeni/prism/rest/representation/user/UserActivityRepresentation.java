@@ -1,9 +1,5 @@
 package uk.co.alumeni.prism.rest.representation.user;
 
-import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
-
-import java.util.List;
-
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismRole.PrismRoleCategory;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismScope;
 import uk.co.alumeni.prism.rest.representation.action.ActionRepresentation;
@@ -14,6 +10,10 @@ import uk.co.alumeni.prism.rest.representation.profile.ProfileRepresentationMess
 import uk.co.alumeni.prism.rest.representation.resource.ResourceRepresentationConnection;
 import uk.co.alumeni.prism.rest.representation.resource.ResourceRepresentationRelation;
 import uk.co.alumeni.prism.rest.representation.user.UserActivityRepresentation.ResourceActivityRepresentation.ActionActivityRepresentation;
+
+import java.util.List;
+
+import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
 
 public class UserActivityRepresentation {
 

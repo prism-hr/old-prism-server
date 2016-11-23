@@ -1,37 +1,20 @@
 package uk.co.alumeni.prism.domain.definitions.workflow.department;
 
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismAction.DEPARTMENT_CREATE_PROGRAM;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismAction.DEPARTMENT_CREATE_PROJECT;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismAction.DEPARTMENT_ESCALATE;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismAction.DEPARTMENT_SEND_MESSAGE;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismAction.DEPARTMENT_TERMINATE;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismAction.DEPARTMENT_VIEW_EDIT;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismAction.DEPARTMENT_WITHDRAW;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismAction.SYSTEM_VIEW_DEPARTMENT_LIST;
+import uk.co.alumeni.prism.domain.definitions.workflow.PrismState;
+import uk.co.alumeni.prism.domain.definitions.workflow.PrismStateAction;
+import uk.co.alumeni.prism.domain.definitions.workflow.PrismStateTransition;
+
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismAction.*;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismActionCondition.ACCEPT_PROGRAM;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismActionCondition.ACCEPT_PROJECT;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismActionEnhancement.DEPARTMENT_VIEW_AS_USER;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismActionEnhancement.DEPARTMENT_VIEW_EDIT_AS_USER;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRole.DEPARTMENT_ADMINISTRATOR;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRole.DEPARTMENT_ENQUIRER;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRoleGroup.DEPARTMENT_ADMINISTRATOR_GROUP;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRoleGroup.DEPARTMENT_PARENT_ADMINISTRATOR_GROUP;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRoleGroup.DEPARTMENT_STAFF_GROUP;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRoleGroup.DEPARTMENT_VIEWER_GROUP;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRoleGroup.INSTITUTION_STAFF_GROUP;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRoleGroup.PARTNERSHIP_ADMINISTRATOR_GROUP;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRoleTransitionGroup.DEPARTMENT_MANAGE_USERS_GROUP;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRoleTransitionGroup.PROGRAM_CREATE_ADMINISTRATOR_GROUP;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRoleTransitionGroup.PROJECT_CREATE_ADMINISTRATOR_GROUP;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismState.DEPARTMENT_DISABLED_COMPLETED;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismState.DEPARTMENT_REJECTED;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismState.DEPARTMENT_WITHDRAWN;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismStateTransitionGroup.DEPARTMENT_VIEW_EDIT_TRANSITION;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismStateTransitionGroup.PROGRAM_CREATE_TRANSITION;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismStateTransitionGroup.PROJECT_CREATE_TRANSITION;
-import uk.co.alumeni.prism.domain.definitions.workflow.PrismState;
-import uk.co.alumeni.prism.domain.definitions.workflow.PrismStateAction;
-import uk.co.alumeni.prism.domain.definitions.workflow.PrismStateTransition;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRoleGroup.*;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRoleTransitionGroup.*;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismState.*;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismStateTransitionGroup.*;
 
 public class PrismDepartmentWorkflow {
 

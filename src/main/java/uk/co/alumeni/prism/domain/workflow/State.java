@@ -1,29 +1,14 @@
 package uk.co.alumeni.prism.domain.workflow;
 
-import java.util.Set;
-
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
-
+import com.google.common.collect.Sets;
 import uk.co.alumeni.prism.domain.application.Application;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismState;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismStateDurationEvaluation;
-import uk.co.alumeni.prism.domain.resource.Department;
-import uk.co.alumeni.prism.domain.resource.Institution;
-import uk.co.alumeni.prism.domain.resource.Program;
-import uk.co.alumeni.prism.domain.resource.Project;
-import uk.co.alumeni.prism.domain.resource.ResourcePreviousState;
-import uk.co.alumeni.prism.domain.resource.ResourceState;
+import uk.co.alumeni.prism.domain.resource.*;
 import uk.co.alumeni.prism.domain.resource.System;
 
-import com.google.common.collect.Sets;
+import javax.persistence.*;
+import java.util.Set;
 
 @Entity
 @Table(name = "state")

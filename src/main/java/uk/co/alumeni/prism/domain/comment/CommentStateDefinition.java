@@ -1,8 +1,7 @@
 package uk.co.alumeni.prism.domain.comment;
 
-import uk.co.alumeni.prism.domain.workflow.State;
-
 import com.google.common.base.Objects;
+import uk.co.alumeni.prism.domain.workflow.State;
 
 public abstract class CommentStateDefinition {
 

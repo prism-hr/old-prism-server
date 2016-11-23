@@ -1,13 +1,12 @@
 package uk.co.alumeni.prism.dto;
 
-import java.math.BigDecimal;
-
 import org.joda.time.LocalDate;
-
 import uk.co.alumeni.prism.domain.definitions.PrismDomicile;
 import uk.co.alumeni.prism.domain.definitions.PrismDurationUnit;
 import uk.co.alumeni.prism.domain.definitions.PrismOpportunityType;
 import uk.co.alumeni.prism.domain.definitions.PrismPaymentOption;
+
+import java.math.BigDecimal;
 
 public class AdvertDTO extends ResourceFlatToNestedDTO {
 

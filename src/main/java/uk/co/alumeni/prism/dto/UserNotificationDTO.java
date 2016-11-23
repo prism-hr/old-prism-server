@@ -1,8 +1,7 @@
 package uk.co.alumeni.prism.dto;
 
-import uk.co.alumeni.prism.domain.definitions.workflow.PrismNotificationDefinition;
-
 import com.google.common.base.Objects;
+import uk.co.alumeni.prism.domain.definitions.workflow.PrismNotificationDefinition;
 
 public class UserNotificationDTO {
 

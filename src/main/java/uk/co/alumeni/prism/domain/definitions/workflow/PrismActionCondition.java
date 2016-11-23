@@ -1,12 +1,9 @@
 package uk.co.alumeni.prism.domain.definitions.workflow;
 
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.DEPARTMENT;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.INSTITUTION;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.PROGRAM;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.PROJECT;
-
 import java.util.Arrays;
 import java.util.List;
+
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.*;
 
 public enum PrismActionCondition {
 

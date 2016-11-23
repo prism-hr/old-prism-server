@@ -1,13 +1,11 @@
 package uk.co.alumeni.prism.rest.controller;
 
-import java.util.Map;
-
-import javax.inject.Inject;
-
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
 import uk.co.alumeni.prism.mapping.StaticDataMapper;
+
+import javax.inject.Inject;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/static")

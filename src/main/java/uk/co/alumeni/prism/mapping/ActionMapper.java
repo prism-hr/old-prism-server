@@ -1,22 +1,8 @@
 package uk.co.alumeni.prism.mapping;
 
-import static com.google.common.collect.Lists.newLinkedList;
-import static com.google.common.collect.Maps.newLinkedHashMap;
-import static java.util.stream.Collectors.toList;
-import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
-import static org.apache.commons.lang.BooleanUtils.isTrue;
-
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-
-import javax.inject.Inject;
-import javax.transaction.Transactional;
-
-import org.apache.commons.lang.time.StopWatch;
+import com.google.common.collect.Lists;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
-
 import uk.co.alumeni.prism.domain.advert.Advert;
 import uk.co.alumeni.prism.domain.comment.Comment;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismAction;
@@ -27,17 +13,23 @@ import uk.co.alumeni.prism.domain.user.User;
 import uk.co.alumeni.prism.dto.ActionDTO;
 import uk.co.alumeni.prism.dto.ActionOutcomeDTO;
 import uk.co.alumeni.prism.dto.ResourceListRowDTO;
-import uk.co.alumeni.prism.rest.representation.action.ActionOutcomeReplicableRepresentation;
-import uk.co.alumeni.prism.rest.representation.action.ActionOutcomeRepresentation;
-import uk.co.alumeni.prism.rest.representation.action.ActionRepresentation;
-import uk.co.alumeni.prism.rest.representation.action.ActionRepresentationExtended;
-import uk.co.alumeni.prism.rest.representation.action.ActionRepresentationSimple;
+import uk.co.alumeni.prism.rest.representation.action.*;
 import uk.co.alumeni.prism.services.ActionService;
 import uk.co.alumeni.prism.services.CommentService;
 import uk.co.alumeni.prism.services.ResourceListFilterService;
 import uk.co.alumeni.prism.services.RoleService;
 
-import com.google.common.collect.Lists;
+import javax.inject.Inject;
+import javax.transaction.Transactional;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+
+import static com.google.common.collect.Lists.newLinkedList;
+import static com.google.common.collect.Maps.newLinkedHashMap;
+import static java.util.stream.Collectors.toList;
+import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
+import static org.apache.commons.lang.BooleanUtils.isTrue;
 
 @Service
 @Transactional

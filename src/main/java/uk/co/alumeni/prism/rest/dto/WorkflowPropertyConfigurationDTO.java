@@ -1,13 +1,12 @@
 package uk.co.alumeni.prism.rest.dto;
 
-import java.util.ArrayList;
+import uk.co.alumeni.prism.domain.definitions.workflow.PrismWorkflowConstraint;
+import uk.co.alumeni.prism.rest.dto.WorkflowPropertyConfigurationDTO.WorkflowPropertyConfigurationValueDTO;
 
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
-
-import uk.co.alumeni.prism.domain.definitions.workflow.PrismWorkflowConstraint;
-import uk.co.alumeni.prism.rest.dto.WorkflowPropertyConfigurationDTO.WorkflowPropertyConfigurationValueDTO;
+import java.util.ArrayList;
 
 public class WorkflowPropertyConfigurationDTO extends ArrayList<WorkflowPropertyConfigurationValueDTO> {
 

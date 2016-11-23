@@ -1,17 +1,6 @@
 package uk.co.alumeni.prism.rest.controller;
 
-import static org.springframework.http.HttpStatus.I_AM_A_TEAPOT;
-import static uk.co.alumeni.prism.services.UserAccountService.OAUTH_USER_TO_CONFIRM;
-
-import java.util.Map;
-
-import javax.annotation.Resource;
-import javax.inject.Inject;
-import javax.inject.Named;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.validation.Valid;
-
+import com.google.common.collect.ImmutableMap;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -24,7 +13,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
-
 import uk.co.alumeni.prism.domain.user.User;
 import uk.co.alumeni.prism.rest.dto.auth.OauthLoginDTO;
 import uk.co.alumeni.prism.rest.dto.auth.OauthUserDefinition;
@@ -34,7 +22,16 @@ import uk.co.alumeni.prism.rest.representation.user.UserRepresentation;
 import uk.co.alumeni.prism.security.AuthenticationTokenHelper;
 import uk.co.alumeni.prism.services.UserAccountService;
 
-import com.google.common.collect.ImmutableMap;
+import javax.annotation.Resource;
+import javax.inject.Inject;
+import javax.inject.Named;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.validation.Valid;
+import java.util.Map;
+
+import static org.springframework.http.HttpStatus.I_AM_A_TEAPOT;
+import static uk.co.alumeni.prism.services.UserAccountService.OAUTH_USER_TO_CONFIRM;
 
 @RestController
 @RequestMapping("/api/auth")

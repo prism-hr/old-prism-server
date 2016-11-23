@@ -1,14 +1,13 @@
 package uk.co.alumeni.prism.utils;
 
-import static java.nio.ByteBuffer.wrap;
-
-import java.io.ByteArrayOutputStream;
-import java.nio.ByteBuffer;
-
 import javax.activation.DataHandler;
 import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
 import javax.mail.util.ByteArrayDataSource;
+import java.io.ByteArrayOutputStream;
+import java.nio.ByteBuffer;
+
+import static java.nio.ByteBuffer.wrap;
 
 public class PrismEmailUtils {
 

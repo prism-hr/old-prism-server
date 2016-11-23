@@ -3,22 +3,22 @@
 </h1>
 
 [#if TEMPLATE_RECIPIENT_EMAIL?matches(APPLICATION_CREATOR_EMAIL)]
-	<p><b>
-		Your application for ${APPLICATION_OPPORTUNITY_TYPE} in the position of: ${TEMPLATE_PARENT_RESOURCE_NAME}.
-	</b></p>
+<p><b>
+    Your application for ${APPLICATION_OPPORTUNITY_TYPE} in the position of: ${TEMPLATE_PARENT_RESOURCE_NAME}.
+</b></p>
 
-	<p>
-	    We can confirm your arrangements for interview.
-	</p>
+<p>
+    We can confirm your arrangements for interview.
+</p>
 [#else]
-	<p><b>
-		${APPLICATION_CREATOR_FULL_NAME} application for ${APPLICATION_OPPORTUNITY_TYPE} in the position of:
-		${TEMPLATE_PARENT_RESOURCE_NAME}.
-	</b></p>
+<p><b>
+${APPLICATION_CREATOR_FULL_NAME} application for ${APPLICATION_OPPORTUNITY_TYPE} in the position of:
+${TEMPLATE_PARENT_RESOURCE_NAME}.
+</b></p>
 
-	<p>
-		We can confirm your arrangements for the interview of this applicant.
-	</p>
+<p>
+    We can confirm your arrangements for the interview of this applicant.
+</p>
 [/#if]
 
 <p>
@@ -26,11 +26,11 @@
 </p>
 
 [#if APPLICATION_INTERVIEWEE_INSTRUCTIONS?has_content]
-	<p>Applicant instructions: ${APPLICATION_INTERVIEWEE_INSTRUCTIONS}</p>
+<p>Applicant instructions: ${APPLICATION_INTERVIEWEE_INSTRUCTIONS}</p>
 [/#if]
 
 [#if APPLICATION_INTERVIEWER_INSTRUCTIONS?has_content]
-	<p>Interviewer instructions: ${APPLICATION_INTERVIEWER_INSTRUCTIONS}</p>
+<p>Interviewer instructions: ${APPLICATION_INTERVIEWER_INSTRUCTIONS}</p>
 [/#if]
 
 ${APPLICATION_INTERVIEW_LOCATION}
@@ -46,7 +46,7 @@ ${ACTION_COMPLETE}
 </p>
 
 [#if TEMPLATE_BUFFERED?has_content]
-    <p>${TEMPLATE_BUFFERED}</p>
+<p>${TEMPLATE_BUFFERED}</p>
 [/#if]
 
 <p>

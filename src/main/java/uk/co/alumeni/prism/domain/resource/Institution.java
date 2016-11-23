@@ -1,26 +1,11 @@
 package uk.co.alumeni.prism.domain.resource;
 
-import java.math.BigDecimal;
-import java.util.Set;
-
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.Lob;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
-
+import com.google.common.collect.Sets;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 import org.hibernate.annotations.Type;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
-
 import uk.co.alumeni.prism.domain.advert.Advert;
 import uk.co.alumeni.prism.domain.application.Application;
 import uk.co.alumeni.prism.domain.comment.Comment;
@@ -30,7 +15,9 @@ import uk.co.alumeni.prism.domain.user.UserRole;
 import uk.co.alumeni.prism.domain.workflow.State;
 import uk.co.alumeni.prism.domain.workflow.StateActionPending;
 
-import com.google.common.collect.Sets;
+import javax.persistence.*;
+import java.math.BigDecimal;
+import java.util.Set;
 
 @Entity
 @Table(name = "institution")

@@ -1,8 +1,8 @@
 package uk.co.alumeni.prism.rest.dto.advert;
 
-import javax.validation.constraints.NotNull;
-
 import uk.co.alumeni.prism.domain.definitions.PrismOpportunityType;
+
+import javax.validation.constraints.NotNull;
 
 public class AdvertSearchDTO {
 

@@ -1,26 +1,13 @@
 package uk.co.alumeni.prism.domain.workflow;
 
-import java.util.Set;
-
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
-import javax.persistence.UniqueConstraint;
-
+import com.google.common.collect.Sets;
 import uk.co.alumeni.prism.domain.UniqueEntity;
 
-import com.google.common.collect.Sets;
+import javax.persistence.*;
+import java.util.Set;
 
 @Entity
-@Table(name = "state_transition", uniqueConstraints = { @UniqueConstraint(columnNames = { "state_action_id", "transition_state_id" }) })
+@Table(name = "state_transition", uniqueConstraints = {@UniqueConstraint(columnNames = {"state_action_id", "transition_state_id"})})
 public class StateTransition implements UniqueEntity {
 
     @Id
@@ -65,8 +52,8 @@ public class StateTransition implements UniqueEntity {
     private Set<RoleTransition> roleTransitions = Sets.newHashSet();
 
     @ManyToMany(cascade = CascadeType.ALL)
-    @JoinTable(name = "state_transition_propagation", joinColumns = { @JoinColumn(name = "state_transition_id", nullable = false) }, inverseJoinColumns = {
-            @JoinColumn(name = "propagated_action_id", nullable = false) })
+    @JoinTable(name = "state_transition_propagation", joinColumns = {@JoinColumn(name = "state_transition_id", nullable = false)}, inverseJoinColumns = {
+            @JoinColumn(name = "propagated_action_id", nullable = false)})
     private Set<Action> propagatedActions = Sets.newHashSet();
 
     @OneToMany(mappedBy = "stateTransition")

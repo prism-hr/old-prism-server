@@ -1,12 +1,11 @@
 package uk.co.alumeni.prism.rest.dto.resource;
 
+import com.google.common.collect.Iterables;
+
+import javax.validation.Valid;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-
-import javax.validation.Valid;
-
-import com.google.common.collect.Iterables;
 
 public class ResourceRelationDTO {
 

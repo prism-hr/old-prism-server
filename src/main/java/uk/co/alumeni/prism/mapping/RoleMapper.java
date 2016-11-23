@@ -1,18 +1,7 @@
 package uk.co.alumeni.prism.mapping;
 
-import static com.google.common.collect.Lists.newLinkedList;
-import static com.google.common.collect.Sets.newHashSet;
-import static com.google.common.collect.Sets.newTreeSet;
-import static org.apache.commons.lang3.StringUtils.isNotBlank;
-
-import java.util.List;
-import java.util.Set;
-
-import javax.inject.Inject;
-import javax.transaction.Transactional;
-
+import com.google.common.collect.HashMultimap;
 import org.springframework.stereotype.Service;
-
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismRole;
 import uk.co.alumeni.prism.domain.resource.Resource;
 import uk.co.alumeni.prism.domain.user.User;
@@ -24,7 +13,15 @@ import uk.co.alumeni.prism.services.RoleService;
 import uk.co.alumeni.prism.services.UserService;
 import uk.co.alumeni.prism.utils.PrismJsonMappingUtils;
 
-import com.google.common.collect.HashMultimap;
+import javax.inject.Inject;
+import javax.transaction.Transactional;
+import java.util.List;
+import java.util.Set;
+
+import static com.google.common.collect.Lists.newLinkedList;
+import static com.google.common.collect.Sets.newHashSet;
+import static com.google.common.collect.Sets.newTreeSet;
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
 @Service
 @Transactional

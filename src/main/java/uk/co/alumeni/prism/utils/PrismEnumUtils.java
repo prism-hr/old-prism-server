@@ -1,11 +1,11 @@
 package uk.co.alumeni.prism.utils;
 
-import static java.util.Arrays.stream;
-import static java.util.stream.Collectors.toList;
+import uk.co.alumeni.prism.domain.definitions.workflow.PrismScope;
 
 import java.util.List;
 
-import uk.co.alumeni.prism.domain.definitions.workflow.PrismScope;
+import static java.util.Arrays.stream;
+import static java.util.stream.Collectors.toList;
 
 public class PrismEnumUtils {
 

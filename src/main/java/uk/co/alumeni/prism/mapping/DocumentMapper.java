@@ -1,11 +1,10 @@
 package uk.co.alumeni.prism.mapping;
 
-import javax.transaction.Transactional;
-
 import org.springframework.stereotype.Service;
-
 import uk.co.alumeni.prism.domain.document.Document;
 import uk.co.alumeni.prism.rest.representation.DocumentRepresentation;
+
+import javax.transaction.Transactional;
 
 @Service
 @Transactional

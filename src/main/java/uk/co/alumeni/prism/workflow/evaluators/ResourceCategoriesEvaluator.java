@@ -1,11 +1,10 @@
 package uk.co.alumeni.prism.workflow.evaluators;
 
-import static org.apache.commons.collections.CollectionUtils.isEmpty;
-
 import org.springframework.stereotype.Component;
-
 import uk.co.alumeni.prism.domain.advert.AdvertCategories;
 import uk.co.alumeni.prism.domain.resource.ResourceParent;
+
+import static org.apache.commons.collections.CollectionUtils.isEmpty;
 
 @Component
 public class ResourceCategoriesEvaluator implements ResourceCompletenessEvaluator<ResourceParent> {

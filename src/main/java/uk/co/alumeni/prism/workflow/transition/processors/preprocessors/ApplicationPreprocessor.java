@@ -1,17 +1,8 @@
 package uk.co.alumeni.prism.workflow.transition.processors.preprocessors;
 
-import static org.joda.time.DateTimeConstants.MONDAY;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismAction.APPLICATION_PROVIDE_INTERVIEW_AVAILABILITY;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismAction.APPLICATION_UPDATE_INTERVIEW_AVAILABILITY;
-
-import java.util.List;
-
-import javax.inject.Inject;
-
 import org.joda.time.DateTime;
 import org.joda.time.LocalDateTime;
 import org.springframework.stereotype.Component;
-
 import uk.co.alumeni.prism.domain.application.Application;
 import uk.co.alumeni.prism.domain.comment.Comment;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismAction;
@@ -23,6 +14,13 @@ import uk.co.alumeni.prism.services.CommentService;
 import uk.co.alumeni.prism.services.InstitutionService;
 import uk.co.alumeni.prism.services.UserService;
 import uk.co.alumeni.prism.workflow.transition.processors.ResourceProcessor;
+
+import javax.inject.Inject;
+import java.util.List;
+
+import static org.joda.time.DateTimeConstants.MONDAY;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismAction.APPLICATION_PROVIDE_INTERVIEW_AVAILABILITY;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismAction.APPLICATION_UPDATE_INTERVIEW_AVAILABILITY;
 
 @Component
 public class ApplicationPreprocessor implements ResourceProcessor<Application> {

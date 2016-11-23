@@ -98,16 +98,16 @@ public class UserAccountService {
         OauthUserDefinition oauthUserDefinition = getLinkedinUserDefinition(oauthLoginDTO);
 
         switch (oauthAssociationType) {
-        case ASSOCIATE_CURRENT_USER:
-            return oauthAssociateUser(userService.getCurrentUser(), oauthUserDefinition);
-        case ASSOCIATE_NEW_USER:
-            return oauthAssociateNewUser(oauthUserDefinition, session);
-        case ASSOCIATE_SPECIFIED_USER:
-            return oauthAssociateUser(userService.getUserByActivationCode(oauthLoginDTO.getActivationCode()), oauthUserDefinition);
-        case AUTHENTICATE:
-            return oauthAuthenticate(oauthUserDefinition);
-        default:
-            throw new UnsupportedOperationException("Unsupported Oauth association type: " + oauthAssociationType);
+            case ASSOCIATE_CURRENT_USER:
+                return oauthAssociateUser(userService.getCurrentUser(), oauthUserDefinition);
+            case ASSOCIATE_NEW_USER:
+                return oauthAssociateNewUser(oauthUserDefinition, session);
+            case ASSOCIATE_SPECIFIED_USER:
+                return oauthAssociateUser(userService.getUserByActivationCode(oauthLoginDTO.getActivationCode()), oauthUserDefinition);
+            case AUTHENTICATE:
+                return oauthAuthenticate(oauthUserDefinition);
+            default:
+                throw new UnsupportedOperationException("Unsupported Oauth association type: " + oauthAssociationType);
         }
     }
 

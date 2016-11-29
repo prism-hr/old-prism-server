@@ -23,10 +23,6 @@ public class ProfileListRowRepresentation extends ProfileRepresentationMessage {
 
     private Integer applicationCount;
 
-    private Integer applicationRatingCount;
-
-    private BigDecimal applicationRatingAverage;
-
     private DateTime updatedTimestamp;
 
     private String sequenceIdentifier;
@@ -88,19 +84,17 @@ public class ProfileListRowRepresentation extends ProfileRepresentationMessage {
     }
 
     public Integer getApplicationRatingCount() {
-        return applicationRatingCount;
+        return null;
     }
 
     public void setApplicationRatingCount(Integer applicationRatingCount) {
-        this.applicationRatingCount = applicationRatingCount;
     }
 
     public BigDecimal getApplicationRatingAverage() {
-        return applicationRatingAverage;
+        return null;
     }
 
     public void setApplicationRatingAverage(BigDecimal applicationRatingAverage) {
-        this.applicationRatingAverage = applicationRatingAverage;
     }
 
     public DateTime getUpdatedTimestamp() {
@@ -165,12 +159,10 @@ public class ProfileListRowRepresentation extends ProfileRepresentationMessage {
     }
 
     public ProfileListRowRepresentation withApplicationRatingCount(Integer applicationRatingCount) {
-        this.applicationRatingCount = applicationRatingCount;
         return this;
     }
 
     public ProfileListRowRepresentation withApplicationRatingAverage(BigDecimal applicationRatingAverage) {
-        this.applicationRatingAverage = applicationRatingAverage;
         return this;
     }
 

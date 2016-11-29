@@ -49,8 +49,6 @@ public enum PrismApplicationReportColumn {
     CLOSING_DATE(SYSTEM_CLOSING_DATE, "application.closingDate", null, false, "closingDate", DATE), //
     SUBMITTED_DATE(APPLICATION_SUBMISSION_DATE, "application.submittedTimestamp", null, false, "submittedDate", DATE), //
     UPDATED_DATE(SYSTEM_UPDATED_DATE, "application.updatedTimestamp", null, false, "updatedDate", DATE), //
-    RATING_COUNT(SYSTEM_TOTAL_RATING, "application.applicationRatingCount", null, true, "ratingCount", STRING), //
-    RATING_AVERAGE(SYSTEM_AVERAGE_RATING, "application.applicationRatingAverage", null, true, "ratingAverage", STRING), //
     STATE(SYSTEM_STATE, "state.stateGroup.id", null, false, "state", DISPLAY_PROPERTY), //
     REFEREE_COUNT(APPLICATION_REFEREES, "count(distinct referee.id)", null, false, "referees", STRING), //
     PROVIDED_REFERENCE_COUNT(APPLICATION_PROVIDED_REFERENCES, "count(distinct provideReferenceComment.id)", null, false, "providedReferences", STRING), //

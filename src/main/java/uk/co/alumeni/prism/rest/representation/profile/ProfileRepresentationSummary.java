@@ -11,10 +11,6 @@ public class ProfileRepresentationSummary extends ResourceRepresentationSummary 
 
     private Integer applicationCount;
 
-    private Integer applicationRatingCount;
-
-    private BigDecimal applicationRatingAverage;
-
     private List<CommentRepresentationRatingSummary> actionSummaries;
 
     private List<ProfileQualificationRepresentation> recentQualifications;
@@ -34,19 +30,17 @@ public class ProfileRepresentationSummary extends ResourceRepresentationSummary 
     }
 
     public Integer getApplicationRatingCount() {
-        return applicationRatingCount;
+        return null;
     }
 
     public void setApplicationRatingCount(Integer applicationRatingCount) {
-        this.applicationRatingCount = applicationRatingCount;
     }
 
     public BigDecimal getApplicationRatingAverage() {
-        return applicationRatingAverage;
+        return null;
     }
 
     public void setApplicationRatingAverage(BigDecimal applicationRatingAverage) {
-        this.applicationRatingAverage = applicationRatingAverage;
     }
 
     public List<CommentRepresentationRatingSummary> getActionSummaries() {

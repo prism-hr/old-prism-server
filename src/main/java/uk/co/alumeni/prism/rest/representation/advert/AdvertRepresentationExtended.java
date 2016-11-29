@@ -39,10 +39,6 @@ public class AdvertRepresentationExtended extends AdvertRepresentationSimple {
 
     private Integer applicationCount;
 
-    private Integer applicationRatingCount;
-
-    private BigDecimal applicationRatingAverage;
-
     private List<AdvertTargetConnectionRepresentation> targets;
 
     private ActionRepresentationResource action;
@@ -142,19 +138,17 @@ public class AdvertRepresentationExtended extends AdvertRepresentationSimple {
     }
 
     public Integer getApplicationRatingCount() {
-        return applicationRatingCount;
+        return null;
     }
 
     public void setApplicationRatingCount(Integer applicationRatingCount) {
-        this.applicationRatingCount = applicationRatingCount;
     }
 
     public BigDecimal getApplicationRatingAverage() {
-        return applicationRatingAverage;
+        return null;
     }
 
     public void setApplicationRatingAverage(BigDecimal applicationRatingAverage) {
-        this.applicationRatingAverage = applicationRatingAverage;
     }
 
     public List<AdvertTargetConnectionRepresentation> getTargets() {

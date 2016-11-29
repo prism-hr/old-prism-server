@@ -102,8 +102,6 @@ public class ResourceSummaryPlotDataRepresentation {
 
         private BigDecimal withdrawnApplicationRatio;
 
-        private BigDecimal averageRating;
-
         private BigDecimal averageProcessingTime;
 
         public Integer getAdvertCount() {
@@ -179,11 +177,10 @@ public class ResourceSummaryPlotDataRepresentation {
         }
 
         public BigDecimal getAverageRating() {
-            return averageRating;
+            return null;
         }
 
         public void setAverageRating(BigDecimal averageRating) {
-            this.averageRating = averageRating;
         }
 
         public BigDecimal getAverageProcessingTime() {

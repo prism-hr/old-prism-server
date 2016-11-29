@@ -43,7 +43,6 @@ import static uk.co.alumeni.prism.PrismConstants.SPACE;
 import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition.*;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.PROJECT;
 import static uk.co.alumeni.prism.services.builders.download.ApplicationDownloadBuilderConfiguration.ApplicationDownloadBuilderFontSize.MEDIUM;
-import static uk.co.alumeni.prism.utils.PrismStringUtils.getBigDecimalAsString;
 
 @Component
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
@@ -95,14 +94,7 @@ public class ApplicationDownloadBuilder {
         pdfDocument.add(applicationDownloadBuilderHelper.newSectionSeparator());
 
         PdfPTable body = applicationDownloadBuilderHelper.startSection(pdfDocument, propertyLoader.loadLazy(APPLICATION_HEADER));
-
         applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.loadLazy(APPLICATION_CREATOR), application.getUser().getFullName(), body);
-
-        BigDecimal applicationRatingAverage = application.getApplicationRatingAverage();
-        if (applicationRatingAverage != null) {
-            applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.loadLazy(SYSTEM_AVERAGE_RATING),
-                    getBigDecimalAsString(application.getApplicationRatingAverage()), body);
-        }
 
         addApplicationSummaryExtended(application, body, MEDIUM);
         applicationDownloadBuilderHelper.closeSection(pdfDocument, body);
@@ -460,15 +452,12 @@ public class ApplicationDownloadBuilder {
         PdfPTable body = applicationDownloadBuilderHelper.startSubSection(propertyLoader.loadLazy(SYSTEM_RESOURCE_COMPETENCES_HEADER));
         competenceGroupRepresentations.stream().forEach(
                 competenceGroupRepresentation -> {
-                    competenceGroupRepresentation
-                            .getCompetences()
-                            .stream()
-                            .forEach(
-                                    competenceRepresentation -> {
-                                        applicationDownloadBuilderHelper.addContentRowMedium(competenceRepresentation.getName(),
-                                                joiner.join(competenceRepresentation.getRating().toString(),
-                                                        competenceRepresentation.getRemark()), body);
-                                    });
+                    competenceGroupRepresentation.getCompetences().stream().forEach(
+                            competenceRepresentation -> {
+                                applicationDownloadBuilderHelper.addContentRowMedium(competenceRepresentation.getName(),
+                                        joiner.join(competenceRepresentation.getRating().toString(),
+                                                competenceRepresentation.getRemark()), body);
+                            });
                 });
 
         applicationDownloadBuilderHelper.closeSection(pdfDocument, body);

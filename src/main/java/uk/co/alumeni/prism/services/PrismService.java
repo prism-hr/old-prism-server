@@ -5,7 +5,6 @@ import org.springframework.transaction.annotation.Transactional;
 import uk.co.alumeni.prism.dao.PrismDAO;
 import uk.co.alumeni.prism.domain.AgeRange;
 import uk.co.alumeni.prism.domain.Domicile;
-import uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition;
 import uk.co.alumeni.prism.domain.definitions.PrismDomicile;
 import uk.co.alumeni.prism.domain.definitions.PrismOpportunityType;
 import uk.co.alumeni.prism.domain.workflow.OpportunityType;

@@ -32,17 +32,6 @@ public class PrismDAO {
                 .uniqueResult();
     }
 
-    public PrismDisplayPropertyDefinition getDomicileDisplayPropertyByName(String name) {
-        return (PrismDisplayPropertyDefinition) sessionFactory.getCurrentSession().createCriteria(DisplayPropertyConfiguration.class)
-                .setProjection(Projections.property("definition.id"))
-                .createAlias("definition", "definition", JoinType.INNER_JOIN)
-                .add(Restrictions.eq("definition.category", SYSTEM_DOMICILE))
-                .add(Restrictions.like("value", name, MatchMode.ANYWHERE))
-                .add(Restrictions.eq("systemDefault", true))
-                .setMaxResults(1)
-                .uniqueResult();
-    }
-
     @SuppressWarnings("unchecked")
     public <T extends Definition<?>> List<T> getDefinitions(Class<T> definitionClass) {
         return (List<T>) sessionFactory.getCurrentSession().createCriteria(definitionClass)

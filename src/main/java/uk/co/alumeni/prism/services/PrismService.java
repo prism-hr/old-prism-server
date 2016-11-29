@@ -31,13 +31,8 @@ public class PrismService {
         return entityService.getById(Domicile.class, prismDomicile);
     }
 
-    public PrismDomicile getDomicileByName(String name) {
-        PrismDisplayPropertyDefinition displayProperty = prismDAO.getDomicileDisplayPropertyByName(name);
-        return displayProperty == null ? null : PrismDomicile.valueOf(displayProperty.name().replace("SYSTEM_DOMICILE_", ""));
-    }
-
     public AgeRange getAgeRangeFromAge(Integer age) {
-        return prismDAO.getAgeRange(age);
+        return prismDAO.getAgeRangeFromAge(age);
     }
 
     public List<AgeRange> getAgeRanges() {

@@ -42,8 +42,6 @@ public enum PrismResourceListConstraint implements PrismLocalizableDefinition {
             Arrays.asList(APPLICATION)), //
     CONFIRMED_START_DATE("resource.offeredStartDate", DATE, Arrays.asList(BETWEEN, EQUAL, GREATER, LESSER, NOT_SPECIFIED), //
             Arrays.asList(APPLICATION)), //
-    RATING("resource.applicationRatingAverage", DECIMAL, Arrays.asList(BETWEEN, GREATER, LESSER, NOT_SPECIFIED), //
-            Arrays.asList(APPLICATION, PROJECT, PROGRAM, DEPARTMENT, INSTITUTION), true), //
     PROJECT_USER("resource.id", STRING, ResourceByUserAndRoleSelector.class, Arrays.asList(CONTAIN), //
             Arrays.asList(PROJECT), true), //
     PROGRAM_USER("resource.id", STRING, ResourceByUserAndRoleSelector.class, Arrays.asList(CONTAIN), //

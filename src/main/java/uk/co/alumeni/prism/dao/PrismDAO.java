@@ -23,18 +23,12 @@ public class PrismDAO {
     @Inject
     private SessionFactory sessionFactory;
 
-    public AgeRange getAgeRange(Integer age) {
+    public AgeRange getAgeRangeFromAge(Integer age) {
         return (AgeRange) sessionFactory.getCurrentSession().createCriteria(AgeRange.class)
+                .add(Restrictions.le("lowerBound", age))
                 .add(Restrictions.disjunction()
-                        .add(Restrictions.conjunction()
-                                .add(Restrictions.isNull("lowerBound"))
-                                .add(Restrictions.ge("upperBound", age)))
-                        .add(Restrictions.conjunction()
-                                .add(Restrictions.le("lowerBound", age))
-                                .add(Restrictions.ge("upperBound", age)))
-                        .add(Restrictions.conjunction()
-                                .add(Restrictions.le("lowerBound", age))
-                                .add(Restrictions.isNull("upperBound"))))
+                        .add(Restrictions.ge("upperBound", age))
+                        .add(Restrictions.isNull("upperBound")))
                 .uniqueResult();
     }
 

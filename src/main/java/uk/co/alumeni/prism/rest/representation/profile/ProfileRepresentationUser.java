@@ -12,8 +12,6 @@ public class ProfileRepresentationUser extends ProfileRepresentationMessage {
 
     private Integer applicationCount;
 
-    private BigDecimal applicationRatingAverage;
-
     private List<ResourceRepresentationRelation> organizations;
 
     private ProfilePersonalDetailRepresentation personalDetail;
@@ -53,11 +51,10 @@ public class ProfileRepresentationUser extends ProfileRepresentationMessage {
     }
 
     public BigDecimal getApplicationRatingAverage() {
-        return applicationRatingAverage;
+        return null;
     }
 
     public void setApplicationRatingAverage(BigDecimal applicationRatingAverage) {
-        this.applicationRatingAverage = applicationRatingAverage;
     }
 
     public List<ResourceRepresentationRelation> getOrganizations() {
@@ -159,7 +156,6 @@ public class ProfileRepresentationUser extends ProfileRepresentationMessage {
     }
 
     public ProfileRepresentationUser withApplicationRatingAverage(BigDecimal applicationRatingAverage) {
-        this.applicationRatingAverage = applicationRatingAverage;
         return this;
     }
 

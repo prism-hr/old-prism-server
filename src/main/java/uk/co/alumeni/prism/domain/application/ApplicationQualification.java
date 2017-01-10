@@ -13,7 +13,7 @@ import uk.co.alumeni.prism.workflow.user.ApplicationQualificationReassignmentPro
 import javax.persistence.*;
 
 @Entity
-@Table(name = "application_qualification", uniqueConstraints = {@UniqueConstraint(columnNames = {"application_id", "advert_id", "start_year"})})
+@Table(name = "application_qualification", uniqueConstraints = {@UniqueConstraint(columnNames = {"application_id", "advert_id", "start_year", "start_month"})})
 public class ApplicationQualification extends ApplicationAdvertRelationSection
         implements ProfileQualification<Application>, UserAssignment<ApplicationQualificationReassignmentProcessor> {
 

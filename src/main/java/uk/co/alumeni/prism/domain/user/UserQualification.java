@@ -10,7 +10,7 @@ import uk.co.alumeni.prism.workflow.user.UserQualificationReassignmentProcessor;
 import javax.persistence.*;
 
 @Entity
-@Table(name = "user_qualification", uniqueConstraints = {@UniqueConstraint(columnNames = {"user_account_id", "advert_id", "start_year"})})
+@Table(name = "user_qualification", uniqueConstraints = {@UniqueConstraint(columnNames = {"user_account_id", "advert_id", "start_year", "start_month"})})
 public class UserQualification extends UserAdvertRelationSection implements ProfileQualification<UserAccount>, UserAssignment<UserQualificationReassignmentProcessor> {
 
     @Id

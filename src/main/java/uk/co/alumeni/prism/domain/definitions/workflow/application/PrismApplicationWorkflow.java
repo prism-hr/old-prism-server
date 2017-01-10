@@ -139,7 +139,7 @@ public class PrismApplicationWorkflow {
 
     public static PrismStateAction applicationViewEditViewerReferee() {
         return applicationViewEdit()
-                .withStateActionAssignments(APPLICATION_VIEWER_REFEREE);
+                .withStateActionAssignments(APPLICATION_VIEWER_REFEREE, APPLICATION_VIEW_AS_REFEREE);
     }
 
     public static PrismStateAction applicationViewEditViewerReferee(PrismState state, PrismRoleTransition... roleTransitions) {

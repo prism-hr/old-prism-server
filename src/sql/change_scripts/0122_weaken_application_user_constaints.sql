@@ -21,5 +21,10 @@ alter table user_employment_position
   add unique index (user_id, advert_id, start_year, start_month)
 ;
 
+alter table user_referee
+  drop index user_account_id,
+  add unique index (user_account_id, user_id)
+;
+
 set foreign_key_checks = 1
 ;

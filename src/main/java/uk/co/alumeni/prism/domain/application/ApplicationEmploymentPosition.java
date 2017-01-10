@@ -11,7 +11,7 @@ import uk.co.alumeni.prism.workflow.user.ApplicationEmploymentPositionReassignme
 import javax.persistence.*;
 
 @Entity
-@Table(name = "application_employment_position", uniqueConstraints = {@UniqueConstraint(columnNames = {"application_id", "advert_id", "start_year"})})
+@Table(name = "application_employment_position", uniqueConstraints = {@UniqueConstraint(columnNames = {"application_id", "advert_id", "start_year", "start_month"})})
 public class ApplicationEmploymentPosition extends ApplicationAdvertRelationSection
         implements ProfileEmploymentPosition<Application>, UserAssignment<ApplicationEmploymentPositionReassignmentProcessor> {
 

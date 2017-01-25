@@ -11,11 +11,14 @@ import uk.co.alumeni.prism.domain.definitions.workflow.PrismActionEnhancement;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismRole.PrismRoleCategory;
 import uk.co.alumeni.prism.dto.ResourceIdentityDTO;
 import uk.co.alumeni.prism.rest.dto.ListFilterDTO;
+import uk.co.alumeni.prism.rest.representation.resource.application.ApplicationYearRepresentation;
 
 import java.util.List;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class ResourceListFilterDTO extends ListFilterDTO {
+    
+    private List<ApplicationYearRepresentation> applicationYears;
 
     private List<PrismAction> actionIds;
 
@@ -56,7 +59,15 @@ public class ResourceListFilterDTO extends ListFilterDTO {
     private Boolean loadAll;
 
     private List<ResourceListFilterConstraintDTO> constraints;
-
+    
+    public List<ApplicationYearRepresentation> getApplicationYears() {
+        return applicationYears;
+    }
+    
+    public void setApplicationYears(List<ApplicationYearRepresentation> applicationYears) {
+        this.applicationYears = applicationYears;
+    }
+    
     public List<PrismAction> getActionIds() {
         return actionIds;
     }

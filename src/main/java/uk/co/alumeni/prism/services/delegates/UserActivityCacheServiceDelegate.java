@@ -24,18 +24,18 @@ import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
 
 @Service
 public class UserActivityCacheServiceDelegate {
-
+    
     private final HashMultimap<Integer, DeferredResult<UserActivityRepresentation>> requests = HashMultimap.create();
-
+    
     @Inject
     private UserActivityCacheService userActivityCacheService;
-
+    
     @Inject
     private UserMapper userMapper;
-
+    
     @Inject
     private UserService userService;
-
+    
     @Async
     @TransactionalEventListener
     public void updateUserActivityCaches(UserActivityUpdateEvent userActivityUpdateEvent) {
@@ -45,37 +45,37 @@ public class UserActivityCacheServiceDelegate {
         if (isEmpty(users) && resource != null) {
             users = newArrayList(userService.getUsersWithActivitiesToCache(resource.getScope(), singletonList(resource.getId()), baseline));
         }
-
+        
         Integer currentUser = userActivityUpdateEvent.getCurrentUser();
         if (currentUser != null) {
-            userActivityCacheService.updateUserActivityCache(currentUser, baseline);
+            userActivityCacheService.updateUserActivityCache(currentUser);
         }
-
+        
         if (isNotEmpty(users)) {
             users.stream().forEach(user -> {
-                userActivityCacheService.updateUserActivityCache(user, baseline);
+                userActivityCacheService.updateUserActivityCache(user);
             });
         }
     }
-
-    public UserActivityRepresentation updateUserActivityCache(Integer userId, DateTime baseline) {
+    
+    public UserActivityRepresentation updateUserActivityCache(Integer userId) {
         UserActivityRepresentation representation = userMapper.getUserActivityRepresentationFresh(userId);
         synchronized (this) {
             requests.removeAll(userId).forEach(result -> {
                 result.setResult(representation);
             });
         }
-
+        
         return representation;
     }
-
+    
     public synchronized void addRequest(Integer userId, DeferredResult<UserActivityRepresentation> result) {
         requests.put(userId, result);
     }
-
+    
     public synchronized void processRequestTimeout(Integer userId, DeferredResult<UserActivityRepresentation> result) {
         requests.remove(userId, result);
         result.setErrorResult(new UserController.UserActivityNotModifiedException());
     }
-
+    
 }

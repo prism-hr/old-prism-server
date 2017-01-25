@@ -128,7 +128,7 @@ public class Application extends Resource
     @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "application_additional_information_id", unique = true)
     private ApplicationAdditionalInformation additionalInformation;
-
+    
     @Column(name = "application_rating_count")
     private Integer applicationRatingCount;
 
@@ -160,10 +160,9 @@ public class Application extends Resource
     @Column(name = "on_course", nullable = false)
     private Boolean onCourse;
 
-    @Column(name = "submitted_timestamp")
-    @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
-    private DateTime submittedTimestamp;
-
+    @Column(name = "business_year_start_month", nullable = false)
+    private Integer businessYearStartMonth;
+    
     @Column(name = "application_year")
     private String applicationYear;
 
@@ -200,6 +199,9 @@ public class Application extends Resource
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
     private DateTime createdTimestamp;
 
+    @Column(name = "submitted_timestamp")
+    @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
+    private DateTime submittedTimestamp;
 
     @Column(name = "updated_timestamp", nullable = false)
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
@@ -574,7 +576,15 @@ public class Application extends Resource
     public void setOnCourse(Boolean onCourse) {
         this.onCourse = onCourse;
     }
-
+    
+    public Integer getBusinessYearStartMonth() {
+        return businessYearStartMonth;
+    }
+    
+    public void setBusinessYearStartMonth(Integer businessYearStartMonth) {
+        this.businessYearStartMonth = businessYearStartMonth;
+    }
+    
     @Override
     public Set<ResourceState> getResourceStates() {
         return resourceStates;
@@ -680,6 +690,11 @@ public class Application extends Resource
 
     public Application withOnCourse(Boolean onCourse) {
         this.onCourse = onCourse;
+        return this;
+    }
+    
+    public Application withBusinessYearStartMonth(Integer businessYearStartMonth) {
+        this.businessYearStartMonth = businessYearStartMonth;
         return this;
     }
 

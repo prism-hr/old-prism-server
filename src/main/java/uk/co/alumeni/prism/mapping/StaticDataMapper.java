@@ -99,6 +99,7 @@ public class StaticDataMapper {
             staticData.putAll(getAgeRanges());
             this.staticData = staticData;
         }
+        
         return this.staticData;
     }
 

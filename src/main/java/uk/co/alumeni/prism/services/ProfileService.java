@@ -187,9 +187,9 @@ public class ProfileService {
 
     public UserAward updateAwardUser(Integer awardId, ProfileAwardDTO awardDTO) {
         UserAccount userAccount = userService.getCurrentUser().getUserAccount();
-        UserAward userQualification = updateAward(userAccount, UserAward.class, awardId, awardDTO);
+        UserAward userAward = updateAward(userAccount, UserAward.class, awardId, awardDTO);
         userAccountService.updateUserAccount(userAccount, PROFILE_QUALIFICATION_UPDATE);
-        return userQualification;
+        return userAward;
     }
 
     public ApplicationAward updateAwardApplication(Integer applicationId, Integer awardId, ProfileAwardDTO awardDTO) {

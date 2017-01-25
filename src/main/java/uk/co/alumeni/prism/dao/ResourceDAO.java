@@ -31,6 +31,7 @@ import uk.co.alumeni.prism.rest.dto.resource.ResourceListFilterDTO;
 import uk.co.alumeni.prism.rest.representation.resource.ResourceRepresentationIdentity;
 import uk.co.alumeni.prism.rest.representation.resource.ResourceRepresentationRobotMetadata;
 import uk.co.alumeni.prism.rest.representation.resource.ResourceRepresentationSitemap;
+import uk.co.alumeni.prism.rest.representation.resource.application.ApplicationYearRepresentation;
 import uk.co.alumeni.prism.utils.PrismEnumUtils;
 
 import javax.inject.Inject;
@@ -56,13 +57,13 @@ import static uk.co.alumeni.prism.utils.PrismEnumUtils.values;
 @Repository
 @SuppressWarnings("unchecked")
 public class ResourceDAO {
-
+    
     @Inject
     private WorkflowDAO workflowDAO;
-
+    
     @Inject
     private SessionFactory sessionFactory;
-
+    
     public List<Integer> getResourcesToEscalate(PrismScope resourceScope, PrismAction actionId, LocalDate baseline) {
         return (List<Integer>) sessionFactory.getCurrentSession().createCriteria(resourceScope.getResourceClass()) //
                 .setProjection(Projections.groupProperty("id")) //
@@ -72,11 +73,11 @@ public class ResourceDAO {
                 .add(Restrictions.lt("dueDate", baseline)) //
                 .list();
     }
-
+    
     public List<Integer> getResourcesToPropagate(PrismScope propagatingScope, Integer propagatingId, PrismScope propagatedScope, PrismAction actionId) {
         String propagatedAlias = propagatedScope.getLowerCamelName();
         String propagatedReference = propagatingScope.ordinal() > propagatedScope.ordinal() ? propagatedAlias : propagatedAlias + "s";
-
+        
         return (List<Integer>) sessionFactory.getCurrentSession().createCriteria(propagatingScope.getResourceClass()) //
                 .setProjection(Projections.property(propagatedAlias + ".id")) //
                 .createAlias(propagatedReference, propagatedAlias, JoinType.INNER_JOIN) //
@@ -86,7 +87,7 @@ public class ResourceDAO {
                 .add(Restrictions.eq("stateAction.action.id", actionId)) //
                 .list();
     }
-
+    
     public void deleteResourceState(Resource resource, State state) {
         sessionFactory.getCurrentSession().createQuery( //
                 "delete ResourceState " //
@@ -96,7 +97,7 @@ public class ResourceDAO {
                 .setParameter("state", state) //
                 .executeUpdate();
     }
-
+    
     public void deleteSecondaryResourceState(Resource resource, State state) {
         sessionFactory.getCurrentSession().createQuery( //
                 "delete ResourceState " //
@@ -106,37 +107,37 @@ public class ResourceDAO {
                 .setParameter("state", state) //
                 .executeUpdate();
     }
-
+    
     public List<ResourceListRowDTO> getResourceList(User user, PrismScope scope, List<PrismScope> parentScopes, Collection<Integer> resourceIds,
             ResourceListFilterDTO filter, boolean hasRedactions) {
         if (isNotEmpty(resourceIds)) {
             String scopeName = scope.getLowerCamelName();
             Criteria criteria = sessionFactory.getCurrentSession().createCriteria(scope.getResourceClass(), scopeName);
-
+            
             ProjectionList projectionList = Projections.projectionList();
-
+            
             List<String> parentScopeNames = Lists.newLinkedList();
             for (PrismScope parentScopeId : parentScopes) {
                 String parentScopeName = parentScopeId.getLowerCamelName();
                 projectionList.add(Projections.property(parentScopeName + ".id"), parentScopeName + "Id");
-
+                
                 if (!parentScopeId.equals(SYSTEM)) {
                     projectionList.add(Projections.property(parentScopeName + ".name"), parentScopeName + "Name");
                 }
-
+                
                 if (scope.equals(INSTITUTION)) {
                     projectionList.add(Projections.property(scopeName + ".logoImage.id"), "logoImageId");
                 }
-
+                
                 parentScopeNames.add(parentScopeName);
             }
-
+            
             boolean parentScope = !scope.equals(APPLICATION);
             projectionList.add(Projections.groupProperty("id"), scopeName + "Id");
             if (parentScope) {
                 projectionList.add(Projections.property("name"), scopeName + "Name");
             }
-
+            
             projectionList.add(Projections.property("advert.applyHomepage"), "applyHomepage") //
                     .add(Projections.property("code"), "code") //
                     .add(Projections.property("user.id"), "userId") //
@@ -146,27 +147,27 @@ public class ResourceDAO {
                     .add(Projections.property("user.lastName"), "userLastName") //
                     .add(Projections.property("user.email"), "userEmail") //
                     .add(Projections.property("userAccount.linkedinImageUrl"), "userAccountImageUrl");
-
+            
             if (!hasRedactions) {
                 projectionList.add(Projections.property("applicationRatingAverage"), "applicationRatingAverage");
             }
-
+            
             projectionList.add(Projections.property("state.id"), "stateId") //
                     .add(Projections.property("createdTimestamp"), "createdTimestamp") //
                     .add(Projections.property("updatedTimestamp"), "updatedTimestamp") //
                     .add(Projections.property("recentUpdate"), "recentUpdate") //
                     .add(Projections.property("sequenceIdentifier"), "sequenceIdentifier"); //
-
+            
             if (parentScope) {
                 projectionList.add(Projections.property("advertIncompleteSection"), "advertIncompleteSection");
             }
-
+            
             criteria.setProjection(projectionList //
                     .add(Projections.countDistinct("stateActionPending.id"), "stateActionPendingCount"));
             for (String parentScopeName : parentScopeNames) {
                 criteria.createAlias(parentScopeName, parentScopeName, JoinType.LEFT_OUTER_JOIN);
             }
-
+            
             return (List<ResourceListRowDTO>) criteria.setProjection(projectionList) //
                     .createAlias("user", "user", JoinType.INNER_JOIN) //
                     .createAlias("advert", "advert", JoinType.INNER_JOIN) //
@@ -178,10 +179,10 @@ public class ResourceDAO {
                     .setResultTransformer(aliasToBean(ResourceListRowDTO.class)) //
                     .list();
         }
-
+        
         return Collections.emptyList();
     }
-
+    
     public <T> List<T> getResources(User user, PrismScope scope, ResourceListFilterDTO filter, ProjectionList columns, Junction conditions,
             Class<T> responseClass, DateTime updateBaseline) {
         Criteria criteria = workflowDAO.getWorkflowCriteriaList(scope, columns) //
@@ -191,7 +192,7 @@ public class ResourceDAO {
                 .setResultTransformer(aliasToBean(responseClass)) //
                 .list();
     }
-
+    
     public <T> List<T> getResources(User user, PrismScope scope, PrismScope parentScope, ResourceListFilterDTO filter, ProjectionList columns,
             Junction conditions, Class<T> responseClass, DateTime updateBaseline) {
         Criteria criteria = workflowDAO.getWorkflowCriteriaList(scope, parentScope, columns) //
@@ -201,7 +202,7 @@ public class ResourceDAO {
                 .setResultTransformer(aliasToBean(responseClass)) //
                 .list();
     }
-
+    
     public <T> List<T> getResources(User user, PrismScope scope, PrismScope targeterScope, PrismScope targetScope, List<Integer> targeterEntities,
             ResourceListFilterDTO filter, ProjectionList columns, Junction conditions, Class<T> responseClass, DateTime updateBaseline) {
         Criteria criteria = workflowDAO.getWorkflowCriteriaList(scope, targeterScope, targetScope, targeterEntities, columns)
@@ -211,7 +212,7 @@ public class ResourceDAO {
                 .setResultTransformer(aliasToBean(responseClass)) //
                 .list();
     }
-
+    
     public List<Integer> getSimilarResources(PrismScope scope, String searchTerm) {
         return (List<Integer>) sessionFactory.getCurrentSession().createCriteria(scope.getResourceClass()) //
                 .setProjection(Projections.property("id")) //
@@ -220,13 +221,13 @@ public class ResourceDAO {
                         .add(Restrictions.like("name", searchTerm, MatchMode.ANYWHERE))) //
                 .list();
     }
-
+    
     public List<Resource> getResourcesByUser(PrismScope scope, User user) {
         return (List<Resource>) sessionFactory.getCurrentSession().createCriteria(scope.getResourceClass()) //
                 .add(Restrictions.eq("user", user)) //
                 .list();
     }
-
+    
     public List<Integer> getResourcesByUserAndRole(PrismScope scope, String searchTerm, List<PrismRole> prismRoles) {
         return (List<Integer>) sessionFactory.getCurrentSession().createCriteria(UserRole.class) //
                 .setProjection(Projections.property(scope.getLowerCamelName() + ".id")) //
@@ -235,7 +236,7 @@ public class ResourceDAO {
                 .add(Restrictions.in("role.id", prismRoles)) //
                 .list();
     }
-
+    
     public List<Integer> getResourcesWithUnreadMessages(PrismScope scope, User user) {
         String resourceIdReference = scope.getLowerCamelName() + ".id";
         return (List<Integer>) sessionFactory.getCurrentSession().createCriteria(Comment.class) //
@@ -248,15 +249,15 @@ public class ResourceDAO {
                 .add(getUnreadMessageConstraint()) //
                 .list();
     }
-
+    
     public List<ActivityMessageCountDTO> getResourceReadMessageCounts(PrismScope scope, Collection<Integer> resourceIds, User user) {
         return getResourceMessageCounts(scope, resourceIds, user, true);
     }
-
+    
     public List<ActivityMessageCountDTO> getResourceUnreadMessageCounts(PrismScope scope, Collection<Integer> resourceIds, User user) {
         return getResourceMessageCounts(scope, resourceIds, user, false);
     }
-
+    
     public ResourceStudyOption getResourceStudyOption(ResourceOpportunity resource, PrismStudyOption studyOption) {
         return (ResourceStudyOption) sessionFactory.getCurrentSession().createCriteria(ResourceStudyOption.class) //
                 .add(Restrictions.disjunction() //
@@ -268,7 +269,7 @@ public class ResourceDAO {
                 .setMaxResults(1) //
                 .uniqueResult();
     }
-
+    
     public List<ResourceStudyOption> getResourceStudyOptions(ResourceOpportunity resource) {
         return (List<ResourceStudyOption>) sessionFactory.getCurrentSession().createCriteria(ResourceStudyOption.class) //
                 .add(Restrictions.disjunction() //
@@ -279,35 +280,35 @@ public class ResourceDAO {
                 .addOrder(Order.asc("studyOption")) //
                 .list();
     }
-
+    
     public List<ResourceCondition> getResourceConditions(ResourceParent resource) {
         return (List<ResourceCondition>) sessionFactory.getCurrentSession().createCriteria(ResourceCondition.class) //
                 .add(Restrictions.eq(resource.getResourceScope().getLowerCamelName(), resource)) //
                 .addOrder(Order.asc("actionCondition")) //
                 .list();
     }
-
+    
     public DateTime getLatestUpdatedTimestampSitemap(PrismScope resourceScope, List<PrismState> scopeStates, HashMultimap<PrismScope, PrismState> enclosedScopes) {
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(resourceScope.getResourceClass()) //
                 .setProjection(Projections.property("updatedTimestampSitemap"));
-
+        
         Junction enclosedScopeConstraint = getResourcePublishedEnclosedScopeConstraint(criteria, enclosedScopes);
-
+        
         return (DateTime) criteria.add(getResourceActiveScopeConstraint(scopeStates, enclosedScopeConstraint)) //
                 .addOrder(Order.desc("updatedTimestampSitemap")) //
                 .setMaxResults(1) //
                 .uniqueResult();
     }
-
+    
     public List<ResourceRepresentationSitemap> getResourceSitemapRepresentations(PrismScope resourceScope, List<PrismState> scopeStates,
             HashMultimap<PrismScope, PrismState> enclosedScopes) {
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(resourceScope.getResourceClass()) //
                 .setProjection(Projections.projectionList() //
                         .add(Projections.groupProperty("id"), "id") //
                         .add(Projections.property("updatedTimestampSitemap"), "updatedTimestampSitemap"));
-
+        
         Junction enclosedScopeConstraint = getResourcePublishedEnclosedScopeConstraint(criteria, enclosedScopes);
-
+        
         return (List<ResourceRepresentationSitemap>) criteria
                 .add(getResourceActiveScopeConstraint(scopeStates, enclosedScopeConstraint)) //
                 .addOrder(Order.desc("updatedTimestampSitemap")) //
@@ -315,7 +316,7 @@ public class ResourceDAO {
                 .setResultTransformer(aliasToBean(ResourceRepresentationSitemap.class)) //
                 .list();
     }
-
+    
     public ResourceRepresentationRobotMetadata getResourceRobotMetadataRepresentation(Resource resource, List<PrismState> scopeStates,
             HashMultimap<PrismScope, PrismState> enclosedScopes) {
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(resource.getResourceScope().getResourceClass())
@@ -326,9 +327,9 @@ public class ResourceDAO {
                         .add(Projections.property("advert.description"), "description")
                         .add(Projections.property("advert.homepage"), "homepage"))
                 .createAlias("advert", "advert", JoinType.INNER_JOIN);
-
+        
         Junction enclosedScopeConstraint = getResourcePublishedEnclosedScopeConstraint(criteria, enclosedScopes);
-
+        
         return (ResourceRepresentationRobotMetadata) criteria
                 .add(Restrictions.eq("id", resource.getId()))
                 .add(getResourceActiveScopeConstraint(scopeStates, enclosedScopeConstraint))
@@ -336,7 +337,7 @@ public class ResourceDAO {
                 .setResultTransformer(aliasToBean(ResourceRepresentationRobotMetadata.class))
                 .uniqueResult();
     }
-
+    
     public List<ResourceRepresentationIdentity> getResourceRobotRelatedRepresentations(Resource resource, PrismScope relatedScope,
             List<PrismState> relatedScopeStates,
             HashMultimap<PrismScope, PrismState> enclosedScopes) {
@@ -344,16 +345,16 @@ public class ResourceDAO {
                 .setProjection(Projections.projectionList()
                         .add(Projections.groupProperty("id"), "id") //
                         .add(Projections.property("name"), "name"));
-
+        
         Junction enclosedScopeConstraint = getResourcePublishedEnclosedScopeConstraint(criteria, enclosedScopes);
-
+        
         return (List<ResourceRepresentationIdentity>) criteria //
                 .add(Restrictions.eq(resource.getResourceScope().getLowerCamelName(), resource))
                 .add(getResourceActiveScopeConstraint(relatedScopeStates, enclosedScopeConstraint)) //
                 .addOrder(Order.desc("updatedTimestampSitemap")) //
                 .setResultTransformer(aliasToBean(ResourceRepresentationIdentity.class)).list();
     }
-
+    
     public <T extends ResourceParent> Long getActiveChildResourceCount(T resource, PrismScope childResourceScope) {
         return (Long) sessionFactory.getCurrentSession().createCriteria(childResourceScope.getResourceClass()) //
                 .setProjection(Projections.countDistinct("id")) //
@@ -362,7 +363,7 @@ public class ResourceDAO {
                 .add(Restrictions.eq("resourceState.state.id", PrismState.valueOf(childResourceScope.name() + "_APPROVED")))
                 .uniqueResult();
     }
-
+    
     public void deleteResourceStudyOptions(ResourceOpportunity resourceOpportunity) {
         String propertyName = resourceOpportunity.getResourceScope().getLowerCamelName();
         sessionFactory.getCurrentSession()
@@ -371,22 +372,22 @@ public class ResourceDAO {
                 .setParameter("resourceOpportunity", resourceOpportunity) //
                 .executeUpdate();
     }
-
+    
     public ResourceFlatToNestedDTO getResourceWithParentResources(Resource resource, List<PrismScope> parentScopes) {
         PrismScope resourceScope = resource.getResourceScope();
         ProjectionList projections = Projections.projectionList();
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(resourceScope.getResourceClass()) //
                 .setProjection(projections);
-
+        
         appendResourceProjections(resourceScope, projections, true);
         parentScopes.forEach(parentScope -> {
             appendResourceProjections(parentScope, projections, false);
         });
-
+        
         if (resourceScope.equals(INSTITUTION)) {
             criteria.createAlias("logoImage", "logoImage", JoinType.LEFT_OUTER_JOIN);
         }
-
+        
         parentScopes.forEach(parentScope -> {
             String parentResourceReference = parentScope.getLowerCamelName();
             criteria.createAlias(parentResourceReference, parentResourceReference, JoinType.LEFT_OUTER_JOIN);
@@ -394,12 +395,12 @@ public class ResourceDAO {
                 criteria.createAlias(parentResourceReference + ".logoImage", "logoImage", JoinType.LEFT_OUTER_JOIN);
             }
         });
-
+        
         return (ResourceFlatToNestedDTO) criteria.add(Restrictions.eq("id", resource.getId()))
                 .setResultTransformer(aliasToBean(ResourceFlatToNestedDTO.class))
                 .uniqueResult();
     }
-
+    
     public Integer getResourceForWhichUserCanConnect(User user, ResourceParent resource) {
         PrismScope resourceScope = resource.getResourceScope();
         String resourceReference = resourceScope.getLowerCamelName();
@@ -413,44 +414,44 @@ public class ResourceDAO {
                 .add(getResourceParentConnectableConstraint(resourceScope, user)) //
                 .uniqueResult();
     }
-
+    
     public List<ResourceConnectionDTO> getResourcesForWhichUserCanConnect(User user, PrismScope resourceScope, String searchTerm) {
         ProjectionList projections = Projections.projectionList() //
                 .add(Projections.property("institution.id").as("institutionId")) //
                 .add(Projections.property("institution.name").as("institutionName")) //
                 .add(Projections.property("institution.logoImage.id").as("logoImageId"));
-
+        
         boolean isDepartment = resourceScope.equals(DEPARTMENT);
         if (isDepartment) {
             projections.add(Projections.property("department.id").as("departmentId")) //
                     .add(Projections.property("department.name").as("departmentName"));
-
+            
         }
-
+        
         String resourceReference = resourceScope.getLowerCamelName();
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(ResourceState.class) //
                 .setProjection(projections.add(Projections.groupProperty(resourceReference + ".advert.id").as("advertId")) //
                         .add(Projections.property(resourceReference + ".opportunityCategories").as("opportunityCategories"))) //
                 .createAlias(resourceReference, resourceReference, JoinType.INNER_JOIN);
-
+        
         if (isDepartment) {
             criteria.createAlias(resourceReference + ".institution", "institution", JoinType.INNER_JOIN);
         }
-
+        
         criteria.createAlias(resourceReference + ".userRoles", "userRole", JoinType.INNER_JOIN) //
                 .createAlias("userRole.role", "role", JoinType.INNER_JOIN) //
                 .createAlias("state", "state", JoinType.INNER_JOIN) //
                 .add(getResourceParentConnectableConstraint(resourceScope, user));
-
+        
         if (!isNullOrEmpty(searchTerm)) {
             criteria.add(Restrictions.like(resourceReference + ".name", searchTerm, MatchMode.ANYWHERE));
         }
-
+        
         return (List<ResourceConnectionDTO>) criteria //
                 .setResultTransformer(aliasToBean(ResourceConnectionDTO.class)) //
                 .list();
     }
-
+    
     public List<Integer> getResourcesForWhichUserHasRolesStrict(User user, Collection<PrismRole> roles) {
         if (isNotEmpty(roles)) {
             String resourceReference = roles.iterator().next().getScope().getLowerCamelName();
@@ -463,7 +464,7 @@ public class ResourceDAO {
         }
         return newArrayList();
     }
-
+    
     public List<PrismStateGroup> getResourceStateGroups(Resource resource) {
         return (List<PrismStateGroup>) sessionFactory.getCurrentSession().createCriteria(ResourceState.class) //
                 .setProjection(Projections.groupProperty("state.stateGroup.id")) //
@@ -471,7 +472,7 @@ public class ResourceDAO {
                 .add(Restrictions.eq(resource.getResourceScope().getLowerCamelName(), resource)) //
                 .list();
     }
-
+    
     public ResourceRatingSummaryDTO getResourceRatingSummary(ResourceParent resource) {
         String resourceReference = resource.getResourceScope().getLowerCamelName();
         return (ResourceRatingSummaryDTO) sessionFactory.getCurrentSession().createCriteria(Comment.class) //
@@ -484,7 +485,7 @@ public class ResourceDAO {
                 .setResultTransformer(aliasToBean(ResourceRatingSummaryDTO.class)) //
                 .uniqueResult();
     }
-
+    
     public ResourceRatingSummaryDTO getResourceRatingSummary(ResourceParent resource, ResourceParent parent) {
         String parentReference = parent.getResourceScope().getLowerCamelName();
         return (ResourceRatingSummaryDTO) sessionFactory.getCurrentSession().createCriteria(resource.getResourceScope().getResourceClass()) //
@@ -497,20 +498,20 @@ public class ResourceDAO {
                 .setResultTransformer(aliasToBean(ResourceRatingSummaryDTO.class)) //
                 .uniqueResult();
     }
-
+    
     public List<Integer> getResourceIds(PrismScope resourceScope) {
         return (List<Integer>) sessionFactory.getCurrentSession().createCriteria(resourceScope.getResourceClass()) //
                 .setProjection(Projections.property("id")) //
                 .list();
     }
-
+    
     public List<Integer> getResourceIds(Resource enclosingResource, PrismScope resourceScope) {
         return (List<Integer>) sessionFactory.getCurrentSession().createCriteria(resourceScope.getResourceClass()) //
                 .setProjection(Projections.property("id")) //
                 .add(Restrictions.eq(enclosingResource.getResourceScope().getLowerCamelName(), enclosingResource)) //
                 .list();
     }
-
+    
     public List<Integer> getResourceIds(Resource enclosingResource, PrismScope searchScope, PrismScope selectScope, String searchTerm) {
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Advert.class) //
                 .setProjection(Projections.groupProperty(selectScope.getLowerCamelName() + ".id")) //
@@ -518,14 +519,14 @@ public class ResourceDAO {
                 .add(Restrictions.eq(enclosingResource.getResourceScope().getLowerCamelName(), enclosingResource)) //
                 .add(Restrictions.eq("scope.id", selectScope)) //
                 .add(Restrictions.eq("submitted", true));
-
+        
         if (isNotEmpty(searchTerm)) {
             criteria.add(Restrictions.like("searchResource.name", searchTerm, MatchMode.ANYWHERE));
         }
-
+        
         return criteria.list();
     }
-
+    
     public List<ResourceSimpleDTO> getResources(Resource enclosingResource, PrismScope resourceScope, Optional<String> query) {
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(ResourceState.class) //
                 .setProjection(Projections.projectionList() //
@@ -536,25 +537,25 @@ public class ResourceDAO {
                 .createAlias(resourceScope.getLowerCamelName(), "resource", JoinType.INNER_JOIN) //
                 .createAlias("resource.state", "state", JoinType.INNER_JOIN) //
                 .add(Restrictions.eq("resource." + enclosingResource.getResourceScope().getLowerCamelName(), enclosingResource));
-
+        
         if (query.isPresent()) {
             criteria.add(getLikeConstraint("resource.name", query.get()));
         }
-
+        
         return (List<ResourceSimpleDTO>) criteria.add(Restrictions.ne("state.id", valueOf(resourceScope.name() + "_DISABLED_COMPLETED")))
                 .addOrder(Order.asc("resource.name")) //
                 .addOrder(Order.asc("resource.id")) //
                 .setResultTransformer(aliasToBean(ResourceSimpleDTO.class)) //
                 .list();
     }
-
+    
     public List<Integer> getResourcesWithUsersToVerify(PrismScope resourceScope) {
         return (List<Integer>) sessionFactory.getCurrentSession().createCriteria(UserRole.class) //
                 .setProjection(Projections.groupProperty(resourceScope.getLowerCamelName() + ".id")) //
                 .add(Restrictions.in("role.id", values(PrismRole.class, resourceScope, "STUDENT_UNVERIFIED", "VIEWER_UNVERIFIED"))) //
                 .list();
     }
-
+    
     public List<Integer> getEnclosedResources(PrismScope resourceScope, Integer resourceId, PrismScope enclosedScope) {
         return (List<Integer>) sessionFactory.getCurrentSession().createCriteria(ResourceState.class) //
                 .setProjection(Projections.property("resource.id")) //
@@ -562,7 +563,7 @@ public class ResourceDAO {
                 .add(Restrictions.eq("resource." + resourceScope.getLowerCamelName() + ".id", resourceId)) //
                 .list();
     }
-
+    
     public List<Integer> getResourcesByTheme(PrismScope resourceScope, PrismResourceListFilterExpression expression, String theme) {
         return (List<Integer>) sessionFactory.getCurrentSession().createCriteria(resourceScope.getResourceClass()) //
                 .setProjection(Projections.groupProperty("id")) //
@@ -572,7 +573,7 @@ public class ResourceDAO {
                 .add(Restrictions.like("theme.name", theme, getMatchMode(expression))) //
                 .list();
     }
-
+    
     public List<Integer> getResourcesByLocation(PrismScope resourceScope, PrismResourceListFilterExpression expression, String location) {
         MatchMode matchMode = getMatchMode(expression);
         return (List<Integer>) sessionFactory.getCurrentSession().createCriteria(resourceScope.getResourceClass()) //
@@ -591,7 +592,7 @@ public class ResourceDAO {
                         .add(Restrictions.like("locationProject.name", location, matchMode))) //
                 .list();
     }
-
+    
     public List<Integer> getResourcesWithStateActionsPending(PrismScope scope, List<PrismAction> actions) {
         return (List<Integer>) sessionFactory.getCurrentSession().createCriteria(scope.getResourceClass()) //
                 .setProjection(Projections.groupProperty("id")) //
@@ -600,7 +601,7 @@ public class ResourceDAO {
                 .add(Restrictions.in("stateActionPending.action.id", actions)) //
                 .list();
     }
-
+    
     public List<Integer> getResourcesByAdvertTheme(PrismScope scope, List<Integer> advertThemes) {
         return (List<Integer>) sessionFactory.getCurrentSession().createCriteria(scope.getResourceClass()) //
                 .setProjection(Projections.groupProperty("id")) //
@@ -609,7 +610,7 @@ public class ResourceDAO {
                 .add(Restrictions.in("theme.theme.id", advertThemes)) //
                 .list();
     }
-
+    
     public List<Integer> getResourcesByAdvertLocation(PrismScope scope, List<Integer> advertLocations) {
         return (List<Integer>) sessionFactory.getCurrentSession().createCriteria(scope.getResourceClass()) //
                 .setProjection(Projections.groupProperty("id")) //
@@ -618,7 +619,7 @@ public class ResourceDAO {
                 .add(Restrictions.in("location.locationAdvert.id", advertLocations)) //
                 .list();
     }
-
+    
     public List<ResourceRoleDTO> getResourceRoles(User user, PrismScope resourceScope) {
         String resourceReference = resourceScope.getLowerCamelName();
         return (List<ResourceRoleDTO>) sessionFactory.getCurrentSession().createCriteria(UserRole.class) //
@@ -634,7 +635,7 @@ public class ResourceDAO {
                 .setResultTransformer(aliasToBean(ResourceRoleDTO.class)) //
                 .list();
     }
-
+    
     public Set<ResourceUpdateDTO> getResourcesWithActivitiesToCache(PrismScope scope, DateTime baseline, DateTime updateBaseline) {
         Session session = sessionFactory.getCurrentSession();
         Class<? extends Resource> resourceClass = scope.getResourceClass();
@@ -648,7 +649,7 @@ public class ResourceDAO {
                         .add(Restrictions.gtProperty("comment.submittedTimestamp", "activityCachedTimestamp"))) //
                 .setResultTransformer(Transformers.aliasToBean(ResourceUpdateDTO.class)) //
                 .list());
-
+        
         resources.addAll((List<ResourceUpdateDTO>) session.createCriteria(resourceClass) //
                 .setProjection(getResourceUpdateProjection(EMPTY)) //
                 .createAlias("comments", "comment", JoinType.INNER_JOIN) //
@@ -660,14 +661,14 @@ public class ResourceDAO {
                         .add(Restrictions.gtProperty("message.createdTimestamp", "activityCachedTimestamp"))) //
                 .setResultTransformer(Transformers.aliasToBean(ResourceUpdateDTO.class)) //
                 .list());
-
+        
         resources.addAll((List<ResourceUpdateDTO>) session.createCriteria(resourceClass) //
                 .setProjection(getResourceUpdateProjection(EMPTY)) //
                 .add(Restrictions.eq("recentUpdate", true)) //
                 .add(Restrictions.lt("updatedTimestamp", updateBaseline)) //
                 .setResultTransformer(Transformers.aliasToBean(ResourceUpdateDTO.class)) //
                 .list());
-
+        
         if (scope.getScopeCategory().equals(ORGANIZATION)) {
             String scopeReference = scope.getLowerCamelName();
             resources.addAll((List<ResourceUpdateDTO>) session.createCriteria(AdvertTarget.class) //
@@ -680,7 +681,7 @@ public class ResourceDAO {
                             .add(Restrictions.gtProperty("createdTimestamp", "resource.activityCachedTimestamp"))) //
                     .setResultTransformer(Transformers.aliasToBean(ResourceUpdateDTO.class)) //
                     .list());
-
+            
             resources.addAll((List<ResourceUpdateDTO>) session.createCriteria(UserRole.class) //
                     .setProjection(getResourceUpdateProjection("resource")) //
                     .createAlias(scopeReference, "resource", JoinType.INNER_JOIN) //
@@ -693,10 +694,10 @@ public class ResourceDAO {
                     .setResultTransformer(Transformers.aliasToBean(ResourceUpdateDTO.class)) //
                     .list());
         }
-
+        
         return resources;
     }
-
+    
     public void setResourceActivityCachedTimestamp(PrismScope scope, Collection<Integer> resources, DateTime baseline) {
         sessionFactory.getCurrentSession().createQuery( //
                 "update " + scope.getUpperCamelName() + " " //
@@ -706,7 +707,7 @@ public class ResourceDAO {
                 .setParameterList("resources", resources) //
                 .executeUpdate();
     }
-
+    
     public void setResourceRecentUpdate(PrismScope scope, Collection<Integer> resources, Boolean recentUpdate) {
         sessionFactory.getCurrentSession().createQuery( //
                 "update " + scope.getUpperCamelName() + " " //
@@ -716,7 +717,7 @@ public class ResourceDAO {
                 .setParameterList("resources", resources) //
                 .executeUpdate();
     }
-
+    
     public List<Integer> getResourceTargets(PrismScope targeterScope, Collection<Integer> targeterResources, PrismScope targetScope) {
         return (List<Integer>) sessionFactory.getCurrentSession().createCriteria(targeterScope.getResourceClass()) //
                 .setProjection(Projections.groupProperty("targetAdvert." + targetScope.getLowerCamelName() + ".id")) //
@@ -727,7 +728,7 @@ public class ResourceDAO {
                 .add(Restrictions.eq("target.partnershipState", ENDORSEMENT_PROVIDED)) //
                 .list();
     }
-
+    
     public List<EntityLocationDTO> getResourceOrganizationLocations(PrismScope resourceScope, Collection<Integer> resourceIds) {
         return (List<EntityLocationDTO>) sessionFactory.getCurrentSession().createCriteria(resourceScope.getResourceClass()) //
                 .setProjection(Projections.projectionList() //
@@ -743,7 +744,7 @@ public class ResourceDAO {
                 .setResultTransformer(Transformers.aliasToBean(EntityLocationDTO.class)) //
                 .list();
     }
-
+    
     public List<ResourceAdvertDTO> getUserResourceParents(User user, PrismScope scope, boolean publishedOnly) {
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(scope.getResourceClass()) //
                 .setProjection(Projections.projectionList() //
@@ -752,18 +753,18 @@ public class ResourceDAO {
                 .createAlias("advert", "advert", JoinType.INNER_JOIN)
                 .createAlias("userRoles", "userRole", JoinType.INNER_JOIN) //
                 .createAlias("userRole.role", "role", JoinType.INNER_JOIN);
-
+        
         if (publishedOnly) {
             criteria.add(Restrictions.eq("advert.published", true));
         }
-
+        
         return (List<ResourceAdvertDTO>) criteria //
                 .add(Restrictions.eq("userRole.user", user)) //
                 .add(Restrictions.eq("role.verified", true)) //
                 .setResultTransformer(Transformers.aliasToBean(ResourceAdvertDTO.class)) //
                 .list();
     }
-
+    
     public List<String> getPossibleLocations() {
         return (List<String>) sessionFactory.getCurrentSession().createCriteria(AdvertLocation.class)
                 .setProjection(Projections.groupProperty("locationAdvert.name"))
@@ -772,51 +773,63 @@ public class ResourceDAO {
                 .add(Restrictions.isNotEmpty("advert.applications"))
                 .list();
     }
-
+    
     public List<String> getPossibleThemes() {
         return (List<String>) sessionFactory.getCurrentSession().createCriteria(AdvertTheme.class)
                 .setProjection(Projections.groupProperty("theme.name"))
                 .createAlias("theme", "theme")
                 .list();
     }
-
+    
     private static void appendResourceListFilterCriteria(Criteria criteria, Junction constraints, ResourceListFilterDTO filter, DateTime updateBaseline) {
+        List<ApplicationYearRepresentation> applicationYears = filter.getApplicationYears();
+        if (isNotEmpty(applicationYears)) {
+            Junction applicationYearConstraint = Restrictions.disjunction();
+            applicationYears.forEach(applicationYear -> {
+                applicationYearConstraint.add(Restrictions.conjunction()
+                        .add(Restrictions.eq("applicationYear", applicationYear.getApplicationYear()))
+                        .add(Restrictions.eq("businessYearStartMonth", applicationYear.getBusinessYearStartMonth())));
+            });
+            
+            criteria.add(applicationYearConstraint);
+        }
+        
         List<Integer> resourceIds = filter.getResourceIds();
         if (isNotEmpty(resourceIds)) {
             criteria.add(Restrictions.in("resource.id", resourceIds));
         }
-
+        
         List<Integer> excludedResourceIds = filter.getExcludedResourceIds();
         if (isNotEmpty(excludedResourceIds)) {
             criteria.add(Restrictions.not(
                     Restrictions.in("resource.id", excludedResourceIds)));
         }
-
+        
         ResourceIdentityDTO parentResource = filter.getParentResource();
         if (parentResource != null) {
             criteria.add(Restrictions.eq("resource." + parentResource.getScope().getLowerCamelName() + ".id", parentResource.getId()));
         }
-
+        
         PrismRoleCategory[] roleCategories = filter.getRoleCategories();
         if (roleCategories != null) {
             criteria.add(Restrictions.in("role.roleCategory", roleCategories));
         }
-
+        
         List<PrismAction> actionIds = filter.getActionIds();
         if (isNotEmpty(actionIds)) {
             criteria.add(Restrictions.in("stateAction.action.id", actionIds));
         }
-
+        
         PrismActionEnhancement[] actionEnhancements = filter.getActionEnhancements();
         if (actionEnhancements != null) {
             criteria.add(Restrictions.disjunction() //
                     .add(Restrictions.in("stateAction.actionEnhancement", actionEnhancements))
                     .add(Restrictions.in("stateActionAssignment.actionEnhancement", actionEnhancements)));
         }
-
+        
         boolean urgentOnly = BooleanUtils.isTrue(filter.getUrgentOnly());
         boolean updateOnly = BooleanUtils.isTrue(filter.getUpdateOnly());
-
+        
         if (urgentOnly && updateOnly) {
             criteria.add(Restrictions.disjunction() //
                     .add(Restrictions.eq("stateAction.raisesUrgentFlag", true)) //
@@ -826,46 +839,46 @@ public class ResourceDAO {
         } else if (updateOnly) {
             criteria.add(Restrictions.ge("resource.updatedTimestamp", updateBaseline));
         }
-
+        
         if (constraints != null) {
             criteria.add(constraints);
         }
     }
-
+    
     private static Junction getResourceActiveScopeConstraint(List<PrismState> relatedScopeStates, Junction enclosedScopeConstraint) {
         return Restrictions.disjunction() //
                 .add(Restrictions.disjunction() //
                         .add(Restrictions.in("state.id", relatedScopeStates)) //
                         .add(Restrictions.not(enclosedScopeConstraint)));
     }
-
+    
     private static Junction getResourcePublishedEnclosedScopeConstraint(Criteria criteria, HashMultimap<PrismScope, PrismState> enclosedScopes) {
         Junction enclosedScopeConstraint = Restrictions.conjunction();
         for (PrismScope enclosedScope : enclosedScopes.keySet()) {
             String enclosedScopeReference = enclosedScope.getLowerCamelName();
             criteria.createAlias(enclosedScopeReference + "s", enclosedScopeReference, JoinType.LEFT_OUTER_JOIN, //
                     Restrictions.in(enclosedScopeReference + ".state.id", enclosedScopes.get(enclosedScope)));
-
+            
             enclosedScopeConstraint.add(Restrictions.isNull(enclosedScopeReference + ".id"));
         }
         return enclosedScopeConstraint;
     }
-
+    
     private void appendResourceProjections(PrismScope resourceScope, ProjectionList projections, boolean rootScope) {
         String resourceReference = resourceScope.getLowerCamelName();
         String accessorPrefix = rootScope ? "" : resourceReference + ".";
         projections.add(Projections.property(accessorPrefix + "id").as(resourceReference + "Id"));
-
+        
         if (asList(PROJECT, PROGRAM, DEPARTMENT, INSTITUTION).contains(resourceScope)) {
             projections.add(Projections.property(accessorPrefix + "name").as(resourceReference + "Name"));
-
+            
             if (resourceScope.equals(INSTITUTION)) {
                 projections.add(Projections.property("logoImage.id").as("logoImageId"));
                 projections.add(Projections.property("logoImage.fileName").as("logoImageFileName"));
             }
         }
     }
-
+    
     private List<ActivityMessageCountDTO> getResourceMessageCounts(PrismScope scope, Collection<Integer> resourceIds, User user, boolean read) {
         String resourceIdReference = scope.getLowerCamelName() + ".id";
         return (List<ActivityMessageCountDTO>) sessionFactory.getCurrentSession().createCriteria(Comment.class) //
@@ -882,7 +895,7 @@ public class ResourceDAO {
                 .setResultTransformer(aliasToBean(ActivityMessageCountDTO.class)) //
                 .list();
     }
-
+    
     private static Junction getResourceParentConnectableConstraint(PrismScope resourceScope, User user) {
         return Restrictions.conjunction() //
                 .add(getResourceParentManageableStateConstraint("state")) //
@@ -891,7 +904,7 @@ public class ResourceDAO {
                         .add(Restrictions.eq("role.roleCategory", RECRUITER))) //
                 .add(Restrictions.eq("userRole.user", user));
     }
-
+    
     private static ProjectionList getResourceUpdateProjection(String resourceReference) {
         resourceReference = StringUtils.isEmpty(resourceReference) ? EMPTY : resourceReference + ".";
         return Projections.projectionList() //
@@ -899,5 +912,5 @@ public class ResourceDAO {
                 .add(Projections.groupProperty(resourceReference + "recentUpdate").as("recentUpdate")) //
                 .add(Projections.groupProperty(resourceReference + "updatedTimestamp").as("updatedTimestamp"));
     }
-
+    
 }

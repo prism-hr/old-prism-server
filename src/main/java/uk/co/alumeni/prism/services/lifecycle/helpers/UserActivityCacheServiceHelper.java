@@ -8,34 +8,31 @@ import uk.co.alumeni.prism.services.UserService;
 import javax.inject.Inject;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import static org.joda.time.DateTime.now;
-
 @Component
 public class UserActivityCacheServiceHelper extends PrismServiceHelperAbstract {
-
+    
     @Inject
     private UserActivityCacheService userActivityCacheService;
-
+    
     @Inject
     private UserService userService;
-
+    
     private AtomicBoolean shuttingDown = new AtomicBoolean(false);
-
+    
     @Override
     public void execute() throws Exception {
-        DateTime baseline = now();
-        userService.getUsersWithActivitiesToCache(baseline).stream().forEach(user -> updateUserActivityCache(user, baseline));
+        userService.getUsersWithActivitiesToCache(DateTime.now()).stream().forEach(user -> updateUserActivityCache(user));
     }
-
+    
     @Override
     public AtomicBoolean getShuttingDown() {
         return shuttingDown;
     }
-
-    private void updateUserActivityCache(Integer user, DateTime baseline) {
+    
+    private void updateUserActivityCache(Integer user) {
         if (!isShuttingDown()) {
-            userActivityCacheService.updateUserActivityCache(user, baseline);
+            userActivityCacheService.updateUserActivityCache(user);
         }
     }
-
+    
 }

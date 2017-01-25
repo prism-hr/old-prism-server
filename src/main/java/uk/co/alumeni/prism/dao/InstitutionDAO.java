@@ -51,12 +51,13 @@ public class InstitutionDAO {
                 .uniqueResult();
     }
 
-    public void changeInstitutionBusinessYear(Integer institutionId, Integer businessYearEndMonth) {
+    public void changeInstitutionBusinessYear(Integer institutionId, Integer businessYearStartMonth, Integer businessYearEndMonth) {
         String templateLocation;
 
         Map<String, Object> model = Maps.newHashMap();
         model.put("institutionId", institutionId);
-
+        model.put("businessYearStartMonth", businessYearStartMonth);
+        
         if (businessYearEndMonth == 12) {
             templateLocation = "sql/institution_change_business_year_simple.ftl";
         } else {

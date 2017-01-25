@@ -92,7 +92,7 @@ public class InstitutionService {
     private void changeInstitutionBusinessYear(Institution institution, Integer businessYearStartMonth) {
         institution.setBusinessYearStartMonth(businessYearStartMonth);
         Integer businessYearEndMonth = businessYearStartMonth == 1 ? 12 : businessYearStartMonth - 1;
-        institutionDAO.changeInstitutionBusinessYear(institution.getId(), businessYearEndMonth);
+        institutionDAO.changeInstitutionBusinessYear(institution.getId(), businessYearStartMonth, businessYearEndMonth);
     }
 
 }

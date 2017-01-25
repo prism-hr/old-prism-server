@@ -191,6 +191,7 @@ public class ResourceController {
         if (resourceDescriptor.getResourceScope() != PrismScope.APPLICATION) {
             throw new UnsupportedOperationException("Report can only be generated for applications");
         }
+        
         ResourceListFilterDTO filterDTO = filter != null ? objectMapper.readValue(filter, ResourceListFilterDTO.class) : null;
         DataTable reportTable = applicationService.getApplicationReport(filterDTO);
         DataSourceRequest dataSourceRequest = new DataSourceRequest(request);

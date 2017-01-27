@@ -786,9 +786,14 @@ public class ResourceDAO {
         if (isNotEmpty(applicationYears)) {
             Junction applicationYearConstraint = Restrictions.disjunction();
             applicationYears.forEach(applicationYear -> {
-                applicationYearConstraint.add(Restrictions.conjunction()
-                        .add(Restrictions.eq("applicationYear", applicationYear.getApplicationYear()))
-                        .add(Restrictions.eq("businessYearStartMonth", applicationYear.getBusinessYearStartMonth())));
+                Integer businessYearStartMonth = applicationYear.getBusinessYearStartMonth();
+                if (businessYearStartMonth == null) {
+                    applicationYearConstraint.add(Restrictions.eq("applicationYear", applicationYear.getApplicationYear()));
+                } else {
+                    applicationYearConstraint.add(Restrictions.conjunction()
+                            .add(Restrictions.eq("applicationYear", applicationYear.getApplicationYear()))
+                            .add(Restrictions.eq("businessYearStartMonth", applicationYear.getBusinessYearStartMonth())));
+                }
             });
             
             criteria.add(applicationYearConstraint);

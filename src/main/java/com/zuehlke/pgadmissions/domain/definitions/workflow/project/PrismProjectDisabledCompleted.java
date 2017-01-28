@@ -11,7 +11,6 @@ public class PrismProjectDisabledCompleted extends PrismWorkflowState {
 	@Override
 	protected void setStateActions() {
 		stateActions.add(projectEmailCreator());
-		stateActions.add(projectEscalateApproved());
 		stateActions.add(projectViewEditApproved());
 	}
 

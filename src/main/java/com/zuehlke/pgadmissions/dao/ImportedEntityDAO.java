@@ -178,9 +178,9 @@ public class ImportedEntityDAO {
     public AgeRange getAgeRange(Institution institution, Integer age) {
         return (AgeRange) sessionFactory.getCurrentSession().createCriteria(AgeRange.class) //
                 .add(Restrictions.eq("institution", institution)) //
-                .add(Restrictions.ge("lowerBound", age)) //
+                .add(Restrictions.le("lowerBound", age)) //
                 .add(Restrictions.disjunction() //
-                        .add(Restrictions.le("upperBound", age)) //
+                        .add(Restrictions.ge("upperBound", age)) //
                         .add(Restrictions.isNull("upperBound"))) //
                 .add(Restrictions.eq("enabled", true)) //
                 .uniqueResult();

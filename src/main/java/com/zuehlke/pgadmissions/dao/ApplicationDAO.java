@@ -1,40 +1,5 @@
 package com.zuehlke.pgadmissions.dao;
 
-import static com.zuehlke.pgadmissions.domain.definitions.PrismPerformanceIndicator.getColumns;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.APPLICATION_APPROVAL;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.APPLICATION_APPROVED_COMPLETED_PURGED;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.APPLICATION_REJECTED;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.APPLICATION_REJECTED_COMPLETED_PURGED;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.APPLICATION_WITHDRAWN_COMPLETED_PURGED;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateGroup.APPLICATION_RESERVED;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateGroup.APPLICATION_VALIDATION;
-
-import java.util.Arrays;
-import java.util.List;
-import java.util.Set;
-
-import javax.inject.Inject;
-
-import org.hibernate.Criteria;
-import org.hibernate.SQLQuery;
-import org.hibernate.SessionFactory;
-import org.hibernate.criterion.DetachedCriteria;
-import org.hibernate.criterion.Disjunction;
-import org.hibernate.criterion.MatchMode;
-import org.hibernate.criterion.Order;
-import org.hibernate.criterion.Projections;
-import org.hibernate.criterion.Restrictions;
-import org.hibernate.criterion.Subqueries;
-import org.hibernate.sql.JoinType;
-import org.hibernate.transform.Transformers;
-import org.hibernate.type.DoubleType;
-import org.hibernate.type.IntegerType;
-import org.hibernate.type.LongType;
-import org.hibernate.type.StringType;
-import org.springframework.stereotype.Repository;
-import org.springframework.ui.freemarker.FreeMarkerTemplateUtils;
-import org.springframework.web.servlet.view.freemarker.FreeMarkerConfig;
-
 import com.amazonaws.util.StringUtils;
 import com.google.common.base.Charsets;
 import com.google.common.base.Joiner;
@@ -42,19 +7,11 @@ import com.google.common.collect.HashMultimap;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 import com.google.common.io.Resources;
-import com.zuehlke.pgadmissions.domain.application.Application;
-import com.zuehlke.pgadmissions.domain.application.ApplicationEmploymentPosition;
-import com.zuehlke.pgadmissions.domain.application.ApplicationQualification;
-import com.zuehlke.pgadmissions.domain.application.ApplicationReferee;
-import com.zuehlke.pgadmissions.domain.application.ApplicationSupervisor;
+import com.zuehlke.pgadmissions.domain.application.*;
 import com.zuehlke.pgadmissions.domain.comment.Comment;
 import com.zuehlke.pgadmissions.domain.comment.CommentAssignedUser;
 import com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismWorkflowPropertyDefinition;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.*;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.resource.ResourceParent;
 import com.zuehlke.pgadmissions.domain.resource.ResourceState;
@@ -67,19 +24,41 @@ import com.zuehlke.pgadmissions.dto.ApplicationReferenceDTO;
 import com.zuehlke.pgadmissions.dto.ApplicationReportListRowDTO;
 import com.zuehlke.pgadmissions.rest.representation.ApplicationSummaryRepresentation.OtherApplicationSummaryRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceSummaryPlotConstraintRepresentation;
-
 import freemarker.template.Template;
+import org.hibernate.Criteria;
+import org.hibernate.SQLQuery;
+import org.hibernate.SessionFactory;
+import org.hibernate.criterion.*;
+import org.hibernate.sql.JoinType;
+import org.hibernate.transform.Transformers;
+import org.hibernate.type.DoubleType;
+import org.hibernate.type.IntegerType;
+import org.hibernate.type.LongType;
+import org.hibernate.type.StringType;
+import org.springframework.stereotype.Repository;
+import org.springframework.ui.freemarker.FreeMarkerTemplateUtils;
+import org.springframework.web.servlet.view.freemarker.FreeMarkerConfig;
+
+import javax.inject.Inject;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Set;
+
+import static com.zuehlke.pgadmissions.domain.definitions.PrismPerformanceIndicator.getColumns;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.*;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateGroup.APPLICATION_RESERVED;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateGroup.APPLICATION_VALIDATION;
 
 @Repository
 @SuppressWarnings("unchecked")
 public class ApplicationDAO {
-
+    
     @Inject
     private SessionFactory sessionFactory;
-
+    
     @Inject
     private FreeMarkerConfig freemarkerConfig;
-
+    
     public Application getPreviousSubmittedApplication(Application application) {
         return (Application) sessionFactory.getCurrentSession().createCriteria(Application.class) //
                 .add(Restrictions.eq("user", application.getUser())) //
@@ -95,18 +74,18 @@ public class ApplicationDAO {
                 .setMaxResults(1) //
                 .uniqueResult();
     }
-
+    
     public String getApplicationExportReference(Application application) {
         return (String) sessionFactory.getCurrentSession().createCriteria(Comment.class) //
                 .setProjection(Projections.property("exportReference")) //
-                .add(Restrictions.eq("application", application)) //
+                .add(Restrictions.eq("application.id", application)) //
                 .add(Restrictions.isNotNull("exportReference")) //
                 .addOrder(Order.desc("createdTimestamp")) //
                 .addOrder(Order.desc("id")) //
                 .setMaxResults(1) //
                 .uniqueResult();
     }
-
+    
     public String getApplicationCreatorIpAddress(Application application) {
         return (String) sessionFactory.getCurrentSession().createCriteria(Comment.class) //
                 .setProjection(Projections.property("creatorIpAddress")) //
@@ -114,7 +93,7 @@ public class ApplicationDAO {
                 .add(Restrictions.isNotNull("creatorIpAddress")) //
                 .uniqueResult();
     }
-
+    
     public User getPrimarySupervisor(Comment offerRecommendationComment) {
         return (User) sessionFactory.getCurrentSession().createCriteria(CommentAssignedUser.class) //
                 .setProjection(Projections.property("user")) //
@@ -122,7 +101,7 @@ public class ApplicationDAO {
                 .add(Restrictions.eq("role.id", PrismRole.APPLICATION_PRIMARY_SUPERVISOR)) //
                 .uniqueResult();
     }
-
+    
     public List<ApplicationReferenceDTO> getApplicationRefereesResponded(Application application) {
         return (List<ApplicationReferenceDTO>) sessionFactory.getCurrentSession().createCriteria(ApplicationReferee.class, "applicationReferee") //
                 .setProjection(Projections.projectionList() //
@@ -145,7 +124,7 @@ public class ApplicationDAO {
                 .setResultTransformer(Transformers.aliasToBean(ApplicationReferenceDTO.class)) //
                 .list();
     }
-
+    
     public List<ApplicationQualification> getApplicationExportQualifications(Application application) {
         return (List<ApplicationQualification>) sessionFactory.getCurrentSession().createCriteria(ApplicationQualification.class) //
                 .add(Restrictions.eq("application", application)) //
@@ -153,14 +132,14 @@ public class ApplicationDAO {
                 .addOrder(Order.desc("startDate")) //
                 .list();
     }
-
+    
     public ApplicationReferee getApplicationReferee(Application application, User user) {
         return (ApplicationReferee) sessionFactory.getCurrentSession().createCriteria(ApplicationReferee.class) //
                 .add(Restrictions.eq("application", application)) //
                 .add(Restrictions.eq("user", user)) //
                 .uniqueResult();
     }
-
+    
     public List<User> getApplicationRefereesNotResponded(Application application) {
         return (List<User>) sessionFactory.getCurrentSession().createCriteria(ApplicationReferee.class) //
                 .setProjection(Projections.property("user")) //
@@ -168,7 +147,7 @@ public class ApplicationDAO {
                 .add(Restrictions.isNull("comment")) //
                 .list();
     }
-
+    
     public List<Integer> getApplicationsForExport() {
         return (List<Integer>) sessionFactory.getCurrentSession().createCriteria(ResourceState.class) //
                 .setProjection(Projections.groupProperty("application.id")) //
@@ -178,7 +157,7 @@ public class ApplicationDAO {
                 .add(Restrictions.eq("action.actionCategory", PrismActionCategory.EXPORT_RESOURCE)) //
                 .list();
     }
-
+    
     public ApplicationQualification getLatestApplicationQualification(Application application) {
         return (ApplicationQualification) sessionFactory.getCurrentSession().createCriteria(ApplicationQualification.class) //
                 .add(Restrictions.eq("application", application)) //
@@ -188,7 +167,7 @@ public class ApplicationDAO {
                 .setMaxResults(1) //
                 .uniqueResult();
     }
-
+    
     public ApplicationEmploymentPosition getLatestApplicationEmploymentPosition(Application application) {
         return (ApplicationEmploymentPosition) sessionFactory.getCurrentSession().createCriteria(ApplicationEmploymentPosition.class) //
                 .add(Restrictions.eq("application", application)) //
@@ -198,7 +177,7 @@ public class ApplicationDAO {
                 .setMaxResults(1) //
                 .uniqueResult();
     }
-
+    
     public Long getProvidedReferenceCount(Application application) {
         return (Long) sessionFactory.getCurrentSession().createCriteria(Comment.class) //
                 .setProjection(Projections.rowCount()) //
@@ -207,7 +186,7 @@ public class ApplicationDAO {
                 .add(Restrictions.eq("declinedResponse", false)) //
                 .uniqueResult();
     }
-
+    
     public Long getDeclinedReferenceCount(Application application) {
         return (Long) sessionFactory.getCurrentSession().createCriteria(Comment.class) //
                 .setProjection(Projections.rowCount()) //
@@ -216,7 +195,7 @@ public class ApplicationDAO {
                 .add(Restrictions.eq("declinedResponse", true)) //
                 .uniqueResult();
     }
-
+    
     public List<OtherApplicationSummaryRepresentation> getOtherLiveApplications(Application application) {
         return (List<OtherApplicationSummaryRepresentation>) sessionFactory.getCurrentSession().createCriteria(Application.class, "application") //
                 .setProjection(Projections.projectionList() //
@@ -241,7 +220,7 @@ public class ApplicationDAO {
                 .setResultTransformer(Transformers.aliasToBean(OtherApplicationSummaryRepresentation.class)) //
                 .list();
     }
-
+    
     public List<PrismWorkflowPropertyDefinition> getApplicationWorkflowPropertyDefinitions(Set<Integer> applicationIds) {
         return (List<PrismWorkflowPropertyDefinition>) sessionFactory.getCurrentSession().createCriteria(WorkflowPropertyConfiguration.class) //
                 .setProjection(Projections.groupProperty("workflowPropertyDefinition.id")) //
@@ -252,7 +231,7 @@ public class ApplicationDAO {
                 .add(Restrictions.eq("enabled", true)) //
                 .list();
     }
-
+    
     public List<ApplicationReportListRowDTO> getApplicationReport(Set<Integer> assignedApplications, String columns) {
         return (List<ApplicationReportListRowDTO>) sessionFactory.getCurrentSession().createQuery( //
                 "select " + columns + " " //
@@ -285,42 +264,42 @@ public class ApplicationDAO {
                 .setResultTransformer(Transformers.aliasToBean(ApplicationReportListRowDTO.class)) //
                 .list();
     }
-
+    
     public <T extends Resource> List<Application> getUserAdministratorApplications(HashMultimap<PrismScope, T> userAdministratorResources) {
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(UserRole.class) //
                 .setProjection(Projections.groupProperty("application")) //
                 .createAlias("application", "application", JoinType.INNER_JOIN) //
                 .createAlias("role", "role", JoinType.INNER_JOIN) //
                 .add(Restrictions.isNull("role.scopeCreator"));
-
+        
         Disjunction disjunction = Restrictions.disjunction();
         for (PrismScope scope : userAdministratorResources.keySet()) {
             disjunction.add(Restrictions.in("application." + scope.getLowerCamelName(), userAdministratorResources.get(scope)));
         }
-
+        
         return (List<Application>) criteria.add(disjunction) //
                 .list();
     }
-
+    
     public List<ApplicationProcessingSummaryDTO> getApplicationProcessingSummariesByYear(ResourceParent resource,
-                                                                                         Set<ResourceSummaryPlotConstraintRepresentation> constraint) {
+            Set<ResourceSummaryPlotConstraintRepresentation> constraint) {
         return (List<ApplicationProcessingSummaryDTO>) getApplicationProcessingSummaryQuery(resource, constraint,
                 "sql/application_processing_summary_year.ftl")
                 .setResultTransformer(Transformers.aliasToBean(ApplicationProcessingSummaryDTO.class))
                 .list();
     }
-
+    
     public List<ApplicationProcessingSummaryDTO> getApplicationProcessingSummariesByMonth(ResourceParent resource,
-                                                                                          Set<ResourceSummaryPlotConstraintRepresentation> constraint) {
+            Set<ResourceSummaryPlotConstraintRepresentation> constraint) {
         return (List<ApplicationProcessingSummaryDTO>) getApplicationProcessingSummaryQuery(resource, constraint,
                 "sql/application_processing_summary_month.ftl")
                 .addScalar("applicationMonth", IntegerType.INSTANCE) //
                 .setResultTransformer(Transformers.aliasToBean(ApplicationProcessingSummaryDTO.class))
                 .list();
     }
-
+    
     public List<ApplicationProcessingSummaryDTO> getApplicationProcessingSummariesByWeek(ResourceParent resource,
-                                                                                         Set<ResourceSummaryPlotConstraintRepresentation> constraint) {
+            Set<ResourceSummaryPlotConstraintRepresentation> constraint) {
         return (List<ApplicationProcessingSummaryDTO>) getApplicationProcessingSummaryQuery(resource, constraint,
                 "sql/application_processing_summary_week.ftl")
                 .addScalar("applicationMonth", IntegerType.INSTANCE) //
@@ -328,7 +307,7 @@ public class ApplicationDAO {
                 .setResultTransformer(Transformers.aliasToBean(ApplicationProcessingSummaryDTO.class))
                 .list();
     }
-
+    
     public ApplicationRatingSummaryDTO getApplicationRatingSummary(Application application) {
         return (ApplicationRatingSummaryDTO) sessionFactory.getCurrentSession().createCriteria(Comment.class) //
                 .setProjection(Projections.projectionList() //
@@ -340,7 +319,7 @@ public class ApplicationDAO {
                 .setResultTransformer(Transformers.aliasToBean(ApplicationRatingSummaryDTO.class)) //
                 .uniqueResult();
     }
-
+    
     public ApplicationRatingSummaryDTO getApplicationRatingSummary(ResourceParent resource) {
         String resourceReference = resource.getResourceScope().getLowerCamelName();
         return (ApplicationRatingSummaryDTO) sessionFactory.getCurrentSession().createCriteria(Application.class) //
@@ -354,7 +333,7 @@ public class ApplicationDAO {
                 .setResultTransformer(Transformers.aliasToBean(ApplicationRatingSummaryDTO.class)) //
                 .uniqueResult();
     }
-
+    
     public List<Integer> getApplicationsByMatchingSuggestedSupervisor(String searchTerm) {
         return (List<Integer>) sessionFactory.getCurrentSession().createCriteria(ApplicationSupervisor.class) //
                 .setProjection(Projections.property("application.id")) //
@@ -364,18 +343,18 @@ public class ApplicationDAO {
                         .add(Restrictions.ilike("user.email", searchTerm, MatchMode.ANYWHERE))) //
                 .list();
     }
-
+    
     private SQLQuery getApplicationProcessingSummaryQuery(ResourceParent resource, Set<ResourceSummaryPlotConstraintRepresentation> constraints,
-                                                          String templateLocation) {
+            String templateLocation) {
         String columnExpression = Joiner.on(",\n\t").join(getColumns());
-
+        
         List<String> filterConstraintExpressions = Lists.newLinkedList();
         if (constraints != null) {
             HashMultimap<PrismImportedEntity, Integer> flattenedConstraints = HashMultimap.create();
             for (ResourceSummaryPlotConstraintRepresentation constraint : constraints) {
                 flattenedConstraints.put(constraint.getType(), constraint.getId());
             }
-
+            
             for (PrismImportedEntity entity : flattenedConstraints.keySet()) {
                 String columnConstraintExpression = "(";
                 List<String> columnConstraint = Lists.newArrayList();
@@ -385,15 +364,15 @@ public class ApplicationDAO {
                 filterConstraintExpressions.add(columnConstraintExpression + Joiner.on("\n\t\tand ").join(columnConstraint) + ")");
             }
         }
-
+        
         String constraintExpression = "where application." + resource.getResourceScope().getLowerCamelName() + "_id = " + resource.getId();
         String filterConstraintExpression = Joiner.on("\n\tand ").join(filterConstraintExpressions);
         if (!StringUtils.isNullOrEmpty(filterConstraintExpression)) {
             constraintExpression = constraintExpression + "\n\tand " + filterConstraintExpression;
         }
-
+        
         ImmutableMap<String, Object> model = ImmutableMap.of("columnExpression", (Object) columnExpression, "constraintExpression", constraintExpression);
-
+        
         String queryString;
         try {
             String statement = Resources.toString(Resources.getResource(templateLocation), Charsets.UTF_8);
@@ -403,7 +382,7 @@ public class ApplicationDAO {
             throw new Error(e);
         }
         SQLQuery query = sessionFactory.getCurrentSession().createSQLQuery(queryString);
-
+        
         return query.addScalar("advertCount", LongType.INSTANCE) //
                 .addScalar("applicationYear", StringType.INSTANCE) //
                 .addScalar("submittedApplicationCount", LongType.INSTANCE) //
@@ -417,5 +396,5 @@ public class ApplicationDAO {
                 .addScalar("averageRating", DoubleType.INSTANCE) //
                 .addScalar("averageProcessingTime", DoubleType.INSTANCE);
     }
-
+    
 }

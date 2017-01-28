@@ -388,7 +388,7 @@ public class CommentService {
 		return commentDAO.getRecentComments(resourceScope, resourceId, rangeStart, rangeClose);
 	}
 
-	public void recordStateTransition(Comment comment, State state, State transitionState,
+	public void kmORE recordStateTransition(Comment comment, State state, State transitionState,
 			Set<State> stateTerminations) {
 		comment.setState(state);
 		comment.setTransitionState(transitionState);
@@ -399,7 +399,7 @@ public class CommentService {
 		updateCommentStates(comment);
 
 		if (comment.isSecondaryStateGroupTransitionComment() || comment.isStateGroupTransitionComment()) {
-			createCommentTransitionStates(comment, transitionState, stateTerminations);
+			createCommentTransitionStates(comment, stateTerminations);
 		} else {
 			updateCommentTransitionStates(comment, stateTerminations);
 		}
@@ -664,7 +664,7 @@ public class CommentService {
 		}
 	}
 
-	private void createCommentTransitionStates(Comment comment, State transitionState, Set<State> stateTerminations) {
+	private void createCommentTransitionStates(Comment comment, Set<State> stateTerminations) {
 		for (State secondaryTransitionState : comment.getSecondaryTransitionStates()) {
 			if (!stateTerminations.contains(secondaryTransitionState)) {
 				comment.addCommentTransitionState(secondaryTransitionState, false);

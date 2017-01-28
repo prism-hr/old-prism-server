@@ -222,9 +222,9 @@ public class ResourceService {
         }
     }
     
-    public void recordStateTransition(Resource resource, Comment comment, State state, State transitionState) throws Exception {
-        resource.setPreviousState(state);
-        resource.setState(transitionState);
+    public void recordStateTransition(Resource resource, Comment comment) throws Exception {
+        resource.setState(comment.getTransitionState());
+        resource.setPreviousState(comment.getState());
         
         Set<ResourcePreviousState> resourcePreviousStates = resource.getResourcePreviousStates();
         Set<CommentState> commentStates = comment.getCommentStates();
@@ -236,10 +236,8 @@ public class ResourceService {
         entityService.flush();
         
         LocalDate baseline = comment.getCreatedTimestamp().toLocalDate();
-        insertResourceStates(resource, resourcePreviousStates, commentStates, ResourcePreviousState.class, baseline);
-        insertResourceStates(resource, resourceStates, commentTransitionStates, ResourceState.class, baseline);
-        
-        resource.setState(comment.getTransitionState());
+        insertResourceStates(resource, commentStates, ResourcePreviousState.class, baseline);
+        insertResourceStates(resource, commentTransitionStates, ResourceState.class, baseline);
         entityService.flush();
     }
     
@@ -800,7 +798,7 @@ public class ResourceService {
     }
     
     private <T extends ResourceStateDefinition, U extends CommentStateDefinition> void insertResourceStates(
-            Resource resource, Set<T> resourceStateDefinitions, Set<U> commentStateDefinitions, Class<T> resourceStateClass, LocalDate baseline)
+            Resource resource, Set<U> commentStateDefinitions, Class<T> resourceStateClass, LocalDate baseline)
             throws Exception {
         for (U commentState : commentStateDefinitions) {
             T transientResourceStateDefinition = resourceStateClass.newInstance();

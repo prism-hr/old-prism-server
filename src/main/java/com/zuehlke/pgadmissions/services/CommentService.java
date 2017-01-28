@@ -388,7 +388,7 @@ public class CommentService {
 		return commentDAO.getRecentComments(resourceScope, resourceId, rangeStart, rangeClose);
 	}
 
-	public void kmORE recordStateTransition(Comment comment, State state, State transitionState,
+	public void recordStateTransition(Comment comment, State state, State transitionState,
 			Set<State> stateTerminations) {
 		comment.setState(state);
 		comment.setTransitionState(transitionState);

@@ -48,9 +48,11 @@ import static uk.co.alumeni.prism.utils.PrismStringUtils.getBigDecimalAsString;
 @Component
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
 public class ApplicationDownloadBuilder {
-
-    private final Map<String, Bookmark<?>> bookmarks = Maps.newLinkedHashMap();
+    
     private PropertyLoader propertyLoader;
+    
+    private final Map<String, Bookmark<?>> bookmarks = Maps.newLinkedHashMap();
+    
     private ApplicationDownloadBuilderHelper applicationDownloadBuilderHelper;
 
     @Value("${export.logo.file.width.percentage}")
@@ -72,7 +74,7 @@ public class ApplicationDownloadBuilder {
             addReferencesSection(application, pdfDocument);
             addDocumentSection(application, pdfDocument);
             addAdditionalInformationSection(application, pdfDocument);
-            addSupportingDocuments(application, pdfDocument, writer);
+            addSupportingDocuments(pdfDocument, writer);
         } catch (Exception e) {
             throw new PdfDocumentBuilderException(e);
         }
@@ -331,15 +333,13 @@ public class ApplicationDownloadBuilder {
                 UserRepresentationSimple user = referee.getResource().getUser();
                 boolean userNull = user == null;
 
-                applicationDownloadBuilderHelper
-                        .addContentRowMedium(propertyLoader.loadLazy(SYSTEM_FIRST_NAME), userNull ? null : user.getFirstName(), subBody);
-                applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.loadLazy(SYSTEM_HTML_GENERAL_FIELD_LAST_NAME_LABEL),
-                        userNull ? null : user.getLastName(), subBody);
+                applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.loadLazy(SYSTEM_FIRST_NAME), userNull ? null : user.getFirstName(), subBody);
+                applicationDownloadBuilderHelper.addContentRowMedium(
+                        propertyLoader.loadLazy(SYSTEM_HTML_GENERAL_FIELD_LAST_NAME_LABEL), userNull ? null : user.getLastName(), subBody);
                 applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.loadLazy(SYSTEM_EMAIL), userNull ? null : user.getEmail(), subBody);
-                applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.loadLazy(PROFILE_REFEREE_POSITION_EMPLOYER_LABEL), referee.getResource()
-                        .getResource().getDisplayName(), subBody);
-                applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.loadLazy(PROFILE_PERSONAL_DETAIL_TELEPHONE_LABEL), referee.getPhone(),
-                        subBody);
+                applicationDownloadBuilderHelper.addContentRowMedium(
+                        propertyLoader.loadLazy(PROFILE_REFEREE_POSITION_EMPLOYER_LABEL), referee.getResource().getResource().getDisplayName(), subBody);
+                applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.loadLazy(PROFILE_PERSONAL_DETAIL_TELEPHONE_LABEL), referee.getPhone(), subBody);
                 applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.loadLazy(PROFILE_PERSONAL_DETAIL_SKYPE_LABEL), referee.getSkype(), subBody);
 
                 CommentRepresentation referenceComment = referee.getComment();
@@ -391,7 +391,7 @@ public class ApplicationDownloadBuilder {
         }
     }
 
-    private void addSupportingDocuments(ApplicationRepresentationExtended application, Document pdfDocument, PdfWriter pdfWriter) throws Exception {
+    private void addSupportingDocuments(Document pdfDocument, PdfWriter pdfWriter) throws Exception {
         int index = 0;
         for (Map.Entry<String, Bookmark<?>> entry : bookmarks.entrySet()) {
             pdfDocument.newPage();
@@ -448,13 +448,11 @@ public class ApplicationDownloadBuilder {
 
             BigDecimal rating = commentRepresentation.getRating();
             applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.loadLazy(SYSTEM_RATING), rating == null ? null : rating.toPlainString(), body);
-
             applicationDownloadBuilderHelper.closeSection(pdfDocument, body);
         }
     }
 
-    private void addReferenceCommentAssessmentCriteria(Document pdfDocument, List<CommentCompetenceGroupRepresentation> competenceGroupRepresentations)
-            throws Exception {
+    private void addReferenceCommentAssessmentCriteria(Document pdfDocument, List<CommentCompetenceGroupRepresentation> competenceGroupRepresentations) throws Exception {
         Joiner joiner = Joiner.on(COLON + SPACE).skipNulls();
 
         PdfPTable body = applicationDownloadBuilderHelper.startSubSection(propertyLoader.loadLazy(SYSTEM_RESOURCE_COMPETENCES_HEADER));

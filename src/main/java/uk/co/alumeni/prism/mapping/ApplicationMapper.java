@@ -455,8 +455,7 @@ public class ApplicationMapper {
 
     private CommentRepresentation getApplicationReferenceRepresentation(Comment referenceComment, List<PrismRole> creatableRoles,
             List<PrismRole> overridingRoles) {
-        return referenceComment == null ? null : commentMapper.getCommentRepresentation(userService.getCurrentUser(), referenceComment, creatableRoles,
-                overridingRoles);
+        return referenceComment == null ? null : commentMapper.getCommentRepresentation(userService.getCurrentUser(), referenceComment, creatableRoles, overridingRoles);
     }
 
 }

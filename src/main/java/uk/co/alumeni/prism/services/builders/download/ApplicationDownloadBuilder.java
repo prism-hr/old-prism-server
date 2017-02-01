@@ -14,11 +14,13 @@ import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import uk.co.alumeni.prism.domain.definitions.*;
+import uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition;
 import uk.co.alumeni.prism.exceptions.IntegrationException;
 import uk.co.alumeni.prism.exceptions.PdfDocumentBuilderException;
 import uk.co.alumeni.prism.rest.representation.DocumentRepresentation;
 import uk.co.alumeni.prism.rest.representation.address.AddressRepresentation;
 import uk.co.alumeni.prism.rest.representation.comment.CommentCompetenceGroupRepresentation;
+import uk.co.alumeni.prism.rest.representation.comment.CommentCompetenceRepresentation;
 import uk.co.alumeni.prism.rest.representation.comment.CommentRepresentation;
 import uk.co.alumeni.prism.rest.representation.profile.*;
 import uk.co.alumeni.prism.rest.representation.resource.ResourceRepresentationRelation;
@@ -448,15 +450,12 @@ public class ApplicationDownloadBuilder {
         Joiner joiner = Joiner.on(COLON + SPACE).skipNulls();
 
         PdfPTable body = applicationDownloadBuilderHelper.startSubSection(propertyLoader.loadLazy(SYSTEM_RESOURCE_COMPETENCES_HEADER));
-        competenceGroupRepresentations.stream().forEach(
-                competenceGroupRepresentation -> {
-                    competenceGroupRepresentation.getCompetences().stream().forEach(
-                            competenceRepresentation -> {
-                                applicationDownloadBuilderHelper.addContentRowMedium(competenceRepresentation.getName(),
-                                        joiner.join(competenceRepresentation.getRating().toString(),
-                                                competenceRepresentation.getRemark()), body);
-                            });
-                });
+        for (CommentCompetenceGroupRepresentation competenceGroupRepresentation : competenceGroupRepresentations) {
+            for (CommentCompetenceRepresentation competenceRepresentation : competenceGroupRepresentation.getCompetences()) {
+                applicationDownloadBuilderHelper.addContentRowMedium(competenceRepresentation.getName(),
+                        joiner.join(competenceRepresentation.getRating(), competenceRepresentation.getRemark()), body);
+            }
+        }
 
         applicationDownloadBuilderHelper.closeSection(pdfDocument, body);
     }

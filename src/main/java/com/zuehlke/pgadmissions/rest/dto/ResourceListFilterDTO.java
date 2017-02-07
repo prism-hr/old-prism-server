@@ -1,13 +1,15 @@
 package com.zuehlke.pgadmissions.rest.dto;
 
-import java.util.List;
-
-import org.apache.commons.lang.BooleanUtils;
-
 import com.zuehlke.pgadmissions.domain.definitions.PrismFilterMatchMode;
 import com.zuehlke.pgadmissions.domain.definitions.PrismFilterSortOrder;
+import com.zuehlke.pgadmissions.rest.representation.resource.application.ApplicationYearRepresentation;
+import org.apache.commons.lang.BooleanUtils;
+
+import java.util.List;
 
 public class ResourceListFilterDTO {
+
+    private List<ApplicationYearRepresentation> applicationYears;
 
     private PrismFilterMatchMode matchMode;
 
@@ -18,6 +20,14 @@ public class ResourceListFilterDTO {
     private Boolean urgentOnly;
 
     private List<ResourceListFilterConstraintDTO> constraints;
+
+    public List<ApplicationYearRepresentation> getApplicationYears() {
+        return applicationYears;
+    }
+
+    public void setApplicationYears(List<ApplicationYearRepresentation> applicationYears) {
+        this.applicationYears = applicationYears;
+    }
 
     public final PrismFilterMatchMode getMatchMode() {
         return matchMode;

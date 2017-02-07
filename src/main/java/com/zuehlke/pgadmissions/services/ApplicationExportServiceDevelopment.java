@@ -1,17 +1,16 @@
 package com.zuehlke.pgadmissions.services;
 
-import java.io.ByteArrayOutputStream;
-import java.io.OutputStream;
-import java.util.HashMap;
-
+import com.google.common.collect.Maps;
+import com.zuehlke.pgadmissions.admissionsservice.jaxb.SubmitAdmissionsApplicationRequest;
+import com.zuehlke.pgadmissions.domain.application.Application;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.exception.ExceptionUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.google.common.collect.Maps;
-import com.zuehlke.pgadmissions.admissionsservice.jaxb.SubmitAdmissionsApplicationRequest;
-import com.zuehlke.pgadmissions.domain.application.Application;
+import java.io.ByteArrayOutputStream;
+import java.io.OutputStream;
+import java.util.HashMap;
 
 @Service
 @Transactional
@@ -41,9 +40,9 @@ public class ApplicationExportServiceDevelopment extends ApplicationExportServic
                     withDocumentExportRequest(byteOutputStream.toByteArray());
             exportRequests.put(application, exportRequest);
 
-            executeExportAction(application, dataExportRequest, "TEST EXPORT", "TEST EXPORT USER ID", null);
+            applicationService.executeExportAction(application.getId(), dataExportRequest, "TEST EXPORT", "TEST EXPORT USER ID", null);
         } catch (Exception e) {
-            executeExportAction(application, dataExportRequest, null, null, ExceptionUtils.getStackTrace(e));
+            applicationService.executeExportAction(application.getId(), dataExportRequest, null, null, ExceptionUtils.getStackTrace(e));
         } finally {
             IOUtils.closeQuietly(outputStream);
         }

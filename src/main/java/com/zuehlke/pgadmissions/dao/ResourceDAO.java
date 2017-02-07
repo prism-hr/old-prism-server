@@ -1,29 +1,5 @@
 package com.zuehlke.pgadmissions.dao;
 
-import static com.zuehlke.pgadmissions.dao.WorkflowDAOUtils.getResourceStateActionConstraint;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType.CREATE;
-import static com.zuehlke.pgadmissions.utils.PrismConstants.SEQUENCE_IDENTIFIER;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
-
-import org.apache.commons.lang.WordUtils;
-import org.hibernate.Criteria;
-import org.hibernate.SessionFactory;
-import org.hibernate.criterion.Junction;
-import org.hibernate.criterion.MatchMode;
-import org.hibernate.criterion.Order;
-import org.hibernate.criterion.ProjectionList;
-import org.hibernate.criterion.Projections;
-import org.hibernate.criterion.Restrictions;
-import org.hibernate.sql.JoinType;
-import org.hibernate.transform.Transformers;
-import org.joda.time.DateTime;
-import org.joda.time.LocalDate;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Repository;
-
 import com.google.common.base.Joiner;
 import com.google.common.collect.HashMultimap;
 import com.zuehlke.pgadmissions.domain.comment.Comment;
@@ -45,6 +21,25 @@ import com.zuehlke.pgadmissions.dto.ResourceListRowDTO;
 import com.zuehlke.pgadmissions.dto.UserAdministratorResourceDTO;
 import com.zuehlke.pgadmissions.rest.dto.ResourceListFilterDTO;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceSponsorRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.resource.application.ApplicationYearRepresentation;
+import org.apache.commons.lang.WordUtils;
+import org.hibernate.Criteria;
+import org.hibernate.SessionFactory;
+import org.hibernate.criterion.*;
+import org.hibernate.sql.JoinType;
+import org.hibernate.transform.Transformers;
+import org.joda.time.DateTime;
+import org.joda.time.LocalDate;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Repository;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
+
+import static com.zuehlke.pgadmissions.dao.WorkflowDAOUtils.getResourceStateActionConstraint;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType.CREATE;
+import static com.zuehlke.pgadmissions.utils.PrismConstants.SEQUENCE_IDENTIFIER;
 
 @Repository
 @SuppressWarnings("unchecked")
@@ -52,6 +47,51 @@ public class ResourceDAO {
 
     @Autowired
     private SessionFactory sessionFactory;
+
+    private static void appendResourceListFilterCriterion(Criteria criteria, Junction conditions, ResourceListFilterDTO filter) {
+        List<ApplicationYearRepresentation> applicationYears = filter.getApplicationYears();
+        if (applicationYears != null) {
+            Junction applicationYearConstraint = Restrictions.disjunction();
+            for (ApplicationYearRepresentation applicationYear : applicationYears) {
+                Integer businessYearStartMonth = applicationYear.getBusinessYearStartMonth();
+                if (businessYearStartMonth == null) {
+                    applicationYearConstraint.add(Restrictions.eq("resource.applicationYear", applicationYear.getApplicationYear()));
+                } else {
+                    applicationYearConstraint.add(Restrictions.conjunction()
+                            .add(Restrictions.eq("resource.applicationYear", applicationYear.getApplicationYear()))
+                            .add(Restrictions.eq("resource.businessYearStartMonth", applicationYear.getBusinessYearStartMonth())));
+                }
+
+            }
+
+            criteria.add(applicationYearConstraint);
+        }
+
+        if (filter.isUrgentOnly()) {
+            criteria.add(Restrictions.eq("stateAction.raisesUrgentFlag", true));
+        }
+
+        if (conditions != null) {
+            criteria.add(conditions);
+        }
+    }
+
+    private static Criteria appendResourceListLimitCriterion(Criteria criteria, ResourceListFilterDTO filter, String lastSequenceIdentifier,
+                                                             Integer recordsToRetrieve) {
+        PrismFilterSortOrder sortOrder = filter.getSortOrder();
+
+        if (lastSequenceIdentifier != null) {
+            criteria.add(PrismFilterSortOrder.getPagingRestriction(SEQUENCE_IDENTIFIER, sortOrder, lastSequenceIdentifier));
+        }
+
+        criteria.addOrder(PrismFilterSortOrder.getOrderExpression(SEQUENCE_IDENTIFIER, sortOrder));
+
+        if (recordsToRetrieve != null) {
+            criteria.setMaxResults(recordsToRetrieve);
+        }
+
+        return criteria;
+    }
 
     public List<Integer> getResourcesToEscalate(PrismScope resourceScope, PrismAction actionId, LocalDate baseline) {
         return (List<Integer>) sessionFactory.getCurrentSession().createCriteria(resourceScope.getResourceClass()) //
@@ -148,7 +188,7 @@ public class ResourceDAO {
     }
 
     public List<ResourceListRowDTO> getResourceList(User user, PrismScope scopeId, List<PrismScope> parentScopeIds,
-            Set<Integer> assignedResources, ResourceListFilterDTO filter, String lastSequenceIdentifier, Integer maxRecords, boolean hasRedactions) {
+                                                    Set<Integer> assignedResources, ResourceListFilterDTO filter, String lastSequenceIdentifier, Integer maxRecords, boolean hasRedactions) {
         if (assignedResources.isEmpty()) {
             return new ArrayList<ResourceListRowDTO>(0);
         }
@@ -207,7 +247,7 @@ public class ResourceDAO {
     }
 
     public List<Integer> getAssignedResources(User user, PrismScope scopeId, ResourceListFilterDTO filter, Junction conditions, String lastSequenceIdentifier,
-            Integer recordsToRetrieve) {
+                                              Integer recordsToRetrieve) {
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(scopeId.getResourceClass()) //
                 .setProjection(Projections.groupProperty("id")) //
                 .createAlias("resourceStates", "resourceState", JoinType.INNER_JOIN) //
@@ -229,7 +269,7 @@ public class ResourceDAO {
     }
 
     public List<Integer> getAssignedResources(User user, PrismScope scopeId, PrismScope parentScopeId, ResourceListFilterDTO filter, Junction conditions,
-            String lastSequenceIdentifier, Integer recordsToRetrieve) {
+                                              String lastSequenceIdentifier, Integer recordsToRetrieve) {
         String parentResourceReference = parentScopeId.getLowerCamelName();
 
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(scopeId.getResourceClass()) //
@@ -254,7 +294,7 @@ public class ResourceDAO {
     }
 
     public List<Integer> getAssignedPartnerResources(User user, PrismScope scopeId, ResourceListFilterDTO filter, Junction conditions,
-            String lastSequenceIdentifier, Integer recordsToRetrieve) {
+                                                     String lastSequenceIdentifier, Integer recordsToRetrieve) {
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(scopeId.getResourceClass()) //
                 .setProjection(Projections.groupProperty("id")) //
                 .createAlias("resourceStates", "resourceState", JoinType.INNER_JOIN) //
@@ -481,33 +521,6 @@ public class ResourceDAO {
                 criteria.createAlias(tableName, tableName, JoinType.LEFT_OUTER_JOIN); //
             }
         }
-    }
-
-    private static void appendResourceListFilterCriterion(Criteria criteria, Junction conditions, ResourceListFilterDTO filter) {
-        if (filter.isUrgentOnly()) {
-            criteria.add(Restrictions.eq("stateAction.raisesUrgentFlag", true));
-        }
-
-        if (conditions != null) {
-            criteria.add(conditions);
-        }
-    }
-
-    private static Criteria appendResourceListLimitCriterion(Criteria criteria, ResourceListFilterDTO filter, String lastSequenceIdentifier,
-            Integer recordsToRetrieve) {
-        PrismFilterSortOrder sortOrder = filter.getSortOrder();
-
-        if (lastSequenceIdentifier != null) {
-            criteria.add(PrismFilterSortOrder.getPagingRestriction(SEQUENCE_IDENTIFIER, sortOrder, lastSequenceIdentifier));
-        }
-
-        criteria.addOrder(PrismFilterSortOrder.getOrderExpression(SEQUENCE_IDENTIFIER, sortOrder));
-
-        if (recordsToRetrieve != null) {
-            criteria.setMaxResults(recordsToRetrieve);
-        }
-
-        return criteria;
     }
 
 }

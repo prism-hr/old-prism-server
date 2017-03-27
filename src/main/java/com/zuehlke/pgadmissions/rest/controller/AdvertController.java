@@ -18,7 +18,6 @@ import com.zuehlke.pgadmissions.rest.dto.advert.AdvertCategoriesDTO;
 import com.zuehlke.pgadmissions.rest.dto.advert.AdvertClosingDateDTO;
 import com.zuehlke.pgadmissions.rest.dto.advert.AdvertDetailsDTO;
 import com.zuehlke.pgadmissions.rest.dto.advert.AdvertFeesAndPaymentsDTO;
-import com.zuehlke.pgadmissions.rest.dto.advert.AdvertSponsorshipDTO;
 import com.zuehlke.pgadmissions.services.AdvertService;
 
 @RestController
@@ -64,12 +63,6 @@ public class AdvertController {
     public void deleteClosingDate(@ModelAttribute ResourceDescriptor resourceDescriptor, @PathVariable Integer resourceId, @PathVariable Integer closingDateId)
             throws Exception {
         advertService.deleteClosingDate(resourceDescriptor.getResourceScope(), resourceId, closingDateId);
-    }
-
-    @RequestMapping(value = "/sponsorship", method = RequestMethod.PUT)
-    public void updateSponsorship(@ModelAttribute ResourceDescriptor resourceDescriptor, @PathVariable Integer resourceId,
-            @Valid @RequestBody AdvertSponsorshipDTO sponsorshipDTO) throws Exception {
-        advertService.updateSponsorship(resourceDescriptor.getResourceScope(), resourceId, sponsorshipDTO);
     }
 
     @ModelAttribute

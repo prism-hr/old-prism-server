@@ -1,90 +1,15 @@
 package com.zuehlke.pgadmissions.domain.definitions.workflow;
 
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationDefinitionPropertyCategory.ACTION_GLOBAL;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationDefinitionPropertyCategory.APPLICATION_APPROVED;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationDefinitionPropertyCategory.APPLICATION_GLOBAL;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationDefinitionPropertyCategory.APPLICATION_INTERVIEW_SCHEDULED;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationDefinitionPropertyCategory.APPLICATION_REJECTED;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationDefinitionPropertyCategory.COMMENT_GLOBAL;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationDefinitionPropertyCategory.COMMENT_SPONSOR;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationDefinitionPropertyCategory.COMMENT_TRANSITION;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationDefinitionPropertyCategory.INSTITUTION_APPROVED;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationDefinitionPropertyCategory.INSTITUTION_GLOBAL;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationDefinitionPropertyCategory.PROGRAM_GLOBAL;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationDefinitionPropertyCategory.PROJECT_GLOBAL;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationDefinitionPropertyCategory.SYSTEM_APPLICATION_MARKETING;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationDefinitionPropertyCategory.SYSTEM_APPLICATION_SYNDICATED;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationDefinitionPropertyCategory.SYSTEM_INSTITUTION_SYNDICATED;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationDefinitionPropertyCategory.SYSTEM_PROGRAM_SYNDICATED;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationDefinitionPropertyCategory.SYSTEM_PROJECT_SYNDICATED;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationDefinitionPropertyCategory.SYSTEM_USER_ACCOUNT;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationDefinitionPropertyCategory.SYSTEM_USER_ACTIVATION;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationDefinitionPropertyCategory.SYSTEM_USER_PASSWORD;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationDefinitionPropertyCategory.TEMPLATE_GLOBAL;
+import com.google.common.collect.LinkedListMultimap;
+import com.google.common.collect.ListMultimap;
+import com.zuehlke.pgadmissions.workflow.notification.property.*;
 
 import java.util.List;
 
-import com.google.common.collect.LinkedListMultimap;
-import com.google.common.collect.ListMultimap;
-import com.zuehlke.pgadmissions.workflow.notification.property.ActionCompleteBuilder;
-import com.zuehlke.pgadmissions.workflow.notification.property.ActionViewEditBuilder;
-import com.zuehlke.pgadmissions.workflow.notification.property.ApplicationCodeBuilder;
-import com.zuehlke.pgadmissions.workflow.notification.property.ApplicationConfirmedOfferConditionBuilder;
-import com.zuehlke.pgadmissions.workflow.notification.property.ApplicationConfirmedPositionDescriptionBuilder;
-import com.zuehlke.pgadmissions.workflow.notification.property.ApplicationConfirmedPositionTitleBuilder;
-import com.zuehlke.pgadmissions.workflow.notification.property.ApplicationConfirmedPrimarySupervisorBuilder;
-import com.zuehlke.pgadmissions.workflow.notification.property.ApplicationConfirmedSecondarySupervisorBuilder;
-import com.zuehlke.pgadmissions.workflow.notification.property.ApplicationConfirmedStartDateBuilder;
-import com.zuehlke.pgadmissions.workflow.notification.property.ApplicationCreatorFullNameBuilder;
-import com.zuehlke.pgadmissions.workflow.notification.property.ApplicationInterviewDateTimeBuilder;
-import com.zuehlke.pgadmissions.workflow.notification.property.ApplicationInterviewLocationBuilder;
-import com.zuehlke.pgadmissions.workflow.notification.property.ApplicationInterviewTimeZoneBuilder;
-import com.zuehlke.pgadmissions.workflow.notification.property.ApplicationIntervieweeInstructionsBuilder;
-import com.zuehlke.pgadmissions.workflow.notification.property.ApplicationInterviewerInstructionsBuilder;
-import com.zuehlke.pgadmissions.workflow.notification.property.ApplicationOpportunityTypeBuilder;
-import com.zuehlke.pgadmissions.workflow.notification.property.ApplicationParentResourceCodeBuilder;
-import com.zuehlke.pgadmissions.workflow.notification.property.ApplicationParentResourceTitleBuilder;
-import com.zuehlke.pgadmissions.workflow.notification.property.ApplicationRejectionReasonBuilder;
-import com.zuehlke.pgadmissions.workflow.notification.property.ApplicationRejectionRecommendBuilder;
-import com.zuehlke.pgadmissions.workflow.notification.property.CommentContentBuilder;
-import com.zuehlke.pgadmissions.workflow.notification.property.CommentDateTimeBuilder;
-import com.zuehlke.pgadmissions.workflow.notification.property.CommentSponsorshipBuilder;
-import com.zuehlke.pgadmissions.workflow.notification.property.CommentTransitionOutcomeBuilder;
-import com.zuehlke.pgadmissions.workflow.notification.property.InstitutionCodeBuilder;
-import com.zuehlke.pgadmissions.workflow.notification.property.InstitutionDataImportErrorBuilder;
-import com.zuehlke.pgadmissions.workflow.notification.property.InstitutionHomepageBuilder;
-import com.zuehlke.pgadmissions.workflow.notification.property.InstitutionTitleBuilder;
-import com.zuehlke.pgadmissions.workflow.notification.property.InstitutionUserContactBuilder;
-import com.zuehlke.pgadmissions.workflow.notification.property.NotificationPropertyBuilder;
-import com.zuehlke.pgadmissions.workflow.notification.property.ProgramCodeBuilder;
-import com.zuehlke.pgadmissions.workflow.notification.property.ProgramTitleBuilder;
-import com.zuehlke.pgadmissions.workflow.notification.property.ProgramUserContactBuilder;
-import com.zuehlke.pgadmissions.workflow.notification.property.ProjectCodeBuilder;
-import com.zuehlke.pgadmissions.workflow.notification.property.ProjectTitleBuilder;
-import com.zuehlke.pgadmissions.workflow.notification.property.ProjectUserContactBuilder;
-import com.zuehlke.pgadmissions.workflow.notification.property.SystemApplicationHomepageBuilder;
-import com.zuehlke.pgadmissions.workflow.notification.property.SystemApplicationRecommendationBuilder;
-import com.zuehlke.pgadmissions.workflow.notification.property.SystemInstitutionHomepageBuilder;
-import com.zuehlke.pgadmissions.workflow.notification.property.SystemProgramHomepageBuilder;
-import com.zuehlke.pgadmissions.workflow.notification.property.SystemProjectHomepageBuilder;
-import com.zuehlke.pgadmissions.workflow.notification.property.SystemUserAccountActivationBuilder;
-import com.zuehlke.pgadmissions.workflow.notification.property.SystemUserAccountManagementBuilder;
-import com.zuehlke.pgadmissions.workflow.notification.property.SystemUserNewPasswordBuilder;
-import com.zuehlke.pgadmissions.workflow.notification.property.TemplateAuthorEmailBuilder;
-import com.zuehlke.pgadmissions.workflow.notification.property.TemplateAuthorFullNameBuilder;
-import com.zuehlke.pgadmissions.workflow.notification.property.TemplateInvokerEmailBuilder;
-import com.zuehlke.pgadmissions.workflow.notification.property.TemplateInvokerFullNameBuilder;
-import com.zuehlke.pgadmissions.workflow.notification.property.TemplateSystemHelpdeskBuilder;
-import com.zuehlke.pgadmissions.workflow.notification.property.TemplateSystemHomepageBuilder;
-import com.zuehlke.pgadmissions.workflow.notification.property.TemplateSystemTitleBuilder;
-import com.zuehlke.pgadmissions.workflow.notification.property.TemplateUserActivationCodeBuilder;
-import com.zuehlke.pgadmissions.workflow.notification.property.TemplateUserEmailBuilder;
-import com.zuehlke.pgadmissions.workflow.notification.property.TemplateUserFirstNameBuilder;
-import com.zuehlke.pgadmissions.workflow.notification.property.TemplateUserFullNameBuilder;
-import com.zuehlke.pgadmissions.workflow.notification.property.TemplateUserLastNameBuilder;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationDefinitionPropertyCategory.*;
 
 public enum PrismNotificationDefinitionProperty {
-
+    
     TEMPLATE_USER_FULL_NAME(TEMPLATE_GLOBAL, true, TemplateUserFullNameBuilder.class), //
     TEMPLATE_USER_FIRST_NAME(TEMPLATE_GLOBAL, true, TemplateUserFirstNameBuilder.class), //
     TEMPLATE_USER_LAST_NAME(TEMPLATE_GLOBAL, true, TemplateUserLastNameBuilder.class), //
@@ -102,7 +27,6 @@ public enum PrismNotificationDefinitionProperty {
     COMMENT_CONTENT(COMMENT_GLOBAL, true, CommentContentBuilder.class), //
     COMMENT_DATE_TIME(COMMENT_GLOBAL, true, CommentDateTimeBuilder.class), //
     COMMENT_TRANSITION_OUTCOME(COMMENT_TRANSITION, true, CommentTransitionOutcomeBuilder.class), //
-    COMMENT_SPONSORSHIP(COMMENT_SPONSOR, true, CommentSponsorshipBuilder.class), //
     APPLICATION_CREATOR_FULL_NAME(APPLICATION_GLOBAL, true, ApplicationCreatorFullNameBuilder.class), //
     APPLICATION_CODE(APPLICATION_GLOBAL, true, ApplicationCodeBuilder.class), //
     APPLICATION_PARENT_RESOURCE_TITLE(APPLICATION_GLOBAL, true, ApplicationParentResourceTitleBuilder.class), //
@@ -140,43 +64,43 @@ public enum PrismNotificationDefinitionProperty {
     SYSTEM_USER_NEW_PASSWORD(SYSTEM_USER_PASSWORD, false, SystemUserNewPasswordBuilder.class), //
     SYSTEM_USER_ACCOUNT_MANAGEMENT(SYSTEM_USER_ACCOUNT, false, SystemUserAccountManagementBuilder.class), //
     SYSTEM_USER_ACCOUNT_ACTIVATION(SYSTEM_USER_ACTIVATION, false, SystemUserAccountActivationBuilder.class);
-
+    
     private PrismNotificationDefinitionPropertyCategory category;
-
+    
     private boolean escapeHtml;
-
+    
     private Class<? extends NotificationPropertyBuilder> builder;
-
+    
     private static ListMultimap<PrismNotificationDefinitionPropertyCategory, PrismNotificationDefinitionProperty> categoryProperties = LinkedListMultimap
             .create();
-
+    
     static {
         for (PrismNotificationDefinitionProperty property : PrismNotificationDefinitionProperty.values()) {
             categoryProperties.put(property.getCategory(), property);
         }
     }
-
-    private PrismNotificationDefinitionProperty(PrismNotificationDefinitionPropertyCategory category, boolean escapeHtml,
+    
+    PrismNotificationDefinitionProperty(PrismNotificationDefinitionPropertyCategory category, boolean escapeHtml,
             Class<? extends NotificationPropertyBuilder> builder) {
         this.category = category;
         this.escapeHtml = escapeHtml;
         this.builder = builder;
     }
-
+    
     public PrismNotificationDefinitionPropertyCategory getCategory() {
         return category;
     }
-
+    
     public boolean isEscapeHtml() {
         return escapeHtml;
     }
-
+    
     public Class<? extends NotificationPropertyBuilder> getBuilder() {
         return builder;
     }
-
+    
     public static List<PrismNotificationDefinitionProperty> getProperties(PrismNotificationDefinitionPropertyCategory category) {
         return categoryProperties.get(category);
     }
-
+    
 }

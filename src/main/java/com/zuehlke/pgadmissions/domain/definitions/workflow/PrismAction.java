@@ -1,51 +1,20 @@
 package com.zuehlke.pgadmissions.domain.definitions.workflow;
 
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory.CREATE_RESOURCE;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory.EMAIL_RESOURCE_CREATOR;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory.ESCALATE_RESOURCE;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory.EXPORT_RESOURCE;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory.IMPORT_RESOURCE;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory.INITIALISE_RESOURCE;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory.MANAGE_ACCOUNT;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory.PROCESS_RESOURCE;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory.PROPAGATE_RESOURCE;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory.PURGE_RESOURCE;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory.SPONSOR_RESOURCE;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory.VIEW_EDIT_RESOURCE;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory.VIEW_RESOURCE_LIST;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory.WITHDRAW_RESOURCE;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCustomQuestionDefinition.APPLICATION_COMPLETE_CUSTOM;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCustomQuestionDefinition.APPLICATION_PROVIDE_INTERVIEW_FEEDBACK_CUSTOM;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCustomQuestionDefinition.APPLICATION_PROVIDE_REFERENCE_CUSTOM;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCustomQuestionDefinition.APPLICATION_PROVIDE_REVIEW_CUSTOM;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionRedactionType.ALL_ASSESSMENT_CONTENT;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionRedactionType.ALL_CONTENT;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionType.SYSTEM_INVOCATION;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionType.USER_INVOCATION;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.APPLICATION_CREATOR;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.APPLICATION_INTERVIEWEE;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.APPLICATION_POTENTIAL_INTERVIEWEE;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.APPLICATION_REFEREE;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.APPLICATION_VIEWER_RECRUITER;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.APPLICATION_VIEWER_REFEREE;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.INSTITUTION_ADMITTER;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.PROGRAM_ADMINISTRATOR;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.PROGRAM_APPROVER;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.PROGRAM_VIEWER;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.PROJECT_ADMINISTRATOR;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.PROJECT_PRIMARY_SUPERVISOR;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.APPLICATION;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.INSTITUTION;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PROGRAM;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PROJECT;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.SYSTEM;
-
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-public enum PrismAction {
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory.*;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCustomQuestionDefinition.*;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionRedactionType.ALL_ASSESSMENT_CONTENT;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionRedactionType.ALL_CONTENT;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionType.SYSTEM_INVOCATION;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionType.USER_INVOCATION;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.*;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.*;
 
+public enum PrismAction {
+    
     APPLICATION_ASSIGN_INTERVIEWERS(USER_INVOCATION, PROCESS_RESOURCE, false, false, true, null, APPLICATION, //
             Arrays.asList(new PrismActionRedaction().withRole(APPLICATION_CREATOR).withRedactionType(ALL_ASSESSMENT_CONTENT), //
                     new PrismActionRedaction().withRole(APPLICATION_INTERVIEWEE).withRedactionType(ALL_ASSESSMENT_CONTENT), //
@@ -225,7 +194,6 @@ public enum PrismAction {
     INSTITUTION_EMAIL_CREATOR(USER_INVOCATION, EMAIL_RESOURCE_CREATOR, false, false, false, null, INSTITUTION, null), //
     INSTITUTION_ESCALATE(SYSTEM_INVOCATION, ESCALATE_RESOURCE, false, false, false, null, INSTITUTION, null), //
     INSTITUTION_IMPORT_PROGRAM(SYSTEM_INVOCATION, IMPORT_RESOURCE, false, false, false, null, INSTITUTION, null), //
-    INSTITUTION_PROVIDE_SPONSORSHIP(USER_INVOCATION, SPONSOR_RESOURCE, false, false, true, null, INSTITUTION, null), //
     INSTITUTION_WITHDRAW(USER_INVOCATION, WITHDRAW_RESOURCE, false, false, true, null, INSTITUTION, null), //
     PROGRAM_STARTUP(SYSTEM_INVOCATION, PROPAGATE_RESOURCE, false, false, true, null, PROGRAM, null), //
     PROGRAM_COMPLETE_APPROVAL_PARTNER_STAGE(USER_INVOCATION, PROCESS_RESOURCE, false, false, true, null, PROGRAM, null), //
@@ -237,7 +205,6 @@ public enum PrismAction {
     PROGRAM_EMAIL_CREATOR(USER_INVOCATION, EMAIL_RESOURCE_CREATOR, false, false, false, null, PROGRAM, null), //
     PROGRAM_ESCALATE(SYSTEM_INVOCATION, ESCALATE_RESOURCE, false, false, false, null, PROGRAM, null), //
     PROGRAM_RESTORE(SYSTEM_INVOCATION, PROCESS_RESOURCE, false, false, false, null, PROGRAM, null), //
-    PROGRAM_PROVIDE_SPONSORSHIP(USER_INVOCATION, SPONSOR_RESOURCE, false, false, true, null, PROGRAM, null), //
     PROGRAM_WITHDRAW(USER_INVOCATION, WITHDRAW_RESOURCE, false, false, true, null, PROGRAM, null), //
     PROJECT_STARTUP(SYSTEM_INVOCATION, PROPAGATE_RESOURCE, false, false, true, null, PROJECT, null), //
     PROJECT_COMPLETE_APPROVAL_PARTNER_STAGE(USER_INVOCATION, PROCESS_RESOURCE, false, false, true, null, PROJECT, null), //
@@ -248,9 +215,8 @@ public enum PrismAction {
     PROJECT_EMAIL_CREATOR(USER_INVOCATION, EMAIL_RESOURCE_CREATOR, false, false, false, null, PROJECT, null), //
     PROJECT_ESCALATE(SYSTEM_INVOCATION, ESCALATE_RESOURCE, false, false, false, null, PROJECT, null), //
     PROJECT_RESTORE(SYSTEM_INVOCATION, PROPAGATE_RESOURCE, false, false, false, null, PROJECT, null), //
-    PROJECT_PROVIDE_SPONSORSHIP(USER_INVOCATION, SPONSOR_RESOURCE, false, false, true, null, PROJECT, null), //
     PROJECT_SUSPEND(SYSTEM_INVOCATION, PROPAGATE_RESOURCE, false, false, true, null, PROJECT, null), //
-	PROJECT_DEACTIVATE(USER_INVOCATION, PROCESS_RESOURCE, false, false, true, null, PROJECT, null), //
+    PROJECT_DEACTIVATE(USER_INVOCATION, PROCESS_RESOURCE, false, false, true, null, PROJECT, null), //
     PROJECT_TERMINATE(SYSTEM_INVOCATION, PROPAGATE_RESOURCE, false, false, true, null, PROJECT, null), //
     PROJECT_WITHDRAW(USER_INVOCATION, WITHDRAW_RESOURCE, false, false, true, null, PROJECT, null), //
     SYSTEM_VIEW_EDIT(USER_INVOCATION, VIEW_EDIT_RESOURCE, false, false, false, null, SYSTEM, null), //
@@ -261,24 +227,24 @@ public enum PrismAction {
     SYSTEM_VIEW_INSTITUTION_LIST(USER_INVOCATION, VIEW_RESOURCE_LIST, false, false, false, null, SYSTEM, null), //
     SYSTEM_VIEW_PROGRAM_LIST(USER_INVOCATION, VIEW_RESOURCE_LIST, false, false, false, null, SYSTEM, null), //
     SYSTEM_VIEW_PROJECT_LIST(USER_INVOCATION, VIEW_RESOURCE_LIST, false, false, false, null, SYSTEM, null);
-
+    
     private PrismActionType actionType;
-
+    
     private PrismActionCategory actionCategory;
-
+    
     private boolean ratingAction;
-
+    
     private boolean declinableAction;
-
+    
     private boolean visibleAction;
-
+    
     private PrismActionCustomQuestionDefinition actionCustomQuestion;
-
+    
     private PrismScope scope;
-
+    
     private List<PrismActionRedaction> redactions;
-
-    private PrismAction(PrismActionType actionType, PrismActionCategory actionCategory, boolean ratingAction, boolean declinableAction, boolean visibleAction,
+    
+    PrismAction(PrismActionType actionType, PrismActionCategory actionCategory, boolean ratingAction, boolean declinableAction, boolean visibleAction,
             PrismActionCustomQuestionDefinition actionCustomQuestion, PrismScope scope, List<PrismActionRedaction> redactions) {
         this.actionType = actionType;
         this.actionCategory = actionCategory;
@@ -289,37 +255,37 @@ public enum PrismAction {
         this.scope = scope;
         this.redactions = redactions;
     }
-
+    
     public PrismActionType getActionType() {
         return actionType;
     }
-
+    
     public PrismActionCategory getActionCategory() {
         return actionCategory;
     }
-
+    
     public boolean isRatingAction() {
         return ratingAction;
     }
-
+    
     public boolean isDeclinableAction() {
         return declinableAction;
     }
-
+    
     public boolean isVisibleAction() {
         return visibleAction;
     }
-
+    
     public PrismActionCustomQuestionDefinition getActionCustomQuestion() {
         return actionCustomQuestion;
     }
-
+    
     public PrismScope getScope() {
         return scope;
     }
-
+    
     public List<PrismActionRedaction> getRedactions() {
-        return redactions == null ? Collections.<PrismActionRedaction> emptyList() : redactions;
+        return redactions == null ? Collections.<PrismActionRedaction>emptyList() : redactions;
     }
-
+    
 }

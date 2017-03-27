@@ -67,9 +67,6 @@ public class CommentDTO {
 	private ResourceDefinitionDTO newResource;
 
 	@Valid
-	private CommentSponsorshipDTO sponsorship;
-
-	@Valid
 	private List<CommentAssignedUserDTO> assignedUsers;
 
 	@Valid
@@ -237,14 +234,6 @@ public class CommentDTO {
 
 	public void setRejectionRecommend(Boolean rejectionRecommend) {
 		this.rejectionRecommend = rejectionRecommend;
-	}
-
-	public CommentSponsorshipDTO getSponsorship() {
-		return sponsorship;
-	}
-
-	public void setSponsorship(CommentSponsorshipDTO sponsorship) {
-		this.sponsorship = sponsorship;
 	}
 
 	public ResourceDefinitionDTO getResource() {

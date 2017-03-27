@@ -1,29 +1,5 @@
 package com.zuehlke.pgadmissions.domain.advert;
 
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.INSTITUTION;
-
-import java.math.BigDecimal;
-import java.util.Set;
-
-import javax.persistence.AttributeOverride;
-import javax.persistence.AttributeOverrides;
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Embedded;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.Lob;
-import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
-
-import org.apache.commons.lang3.ObjectUtils;
-import org.hibernate.annotations.OrderBy;
-import org.hibernate.annotations.Type;
-import org.joda.time.LocalDate;
-
 import com.google.common.collect.Sets;
 import com.zuehlke.pgadmissions.domain.application.Application;
 import com.zuehlke.pgadmissions.domain.definitions.PrismAdvertDomain;
@@ -39,6 +15,15 @@ import com.zuehlke.pgadmissions.domain.project.Project;
 import com.zuehlke.pgadmissions.domain.resource.ResourceOpportunity;
 import com.zuehlke.pgadmissions.domain.resource.ResourceParent;
 import com.zuehlke.pgadmissions.domain.resource.ResourceParentAttribute;
+import org.apache.commons.lang3.ObjectUtils;
+import org.hibernate.annotations.OrderBy;
+import org.hibernate.annotations.Type;
+import org.joda.time.LocalDate;
+
+import javax.persistence.*;
+import java.util.Set;
+
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.INSTITUTION;
 
 @Entity
 @Table(name = "ADVERT")
@@ -70,15 +55,6 @@ public class Advert extends ResourceParentAttribute {
     @OneToOne
     @JoinColumn(name = "institution_address_id")
     private InstitutionAddress address;
-
-    @Column(name = "sponsorship_purpose")
-    private String sponsorshipPurpose;
-    
-    @Column(name = "sponsorship_target")
-    private BigDecimal sponsorshipTarget;
-
-    @Column(name = "sponsorship_secured")
-    private BigDecimal sponsorshipSecured;
 
     @Embedded
     @AttributeOverrides({ @AttributeOverride(name = "interval", column = @Column(name = "fee_interval")),
@@ -222,33 +198,9 @@ public class Advert extends ResourceParentAttribute {
     public InstitutionAddress getAddress() {
         return address;
     }
-
+    
     public void setAddress(InstitutionAddress address) {
         this.address = address;
-    }
-
-    public String getSponsorshipPurpose() {
-        return sponsorshipPurpose;
-    }
-
-    public void setSponsorshipPurpose(String sponsorshipPurpose) {
-        this.sponsorshipPurpose = sponsorshipPurpose;
-    }
-
-    public BigDecimal getSponsorshipTarget() {
-        return sponsorshipTarget;
-    }
-
-    public void setSponsorshipTarget(BigDecimal sponsorshipTarget) {
-        this.sponsorshipTarget = sponsorshipTarget;
-    }
-
-    public BigDecimal getSponsorshipSecured() {
-        return sponsorshipSecured;
-    }
-
-    public void setSponsorshipSecured(BigDecimal sponsorshipSecured) {
-        this.sponsorshipSecured = sponsorshipSecured;
     }
 
     public AdvertFinancialDetail getFee() {

@@ -337,13 +337,6 @@ public class ResourceController {
         return mapper.map(actionOutcome, ActionOutcomeRepresentation.class);
     }
 
-    @RequestMapping(value = "/{resourceId}/comments/{commentId}/sponsorship", method = RequestMethod.DELETE)
-    @PreAuthorize("isAuthenticated()")
-    public void rejectSponsorship(@PathVariable Integer resourceId, @ModelAttribute ResourceDescriptor resourceDescriptor, @PathVariable Integer commentId)
-            throws Exception {
-        advertService.rejectSponsorship(resourceDescriptor.getResourceScope(), resourceId, commentId);
-    }
-
     @ModelAttribute
     private ResourceDescriptor getResourceDescriptor(@PathVariable String resourceScope) {
         return RestApiUtils.getResourceDescriptor(resourceScope);

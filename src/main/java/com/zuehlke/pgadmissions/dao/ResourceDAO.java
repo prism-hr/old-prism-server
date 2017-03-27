@@ -20,7 +20,6 @@ import com.zuehlke.pgadmissions.domain.workflow.State;
 import com.zuehlke.pgadmissions.dto.ResourceListRowDTO;
 import com.zuehlke.pgadmissions.dto.UserAdministratorResourceDTO;
 import com.zuehlke.pgadmissions.rest.dto.ResourceListFilterDTO;
-import com.zuehlke.pgadmissions.rest.representation.resource.ResourceSponsorRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.application.ApplicationYearRepresentation;
 import org.apache.commons.lang.WordUtils;
 import org.hibernate.Criteria;
@@ -44,10 +43,10 @@ import static com.zuehlke.pgadmissions.utils.PrismConstants.SEQUENCE_IDENTIFIER;
 @Repository
 @SuppressWarnings("unchecked")
 public class ResourceDAO {
-
+    
     @Autowired
     private SessionFactory sessionFactory;
-
+    
     private static void appendResourceListFilterCriterion(Criteria criteria, Junction conditions, ResourceListFilterDTO filter) {
         List<ApplicationYearRepresentation> applicationYears = filter.getApplicationYears();
         if (applicationYears != null) {
@@ -61,38 +60,38 @@ public class ResourceDAO {
                             .add(Restrictions.eq("applicationYear", applicationYear.getApplicationYear()))
                             .add(Restrictions.eq("businessYearStartMonth", applicationYear.getBusinessYearStartMonth())));
                 }
-
+                
             }
-
+            
             criteria.add(applicationYearConstraint);
         }
-
+        
         if (filter.isUrgentOnly()) {
             criteria.add(Restrictions.eq("stateAction.raisesUrgentFlag", true));
         }
-
+        
         if (conditions != null) {
             criteria.add(conditions);
         }
     }
-
+    
     private static Criteria appendResourceListLimitCriterion(Criteria criteria, ResourceListFilterDTO filter, String lastSequenceIdentifier,
-                                                             Integer recordsToRetrieve) {
+            Integer recordsToRetrieve) {
         PrismFilterSortOrder sortOrder = filter.getSortOrder();
-
+        
         if (lastSequenceIdentifier != null) {
             criteria.add(PrismFilterSortOrder.getPagingRestriction(SEQUENCE_IDENTIFIER, sortOrder, lastSequenceIdentifier));
         }
-
+        
         criteria.addOrder(PrismFilterSortOrder.getOrderExpression(SEQUENCE_IDENTIFIER, sortOrder));
-
+        
         if (recordsToRetrieve != null) {
             criteria.setMaxResults(recordsToRetrieve);
         }
-
+        
         return criteria;
     }
-
+    
     public List<Integer> getResourcesToEscalate(PrismScope resourceScope, PrismAction actionId, LocalDate baseline) {
         return (List<Integer>) sessionFactory.getCurrentSession().createCriteria(resourceScope.getResourceClass()) //
                 .setProjection(Projections.groupProperty("id")) //
@@ -102,11 +101,11 @@ public class ResourceDAO {
                 .add(Restrictions.lt("dueDate", baseline)) //
                 .list();
     }
-
+    
     public List<Integer> getResourcesToPropagate(PrismScope propagatingScope, Integer propagatingId, PrismScope propagatedScope, PrismAction actionId) {
         String propagatedAlias = propagatedScope.getLowerCamelName();
         String propagatedReference = propagatingScope.ordinal() > propagatedScope.ordinal() ? propagatedAlias : propagatedAlias + "s";
-
+        
         return (List<Integer>) sessionFactory.getCurrentSession().createCriteria(propagatingScope.getResourceClass()) //
                 .setProjection(Projections.property(propagatedAlias + ".id")) //
                 .createAlias(propagatedReference, propagatedAlias, JoinType.INNER_JOIN) //
@@ -116,11 +115,11 @@ public class ResourceDAO {
                 .add(Restrictions.eq("stateAction.action.id", actionId)) //
                 .list();
     }
-
+    
     public List<Integer> getPartnerResourcesToPropagate(PrismScope propagatingScope, Integer propagatingId, PrismScope propagatedScope, PrismAction actionId) {
         String propagatedAlias = "partner" + propagatedScope.getUpperCamelName();
         String propagatedReference = propagatingScope.ordinal() > propagatedScope.ordinal() ? propagatedAlias : propagatedAlias + "s";
-
+        
         return (List<Integer>) sessionFactory.getCurrentSession().createCriteria(propagatingScope.getResourceClass()) //
                 .setProjection(Projections.property(propagatedAlias + ".id")) //
                 .createAlias(propagatedReference, propagatedAlias, JoinType.INNER_JOIN) //
@@ -130,7 +129,7 @@ public class ResourceDAO {
                 .add(Restrictions.eq("stateAction.action.id", actionId)) //
                 .list();
     }
-
+    
     public List<Integer> getResourcesRequiringIndividualReminders(PrismScope resourceScope, LocalDate baseline) {
         return (List<Integer>) sessionFactory.getCurrentSession().createCriteria(resourceScope.getResourceClass()) //
                 .setProjection(Projections.groupProperty("id")) //
@@ -143,7 +142,7 @@ public class ResourceDAO {
                 .add(Restrictions.eq("stateAction.raisesUrgentFlag", true)) //
                 .list();
     }
-
+    
     public List<Integer> getResourcesRequiringSyndicatedReminders(PrismScope resourceScope, LocalDate baseline) {
         return (List<Integer>) sessionFactory.getCurrentSession().createCriteria(resourceScope.getResourceClass()) //
                 .setProjection(Projections.groupProperty("id")) //
@@ -156,7 +155,7 @@ public class ResourceDAO {
                 .add(Restrictions.eq("stateAction.raisesUrgentFlag", true)) //
                 .list();
     }
-
+    
     public List<Integer> getResourceRequiringSyndicatedUpdates(PrismScope resourceScope, LocalDate baseline, DateTime rangeStart, DateTime rangeClose) {
         return (List<Integer>) sessionFactory.getCurrentSession().createCriteria(resourceScope.getResourceClass()) //
                 .setProjection(Projections.property("id")) //
@@ -166,7 +165,7 @@ public class ResourceDAO {
                 .add(Restrictions.between("updatedTimestamp", rangeStart, rangeClose)) //
                 .list();
     }
-
+    
     public void deleteResourceState(Resource resource, State state) {
         sessionFactory.getCurrentSession().createQuery( //
                 "delete ResourceState " //
@@ -176,7 +175,7 @@ public class ResourceDAO {
                 .setParameter("state", state) //
                 .executeUpdate();
     }
-
+    
     public void deleteSecondaryResourceState(Resource resource, State state) {
         sessionFactory.getCurrentSession().createQuery( //
                 "delete ResourceState " //
@@ -186,25 +185,25 @@ public class ResourceDAO {
                 .setParameter("state", state) //
                 .executeUpdate();
     }
-
+    
     public List<ResourceListRowDTO> getResourceList(User user, PrismScope scopeId, List<PrismScope> parentScopeIds,
-                                                    Set<Integer> assignedResources, ResourceListFilterDTO filter, String lastSequenceIdentifier, Integer maxRecords, boolean hasRedactions) {
+            Set<Integer> assignedResources, ResourceListFilterDTO filter, String lastSequenceIdentifier, Integer maxRecords, boolean hasRedactions) {
         if (assignedResources.isEmpty()) {
             return new ArrayList<ResourceListRowDTO>(0);
         }
-
+        
         Class<? extends Resource> resourceClass = scopeId.getResourceClass();
         String resourceReference = scopeId.getLowerCamelName();
-
+        
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(resourceClass, resourceReference);
-
+        
         ProjectionList projectionList = Projections.projectionList();
-
+        
         for (PrismScope parentScopeId : parentScopeIds) {
             String parentScopeName = parentScopeId.getLowerCamelName();
             projectionList.add(Projections.property(parentScopeName + ".id"), parentScopeName + "Id");
         }
-
+        
         projectionList.add(Projections.property("partner.id"), "partnerId") //
                 .add(Projections.property("id"), scopeId.getLowerCamelName() + "Id") //
                 .add(Projections.property("user.id"), "creatorId") //
@@ -216,20 +215,20 @@ public class ResourceDAO {
                 .add(Projections.property("primaryExternalAccount.accountImageUrl"), "creatorAccountImageUrl")
                 .add(Projections.property("externalAccount.accountProfileUrl"), "creatorLinkedinProfileUrl")
                 .add(Projections.property("code"), "code");
-
+        
         addResourceListCustomColumns(scopeId, projectionList);
-
+        
         if (!hasRedactions) {
             projectionList.add(Projections.property("applicationRatingAverage"), "applicationRatingAverage");
         }
-
+        
         projectionList.add(Projections.property("state.id"), "stateId") //
                 .add(Projections.property("state.stateGroup.id"), "stateGroupId") //
                 .add(Projections.property("user.email"), "creatorEmail") //
                 .add(Projections.property("createdTimestamp"), "createdTimestamp") //
                 .add(Projections.property("updatedTimestamp"), "updatedTimestamp") //
                 .add(Projections.property("sequenceIdentifier"), "sequenceIdentifier"); //
-
+        
         criteria.setProjection(projectionList) //
                 .createAlias("user", "user", JoinType.INNER_JOIN) //
                 .createAlias("state", "state", JoinType.INNER_JOIN)
@@ -237,17 +236,17 @@ public class ResourceDAO {
                 .createAlias("userAccount.primaryExternalAccount", "primaryExternalAccount", JoinType.LEFT_OUTER_JOIN)
                 .createAlias("userAccount.externalAccounts", "externalAccount", JoinType.LEFT_OUTER_JOIN, //
                         Restrictions.eq("externalAccount.accountType", OauthProvider.LINKEDIN));
-
+        
         addResourceListCustomJoins(scopeId, resourceReference, criteria);
         criteria.add(Restrictions.in("id", assignedResources));
-
+        
         return appendResourceListLimitCriterion(criteria, filter, lastSequenceIdentifier, maxRecords)
                 .setResultTransformer(Transformers.aliasToBean(ResourceListRowDTO.class)) //
                 .list();
     }
-
+    
     public List<Integer> getAssignedResources(User user, PrismScope scopeId, ResourceListFilterDTO filter, Junction conditions, String lastSequenceIdentifier,
-                                              Integer recordsToRetrieve) {
+            Integer recordsToRetrieve) {
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(scopeId.getResourceClass()) //
                 .setProjection(Projections.groupProperty("id")) //
                 .createAlias("resourceStates", "resourceState", JoinType.INNER_JOIN) //
@@ -262,16 +261,16 @@ public class ResourceDAO {
                 .add(Restrictions.eqProperty("stateAction.state", "resourceState.state")) //
                 .add(getResourceStateActionConstraint()) //
                 .add(Restrictions.isNull("state.hidden"));
-
+        
         appendResourceListFilterCriterion(criteria, conditions, filter);
         appendResourceListLimitCriterion(criteria, filter, lastSequenceIdentifier, recordsToRetrieve);
         return (List<Integer>) criteria.list();
     }
-
+    
     public List<Integer> getAssignedResources(User user, PrismScope scopeId, PrismScope parentScopeId, ResourceListFilterDTO filter, Junction conditions,
-                                              String lastSequenceIdentifier, Integer recordsToRetrieve) {
+            String lastSequenceIdentifier, Integer recordsToRetrieve) {
         String parentResourceReference = parentScopeId.getLowerCamelName();
-
+        
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(scopeId.getResourceClass()) //
                 .setProjection(Projections.groupProperty("id")) //
                 .createAlias("resourceStates", "resourceState", JoinType.INNER_JOIN) //
@@ -287,14 +286,14 @@ public class ResourceDAO {
                 .add(getResourceStateActionConstraint()) //
                 .add(Restrictions.eqProperty("stateAction.state", "resourceState.state")) //
                 .add(Restrictions.isNull("state.hidden"));
-
+        
         appendResourceListFilterCriterion(criteria, conditions, filter);
         appendResourceListLimitCriterion(criteria, filter, lastSequenceIdentifier, recordsToRetrieve);
         return (List<Integer>) criteria.list();
     }
-
+    
     public List<Integer> getAssignedPartnerResources(User user, PrismScope scopeId, ResourceListFilterDTO filter, Junction conditions,
-                                                     String lastSequenceIdentifier, Integer recordsToRetrieve) {
+            String lastSequenceIdentifier, Integer recordsToRetrieve) {
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(scopeId.getResourceClass()) //
                 .setProjection(Projections.groupProperty("id")) //
                 .createAlias("resourceStates", "resourceState", JoinType.INNER_JOIN) //
@@ -310,12 +309,12 @@ public class ResourceDAO {
                 .add(Restrictions.eqProperty("stateAction.state", "resourceState.state")) //
                 .add(getResourceStateActionConstraint()) //
                 .add(Restrictions.isNull("state.hidden"));
-
+        
         appendResourceListFilterCriterion(criteria, conditions, filter);
         appendResourceListLimitCriterion(criteria, filter, lastSequenceIdentifier, recordsToRetrieve);
         return (List<Integer>) criteria.list();
     }
-
+    
     public List<Integer> getResourcesByMatchingEnclosingResources(PrismScope parentResourceScope, String searchTerm) {
         return (List<Integer>) sessionFactory.getCurrentSession().createCriteria(parentResourceScope.getResourceClass()) //
                 .setProjection(Projections.property("id")) //
@@ -324,7 +323,7 @@ public class ResourceDAO {
                         .add(Restrictions.ilike("title", searchTerm, MatchMode.ANYWHERE))) //
                 .list();
     }
-
+    
     public List<Integer> getResourcesByMatchingUsersAndRole(PrismScope prismScope, String searchTerm, List<PrismRole> prismRoles) {
         return (List<Integer>) sessionFactory.getCurrentSession().createCriteria(UserRole.class) //
                 .setProjection(Projections.property(prismScope.getLowerCamelName() + ".id")) //
@@ -335,7 +334,7 @@ public class ResourceDAO {
                 .add(Restrictions.in("role.id", prismRoles)) //
                 .list();
     }
-
+    
     public List<UserAdministratorResourceDTO> getUserAdministratorResources(User user) {
         return (List<UserAdministratorResourceDTO>) sessionFactory.getCurrentSession().createCriteria(UserRole.class) //
                 .setProjection(Projections.projectionList() //
@@ -356,7 +355,7 @@ public class ResourceDAO {
                 .setResultTransformer(Transformers.aliasToBean(UserAdministratorResourceDTO.class)) //
                 .list();
     }
-
+    
     public void reassignResources(PrismScope prismScope, User oldUser, User newUser) {
         sessionFactory.getCurrentSession().createQuery( //
                 "update " + prismScope.getUpperCamelName() + " " //
@@ -366,7 +365,7 @@ public class ResourceDAO {
                 .setParameter("oldUser", oldUser) //
                 .executeUpdate();
     }
-
+    
     public <T> T getResourceAttribute(ResourceParent resource, Class<T> attributeClass, String attributeName, Object attributeValue) {
         return (T) sessionFactory.getCurrentSession().createCriteria(attributeClass) //
                 .add(Restrictions.disjunction() //
@@ -380,14 +379,14 @@ public class ResourceDAO {
                 .setMaxResults(1) //
                 .uniqueResult();
     }
-
+    
     public <T> T getResourceAttributeStrict(ResourceParent resource, Class<T> attributeClass, String attributeName, Object attributeValue) {
         return (T) sessionFactory.getCurrentSession().createCriteria(attributeClass) //
                 .add(Restrictions.eq(resource.getResourceScope().getLowerCamelName(), resource)) //
                 .add(Restrictions.eq(attributeName, attributeValue)) //
                 .uniqueResult();
     }
-
+    
     public <T> List<T> getResourceAttributes(ResourceParent resource, Class<T> attributeClass, String attributeName, String orderAttributeName) {
         return (List<T>) sessionFactory.getCurrentSession().createCriteria(attributeClass) //
                 .add(Restrictions.disjunction() //
@@ -400,14 +399,14 @@ public class ResourceDAO {
                 .addOrder(Order.asc(Joiner.on(".").skipNulls().join(attributeName, orderAttributeName))) //
                 .list();
     }
-
+    
     public <T> List<T> getResourceAttributesStrict(ResourceParent resource, Class<T> attributeClass, String orderAttributeName) {
         return (List<T>) sessionFactory.getCurrentSession().createCriteria(attributeClass) //
                 .add(Restrictions.eq(resource.getResourceScope().getLowerCamelName(), resource)) //
                 .addOrder(Order.asc(orderAttributeName)) //
                 .list();
     }
-
+    
     public <T> List<T> getResourceAttributesStrict(ResourceParent resource, Class<T> attributeClass, String attributeName, String orderAttributeName) {
         return (List<T>) sessionFactory.getCurrentSession().createCriteria(attributeClass) //
                 .createAlias(attributeName, attributeName, JoinType.INNER_JOIN) //
@@ -415,7 +414,7 @@ public class ResourceDAO {
                 .addOrder(Order.asc(Joiner.on(".").skipNulls().join(attributeName, orderAttributeName))) //
                 .list();
     }
-
+    
     public ResourceStudyOptionInstance getFirstStudyOptionInstance(ResourceParent resource, StudyOption studyOption) {
         return (ResourceStudyOptionInstance) sessionFactory.getCurrentSession().createCriteria(ResourceStudyOptionInstance.class) //
                 .createAlias("studyOption", "studyOption", JoinType.INNER_JOIN) //
@@ -425,7 +424,7 @@ public class ResourceDAO {
                 .setMaxResults(1) //
                 .uniqueResult();
     }
-
+    
     public void deleteElapsedStudyOptions(LocalDate baseline) {
         sessionFactory.getCurrentSession().createQuery( //
                 "delete ResourceStudyOption " //
@@ -433,7 +432,7 @@ public class ResourceDAO {
                 .setParameter("baseline", baseline) //
                 .executeUpdate();
     }
-
+    
     public void deleteElapsedStudyOptionInstances(LocalDate baseline) {
         sessionFactory.getCurrentSession().createQuery( //
                 "delete ResourceStudyOptionInstance " //
@@ -441,7 +440,7 @@ public class ResourceDAO {
                 .setParameter("baseline", baseline) //
                 .executeUpdate();
     }
-
+    
     public Institution getPreviousPartner(ResourceOpportunity resource) {
         return (Institution) sessionFactory.getCurrentSession().createCriteria(Comment.class) //
                 .setProjection(Projections.property("partner")) //
@@ -451,7 +450,7 @@ public class ResourceDAO {
                 .setMaxResults(1) //
                 .uniqueResult();
     }
-
+    
     public List<Integer> getResourcesByPartner(PrismScope scope, String searchTerm) {
         return (List<Integer>) sessionFactory.getCurrentSession().createCriteria(scope.getResourceClass()) //
                 .setProjection(Projections.property("id")) //
@@ -459,43 +458,7 @@ public class ResourceDAO {
                 .add(Restrictions.ilike("partner.title", searchTerm, MatchMode.ANYWHERE))
                 .list();
     }
-
-    public List<Integer> getResourcesBySponsor(PrismScope scope, String searchTerm) {
-        return (List<Integer>) sessionFactory.getCurrentSession().createCriteria(Comment.class) //
-                .setProjection(Projections.groupProperty(scope.getLowerCamelName() + ".id")) //
-                .createAlias("sponsorship.sponsor", "sponsor", JoinType.INNER_JOIN) //
-                .add(Restrictions.ilike("sponsor.title", searchTerm, MatchMode.ANYWHERE))
-                .list();
-    }
-
-    public Long getResourceSponsorCount(Resource resource) {
-        return (Long) sessionFactory.getCurrentSession().createCriteria(Comment.class) //
-                .setProjection(Projections.countDistinct("sponsorship.sponsor")) //
-                .add(Restrictions.eq(resource.getResourceScope().getLowerCamelName(), resource)) //
-                .add(Restrictions.isNotNull("sponsorship.amountConverted")) //
-                .add(Restrictions.isNull("sponsorship.rejection")) //
-                .uniqueResult();
-    }
-
-    public List<ResourceSponsorRepresentation> getResourceTopTenSponsors(ResourceParent resource) {
-        return (List<ResourceSponsorRepresentation>) sessionFactory.getCurrentSession().createCriteria(Comment.class) //
-                .setProjection(Projections.projectionList() //
-                        .add(Projections.groupProperty("sponsor.id"), "sponsorId") //
-                        .add(Projections.property("sponsor.title"), "sponsorTitle") //
-                        .add(Projections.property("sponsor.logoImage.id"), "sponsorLogoId") //
-                        .add(Projections.sum("sponsorship.amountConverted").as("sponsorshipProvided"), "sponsorshipProvided")) //
-                .createAlias("sponsorship.sponsor", "sponsor", JoinType.INNER_JOIN) //
-                .add(Restrictions.eq(resource.getResourceScope().getLowerCamelName(), resource)) //
-                .add(Restrictions.isNotNull("sponsorship.amountConverted")) //
-                .add(Restrictions.isNull("sponsorship.rejection")) //
-                .addOrder(Order.desc("sponsorshipProvided")) //
-                .addOrder(Order.desc("createdTimestamp")) //
-                .addOrder(Order.desc("id")) //
-                .setMaxResults(10) //
-                .setResultTransformer(Transformers.aliasToBean(ResourceSponsorRepresentation.class))
-                .list();
-    }
-
+    
     private void addResourceListCustomColumns(PrismScope scopeId, ProjectionList projectionList) {
         HashMultimap<String, String> customColumns = scopeId.getConsoleListCustomColumns();
         for (String tableName : customColumns.keySet()) {
@@ -514,7 +477,7 @@ public class ResourceDAO {
             }
         }
     }
-
+    
     private void addResourceListCustomJoins(PrismScope scopeId, String resourceReference, Criteria criteria) {
         for (String tableName : scopeId.getConsoleListCustomColumns().keySet()) {
             if (!tableName.equals(resourceReference)) {
@@ -522,5 +485,5 @@ public class ResourceDAO {
             }
         }
     }
-
+    
 }

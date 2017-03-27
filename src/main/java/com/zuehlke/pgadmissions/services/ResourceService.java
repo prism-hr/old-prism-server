@@ -9,6 +9,7 @@ import com.zuehlke.pgadmissions.domain.application.Application;
 import com.zuehlke.pgadmissions.domain.comment.*;
 import com.zuehlke.pgadmissions.domain.definitions.*;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.*;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.department.Department;
 import com.zuehlke.pgadmissions.domain.document.Document;
 import com.zuehlke.pgadmissions.domain.imported.OpportunityType;
@@ -700,10 +701,6 @@ public class ResourceService {
         return resourceDAO.getResourcesByPartner(scope, searchTerm);
     }
     
-    public List<Integer> getResourcesBySponsor(PrismScope scope, String searchTerm) {
-        return resourceDAO.getResourcesBySponsor(scope, searchTerm);
-    }
-    
     public ResourceSummaryRepresentation getResourceSummaryRepresentation(PrismScope resourceScope, Integer resourceId) {
         ResourceParent resource = (ResourceParent) getById(resourceScope, resourceId);
         ResourceSummaryRepresentation representation = new ResourceSummaryRepresentation();
@@ -733,14 +730,6 @@ public class ResourceService {
             plotsRepresentation.addPlot(new ResourceSummaryPlotRepresentation().withConstraint(constraint).withData(plotDataRepresentation));
         }
         return plotsRepresentation;
-    }
-    
-    public Integer getResourceSponsorCount(ResourceParent resource) {
-        return resourceDAO.getResourceSponsorCount(resource).intValue();
-    }
-    
-    public List<ResourceSponsorRepresentation> getResourceTopTenSponsors(ResourceParent resource) {
-        return resourceDAO.getResourceTopTenSponsors(resource);
     }
     
     public Integer getBackgroundImage(ResourceParent resource) {

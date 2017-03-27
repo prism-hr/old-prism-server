@@ -226,7 +226,7 @@
         <field>
             <a>logoImage.id</a>
             <b>logoImage</b>
-        </field>        
+        </field>
         <field>
             <a>domicile.id</a>
             <b>domicile</b>
@@ -236,7 +236,7 @@
             <b>address</b>
         </field>
     </mapping>
-    
+
     <mapping>
         <class-a>com.zuehlke.pgadmissions.domain.institution.Institution
         </class-a>
@@ -276,7 +276,7 @@
             <b>locationY</b>
         </field>
     </mapping>
-    
+
     <mapping>
         <class-a>com.zuehlke.pgadmissions.domain.institution.InstitutionAddress
         </class-a>
@@ -400,18 +400,7 @@
             <b>id</b>
         </field>
     </mapping>
-    
-    <mapping>
-        <class-a>com.zuehlke.pgadmissions.domain.comment.CommentSponsorship
-        </class-a>
-        <class-b>com.zuehlke.pgadmissions.rest.representation.comment.CommentSponsorshipRepresentation
-        </class-b>
-        <field>
-            <a>rejection.id</a>
-            <b>rejection</b>
-        </field>
-    </mapping>
-    
+
     <mapping>
         <class-a>com.zuehlke.pgadmissions.rest.dto.ResourceReportFilterDTO.ResourceReportFilterPropertyDTO
         </class-a>

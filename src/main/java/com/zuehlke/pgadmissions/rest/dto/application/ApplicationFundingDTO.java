@@ -1,13 +1,13 @@
 package com.zuehlke.pgadmissions.rest.dto.application;
 
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
-
+import com.zuehlke.pgadmissions.rest.dto.FileDTO;
+import com.zuehlke.pgadmissions.rest.validation.annotation.DateNotFuture;
 import org.hibernate.validator.constraints.NotEmpty;
 import org.joda.time.LocalDate;
 
-import com.zuehlke.pgadmissions.rest.dto.FileDTO;
-import com.zuehlke.pgadmissions.rest.validation.annotation.DateNotFuture;
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 public class ApplicationFundingDTO {
 
@@ -19,7 +19,7 @@ public class ApplicationFundingDTO {
     @NotEmpty
     @Size(max = 255)
     private String sponsor;
-    
+
     @NotEmpty
     @Size(max = 2000)
     private String description;
@@ -27,14 +27,16 @@ public class ApplicationFundingDTO {
     @NotEmpty
     @Size(max = 100)
     private String value;
-    
+
     @NotNull
     @DateNotFuture
     private LocalDate awardDate;
-    
+
     @Size(max = 2000)
     private String terms;
-    
+
+    @NotNull
+    @Valid
     private FileDTO document;
 
     public Integer getId() {
@@ -44,7 +46,7 @@ public class ApplicationFundingDTO {
     public void setId(Integer id) {
         this.id = id;
     }
-    
+
     public final String getSponsor() {
         return sponsor;
     }
@@ -92,7 +94,7 @@ public class ApplicationFundingDTO {
     public final void setTerms(String terms) {
         this.terms = terms;
     }
-    
+
     public FileDTO getDocument() {
         return document;
     }
@@ -100,5 +102,5 @@ public class ApplicationFundingDTO {
     public void setDocument(FileDTO document) {
         this.document = document;
     }
-    
+
 }

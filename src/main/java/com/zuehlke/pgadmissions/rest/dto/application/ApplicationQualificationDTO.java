@@ -1,14 +1,14 @@
 package com.zuehlke.pgadmissions.rest.dto.application;
 
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
-
-import org.hibernate.validator.constraints.NotEmpty;
-import org.joda.time.LocalDate;
-
 import com.zuehlke.pgadmissions.rest.dto.FileDTO;
 import com.zuehlke.pgadmissions.rest.validation.annotation.DateNotAfterDate;
 import com.zuehlke.pgadmissions.rest.validation.annotation.DateNotFuture;
+import org.hibernate.validator.constraints.NotEmpty;
+import org.joda.time.LocalDate;
+
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 @DateNotAfterDate(startDate = "startDate", endDate = "awardDate")
 public class ApplicationQualificationDTO {
@@ -41,6 +41,8 @@ public class ApplicationQualificationDTO {
     @Size(max = 200)
     private String grade;
 
+    @NotNull
+    @Valid
     private FileDTO document;
 
     @NotNull

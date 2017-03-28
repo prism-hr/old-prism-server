@@ -1,12 +1,12 @@
 package com.zuehlke.pgadmissions.rest.dto.application;
 
-import javax.validation.constraints.NotNull;
-
+import com.zuehlke.pgadmissions.rest.dto.FileDTO;
+import com.zuehlke.pgadmissions.rest.validation.annotation.DatePast;
 import org.hibernate.validator.constraints.NotEmpty;
 import org.joda.time.LocalDate;
 
-import com.zuehlke.pgadmissions.rest.dto.FileDTO;
-import com.zuehlke.pgadmissions.rest.validation.annotation.DatePast;
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 
 public class ApplicationLanguageQualificationDTO {
 
@@ -32,6 +32,8 @@ public class ApplicationLanguageQualificationDTO {
     @NotEmpty
     private String listeningScore;
 
+    @NotNull
+    @Valid
     private FileDTO document;
 
     public Integer getType() {

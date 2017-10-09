@@ -110,6 +110,7 @@ public class LifeCycleService {
             systemService.initializePropertyLoader();
         }
 
+        logger.info("Maintenance is turned " + (isTrue(maintain) ? "on" : "off"));
         if (isTrue(maintain)) {
             executorService = newFixedThreadPool(PrismMaintenanceTask.values().length);
         }

@@ -23,6 +23,9 @@ public class ProfileRefereeDTO extends ApplicationAdvertRelationSectionDTO {
 
     @Size(min = 6, max = 32)
     private String skype;
+    
+    @NotNull
+    private Boolean supervisor;
 
     public Integer getId() {
         return id;
@@ -57,5 +60,13 @@ public class ProfileRefereeDTO extends ApplicationAdvertRelationSectionDTO {
     public void setSkype(String skype) {
         this.skype = skype;
     }
-
+    
+    public Boolean getSupervisor() {
+        return supervisor;
+    }
+    
+    public void setSupervisor(Boolean supervisor) {
+        this.supervisor = supervisor;
+    }
+    
 }

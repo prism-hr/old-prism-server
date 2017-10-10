@@ -15,5 +15,9 @@ public interface ProfileReferee<T extends ProfileEntity<?, ?, ?, ?, ?, ?, ?, ?>>
     String getPhone();
 
     void setPhone(String phone);
+    
+    Boolean getSupervisor();
+    
+    void setSupervisor(Boolean supervisor);
 
 }

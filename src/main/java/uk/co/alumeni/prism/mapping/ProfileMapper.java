@@ -34,10 +34,7 @@ import uk.co.alumeni.prism.services.*;
 
 import javax.inject.Inject;
 import java.math.BigDecimal;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.google.common.base.Objects.equal;
@@ -218,14 +215,14 @@ public class ProfileMapper {
             Collection<T> employmentPositions, User currentUser) {
         return employmentPositions.stream()
                 .map(employmentPosition -> getEmploymentPositionRepresentation(employmentPosition, currentUser))
-                .sorted((o1, o2) -> o1.getStartDate().compareTo(o2.getStartDate()))
+                .sorted(Comparator.comparing(ProfileEmploymentPositionRepresentation::getStartDate))
                 .collect(Collectors.toList());
     }
 
     public <T extends ProfileReferee<?>> List<ProfileRefereeRepresentation> getRefereeRepresentations(Collection<T> referees, User currentUser) {
         return referees.stream()
                 .map(referee -> getRefereeRepresentation(referee, currentUser))
-                .sorted((o1, o2) -> o1.getResource().getUser().getFullName().compareTo(o2.getResource().getUser().getFullName()))
+                .sorted(Comparator.comparing(o -> o.getResource().getUser().getFullName()))
                 .collect(Collectors.toList());
     }
 
@@ -466,7 +463,7 @@ public class ProfileMapper {
 
         setUserRepresentation(referee, relation, currentUser);
         ProfileRefereeRepresentation representation = new ProfileRefereeRepresentation().withId(referee.getId())
-                .withResource(relation).withPhone(referee.getPhone()).withSkype(referee.getSkype());
+                .withResource(relation).withPhone(referee.getPhone()).withSkype(referee.getSkype()).withSupervisor(referee.getSupervisor());
 
         if (referee.getClass().equals(ApplicationReferee.class)) {
             representation.setLastUpdatedTimestamp(((ApplicationReferee) referee).getLastUpdatedTimestamp());

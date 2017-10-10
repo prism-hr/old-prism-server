@@ -1,5 +1,6 @@
 package uk.co.alumeni.prism.rest.validation;
 
+import org.apache.commons.lang.BooleanUtils;
 import org.joda.time.LocalDate;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
@@ -13,6 +14,7 @@ import uk.co.alumeni.prism.domain.definitions.workflow.PrismWorkflowConstraint;
 import uk.co.alumeni.prism.domain.document.Document;
 import uk.co.alumeni.prism.domain.profile.ProfileDocument;
 import uk.co.alumeni.prism.domain.profile.ProfileEntity;
+import uk.co.alumeni.prism.domain.profile.ProfileReferee;
 import uk.co.alumeni.prism.domain.resource.ResourceOpportunity;
 import uk.co.alumeni.prism.domain.resource.ResourceParent;
 import uk.co.alumeni.prism.exceptions.PrismCannotApplyException;
@@ -64,6 +66,13 @@ public class ProfileValidator extends LocalValidatorFactoryBean implements Valid
             switch (constraint) {
                 case APPLICATION_REFEREE_ASSIGNMENT:
                     validateRangeConstraint(profile, "referees", constraint, errors);
+                    long supervisorCount = profile.getReferees().stream().map(ProfileReferee::getSupervisor).filter(BooleanUtils::isTrue).count();
+                    if (supervisorCount == 0) {
+                        errors.rejectValue("referees", "tooFewSupervisors");
+                    } else if (supervisorCount > 1) {
+                        errors.rejectValue("referees", "tooManySupervisors");
+                    }
+                    
                     break;
                 case APPLICATION_DOCUMENT_COVERING_LETTER:
                     validateDocumentConstraint(profile, "coveringLetter", constraint, errors);

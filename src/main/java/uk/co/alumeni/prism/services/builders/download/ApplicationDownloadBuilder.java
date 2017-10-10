@@ -335,6 +335,8 @@ public class ApplicationDownloadBuilder {
                         propertyLoader.loadLazy(PROFILE_REFEREE_POSITION_EMPLOYER_LABEL), referee.getResource().getResource().getDisplayName(), subBody);
                 applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.loadLazy(PROFILE_PERSONAL_DETAIL_TELEPHONE_LABEL), referee.getPhone(), subBody);
                 applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.loadLazy(PROFILE_PERSONAL_DETAIL_SKYPE_LABEL), referee.getSkype(), subBody);
+                applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.loadLazy(PROFILE_REFEREE_SUPERVISOR_LABEL),
+                        propertyLoader.loadLazy(SYSTEM_YES, SYSTEM_NO, referee.getSupervisor()), subBody);
 
                 CommentRepresentation referenceComment = referee.getComment();
                 if (referenceComment != null) {

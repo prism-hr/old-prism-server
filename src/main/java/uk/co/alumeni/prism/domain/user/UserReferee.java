@@ -36,6 +36,9 @@ public class UserReferee extends UserAdvertRelationSection implements ProfileRef
 
     @Column(name = "skype")
     private String skype;
+    
+    @Column(name = "supervisor", nullable = false)
+    private Boolean supervisor;
 
     @Override
     public Integer getId() {
@@ -104,7 +107,17 @@ public class UserReferee extends UserAdvertRelationSection implements ProfileRef
     public void setPhone(String phone) {
         this.phone = phone;
     }
-
+    
+    @Override
+    public Boolean getSupervisor() {
+        return supervisor;
+    }
+    
+    @Override
+    public void setSupervisor(Boolean supervisor) {
+        this.supervisor = supervisor;
+    }
+    
     @Override
     public Class<UserRefereeReassignmentProcessor> getUserReassignmentProcessor() {
         return UserRefereeReassignmentProcessor.class;

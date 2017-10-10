@@ -441,7 +441,7 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
 
     SYSTEM_GENDER_FEMALE(PrismDisplayPropertyCategory.SYSTEM_GENDER, "Female"),
     SYSTEM_GENDER_MALE(PrismDisplayPropertyCategory.SYSTEM_GENDER, "Male"),
-    SYSTEM_GENDER_INDETERMINATE(PrismDisplayPropertyCategory.SYSTEM_GENDER, "Intederminate Gender"),
+    SYSTEM_GENDER_INDETERMINATE(PrismDisplayPropertyCategory.SYSTEM_GENDER, "Prefer not to specify"),
 
     /*
      * *************** SYSTEM ETHNICITY *********************

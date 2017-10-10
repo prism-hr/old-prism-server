@@ -2473,7 +2473,7 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     PROFILE_PERSONAL_DETAIL_TELEPHONE_HINT(PrismDisplayPropertyCategory.PROFILE_PERSONAL_DETAIL, "Your contact telephone number."),
     PROFILE_PERSONAL_DETAIL_SKYPE_LABEL(PrismDisplayPropertyCategory.PROFILE_PERSONAL_DETAIL, "Skype"),
     PROFILE_PERSONAL_DETAIL_SKYPE_HINT(PrismDisplayPropertyCategory.PROFILE_PERSONAL_DETAIL, "Your Skype address. We may you skype to contact you."),
-
+    
     PROFILE_PERSONAL_DETAIL_EQUAL_OPPORTUNITIES_HEADER(PrismDisplayPropertyCategory.PROFILE_PERSONAL_DETAIL, "Equal Opportunities"),
     PROFILE_PERSONAL_DETAIL_ETHNICITY_LABEL(PrismDisplayPropertyCategory.PROFILE_PERSONAL_DETAIL, "Ethnicity"),
     PROFILE_PERSONAL_DETAIL_ETHNICITY_HINT(
@@ -2550,9 +2550,9 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     PROFILE_EMPLOYMENT_POSITION_CURRENT_HINT(PrismDisplayPropertyCategory.PROFILE_EMPLOYMENT_POSITION, "This tells us that the position is an ongoing one."),
     PROFILE_EMPLOYMENT_POSITION_PERIOD_LABEL(PrismDisplayPropertyCategory.PROFILE_EMPLOYMENT_POSITION, "Employment Period"),
 
-    PROFILE_REFEREE_HEADER(PrismDisplayPropertyCategory.PROFILE_REFEREE, "Supervisor"),
+    PROFILE_REFEREE_HEADER(PrismDisplayPropertyCategory.PROFILE_REFEREE, "Referees"),
     PROFILE_REFEREE_DESCRIPTION(PrismDisplayPropertyCategory.PROFILE_REFEREE,
-            "Specify your supervisor here. Should we progress your application for a scholarship, your supervisor will be contacted to provide a supporting statement."),
+            "Specify your referees here. One of your referees must be your intended supervisor. Should we progress your application for a scholarship, your referees will be contacted to provide supporting statements."),
     PROFILE_REFEREE_SUBHEADER(PrismDisplayPropertyCategory.PROFILE_REFEREE, "Referee"),
     PROFILE_REFEREE_POSITION_CONTACT_SUBHEADER(PrismDisplayPropertyCategory.PROFILE_REFEREE, "Contact Details"),
     PROFILE_REFEREE_POSITION_EMPLOYER_LABEL(PrismDisplayPropertyCategory.PROFILE_REFEREE, "Employer & Position"),
@@ -2562,6 +2562,8 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     PROFILE_REFEREE_PHONE_HINT(PrismDisplayPropertyCategory.PROFILE_REFEREE, "The work telephone number of the referee."),
     PROFILE_REFEREE_SKYPE_LABEL(PrismDisplayPropertyCategory.PROFILE_REFEREE, "Skype user name"),
     PROFILE_REFEREE_SKYPE_HINT(PrismDisplayPropertyCategory.PROFILE_REFEREE, "The Skype address of the referee."),
+    PROFILE_REFEREE_SUPERVISOR_LABEL(PrismDisplayPropertyCategory.PROFILE_REFEREE, "Intended supervisor?"),
+    PROFILE_REFEREE_SUPERVISOR_HINT(PrismDisplayPropertyCategory.PROFILE_REFEREE, "Check to specify that this referee is your intended supervisor"),
     PROFILE_REFEREE_REFERENCE_APPENDIX(PrismDisplayPropertyCategory.PROFILE_REFEREE, "Reference"),
     PROFILE_REFEREE_REFERENCE_COMMENT(PrismDisplayPropertyCategory.PROFILE_REFEREE, "Reference Comment"),
 

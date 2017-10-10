@@ -13,6 +13,8 @@ public class ProfileRefereeRepresentation extends ApplicationSectionRepresentati
     private String phone;
 
     private String skype;
+    
+    private Boolean supervisor;
 
     private CommentRepresentation comment;
 
@@ -47,7 +49,15 @@ public class ProfileRefereeRepresentation extends ApplicationSectionRepresentati
     public void setSkype(String skype) {
         this.skype = skype;
     }
-
+    
+    public Boolean getSupervisor() {
+        return supervisor;
+    }
+    
+    public void setSupervisor(Boolean supervisor) {
+        this.supervisor = supervisor;
+    }
+    
     public CommentRepresentation getComment() {
         return comment;
     }
@@ -73,6 +83,11 @@ public class ProfileRefereeRepresentation extends ApplicationSectionRepresentati
 
     public ProfileRefereeRepresentation withSkype(String skype) {
         this.skype = skype;
+        return this;
+    }
+    
+    public ProfileRefereeRepresentation withSupervisor(Boolean supervisor) {
+        this.supervisor = supervisor;
         return this;
     }
 

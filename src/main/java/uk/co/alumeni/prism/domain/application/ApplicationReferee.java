@@ -36,6 +36,9 @@ public class ApplicationReferee extends ApplicationAdvertRelationSection impleme
 
     @Column(name = "skype")
     private String skype;
+    
+    @Column(name = "supervisor", nullable = false)
+    private Boolean supervisor;
 
     @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "comment_id")
@@ -82,7 +85,17 @@ public class ApplicationReferee extends ApplicationAdvertRelationSection impleme
     public void setSkype(String skype) {
         this.skype = skype;
     }
-
+    
+    @Override
+    public Boolean getSupervisor() {
+        return supervisor;
+    }
+    
+    @Override
+    public void setSupervisor(Boolean supervisor) {
+        this.supervisor = supervisor;
+    }
+    
     @Override
     public User getUser() {
         return user;

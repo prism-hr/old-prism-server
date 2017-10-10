@@ -483,6 +483,7 @@ public class ProfileService {
         applicationReferee.setUser(userReferee.getUser());
         applicationReferee.setPhone(userReferee.getPhone());
         applicationReferee.setSkype(userReferee.getSkype());
+        applicationReferee.setSupervisor(userReferee.getSupervisor());
         applicationReferee.setLastUpdatedTimestamp(now());
     }
 
@@ -746,6 +747,7 @@ public class ProfileService {
 
         referee.setPhone(refereeDTO.getPhone());
         referee.setSkype(Strings.emptyToNull(refereeDTO.getSkype()));
+        referee.setSupervisor(refereeDTO.getSupervisor());
 
         if (referee.getClass().equals(ApplicationReferee.class)) {
             ((ApplicationReferee) referee).setLastUpdatedTimestamp(DateTime.now());

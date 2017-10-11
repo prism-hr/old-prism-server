@@ -37,6 +37,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -81,15 +82,17 @@ public class ApplicationDownloadService {
     public String build(List<Integer> applicationIds) throws IOException {
         User user = userService.getCurrentUser();
         String uuid = UUID.randomUUID().toString();
-    
+        
         PipedOutputStream outputStream = new PipedOutputStream();
         PipedInputStream  inputStream  = new PipedInputStream(outputStream);
+        CountDownLatch countDownLatch = new CountDownLatch(2);
         Runnable reader = () -> {
             PropertyLoader generalPropertyLoader = applicationContext.getBean(PropertyLoader.class).localizeLazy(systemService.getSystem());
             ApplicationDownloadBuilderHelper generalApplicationDownloadBuilderHelper =
                     applicationContext.getBean(ApplicationDownloadBuilderHelper.class).localize(generalPropertyLoader);
             
             try {
+                
                 Document pdfDocument = generalApplicationDownloadBuilderHelper.startDocument();
                 PdfWriter pdfWriter = PdfWriter.getInstance(pdfDocument, outputStream);
                 pdfDocument.open();
@@ -106,16 +109,19 @@ public class ApplicationDownloadService {
                 }
                 
                 pdfDocument.close();
-//                outputStream.close();
+                
+                countDownLatch.countDown();
+                countDownLatch.await();
+                outputStream.close();
             } catch (Exception e) {
                 logger.error("Error downloading applications for " + user.getFullName(), e);
             } finally {
-//                IOUtils.closeQuietly(outputStream);
+                IOUtils.closeQuietly(outputStream);
             }
         };
     
         Runnable writer = () -> {
-            documentService.exportBatchedDocumentToAmazon(uuid, inputStream);
+            documentService.exportBatchedDocumentToAmazon(uuid, inputStream, countDownLatch);
         };
     
         executorService.submit(reader);
@@ -146,7 +152,6 @@ public class ApplicationDownloadService {
             }
             
             pdfDocument.close();
-            
         } catch (Exception e) {
             logger.error("Error downloading applications for " + user.getFullName(), e);
         }

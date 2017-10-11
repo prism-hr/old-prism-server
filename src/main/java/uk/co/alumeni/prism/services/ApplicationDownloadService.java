@@ -106,11 +106,11 @@ public class ApplicationDownloadService {
                 }
                 
                 pdfDocument.close();
-                outputStream.close();
+//                outputStream.close();
             } catch (Exception e) {
                 logger.error("Error downloading applications for " + user.getFullName(), e);
             } finally {
-                IOUtils.closeQuietly(outputStream);
+//                IOUtils.closeQuietly(outputStream);
             }
         };
     

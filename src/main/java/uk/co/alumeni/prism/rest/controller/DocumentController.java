@@ -24,7 +24,6 @@ import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.Part;
 import java.io.IOException;
-import java.io.PipedOutputStream;
 import java.util.List;
 import java.util.Map;
 
@@ -120,22 +119,21 @@ public class DocumentController {
         ServletOutputStream outputStream = response.getOutputStream();
         applicationDownloadService.build(ids, outputStream);
     }
-    
+
     // Expected to be used for batched downloads
     @PreAuthorize("isAuthenticated()")
     @RequestMapping(value = "/pdfDownload/batch", method = RequestMethod.POST)
-    public String downloadPdfBatch(@RequestParam(value = "applicationIds") String applicationIds) throws IOException {
-        List<Integer> ids = getApplicationIds(applicationIds);
-        return applicationDownloadService.build(ids, null);
+    public String downloadPdfBatch(@RequestBody List<Integer> applicationIds) throws IOException {
+        return applicationDownloadService.build(applicationIds, null);
     }
-    
+
     // Polling endpoint to find out if batched download is ready
     @PreAuthorize("isAuthenticated()")
     @RequestMapping(value = "/pdfDownload/batch/status/{uuid}", method = RequestMethod.GET)
     public ApplicationBatchedDownloadRepresentation getPdfBatchStatus(@PathVariable String uuid) throws IOException {
         return applicationDownloadService.getStatus(uuid);
     }
-    
+
     // Endpoint to get the batched download when ready
     @PreAuthorize("isAuthenticated()")
     @RequestMapping(value = "/pdfDownload/batch/{uuid}", method = RequestMethod.GET)
@@ -147,7 +145,7 @@ public class DocumentController {
         response.setContentLength(content.available());
         IoUtils.copyStream(content, response.getOutputStream());
     }
-    
+
     private List<Integer> getApplicationIds(@RequestParam(value = "applicationIds") String applicationIds) {
         List<Integer> ids;
         try {

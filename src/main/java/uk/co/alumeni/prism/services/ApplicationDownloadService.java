@@ -107,7 +107,6 @@ public class ApplicationDownloadService {
                 
                 pdfDocument.close();
                 outputStream.close();
-                
                 executorService.submit(() -> {
                     documentService.exportBatchedDocumentToAmazon(uuid, inputStream);
                 });

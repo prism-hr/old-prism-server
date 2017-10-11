@@ -124,7 +124,7 @@ public class DocumentController {
     @PreAuthorize("isAuthenticated()")
     @RequestMapping(value = "/pdfDownload/batch", method = RequestMethod.POST)
     public String downloadPdfBatch(@RequestBody List<Integer> applicationIds) throws IOException {
-        return applicationDownloadService.build(applicationIds, null);
+        return applicationDownloadService.build(applicationIds);
     }
 
     // Polling endpoint to find out if batched download is ready

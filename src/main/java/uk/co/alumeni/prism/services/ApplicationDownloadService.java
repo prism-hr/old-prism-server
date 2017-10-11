@@ -84,7 +84,7 @@ public class ApplicationDownloadService {
     
         PipedOutputStream outputStream = new PipedOutputStream();
         PipedInputStream  inputStream  = new PipedInputStream(outputStream);
-        Runnable download = () -> {
+        Runnable reader = () -> {
             PropertyLoader generalPropertyLoader = applicationContext.getBean(PropertyLoader.class).localizeLazy(systemService.getSystem());
             ApplicationDownloadBuilderHelper generalApplicationDownloadBuilderHelper =
                     applicationContext.getBean(ApplicationDownloadBuilderHelper.class).localize(generalPropertyLoader);
@@ -107,9 +107,6 @@ public class ApplicationDownloadService {
                 
                 pdfDocument.close();
                 outputStream.close();
-                executorService.submit(() -> {
-                    documentService.exportBatchedDocumentToAmazon(uuid, inputStream);
-                });
             } catch (Exception e) {
                 logger.error("Error downloading applications for " + user.getFullName(), e);
             } finally {
@@ -117,7 +114,12 @@ public class ApplicationDownloadService {
             }
         };
     
-        executorService.submit(download);
+        Runnable writer = () -> {
+            documentService.exportBatchedDocumentToAmazon(uuid, inputStream);
+        };
+    
+        executorService.submit(reader);
+        executorService.submit(writer);
         return uuid;
     }
     

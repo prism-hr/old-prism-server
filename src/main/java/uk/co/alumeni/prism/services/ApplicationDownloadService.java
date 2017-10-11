@@ -5,6 +5,7 @@ import com.amazonaws.services.sqs.model.Message;
 import com.amazonaws.services.sqs.model.ReceiveMessageRequest;
 import com.amazonaws.services.sqs.model.ReceiveMessageResult;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.Maps;
 import com.itextpdf.text.Document;
@@ -14,7 +15,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 import uk.co.alumeni.prism.domain.application.Application;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismRole;
 import uk.co.alumeni.prism.domain.resource.Program;
@@ -41,7 +42,7 @@ import java.util.concurrent.Executors;
 import static com.google.common.collect.Lists.newArrayList;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.APPLICATION;
 
-@Service
+@Component
 public class ApplicationDownloadService {
 
     private static final Logger logger = LoggerFactory.getLogger(ApplicationDownloadService.class);
@@ -107,8 +108,7 @@ public class ApplicationDownloadService {
                 User currentUser = userService.getCurrentUser();
                 for (Integer applicationId : applicationIds) {
                     applicationContext.getBean(ApplicationDownloadService.class)
-                            .processApplicationToPdfDocument(pdfDocument, pdfWriter, specificPropertyLoaders,
-                                    overridingRoles, specificApplicationDownloadBuilderHelpers, currentUser, applicationId);
+                            .processApplicationToPdfDocument(pdfDocument, pdfWriter, specificPropertyLoaders, overridingRoles, specificApplicationDownloadBuilderHelpers, currentUser, applicationId);
                 }
 
                 pdfDocument.close();
@@ -134,11 +134,10 @@ public class ApplicationDownloadService {
     }
 
     @Transactional
-    protected void processApplicationToPdfDocument(Document pdfDocument, PdfWriter pdfWriter,
-                                                   HashMap<Program, PropertyLoader> specificPropertyLoaders,
-                                                   List<PrismRole> overridingRoles, HashMap<Program,
-            ApplicationDownloadBuilderHelper> specificApplicationDownloadBuilderHelpers,
-                                                   User currentUser, Integer applicationId) {
+    public void processApplicationToPdfDocument(Document pdfDocument, PdfWriter pdfWriter,
+                                                HashMap<Program, PropertyLoader> specificPropertyLoaders,
+                                                List<PrismRole> overridingRoles, HashMap<Program,
+            ApplicationDownloadBuilderHelper> specificApplicationDownloadBuilderHelpers, User currentUser, Integer applicationId) {
         Application application = applicationService.getById(applicationId);
         Program program = application.getProgram();
 
@@ -192,6 +191,7 @@ public class ApplicationDownloadService {
     @JsonIgnoreProperties(ignoreUnknown = true)
     private static class UploadEventMessage {
 
+        @JsonProperty("Records")
         List<Record> records = new ArrayList<>();
 
         public List<Record> getRecords() {

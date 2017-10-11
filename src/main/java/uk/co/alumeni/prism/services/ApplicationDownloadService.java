@@ -167,7 +167,7 @@ public class ApplicationDownloadService {
             for (Message message : messages) {
                 UploadEventMessage uploadEventMessage = objectMapper.readValue(message.getBody(), UploadEventMessage.class);
                 for (UploadEventMessage.Record record : uploadEventMessage.getRecords()) {
-                    if (record.getS3().getObject().getKey().contains(uuid)) {
+                    if (record.getS3().getObject().getKey().endsWith(uuid)) {
                         return new ApplicationBatchedDownloadRepresentation().setUuid(uuid).setReady(true);
                     }
                 }

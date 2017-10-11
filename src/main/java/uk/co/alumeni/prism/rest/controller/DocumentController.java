@@ -123,7 +123,7 @@ public class DocumentController {
     
     // Expected to be used for batched downloads
     @PreAuthorize("isAuthenticated()")
-    @RequestMapping(value = "/pdfDownload/batch", method = RequestMethod.GET)
+    @RequestMapping(value = "/pdfDownload/batch", method = RequestMethod.POST)
     public String downloadPdfBatch(@RequestParam(value = "applicationIds") String applicationIds) throws IOException {
         List<Integer> ids = getApplicationIds(applicationIds);
         return applicationDownloadService.build(ids, null);

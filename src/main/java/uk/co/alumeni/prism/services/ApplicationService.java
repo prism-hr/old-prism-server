@@ -229,7 +229,7 @@ public class ApplicationService {
         
         for (List<String> values : reportIndex.values()) {
             TableRow row = new TableRow();
-            values.stream().forEach(value -> row.addCell(value));
+            values.forEach(row::addCell);
             table.addRow(row);
         }
         

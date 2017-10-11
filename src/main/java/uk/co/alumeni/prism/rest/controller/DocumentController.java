@@ -1,10 +1,12 @@
 package uk.co.alumeni.prism.rest.controller;
 
+import com.amazonaws.services.s3.model.S3ObjectInputStream;
 import com.google.common.base.Splitter;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.primitives.Ints;
+import org.jboss.as.patching.IoUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -13,6 +15,7 @@ import uk.co.alumeni.prism.domain.document.Document;
 import uk.co.alumeni.prism.domain.document.PrismFileCategory.PrismImageCategory;
 import uk.co.alumeni.prism.exceptions.PrismBadRequestException;
 import uk.co.alumeni.prism.exceptions.ResourceNotFoundException;
+import uk.co.alumeni.prism.rest.representation.resource.application.ApplicationBatchedDownloadRepresentation;
 import uk.co.alumeni.prism.services.ApplicationDownloadService;
 import uk.co.alumeni.prism.services.DocumentService;
 import uk.co.alumeni.prism.services.EntityService;
@@ -21,6 +24,7 @@ import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.Part;
 import java.io.IOException;
+import java.io.PipedOutputStream;
 import java.util.List;
 import java.util.Map;
 
@@ -95,15 +99,11 @@ public class DocumentController {
         outputStream.write(content);
     }
 
+    // Expected to be used for one of downloads
     @PreAuthorize("isAuthenticated()")
     @RequestMapping(value = "/pdfDownload", method = RequestMethod.GET)
     public void downloadPdf(@RequestParam(value = "applicationIds") String applicationIds, HttpServletResponse response) throws IOException {
-        List<Integer> ids;
-        try {
-            ids = Lists.newArrayList(Iterables.transform(Splitter.on(",").split(applicationIds), Ints.stringConverter()));
-        } catch (Exception e) {
-            throw new PrismBadRequestException("Expected comma-separated list of application IDs");
-        }
+        List<Integer> ids = getApplicationIds(applicationIds);
 
         String fileName;
         if (ids.size() == 1) {
@@ -118,7 +118,44 @@ public class DocumentController {
         response.setContentType("application/pdf");
 
         ServletOutputStream outputStream = response.getOutputStream();
-        applicationDownloadService.build(outputStream, ids.toArray(new Integer[ids.size()]));
+        applicationDownloadService.build(ids, outputStream);
+    }
+    
+    // Expected to be used for batched downloads
+    @PreAuthorize("isAuthenticated()")
+    @RequestMapping(value = "/pdfDownload/batch", method = RequestMethod.GET)
+    public String downloadPdfBatch(@RequestParam(value = "applicationIds") String applicationIds) throws IOException {
+        List<Integer> ids = getApplicationIds(applicationIds);
+        return applicationDownloadService.build(ids, null);
+    }
+    
+    // Polling endpoint to find out if batched download is ready
+    @PreAuthorize("isAuthenticated()")
+    @RequestMapping(value = "/pdfDownload/batch/status/{uuid}", method = RequestMethod.GET)
+    public ApplicationBatchedDownloadRepresentation getPdfBatchStatus(@PathVariable String uuid) throws IOException {
+        return applicationDownloadService.getStatus(uuid);
+    }
+    
+    // Endpoint to get the batched download when ready
+    @PreAuthorize("isAuthenticated()")
+    @RequestMapping(value = "/pdfDownload/batch/{uuid}", method = RequestMethod.GET)
+    public void getPdfBatch(@PathVariable String uuid, HttpServletResponse response) throws IOException, IllegalAccessException {
+        response.setHeader("Content-Disposition", "attachment; filename=\"applications.pdf\"");
+        response.setHeader("File-Name", "applications.pdf");
+        response.setContentType("application/pdf");
+        S3ObjectInputStream content = documentService.getAmazonBatchedObjectData(uuid);
+        response.setContentLength(content.available());
+        IoUtils.copyStream(content, response.getOutputStream());
+    }
+    
+    private List<Integer> getApplicationIds(@RequestParam(value = "applicationIds") String applicationIds) {
+        List<Integer> ids;
+        try {
+            ids = Lists.newArrayList(Iterables.transform(Splitter.on(",").split(applicationIds), Ints.stringConverter()));
+        } catch (Exception e) {
+            throw new PrismBadRequestException("Expected comma-separated list of application IDs");
+        }
+        return ids;
     }
 
 }

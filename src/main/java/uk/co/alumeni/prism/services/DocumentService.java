@@ -11,6 +11,8 @@ import org.apache.commons.io.IOUtils;
 import org.bouncycastle.util.io.Streams;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
@@ -29,9 +31,7 @@ import uk.co.alumeni.prism.exceptions.WorkflowPermissionException;
 
 import javax.inject.Inject;
 import javax.servlet.http.Part;
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.util.List;
 
 import static uk.co.alumeni.prism.domain.document.PrismFileCategory.DOCUMENT;
@@ -40,7 +40,9 @@ import static uk.co.alumeni.prism.domain.document.PrismFileCategory.IMAGE;
 @Service
 @Transactional
 public class DocumentService {
-
+    
+    private static final Logger logger = LoggerFactory.getLogger(DocumentService.class);
+    
     @Value("${context.environment}")
     private String contextEnvironment;
 
@@ -186,6 +188,22 @@ public class DocumentService {
             }
         }
     }
+    
+    public void exportBatchedDocumentToAmazon(String uuid, PipedOutputStream outputStream) {
+        PipedInputStream inputStream = null;
+        try {
+            inputStream = new PipedInputStream(outputStream);
+            ObjectMetadata amazonMetadata = new ObjectMetadata();
+            amazonMetadata.setContentType("application/pdf");
+            amazonMetadata.setContentLength(inputStream.available());
+            PutObjectRequest amazonRequest = new PutObjectRequest(amazonBucket, "batched/" + uuid + ".pdf", inputStream, amazonMetadata);
+            getAmazonClient().putObject(amazonRequest);
+        }catch (IOException e) {
+            logger.error("Unable to prepare batch download", e);
+        } finally {
+            IOUtils.closeQuietly(inputStream);
+        }
+    }
 
     public void deleteAmazonDocuments(DateTime baselineTime) throws IOException, IntegrationException {
         LocalDate baselineDate = baselineTime.toLocalDate();
@@ -243,6 +261,19 @@ public class DocumentService {
         } finally {
             IOUtils.closeQuietly(amazonStream);
         }
+    }
+    
+    public S3ObjectInputStream getAmazonBatchedObjectData(String uuid) throws IllegalAccessException {
+        AmazonS3 amazonClient = getAmazonClient();
+        String amazonObjectKey = "batched/" + uuid + "/pdf";
+        S3Object amazonObject = amazonClient.getObject(new GetObjectRequest(amazonBucket, amazonObjectKey));
+        if (amazonObject == null) {
+            throw new IllegalAccessException("batched document with uuid: " + uuid + " already consumed");
+        }
+        
+        // Remove the object - hopefully amazon is smart enough not to start deleting the object while we are streaming, otherwise use a scheduler
+        amazonClient.deleteObject(new DeleteObjectRequest(amazonBucket, amazonObjectKey));
+        return amazonObject.getObjectContent();
     }
 
     public S3Object getAmazonObject(String bucketName, String amazonObjectKey) {

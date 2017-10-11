@@ -40,9 +40,9 @@ import static uk.co.alumeni.prism.domain.document.PrismFileCategory.IMAGE;
 @Service
 @Transactional
 public class DocumentService {
-    
+
     private static final Logger logger = LoggerFactory.getLogger(DocumentService.class);
-    
+
     @Value("${context.environment}")
     private String contextEnvironment;
 
@@ -188,7 +188,7 @@ public class DocumentService {
             }
         }
     }
-    
+
     public void exportBatchedDocumentToAmazon(String uuid, PipedOutputStream outputStream) {
         PipedInputStream inputStream = null;
         try {
@@ -262,7 +262,7 @@ public class DocumentService {
             IOUtils.closeQuietly(amazonStream);
         }
     }
-    
+
     public S3ObjectInputStream getAmazonBatchedObjectData(String uuid) throws IllegalAccessException {
         AmazonS3 amazonClient = getAmazonClient();
         String amazonObjectKey = "batched/" + uuid;
@@ -270,7 +270,7 @@ public class DocumentService {
         if (amazonObject == null) {
             throw new IllegalAccessException("batched document with uuid: " + uuid + " already consumed");
         }
-        
+
         // Remove the object - hopefully amazon is smart enough not to start deleting the object while we are streaming, otherwise use a scheduler
         amazonClient.deleteObject(new DeleteObjectRequest(amazonBucket, amazonObjectKey));
         return amazonObject.getObjectContent();

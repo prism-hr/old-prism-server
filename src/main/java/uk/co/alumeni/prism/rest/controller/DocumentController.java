@@ -6,7 +6,7 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.primitives.Ints;
-import org.jboss.as.patching.IoUtils;
+import org.apache.commons.fileupload.util.Streams;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -143,7 +143,7 @@ public class DocumentController {
         response.setContentType("application/pdf");
         S3ObjectInputStream content = documentService.getAmazonBatchedObjectData(uuid);
         response.setContentLength(content.available());
-        IoUtils.copyStream(content, response.getOutputStream());
+        Streams.copy(content, response.getOutputStream(), true);
     }
 
     private List<Integer> getApplicationIds(@RequestParam(value = "applicationIds") String applicationIds) {

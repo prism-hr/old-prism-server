@@ -1,0 +1,1 @@
+${PROJECT_CREATOR_FULL_NAME} Project ${PROJECT_CODE} - New Project

@@ -196,7 +196,7 @@ public class DocumentService {
             ObjectMetadata amazonMetadata = new ObjectMetadata();
             amazonMetadata.setContentType("application/pdf");
             amazonMetadata.setContentLength(inputStream.available());
-            PutObjectRequest amazonRequest = new PutObjectRequest(amazonBucket, "batched/" + uuid + ".pdf", inputStream, amazonMetadata);
+            PutObjectRequest amazonRequest = new PutObjectRequest(amazonBucket, "batched/" + uuid, inputStream, amazonMetadata);
             getAmazonClient().putObject(amazonRequest);
         }catch (IOException e) {
             logger.error("Unable to prepare batch download", e);
@@ -265,7 +265,7 @@ public class DocumentService {
     
     public S3ObjectInputStream getAmazonBatchedObjectData(String uuid) throws IllegalAccessException {
         AmazonS3 amazonClient = getAmazonClient();
-        String amazonObjectKey = "batched/" + uuid + "/pdf";
+        String amazonObjectKey = "batched/" + uuid;
         S3Object amazonObject = amazonClient.getObject(new GetObjectRequest(amazonBucket, amazonObjectKey));
         if (amazonObject == null) {
             throw new IllegalAccessException("batched document with uuid: " + uuid + " already consumed");

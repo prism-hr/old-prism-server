@@ -189,10 +189,8 @@ public class DocumentService {
         }
     }
 
-    public void exportBatchedDocumentToAmazon(String uuid, PipedOutputStream outputStream) {
-        PipedInputStream inputStream = null;
+    public void exportBatchedDocumentToAmazon(String uuid, PipedInputStream inputStream) {
         try {
-            inputStream = new PipedInputStream(outputStream);
             ObjectMetadata amazonMetadata = new ObjectMetadata();
             amazonMetadata.setContentType("application/pdf");
             amazonMetadata.setContentLength(inputStream.available());

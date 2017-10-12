@@ -51,7 +51,7 @@ public enum PrismAction implements PrismLocalizableDefinition {
     APPLICATION_PROVIDE_INTERVIEW_FEEDBACK(getDefaultRateApplicationActionDefinitionDeclinable()), //
     APPLICATION_PROVIDE_PARTNER_APPROVAL(getDefaultProcessApplicationActionDefinitionWithRedactions()), //
     APPLICATION_PROVIDE_REFERENCE(getDefaultRateApplicationActionDefinitionDeclinable()), //
-    APPLICATION_PROVIDE_REVIEW(getDefaultRateApplicationActionDefinitionDeclinable()), //
+    APPLICATION_PROVIDE_REVIEW(getDefaultRateApplicationActionDefinitionDeclinable().withExcludeFromReminder(true)), //
     APPLICATION_REVERSE_REJECTION(getDefaultProcessApplicationActionDefinitionWithRedactions()), //
     APPLICATION_UPDATE_INTERVIEW_AVAILABILITY(getDefaultProcessApplicationActionDefinitionWithRedactions()), //
     APPLICATION_UPLOAD_REFERENCE(getDefaultRateApplicationActionDefinitionDeclinable()), //
@@ -148,7 +148,7 @@ public enum PrismAction implements PrismLocalizableDefinition {
 
     private PrismActionDefinition actionDefinition;
 
-    private PrismAction(PrismActionDefinition actionDefinition) {
+    PrismAction(PrismActionDefinition actionDefinition) {
         this.actionDefinition = actionDefinition;
     }
 
@@ -191,6 +191,10 @@ public enum PrismAction implements PrismLocalizableDefinition {
     public PrismScope getScope() {
         return actionDefinition.getScope();
     }
+    
+    public boolean isExcludeFromReminder() {
+        return actionDefinition.isExcludeFromReminder();
+    }
 
     public Set<PrismActionRedaction> getActionRedactions() {
         return actionDefinition.getActionRedactions();
@@ -229,6 +233,8 @@ public enum PrismAction implements PrismLocalizableDefinition {
         private PrismPartnershipState partnershipTransitionState;
 
         private PrismScope scope;
+        
+        private boolean excludeFromReminder;
 
         private Set<PrismActionRedaction> actionRedactions = newLinkedHashSet();
 
@@ -271,7 +277,11 @@ public enum PrismAction implements PrismLocalizableDefinition {
         public PrismScope getScope() {
             return scope;
         }
-
+    
+        public boolean isExcludeFromReminder() {
+            return excludeFromReminder;
+        }
+    
         public Set<PrismActionRedaction> getActionRedactions() {
             return actionRedactions;
         }
@@ -323,6 +333,11 @@ public enum PrismAction implements PrismLocalizableDefinition {
 
         public PrismActionDefinition withScope(PrismScope scope) {
             this.scope = scope;
+            return this;
+        }
+        
+        public PrismActionDefinition withExcludeFromReminder(boolean excludeFromReminder) {
+            this.excludeFromReminder = excludeFromReminder;
             return this;
         }
 

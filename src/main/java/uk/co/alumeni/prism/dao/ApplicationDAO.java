@@ -39,6 +39,7 @@ import java.util.List;
 import java.util.Set;
 
 import static com.amazonaws.util.StringUtils.isNullOrEmpty;
+import static com.google.common.collect.Lists.newArrayList;
 import static com.google.common.collect.Lists.newLinkedList;
 import static java.util.stream.Collectors.joining;
 import static java.util.stream.Collectors.toList;
@@ -47,6 +48,7 @@ import static org.hibernate.sql.JoinType.LEFT_OUTER_JOIN;
 import static uk.co.alumeni.prism.dao.WorkflowDAO.getMatchMode;
 import static uk.co.alumeni.prism.domain.definitions.PrismPerformanceIndicator.getColumns;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismAction.APPLICATION_PROVIDE_REFERENCE;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismAction.APPLICATION_UPLOAD_REFERENCE;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRoleGroup.APPLICATION_CONFIRMED_INTERVIEW_GROUP;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismState.APPLICATION_INTERVIEW_PENDING_INTERVIEW;
 
@@ -110,16 +112,18 @@ public class ApplicationDAO {
                         + "left join application.state as state " //
                         + "left join application.referees as referee " //
                         + "left join application.comments as provideReferenceComment " //
-                        + "with provideReferenceComment.action.id = :provideReferenceAction " //
+                        + "with provideReferenceComment.action.id in (:referenceActions) " //
                         + "and provideReferenceComment.declinedResponse is false " //
+                        + "and provideReferenceComment.submittedTimestamp is not null " //
                         + "left join application.comments as declineReferenceComment " //
-                        + "with declineReferenceComment.action.id = :provideReferenceAction " //
+                        + "with declineReferenceComment.action.id in (:referenceActions) " //
                         + "and declineReferenceComment.declinedResponse is true " //
+                        + "and declineReferenceComment.submittedTimestamp is not null " //
                         + "where application.id in :assignedApplications " //
                         + "group by application.id, secondaryTheme.id, secondaryLocation.id " //
                         + "order by application.sequenceIdentifier desc") //
                 .setParameterList("assignedApplications", applicationIds) //
-                .setParameter("provideReferenceAction", APPLICATION_PROVIDE_REFERENCE) //
+                .setParameter("referenceActions", newArrayList(APPLICATION_PROVIDE_REFERENCE, APPLICATION_UPLOAD_REFERENCE)) //
                 .setResultTransformer(Transformers.aliasToBean(ApplicationReportListRowDTO.class)) //
                 .list();
     }

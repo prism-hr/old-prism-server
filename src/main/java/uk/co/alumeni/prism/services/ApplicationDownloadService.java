@@ -1,7 +1,5 @@
 package uk.co.alumeni.prism.services;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.collect.Maps;
 import com.itextpdf.text.Document;
 import com.itextpdf.text.pdf.PdfWriter;
@@ -34,7 +32,10 @@ import java.io.OutputStream;
 import java.nio.file.FileVisitOption;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.*;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -205,67 +206,6 @@ public class ApplicationDownloadService {
 
     public void getPdfBatch(String fileId, HttpServletResponse response) throws IOException {
         Files.copy(tempDirectory.resolve(fileId + ".pdf"), response.getOutputStream());
-    }
-
-    @JsonIgnoreProperties(ignoreUnknown = true)
-    private static class UploadEventMessage {
-
-        @JsonProperty("Records")
-        List<Record> records = new ArrayList<>();
-
-        public List<Record> getRecords() {
-            return records;
-        }
-
-        public void setRecords(List<Record> records) {
-            this.records = records;
-        }
-
-        @JsonIgnoreProperties(ignoreUnknown = true)
-        private static class Record {
-
-            private S3 s3;
-
-            public S3 getS3() {
-                return s3;
-            }
-
-            public void setS3(S3 s3) {
-                this.s3 = s3;
-            }
-
-            @JsonIgnoreProperties(ignoreUnknown = true)
-            private static class S3 {
-
-                private S3Object object;
-
-                public S3Object getObject() {
-                    return object;
-                }
-
-                public void setObject(S3Object object) {
-                    this.object = object;
-                }
-
-                @JsonIgnoreProperties(ignoreUnknown = true)
-                private static class S3Object {
-
-                    private String key;
-
-                    public String getKey() {
-                        return key;
-                    }
-
-                    public void setKey(String key) {
-                        this.key = key;
-                    }
-
-                }
-
-            }
-
-        }
-
     }
 
 }

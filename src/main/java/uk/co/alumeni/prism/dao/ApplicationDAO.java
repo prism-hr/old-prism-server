@@ -123,7 +123,7 @@ public class ApplicationDAO {
                         + "group by application.id, secondaryTheme.id, secondaryLocation.id " //
                         + "order by application.sequenceIdentifier desc") //
                 .setParameterList("assignedApplications", applicationIds) //
-                .setParameter("referenceActions", newArrayList(APPLICATION_PROVIDE_REFERENCE, APPLICATION_UPLOAD_REFERENCE)) //
+                .setParameterList("referenceActions", newArrayList(APPLICATION_PROVIDE_REFERENCE, APPLICATION_UPLOAD_REFERENCE)) //
                 .setResultTransformer(Transformers.aliasToBean(ApplicationReportListRowDTO.class)) //
                 .list();
     }

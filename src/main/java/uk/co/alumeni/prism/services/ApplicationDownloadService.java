@@ -1,12 +1,5 @@
 package uk.co.alumeni.prism.services;
 
-import com.amazonaws.services.sqs.AmazonSQSClient;
-import com.amazonaws.services.sqs.model.Message;
-import com.amazonaws.services.sqs.model.ReceiveMessageRequest;
-import com.amazonaws.services.sqs.model.ReceiveMessageResult;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.Maps;
 import com.itextpdf.text.Document;
 import com.itextpdf.text.pdf.PdfWriter;
@@ -27,17 +20,22 @@ import uk.co.alumeni.prism.services.builders.download.ApplicationDownloadBuilder
 import uk.co.alumeni.prism.services.builders.download.ApplicationDownloadBuilderHelper;
 import uk.co.alumeni.prism.services.helpers.PropertyLoader;
 
+import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
 import javax.inject.Inject;
+import javax.servlet.http.HttpServletResponse;
 import javax.transaction.Transactional;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.io.PipedInputStream;
-import java.io.PipedOutputStream;
-import java.util.ArrayList;
+import java.nio.file.FileVisitOption;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
-import java.util.UUID;
-import java.util.concurrent.CountDownLatch;
+import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -46,138 +44,151 @@ import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.APPLICA
 
 @Component
 public class ApplicationDownloadService {
-    
+
     private static final Logger logger = LoggerFactory.getLogger(ApplicationDownloadService.class);
-    
+
     private ExecutorService executorService = Executors.newFixedThreadPool(10);
-    
+
     @Value("${integration.amazon.upload.completion.queue}")
     private String uploadCompletionQueue;
-    
+
     @Inject
     private ApplicationService applicationService;
-    
+
     @Inject
     private SystemService systemService;
-    
+
     @Inject
     private RoleService roleService;
-    
+
     @Inject
     private UserService userService;
-    
-    @Inject
-    private DocumentService documentService;
-    
+
     @Inject
     private ApplicationMapper applicationMapper;
-    
-    @Inject
-    @SuppressWarnings("SpringJavaAutowiringInspection")
-    private ObjectMapper objectMapper;
-    
+
     @Inject
     private ApplicationContext applicationContext;
-    
+
+    private Path tempDirectory;
+
+    private Map<String, ApplicationBatchedDownloadRepresentation> batchDownloadStatuses = new HashMap<>();
+
+    @PostConstruct
+    public void init() throws Exception {
+        tempDirectory = Files.createTempDirectory("batch-pdf-");
+    }
+
+    @PreDestroy
+    public void cleanUp() throws Exception {
+        Files.walk(tempDirectory, FileVisitOption.FOLLOW_LINKS)
+                .sorted(Comparator.reverseOrder())
+                .map(Path::toFile)
+                .peek(System.out::println)
+                .forEach(File::delete);
+        boolean delete = tempDirectory.toFile().delete();
+        System.out.println(delete ? "Deleted" : "Not deleted");
+    }
+
     public String build(List<Integer> applicationIds) throws IOException {
+
+        Files.walk(tempDirectory, FileVisitOption.FOLLOW_LINKS)
+                .sorted(Comparator.reverseOrder())
+                .map(Path::toFile)
+                .forEach(System.out::println);
+
         User user = userService.getCurrentUser();
-        String uuid = UUID.randomUUID().toString();
-        
-        PipedOutputStream outputStream = new PipedOutputStream();
-        PipedInputStream  inputStream  = new PipedInputStream(outputStream);
-        CountDownLatch countDownLatch = new CountDownLatch(2);
+
+        Path tempFile = Files.createTempFile(tempDirectory, null, ".pdf");
+        OutputStream outputStream = new FileOutputStream(tempFile.toFile());
+        String fileId = tempFile.getFileName().toString().replace(".pdf", "");
+        ApplicationBatchedDownloadRepresentation status = new ApplicationBatchedDownloadRepresentation(fileId, 0);
+        batchDownloadStatuses.put(fileId, status);
         Runnable reader = () -> {
             PropertyLoader generalPropertyLoader = applicationContext.getBean(PropertyLoader.class).localizeLazy(systemService.getSystem());
             ApplicationDownloadBuilderHelper generalApplicationDownloadBuilderHelper =
                     applicationContext.getBean(ApplicationDownloadBuilderHelper.class).localize(generalPropertyLoader);
-            
+
             try {
-                
                 Document pdfDocument = generalApplicationDownloadBuilderHelper.startDocument();
                 PdfWriter pdfWriter = PdfWriter.getInstance(pdfDocument, outputStream);
                 pdfDocument.open();
-                
+
                 HashMap<Program, PropertyLoader> specificPropertyLoaders = Maps.newHashMap();
-                List<PrismRole> overridingRoles = roleService.getRolesOverridingRedactions(userService.getCurrentUser(), APPLICATION, newArrayList(applicationIds));
+                List<PrismRole> overridingRoles = roleService.getRolesOverridingRedactions(user, APPLICATION, newArrayList(applicationIds));
                 HashMap<Program, ApplicationDownloadBuilderHelper> specificApplicationDownloadBuilderHelpers = Maps.newHashMap();
-                
+
+
                 User currentUser = userService.getCurrentUser();
-                for (Integer applicationId : applicationIds) {
+                for (int i = 0; i < applicationIds.size(); i++) {
+                    Integer applicationId = applicationIds.get(i);
                     applicationContext.getBean(ApplicationDownloadService.class)
                             .processApplicationToPdfDocument(pdfDocument, pdfWriter, specificPropertyLoaders, overridingRoles, specificApplicationDownloadBuilderHelpers,
                                     currentUser, applicationId);
+                    status.setPercentReady((i + 1) * 100 / applicationIds.size());
                 }
-                
+
                 pdfDocument.close();
-                
-                countDownLatch.countDown();
-                countDownLatch.await();
-                outputStream.close();
             } catch (Exception e) {
                 logger.error("Error downloading applications for " + user.getFullName(), e);
             } finally {
                 IOUtils.closeQuietly(outputStream);
             }
         };
-    
-        Runnable writer = () -> {
-            documentService.exportBatchedDocumentToAmazon(uuid, inputStream, countDownLatch);
-        };
-    
+
         executorService.submit(reader);
-        executorService.submit(writer);
-        return uuid;
+        return fileId;
     }
-    
+
     public void build(List<Integer> applicationIds, OutputStream outputStream) {
         User user = userService.getCurrentUser();
-        
+
         PropertyLoader generalPropertyLoader = applicationContext.getBean(PropertyLoader.class).localizeLazy(systemService.getSystem());
         ApplicationDownloadBuilderHelper generalApplicationDownloadBuilderHelper = applicationContext.getBean(ApplicationDownloadBuilderHelper.class)
                 .localize(generalPropertyLoader);
-        
+
         try {
             Document pdfDocument = generalApplicationDownloadBuilderHelper.startDocument();
             PdfWriter pdfWriter = PdfWriter.getInstance(pdfDocument, outputStream);
             pdfDocument.open();
-            
+
             HashMap<Program, PropertyLoader> specificPropertyLoaders = Maps.newHashMap();
             List<PrismRole> overridingRoles = roleService.getRolesOverridingRedactions(userService.getCurrentUser(), APPLICATION, newArrayList(applicationIds));
             HashMap<Program, ApplicationDownloadBuilderHelper> specificApplicationDownloadBuilderHelpers = Maps.newHashMap();
-            
+
             User currentUser = userService.getCurrentUser();
             for (Integer applicationId : applicationIds) {
                 applicationContext.getBean(ApplicationDownloadService.class).processApplicationToPdfDocument(pdfDocument,
                         pdfWriter, specificPropertyLoaders, overridingRoles, specificApplicationDownloadBuilderHelpers, currentUser, applicationId);
             }
-            
+
             pdfDocument.close();
         } catch (Exception e) {
             logger.error("Error downloading applications for " + user.getFullName(), e);
         }
     }
-    
+
     @Transactional
     public void processApplicationToPdfDocument(Document pdfDocument, PdfWriter pdfWriter, HashMap<Program, PropertyLoader> specificPropertyLoaders,
-            List<PrismRole> overridingRoles, HashMap<Program, ApplicationDownloadBuilderHelper> specificApplicationDownloadBuilderHelpers, User currentUser,
-            Integer applicationId) {
+                                                List<PrismRole> overridingRoles, HashMap<Program, ApplicationDownloadBuilderHelper> specificApplicationDownloadBuilderHelpers, User currentUser,
+                                                Integer applicationId) {
         Application application = applicationService.getById(applicationId);
         Program program = application.getProgram();
-        
+
         PropertyLoader propertyLoader = specificPropertyLoaders.get(program);
         if (propertyLoader == null) {
             propertyLoader = applicationContext.getBean(PropertyLoader.class).localizeLazy(application);
         }
-        
+
         specificPropertyLoaders.put(program, propertyLoader);
-        
+
         ApplicationDownloadBuilderHelper downloadBuilderHelper = specificApplicationDownloadBuilderHelpers.get(program);
         if (downloadBuilderHelper == null) {
             downloadBuilderHelper = applicationContext.getBean(ApplicationDownloadBuilderHelper.class).localize(specificPropertyLoaders.get(program));
         }
-        
+
         specificApplicationDownloadBuilderHelpers.put(program, downloadBuilderHelper);
-        
+
         try {
             applicationContext.getBean(ApplicationDownloadBuilder.class)
                     .localize(specificPropertyLoaders.get(program), specificApplicationDownloadBuilderHelpers.get(program))
@@ -185,93 +196,16 @@ public class ApplicationDownloadService {
         } catch (PdfDocumentBuilderException e) {
             logger.error("Error building download for application " + application.getCode(), e);
         }
-        
+
         pdfDocument.newPage();
     }
-    
-    public ApplicationBatchedDownloadRepresentation getStatus(String uuid) throws IOException {
-        AmazonSQSClient client = new AmazonSQSClient(systemService.getAmazonCredentials());
-        ReceiveMessageRequest receiveMessageRequest = new ReceiveMessageRequest(uploadCompletionQueue);
-        receiveMessageRequest.setMaxNumberOfMessages(10);
-        
-        while (true) {
-            ReceiveMessageResult result = client.receiveMessage(receiveMessageRequest);
-            List<Message> messages = result.getMessages();
-            if (messages.isEmpty()) {
-                // Depend upon next client request to find the message
-                return new ApplicationBatchedDownloadRepresentation().setUuid(uuid);
-            }
-            
-            for (Message message : messages) {
-                UploadEventMessage uploadEventMessage = objectMapper.readValue(message.getBody(), UploadEventMessage.class);
-                for (UploadEventMessage.Record record : uploadEventMessage.getRecords()) {
-                    if (record.getS3().getObject().getKey().endsWith(uuid)) {
-                        return new ApplicationBatchedDownloadRepresentation().setUuid(uuid).setReady(true);
-                    }
-                }
-            }
-        }
+
+    public ApplicationBatchedDownloadRepresentation getStatus(String fileId) throws IOException {
+        return batchDownloadStatuses.get(fileId);
     }
-    
-    @JsonIgnoreProperties(ignoreUnknown = true)
-    private static class UploadEventMessage {
-        
-        @JsonProperty("Records")
-        List<Record> records = new ArrayList<>();
-        
-        public List<Record> getRecords() {
-            return records;
-        }
-        
-        public void setRecords(List<Record> records) {
-            this.records = records;
-        }
-        
-        @JsonIgnoreProperties(ignoreUnknown = true)
-        private static class Record {
-            
-            private S3 s3;
-            
-            public S3 getS3() {
-                return s3;
-            }
-            
-            public void setS3(S3 s3) {
-                this.s3 = s3;
-            }
-            
-            @JsonIgnoreProperties(ignoreUnknown = true)
-            private static class S3 {
-                
-                private S3Object object;
-                
-                public S3Object getObject() {
-                    return object;
-                }
-                
-                public void setObject(S3Object object) {
-                    this.object = object;
-                }
-                
-                @JsonIgnoreProperties(ignoreUnknown = true)
-                private static class S3Object {
-                    
-                    private String key;
-                    
-                    public String getKey() {
-                        return key;
-                    }
-                    
-                    public void setKey(String key) {
-                        this.key = key;
-                    }
-                    
-                }
-                
-            }
-            
-        }
-        
+
+    public void getPdfBatch(String fileId, HttpServletResponse response) throws IOException {
+        Files.copy(tempDirectory.resolve(fileId + ".pdf"), response.getOutputStream());
     }
-    
+
 }

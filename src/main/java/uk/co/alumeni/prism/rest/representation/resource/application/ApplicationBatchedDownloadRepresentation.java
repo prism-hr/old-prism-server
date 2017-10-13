@@ -1,27 +1,32 @@
 package uk.co.alumeni.prism.rest.representation.resource.application;
 
 public class ApplicationBatchedDownloadRepresentation {
-    
+
     private String uuid;
-    
-    private boolean ready;
-    
+
+    int percentReady;
+
+    public ApplicationBatchedDownloadRepresentation(String uuid, int percentReady) {
+        this.uuid = uuid;
+        this.percentReady = percentReady;
+    }
+
+    public ApplicationBatchedDownloadRepresentation() {
+    }
+
     public String getUuid() {
         return uuid;
     }
-    
-    public ApplicationBatchedDownloadRepresentation setUuid(String uuid) {
+
+    public void setUuid(String uuid) {
         this.uuid = uuid;
-        return this;
     }
-    
-    public boolean isReady() {
-        return ready;
+
+    public int getPercentReady() {
+        return percentReady;
     }
-    
-    public ApplicationBatchedDownloadRepresentation setReady(boolean ready) {
-        this.ready = ready;
-        return this;
+
+    public void setPercentReady(int percentReady) {
+        this.percentReady = percentReady;
     }
-    
 }

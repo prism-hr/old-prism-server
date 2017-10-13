@@ -1,12 +1,10 @@
 package uk.co.alumeni.prism.rest.controller;
 
-import com.amazonaws.services.s3.model.S3ObjectInputStream;
 import com.google.common.base.Splitter;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.primitives.Ints;
-import org.apache.commons.fileupload.util.Streams;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -141,9 +139,7 @@ public class DocumentController {
         response.setHeader("Content-Disposition", "attachment; filename=\"applications.pdf\"");
         response.setHeader("File-Name", "applications.pdf");
         response.setContentType("application/pdf");
-        S3ObjectInputStream content = documentService.getAmazonBatchedObjectData(uuid);
-        response.setContentLength(content.available());
-        Streams.copy(content, response.getOutputStream(), true);
+        applicationDownloadService.getPdfBatch(uuid, response);
     }
 
     private List<Integer> getApplicationIds(@RequestParam(value = "applicationIds") String applicationIds) {

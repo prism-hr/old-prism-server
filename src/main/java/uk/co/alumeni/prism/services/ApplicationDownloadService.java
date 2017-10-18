@@ -8,6 +8,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import uk.co.alumeni.prism.domain.application.Application;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismRole;
@@ -32,6 +33,7 @@ import java.io.OutputStream;
 import java.nio.file.FileVisitOption;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.attribute.BasicFileAttributes;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
@@ -78,18 +80,13 @@ public class ApplicationDownloadService {
     public void init() throws Exception {
         tempDirectory = Files.createTempDirectory("batch-pdf-");
     }
-
+    
     @PreDestroy
+    @Scheduled(fixedDelay = 3600000)
     public void cleanUp() throws Exception {
-        Files.walk(tempDirectory, FileVisitOption.FOLLOW_LINKS)
-                .sorted(Comparator.reverseOrder())
-                .map(Path::toFile)
-                .peek(System.out::println)
-                .forEach(File::delete);
-        boolean delete = tempDirectory.toFile().delete();
-        System.out.println(delete ? "Deleted" : "Not deleted");
+        cleanUps(true);
     }
-
+    
     public String build(List<Integer> applicationIds) throws IOException {
 
         Files.walk(tempDirectory, FileVisitOption.FOLLOW_LINKS)
@@ -206,6 +203,17 @@ public class ApplicationDownloadService {
 
     public void getPdfBatch(String fileId, HttpServletResponse response) throws IOException {
         Files.copy(tempDirectory.resolve(fileId + ".pdf"), response.getOutputStream());
+    }
+    
+    private void cleanUps(boolean all) throws IOException {
+        Files.walk(tempDirectory, FileVisitOption.FOLLOW_LINKS)
+                .sorted(Comparator.reverseOrder())
+                .map(Path::toFile)
+                .filter(file -> all)
+                .peek(System.out::println)
+                .forEach(File::delete);
+        boolean delete = tempDirectory.toFile().delete();
+        System.out.println(delete ? "Deleted" : "Not deleted");
     }
 
 }

@@ -4,6 +4,7 @@ import com.google.common.collect.Maps;
 import com.itextpdf.text.Document;
 import com.itextpdf.text.pdf.PdfWriter;
 import org.apache.commons.io.IOUtils;
+import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -33,7 +34,6 @@ import java.io.OutputStream;
 import java.nio.file.FileVisitOption;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.attribute.BasicFileAttributes;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
@@ -82,9 +82,13 @@ public class ApplicationDownloadService {
     }
     
     @PreDestroy
-    @Scheduled(fixedDelay = 3600000)
     public void cleanUp() throws Exception {
-        cleanUps(true);
+        cleanUp(true);
+    }
+    
+    @Scheduled(fixedDelay = 60000)
+    public void cleanUpScheduled() throws IOException {
+        cleanUp(false);
     }
     
     public String build(List<Integer> applicationIds) throws IOException {
@@ -205,11 +209,11 @@ public class ApplicationDownloadService {
         Files.copy(tempDirectory.resolve(fileId + ".pdf"), response.getOutputStream());
     }
     
-    private void cleanUps(boolean all) throws IOException {
+    private void cleanUp(boolean all) throws IOException {
         Files.walk(tempDirectory, FileVisitOption.FOLLOW_LINKS)
                 .sorted(Comparator.reverseOrder())
                 .map(Path::toFile)
-                .filter(file -> all)
+                .filter(file -> all || file.lastModified() < DateTime.now().minusHours(1).getMillis())
                 .peek(System.out::println)
                 .forEach(File::delete);
         boolean delete = tempDirectory.toFile().delete();

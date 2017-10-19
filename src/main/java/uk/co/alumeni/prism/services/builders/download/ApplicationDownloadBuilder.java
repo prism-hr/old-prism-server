@@ -321,9 +321,12 @@ public class ApplicationDownloadBuilder {
 
             int counter = 1;
             for (ProfileRefereeRepresentation referee : referees) {
-                PdfPTable subBody = applicationDownloadBuilderHelper
-                        .startSubSection(propertyLoader.loadLazy(PROFILE_REFEREE_SUBHEADER) + "(" + counter++ + ")");
-
+                String subHeader = propertyLoader.loadLazy(PROFILE_REFEREE_SUBHEADER) + "(" + counter++ + ")";
+                if (BooleanUtils.isTrue(referee.getSupervisor())) {
+                    subHeader += " - intended supervisor";
+                }
+                
+                PdfPTable subBody = applicationDownloadBuilderHelper.startSubSection(subHeader);
                 UserRepresentationSimple user = referee.getResource().getUser();
                 boolean userNull = user == null;
 

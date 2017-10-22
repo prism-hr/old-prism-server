@@ -1,5 +1,6 @@
 package uk.co.alumeni.prism.services.lifecycle.helpers;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.springframework.stereotype.Component;
 import uk.co.alumeni.prism.mapping.AdvertMapper;
 import uk.co.alumeni.prism.mapping.UserMapper;
@@ -9,6 +10,7 @@ import uk.co.alumeni.prism.services.NotificationService;
 import uk.co.alumeni.prism.services.UserService;
 
 import javax.inject.Inject;
+import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 @Component
@@ -42,8 +44,12 @@ public class NotificationServiceHelperActivity extends PrismServiceHelperAbstrac
         if (!isShuttingDown()) {
             UserActivityRepresentation userActivityRepresentation = userMapper.getUserActivityRepresentation(user);
             if (userActivityRepresentation != null) {
-                AdvertListRepresentation advertListRepresentation = advertMapper.getAdvertExtendedRepresentations(user);
-                notificationService.sendUserActivityNotification(user, userActivityRepresentation, advertListRepresentation);
+                List<UserActivityRepresentation.ResourceActivityRepresentation> resourceActivityRepresentations =
+                        userMapper.filterResourceActivitiesForNotification(userActivityRepresentation.getResourceActivities());
+                if (CollectionUtils.isNotEmpty(resourceActivityRepresentations)) {
+                    AdvertListRepresentation advertListRepresentation = advertMapper.getAdvertExtendedRepresentations(user);
+                    notificationService.sendUserActivityNotification(user, userActivityRepresentation, advertListRepresentation);
+                }
             }
         }
     }

@@ -12,6 +12,7 @@ import uk.co.alumeni.prism.services.SystemService;
 import uk.co.alumeni.prism.services.helpers.PropertyLoader;
 
 import javax.inject.Inject;
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -51,6 +52,7 @@ public class PrismMapper {
         PropertyLoader propertyLoader = applicationContext.getBean(PropertyLoader.class).localizeLazy(systemService.getSystem());
         return prismService.getDomiciles().stream()
                 .map(d -> new DomicileRepresentation(d.getId(), propertyLoader.loadEager(d.getId().getDisplayProperty()), d.getCurrency()))
+                .sorted(Comparator.comparing(DomicileRepresentation::getName))
                 .collect(toList());
     }
 

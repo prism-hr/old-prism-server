@@ -80,17 +80,17 @@ public class ApplicationDownloadService {
     public void init() throws Exception {
         tempDirectory = Files.createTempDirectory("batch-pdf-");
     }
-    
+
     @PreDestroy
     public void cleanUp() throws Exception {
         cleanUp(true);
     }
-    
+
     @Scheduled(fixedDelay = 60000)
     public void cleanUpScheduled() throws IOException {
         cleanUp(false);
     }
-    
+
     public String build(List<Integer> applicationIds) throws IOException {
 
         Files.walk(tempDirectory, FileVisitOption.FOLLOW_LINKS)
@@ -208,7 +208,7 @@ public class ApplicationDownloadService {
     public void getPdfBatch(String fileId, HttpServletResponse response) throws IOException {
         Files.copy(tempDirectory.resolve(fileId + ".pdf"), response.getOutputStream());
     }
-    
+
     private void cleanUp(boolean all) throws IOException {
         Files.walk(tempDirectory, FileVisitOption.FOLLOW_LINKS)
                 .sorted(Comparator.reverseOrder())
@@ -216,8 +216,10 @@ public class ApplicationDownloadService {
                 .filter(file -> all || file.lastModified() < DateTime.now().minusHours(1).getMillis())
                 .peek(System.out::println)
                 .forEach(File::delete);
-        boolean delete = tempDirectory.toFile().delete();
-        System.out.println(delete ? "Deleted" : "Not deleted");
+
+        if (all) {
+            tempDirectory.toFile().delete();
+        }
     }
 
 }

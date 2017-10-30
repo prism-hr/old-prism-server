@@ -213,6 +213,7 @@ public class ApplicationDownloadService {
         Files.walk(tempDirectory, FileVisitOption.FOLLOW_LINKS)
                 .sorted(Comparator.reverseOrder())
                 .map(Path::toFile)
+                .filter(File::isFile)
                 .filter(file -> all || file.lastModified() < DateTime.now().minusHours(1).getMillis())
                 .peek(System.out::println)
                 .forEach(File::delete);

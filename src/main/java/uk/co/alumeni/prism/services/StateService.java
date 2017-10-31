@@ -183,14 +183,8 @@ public class StateService {
         state = state == null ? transitionState : state;
 
         Set<UserNotificationDefinitionDTO> updates = notificationService.getIndividualUpdateDefinitions(resource, stateTransition);
-        Iterator<UserNotificationDefinitionDTO> updatesIterator = updates.iterator();
-        while (updatesIterator.hasNext()) {
-            UserNotificationDefinitionDTO update = updatesIterator.next();
-            if (update.getNotificationDefinitionId().equals(PrismNotificationDefinition.APPLICATION_PROVIDE_REFERENCE_NOTIFICATION)
-                    && !update.getUserId().equals(comment.getUser().getId())) {
-                updatesIterator.remove();
-            }
-        }
+        updates.removeIf(update -> update.getNotificationDefinitionId().equals(PrismNotificationDefinition.APPLICATION_PROVIDE_REFERENCE_NOTIFICATION)
+                && !update.getUserId().equals(comment.getUser().getId()));
 
         Set<State> stateTerminations = getStateTerminations(resource, action, stateTransition);
         commentService.recordStateTransition(comment, state, transitionState, stateTerminations);

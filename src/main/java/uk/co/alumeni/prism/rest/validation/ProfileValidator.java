@@ -72,7 +72,7 @@ public class ProfileValidator extends LocalValidatorFactoryBean implements Valid
                     } else if (supervisorCount > 1) {
                         errors.rejectValue("referees", "tooManySupervisors");
                     }
-                    
+
                     break;
                 case APPLICATION_DOCUMENT_COVERING_LETTER:
                     validateDocumentConstraint(profile, "coveringLetter", constraint, errors);
@@ -116,9 +116,11 @@ public class ProfileValidator extends LocalValidatorFactoryBean implements Valid
             ApplicationStartDateRepresentation startDateConstraints = applicationMapper.getApplicationStartDateRepresentation(new LocalDate());
             LocalDate earliestStartDate = startDateConstraints.getEarliestDate();
             LocalDate latestStartDate = startDateConstraints.getLatestDate();
-            if (startDate.isBefore(earliestStartDate)) {
-                errors.rejectValue("startDate", "notBefore", new Object[]{earliestStartDate}, null);
-            } else if (startDate.isAfter(latestStartDate)) {
+//            if (startDate.isBefore(earliestStartDate)) {
+//                errors.rejectValue("startDate", "notBefore", new Object[]{earliestStartDate}, null);
+//            } else
+
+            if (startDate.isAfter(latestStartDate)) {
                 errors.rejectValue("startDate", "notAfter", new Object[]{latestStartDate}, null);
             }
 

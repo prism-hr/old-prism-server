@@ -59,129 +59,129 @@ import static uk.co.alumeni.prism.utils.PrismEmailUtils.getMessagePart;
 @Service
 @Transactional
 public class MailSender {
-    
+
     private static final Logger logger = getLogger(MailSender.class);
-    
+
     @Value("${context.environment}")
     private String contextEnvironment;
-    
+
     @Value("${email.source}")
     private String emailSource;
-    
+
     @Value("${application.url}")
     private String applicationUrl;
-    
+
     @Value("${application.api.url}")
     private String applicationApiUrl;
-    
+
     @Value("${email.strategy}")
     private String emailStrategy;
-    
+
     @Inject
     private AdvertService advertService;
-    
+
     @Inject
     private CommentService commentService;
-    
+
     @Inject
     private DocumentService documentService;
-    
+
     @Inject
     private NotificationService notificationService;
-    
+
     @Inject
     private MessageService messageService;
-    
+
     @Inject
     private ResourceService resourceService;
-    
+
     @Inject
     private SystemService systemService;
-    
+
     @Inject
     private UserActivityCacheServiceDelegate userActivityCacheServiceDelegate;
-    
+
     @Inject
     private UserService userService;
-    
+
     @Inject
     private PrismTemplateUtils prismTemplateUtils;
-    
+
     @Inject
     private ApplicationContext applicationContext;
-    
+
     public void sendEmail(NotificationEvent notificationEvent) {
         PrismNotificationDefinition prismNotificationDefinition = notificationEvent.getNotificationDefinition();
         NotificationDefinition notificationDefinition = notificationService.getById(prismNotificationDefinition);
-        
+
         User recipient = getUser(notificationEvent.getRecipient());
         userActivityCacheServiceDelegate.updateUserActivityCache(recipient.getId());
         Resource resource = getResource(notificationEvent.getResource());
-        
+
         NotificationDefinitionDTO notificationDefinitionDTO = getNotificationDefinitionDTO(recipient, resource, notificationEvent);
         NotificationConfiguration notificationConfiguration = notificationService.getNotificationConfiguration(resource, recipient, notificationDefinition);
         PropertyLoader propertyLoader = applicationContext.getBean(PropertyLoader.class).localizeLazy(resource);
-        
+
         try {
             Map<String, Object> model = createNotificationModel(notificationDefinition, notificationDefinitionDTO, propertyLoader);
             String definitionReference = notificationConfiguration.getDefinition().getId().name();
             String subject = prismTemplateUtils.getContent(definitionReference + "_subject", notificationConfiguration.getSubject(), model);
             String content = prismTemplateUtils.getContent(definitionReference + "_content", notificationConfiguration.getContent(), model);
-            
+
             String htmlContent = getMessage(resource, subject, content, model);
             String plainContent = htmlToPlainText(htmlContent) + "\n\n" + propertyLoader.loadLazy(SYSTEM_EMAIL_LINK_MESSAGE);
-            
+
             if (emailStrategy.equals("send")) {
                 logger.info("Sending Production Email: " + getMessageString(prismNotificationDefinition, notificationDefinitionDTO));
                 AWSCredentials credentials = systemService.getAmazonCredentials();
                 AmazonSimpleEmailServiceClient amazonClient = new AmazonSimpleEmailServiceClient(credentials);
                 amazonClient.setRegion(Region.getRegion(EU_WEST_1));
-                
+
                 Properties mailSessionProperties = new Properties();
                 mailSessionProperties.setProperty("mail.transport.protocol", "aws");
                 mailSessionProperties.setProperty("mail.aws.user", credentials.getAWSAccessKeyId());
                 mailSessionProperties.setProperty("mail.aws.password", credentials.getAWSSecretKey());
                 Session mailSession = getInstance(mailSessionProperties);
-                
+
                 MimeMessage message = new MimeMessage(mailSession);
                 message.setFrom(new InternetAddress(emailSource, "prism.hr"));
                 message.setRecipient(Message.RecipientType.TO, convertToInternetAddresses(recipient));
                 message.setSubject(subject);
-                
+
                 MimeBodyPart messageBodyPart = new MimeBodyPart();
                 MimeMultipart messageBodyParts = new MimeMultipart("alternative");
                 messageBodyParts.addBodyPart(getMessagePart(plainContent, "text/plain"));
                 messageBodyParts.addBodyPart(getMessagePart(htmlContent, "text/html"));
                 messageBodyPart.setContent(messageBodyParts);
-                
+
                 MimeMultipart messageParts = new MimeMultipart("related");
                 messageParts.addBodyPart(messageBodyPart);
-                
+
                 for (Document document : getMessageAttachments(notificationDefinitionDTO, notificationConfiguration)) {
                     messageParts.addBodyPart(getMessagePart(documentService.getDocumentContent(document), document.getContentType(), document.getFileName()));
                 }
-                
+
                 message.setContent(messageParts);
                 amazonClient.sendRawEmail(new SendRawEmailRequest(new RawMessage(getMessageData(message))));
             } else if (emailStrategy.equals("log")) {
                 logger.info("Sending Development Email: " + getMessageString(prismNotificationDefinition, notificationDefinitionDTO) + "\n" + subject
-                        + "\nContent:\n" + htmlContent);
+                        + "\nContent:\n" + plainContent);
                 getMessageAttachments(notificationDefinitionDTO, notificationConfiguration).forEach(document -> {
                     logger.info("Sending Development Attachment: " + document.getFileName());
                 });
             } else {
                 logger.info("Sending Development Email: " + getMessageString(prismNotificationDefinition, notificationDefinitionDTO));
             }
-            
+
             notificationService.createUserNotification(resource, recipient, notificationDefinition);
         } catch (Exception e) {
             logger.error(String.format("Failed to send email %s", getMessageString(prismNotificationDefinition, notificationDefinitionDTO)), e);
         }
     }
-    
+
     private String getMessage(Resource resource, String subject, String content, Map<String, Object> model) {
         model.put("IMAGES_PATH", applicationUrl + "/images/email");
-        
+
         Institution institution = resource.getInstitution();
         if (institution != null) {
             Document institutionLogoImage = institution.getLogoImageEmail();
@@ -189,12 +189,12 @@ public class MailSender {
                 model.put("LOGO_URL", applicationApiUrl + "/images/" + institutionLogoImage.getId());
             }
         }
-        
+
         model.put("SUBJECT", subject);
         model.put("CONTENT", content);
         return prismTemplateUtils.getContentFromLocation("email/email_template.ftl", model);
     }
-    
+
     private Map<String, Object> createNotificationModel(NotificationDefinition notificationDefinition, NotificationDefinitionDTO notificationDefinitionDTO,
             PropertyLoader propertyLoader) {
         Map<String, Object> model = newHashMap();
@@ -208,7 +208,7 @@ public class MailSender {
         }
         return model;
     }
-    
+
     private InternetAddress convertToInternetAddresses(User user) {
         try {
             StringBuilder stringBuilder = new StringBuilder(user.getFirstName());
@@ -224,19 +224,19 @@ public class MailSender {
             throw new IllegalArgumentException(e);
         }
     }
-    
+
     protected NotificationService getNotificationService() {
         return notificationService;
     }
-    
+
     protected User getUser(Integer user) {
         return user == null ? null : userService.getById(user);
     }
-    
+
     protected Resource getResource(ResourceDTO resource) {
         return resource == null ? null : resourceService.getById(resource.getScope(), resource.getId());
     }
-    
+
     protected NotificationDefinitionDTO getNotificationDefinitionDTO(User recipient, Resource resource, NotificationEvent notificationEvent) {
         NotificationDefinitionDTO notificationDefinitionDTO = new NotificationDefinitionDTO();
         notificationDefinitionDTO.setInitiator(getUser(notificationEvent.getInitiator()));
@@ -244,16 +244,16 @@ public class MailSender {
         notificationDefinitionDTO.setSignatory(getUser(notificationEvent.getSignatory()));
         notificationDefinitionDTO.setCandidate(getUser(notificationEvent.getCandidate()));
         notificationDefinitionDTO.setResource(resource);
-        
+
         Integer comment = notificationEvent.getComment();
         notificationDefinitionDTO.setComment(comment == null ? null : commentService.getById(comment));
-        
+
         Integer message = notificationEvent.getMessage();
         notificationDefinitionDTO.setMessage(message == null ? null : messageService.getMessageById(message));
-        
+
         Integer advertTarget = notificationEvent.getAdvertTarget();
         notificationDefinitionDTO.setAdvertTarget(advertTarget == null ? null : advertService.getAdvertTargetById(advertTarget));
-        
+
         notificationDefinitionDTO.setInvitationMessage(notificationEvent.getInvitationMessage());
         notificationDefinitionDTO.setTransitionAction(notificationEvent.getTransitionAction());
         notificationDefinitionDTO.setNewPassword(notificationEvent.getNewPassword());
@@ -262,7 +262,7 @@ public class MailSender {
         notificationDefinitionDTO.setBuffered(notificationEvent.getBuffered());
         return notificationDefinitionDTO;
     }
-    
+
     private String getMessageString(PrismNotificationDefinition notificationDefinition, NotificationDefinitionDTO notificationDefinitionDTO) {
         return MoreObjects.toStringHelper(this)
                 .add("to", notificationDefinitionDTO.getRecipient().getEmail())
@@ -271,17 +271,17 @@ public class MailSender {
                 .add("configuration", notificationDefinition)
                 .toString();
     }
-    
+
     private List<Document> getMessageAttachments(NotificationDefinitionDTO notificationDefinitionDTO, NotificationConfiguration notificationConfiguration) {
         List<Document> documentAttachments = newLinkedList();
-        
+
         Comment comment = notificationDefinitionDTO.getComment();
         if (comment != null && isTrue(comment.getAction().getDocumentCirculationAction())) {
             comment.getDocuments().forEach(document -> documentAttachments.add(document));
         }
-        
+
         notificationConfiguration.getDocuments().forEach(document -> documentAttachments.add(document.getDocument()));
         return documentAttachments;
     }
-    
+
 }
